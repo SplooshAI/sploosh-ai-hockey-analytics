@@ -12,6 +12,20 @@ def generate_qr_code(gameId: str):
     qr_img = qr.make_image(fill_color="black", back_color="white")
     return qr_img
 
+def generate_qr_code_base64(gameId: str):
+    server_time = datetime.now().isoformat()
+
+    # Generate the QR code
+    qr_img = generate_qr_code(gameId)
+
+    # Generate the HTML response with the embedded QR code image
+    img_byte_arr = io.BytesIO()
+    qr_img.save(img_byte_arr)
+    img_byte_arr.seek(0)
+    qr_img_base64 = base64.b64encode(img_byte_arr.getvalue()).decode('utf-8')
+
+    return qr_img_base64
+
 def generate_qr_code_html(gameId: str):
     server_time = datetime.now().isoformat()
 
