@@ -15,6 +15,10 @@ If you go to the URL [https://nhl-shot-chart-on-vercel-with-fastapi.vercel.app/?
 
 ![](./__screenshots__/02.png)
 
+If you would like to view a shot chart along with the NHL schedule for a single team, you can go to the URL [https://nhl-shot-chart-on-vercel-with-fastapi.vercel.app/nhl-schedule](https://nhl-shot-chart-on-vercel-with-fastapi.vercel.app/nhl-schedule) - and optionally supply parameters for `seasonId`, `teamId`, and `gameId`:
+
+![](./__screenshots__/03.png)
+
 ## Local development
 
 ### Install dependencies and run our project
