@@ -20,6 +20,9 @@ This project will explore creating and deploying a FastAPI project to Vercel.
 % source .venv/bin/activate
 (.venv) %
 
+# PREFERRED: Install the packages from requirements.txt
+(.venv) % pip install -r requirements.txt
+
 # Install Python packages in a virtual environment
 (.venv) % pip install fastapi
 (.venv) % pip install uvicorn
@@ -35,9 +38,6 @@ This project will explore creating and deploying a FastAPI project to Vercel.
 
 # Remove the dependency from requirements.txt if it exists
 # (.venv) % pip uninstall -r requirements.txt
-
-# PREFERRED: Install the packages from requirements.txt
-(.venv) % pip install -r requirements.txt
 
 # Let's start our FastAPI server - Available at http://127.0.0.1:8000/
 (.venv) % uvicorn main:app --reload
