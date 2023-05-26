@@ -20,17 +20,7 @@ class QueryParamLoggerMiddleware:
         for key, value in request.headers.items():
             print(f"\t{key}: {value}")
 
-        # # Measure execution time
-        # start_time = time.time()
-
         # Call the next middleware or route handler
         response = await self.app(scope, receive, send)
-
-        # # Calculate execution time
-        # end_time = time.time()
-        # execution_time = end_time - start_time
-
-        # # Log execution time
-        # print(f"Execution Time: {execution_time} seconds")
 
         return response
