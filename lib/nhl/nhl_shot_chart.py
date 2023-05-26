@@ -224,18 +224,18 @@ def generate_shot_chart_for_game(gameId):
     plt.text(0, -53, detail_line, ha="center", fontsize=11, alpha=0.9)
 
     # OPTIONAL: Save our plot to a PNG file
-    saveToFile = (
-        OUTPUT_SHOT_CHART_DIRECTORY_AND_FILENAME_PREFIX
-        + str(gameId)
-        + "-"
-        + gameStartLocalDateTime.replace(" ", "_").replace(":", "")
-        + "-"
-        + away_team
-        + "-vs-"
-        + home_team
-        + ".png"
-    )  # Example - ./images/shot-chart-2022020711-2023-01-17_6:00pm-SEA-vs-EDM.png
-    plt.savefig(saveToFile)
+    # saveToFile = (
+    #     OUTPUT_SHOT_CHART_DIRECTORY_AND_FILENAME_PREFIX
+    #     + str(gameId)
+    #     + "-"
+    #     + gameStartLocalDateTime.replace(" ", "_").replace(":", "")
+    #     + "-"
+    #     + away_team
+    #     + "-vs-"
+    #     + home_team
+    #     + ".png"
+    # )  # Example - ./images/shot-chart-2022020711-2023-01-17_6:00pm-SEA-vs-EDM.png
+    # plt.savefig(saveToFile)
 
     return plt
     # OPTIONAL: Display chart before the program finishes executing
