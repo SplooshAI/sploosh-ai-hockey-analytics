@@ -1,4 +1,4 @@
-# SOURCE - https://github.com/ztandrews/NHLShotCharts/blob/main/NHLGameShotChart.py
+# Heavily modified but inspired by the work at https://github.com/ztandrews/NHLShotCharts/blob/main/NHLGameShotChart.py
 
 import arrow
 import base64
