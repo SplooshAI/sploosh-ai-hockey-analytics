@@ -26,6 +26,7 @@ This project will explore creating and deploying a FastAPI project to Vercel.
 # Install Python packages in a virtual environment
 (.venv) % pip install fastapi
 (.venv) % pip install uvicorn
+(.venv) % pip install qrcode
 
 # Let's start our Flask server - Available at http://127.0.0.1:8000/
 (.venv) % python main.py
