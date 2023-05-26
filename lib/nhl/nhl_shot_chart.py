@@ -1,8 +1,6 @@
 # Heavily modified but inspired by the work at https://github.com/ztandrews/NHLShotCharts/blob/main/NHLGameShotChart.py
 
 import arrow
-import base64
-import io
 import json
 import matplotlib.pyplot as plt
 import os
@@ -11,7 +9,7 @@ import requests
 from datetime import datetime as dt
 from fastapi.responses import HTMLResponse
 from hockey_rink import NHLRink
-from lib.qrcode.qrcode_generator import generate_qr_code_base64, generate_qr_code_for_text
+from lib.qrcode.qrcode_generator import generate_qr_code_base64, generate_qr_code_for_text, generate_base64_image
 
 
 # Global settings - Set to False if you do not want to display certain visual elements
@@ -68,21 +66,20 @@ def printJSON(data, indent=0):
 # Generate a shot chart for a specific game ID from the NHL API
 def generate_shot_chart_html(gameId):
     try:
-        shot_chart_img = generate_shot_chart_for_game(gameId)
         server_time = dt.now().isoformat()
-        nhl_gamecenter_url = f"""https://www.nhl.com/gamecenter/{gameId}"""
+
+        # NHL Gamecenter
         nhl_gamecenter_title = "NHL Gamecenter"
-        shot_chart_url = f"""https://nhl-shot-chart-on-vercel-with-fastapi.vercel.app/?gameId={gameId}"""
+        nhl_gamecenter_url = f"""https://www.nhl.com/gamecenter/{gameId}"""
+
+        # Shot chart
         shot_chart_title = "Shot Chart"
+        shot_chart_url = f"""https://nhl-shot-chart-on-vercel-with-fastapi.vercel.app/?gameId={gameId}"""
+        shot_chart_img = generate_shot_chart_for_game(gameId)
+        shot_chart_img_base64 = generate_base64_image(shot_chart_img)
 
-        # Generate the HTML response with the embedded shot chart image
-        img_byte_arr = io.BytesIO()
-        shot_chart_img.savefig(img_byte_arr, format='png', bbox_inches='tight')
-        img_byte_arr.seek(0)
-        shot_chart_img_base64 = base64.b64encode(img_byte_arr.getvalue()).decode('utf-8')
-
-        # Generate QR codes
-        qr_code_img_base64 = generate_qr_code_base64(gameId)
+        # QR codes
+        qr_code_nhl_gamecenter_img_base64 = generate_qr_code_base64(gameId)
         qr_code_shot_chart_img_base64 = generate_qr_code_for_text(shot_chart_url)
 
         # Generate HTML with captions
@@ -103,14 +100,14 @@ def generate_shot_chart_html(gameId):
             <body>
                 <div align="center">
                     <figure>
-                        <img src="data:image/png;base64,{shot_chart_img_base64}" alt="NHL Shot Chart">
+                        <img src="data:image/png;base64,{shot_chart_img_base64}" alt="{shot_chart_title}">
                         <figcaption>Shot Chart for Game ID <a href="{nhl_gamecenter_url}" target="_blank">{gameId}</a></figcaption>
                     </figure>
                     <p>Generated at {server_time}</p>
                     <div class="qr-code-container">
                         <figure>
                             <a href="{nhl_gamecenter_url}" target="_blank">
-                                <img src="data:image/png;base64,{qr_code_img_base64}" alt="{nhl_gamecenter_title}" class="qr-code">
+                                <img src="data:image/png;base64,{qr_code_nhl_gamecenter_img_base64}" alt="{nhl_gamecenter_title}" class="qr-code">
                             </a>
                             <figcaption>{nhl_gamecenter_title}</figcaption>
                         </figure>
@@ -139,8 +136,7 @@ def generate_shot_chart_html(gameId):
                     this game
                     </a>
             </p>
-            <br />
-            Please double-check to make sure you have supplied a valid NHL Game ID.
+            <pre>{e}</pre>
         </body>
         </html>
         """
