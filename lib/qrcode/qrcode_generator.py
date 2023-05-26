@@ -6,13 +6,26 @@ import io
 import qrcode
 
 def generate_base64_image(image):
-    # Generate the HTML response with the embedded QR code image
-    image_byte_arr = io.BytesIO()
-    image.save(image_byte_arr)
-    image_byte_arr.seek(0)
-    qr_img_base64 = base64.b64encode(image_byte_arr.getvalue()).decode('utf-8')
+    try:
+        # Generate the HTML response with the embedded QR code image
+        image_byte_arr = io.BytesIO()
+        image.save(image_byte_arr)
+        image_byte_arr.seek(0)
+        qr_img_base64 = base64.b64encode(image_byte_arr.getvalue()).decode('utf-8')
 
-    return qr_img_base64
+        return qr_img_base64
+
+    except AttributeError as e:
+        # Handle the specific exception when 'save' method is not available - e.g. "module 'matplotlib.pyplot' has no attribute 'save'"
+        image_byte_arr = io.BytesIO()
+        image.savefig(image_byte_arr, format='png', bbox_inches='tight')
+        image_byte_arr.seek(0)
+        return base64.b64encode(image_byte_arr.getvalue()).decode('utf-8')
+
+    except Exception as e:
+        # Handle any other exceptions that may occur
+        # Add your error handling code here
+        return None
 
 def generate_qr_code_for_text(text: str):
     qr = qrcode.QRCode(version=1, box_size=10, border=5)
