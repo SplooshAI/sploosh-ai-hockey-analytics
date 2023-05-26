@@ -95,7 +95,69 @@ def generate_shot_chart_html(gameId):
                         display: flex;
                         justify-content: center;
                     }}
+                    #scheduleTable {{
+                        display: flex;
+                        justify-content: center;
+                        align-items: center;
+                        margin: 0 auto;
+                    }}          
+                   #scheduleTable table {{
+                        border-collapse: collapse;
+                        width: 100%;
+                        padding: 10px;
+                    }}
+                    #scheduleTable th, #scheduleTable td {{
+                        padding: 8px;
+                        border: 1px solid black;
+                    }}
                 </style>
+                <script>
+                    // Seattle Kraken 2022-23
+                    const nhl_schedule = 'https://statsapi.web.nhl.com/api/v1/schedule?teamId=55&season=20222023'
+
+                    fetch(nhl_schedule)
+                    .then(response => response.json())
+                    .then(data => {{
+                        const schedule = data.dates;
+                        
+                        // Create the table header
+                        let tableHTML = '<table>';
+                        tableHTML += '<tr><th>Date</th><th>gameId</th><th>gameDate</th><th>Away team</th><th>Home team</th></tr>';
+                        
+                        schedule.forEach(game => {{
+                        const date = game.date;
+                        const gameId = game.games[0].gamePk;
+                        const gameDate = game.games[0].gameDate;
+                        const link = game.games[0].link;
+                        const awayTeam = game.games[0].teams.away.team.name;
+                        const awayTeamScore = game.games[0].teams.away.score;
+                        const homeTeam = game.games[0].teams.home.team.name;
+                        const homeTeamScore = game.games[0].teams.home.score;
+
+                        // Create the table row
+                        tableHTML += `<tr><td>${{date}}</td><td>${{createShotChartHyperlink(gameId)}}</td><td>${{gameDate}}</td><td>${{awayTeam}} <strong>${{awayTeamScore}}</strong></td><td>${{homeTeam}} <strong>${{homeTeamScore}}</strong></td></tr>`;
+                        }});
+
+                        tableHTML += '</table>';
+
+                        // Display the table in the HTML document
+                        document.getElementById('scheduleTable').innerHTML = tableHTML;
+                    }})
+                    .catch(error => {{
+                        console.error('Error:', error);
+                    }});
+
+                    // Helper function to create a hyperlink
+                    function createHyperlink(text, url) {{
+                    return `<a href="${{url}}">${{text}}</a>`;
+                    }}
+
+                    // Helper function to create a shot chart link
+                    function createShotChartHyperlink(gameId) {{
+                    return `<a href="/?gameId=${{gameId}}">${{gameId}}</a>`;
+                    }}
+
+                </script>
             </head>
             <body>
                 <div align="center">
@@ -119,6 +181,7 @@ def generate_shot_chart_html(gameId):
                         </figure>
                     </div>
                 </div>
+                <div id="scheduleTable"></div>
             </body>
         </html>
         """
