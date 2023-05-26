@@ -171,25 +171,9 @@ def generate_shot_chart_for_game(gameId):
     rink = NHLRink()
     ax = rink.draw()
 
-    # Log
-    # DEBUG: Review events received from the API
-    # eventLog = "-- BEGIN GAME --"
-
     # Plot our elements on the chart
     elements = data["game"]["charts"]["shotChart"]["data"]
     for e in elements:
-        # DEBUG: Review events received from the API
-        # eventDescription = e["event_description"]
-        # eventDetails = e["event_details"]
-        # eventLog = "Period {0} - {1} ({2} remaining) -> {4} {3}".format(
-        #     eventDetails["period"],
-        #     eventDetails["periodTime"],
-        #     eventDetails["periodTimeRemaining"],
-        #     eventDescription,
-        #     e["team"],
-        # )
-        # print(eventLog)
-
         plt.plot(
             e["x_calculated_shot_chart"],
             e["y_calculated_shot_chart"],
