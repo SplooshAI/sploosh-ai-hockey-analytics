@@ -5,7 +5,7 @@ import base64
 import io
 import qrcode
 
-def generate_qr_code(gameId: str):
+def generate_qr_code_for_gameId(gameId: str):
     qr = qrcode.QRCode(version=1, box_size=10, border=5)
     qr.add_data(f"NHL Game ID: {gameId}")
     qr.make(fit=True)
@@ -16,7 +16,7 @@ def generate_qr_code_base64(gameId: str):
     server_time = datetime.now().isoformat()
 
     # Generate the QR code
-    qr_img = generate_qr_code(gameId)
+    qr_img = generate_qr_code_for_gameId(gameId)
 
     # Generate the HTML response with the embedded QR code image
     img_byte_arr = io.BytesIO()
@@ -30,7 +30,7 @@ def generate_qr_code_html(gameId: str):
     server_time = datetime.now().isoformat()
 
     # Generate the QR code
-    qr_img = generate_qr_code(gameId)
+    qr_img = generate_qr_code_for_gameId(gameId)
 
     # Generate the HTML response with the embedded QR code image
     img_byte_arr = io.BytesIO()
