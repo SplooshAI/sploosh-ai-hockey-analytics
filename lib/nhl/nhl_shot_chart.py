@@ -246,7 +246,7 @@ def generate_shot_chart_with_schedule_html(gameId, teamId, seasonId):
 
                     // Helper function to create a shot chart link
                     function createShotChartHyperlink(gameId) {{
-                    return `<a href="/?gameId=${{gameId}}" target="_blank">${{gameId}}</a>`;
+                    return `<a href="/nhl-schedule?gameId=${{gameId}}">${{gameId}}</a>`;
                     }}
 
                     // Helper function to create a shot chart link
