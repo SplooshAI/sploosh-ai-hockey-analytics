@@ -5,7 +5,8 @@ app = FastAPI()
 
 @app.get("/")
 @app.get("/nhl-shot-chart")
-async def nhl_shot_chart(gameId: str = "2022030324"):
+@app.get("/nhl-shot-chart/qrcode")
+async def nhl_shot_chart_qrcode(gameId: str = "2022030324"):
     return generate_qr_code_html(gameId)
 
 @app.get("/nhl-shot-chart/download")
