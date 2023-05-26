@@ -1,6 +1,20 @@
 # Welcome
 This project will explore creating and deploying a FastAPI project to Vercel.
 
+You can view the [demo](https://nhl-shot-chart-on-vercel-with-fastapi.vercel.app/) on Vercel at [https://nhl-shot-chart-on-vercel-with-fastapi.vercel.app/](https://nhl-shot-chart-on-vercel-with-fastapi.vercel.app/)
+
+![](./__screenshots__/01.png)
+
+If you know the NHL game ID you would like to generate a shot chart for, you can add the `?gameId=XXXXXXXXXX` parameter to the URL. 
+
+For example, clicking on Gamecenter in the NHL scoreboard would take you to a URL that looks something like `https://www.nhl.com/gamecenter/vgk-vs-dal/2023/05/25/2022030324#game=2022030324,game_state=final1`
+
+In this example URL, the `gameId` would be `2022030324`
+
+If you go to the URL [https://nhl-shot-chart-on-vercel-with-fastapi.vercel.app/?gameId=2022030324](https://nhl-shot-chart-on-vercel-with-fastapi.vercel.app/?gameId=2022030324) you will see the shot chart and QR code that links to this particular game:
+
+![](./__screenshots__/02.png)
+
 ## Local development
 
 ### Install dependencies and run our project

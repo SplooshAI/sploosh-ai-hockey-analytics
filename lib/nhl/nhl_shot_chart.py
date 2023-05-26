@@ -1,4 +1,4 @@
-# SOURCE - https://github.com/ztandrews/NHLShotCharts/blob/main/NHLGameShotChart.py
+# Heavily modified but inspired by the work at https://github.com/ztandrews/NHLShotCharts/blob/main/NHLGameShotChart.py
 
 import arrow
 import base64
@@ -11,17 +11,8 @@ import requests
 from datetime import datetime as dt
 from fastapi.responses import HTMLResponse
 from hockey_rink import NHLRink
-from PIL import Image
-
 from lib.qrcode_generator import generate_qr_code_base64
 
-from matplotlib import image
-from matplotlib import cm
-from matplotlib.patches import Circle, Rectangle, Arc, ConnectionPatch
-from matplotlib.patches import Polygon
-from matplotlib.collections import PatchCollection
-from matplotlib.path import Path
-from matplotlib.patches import PathPatch
 
 # Global settings - Set to False if you do not want to display certain visual elements
 SHOW_GOALS = True
@@ -56,11 +47,6 @@ LOCAL_DATE_TIME_FORMAT_STRING = "YYYY-MM-DD h:mma ZZZ"  # '2023-01-19 7:00pm PST
 NHL_API_BASE_URL = "https://statsapi.web.nhl.com/api/v1"
 NHL_API_DATE_TIME_FORMAT_STRING = "%Y-%m-%dT%H:%M:%SZ"  # '2023-01-20T03:00:00Z'
 
-# NHL settings and configuration
-# Click on an individual game in the scorebar at https://www.nhl.com to get the game ID
-NHL_GAME_ID = 2022030324
-
-
 def convertToLocalDateTimeString(dateTimeString):
     # Convert '2023-01-20T03:00:00Z' to '2023-01-19 7:00pm PST'
     # See https://arrow.readthedocs.io/en/latest/guide.html#supported-tokens
@@ -81,34 +67,54 @@ def printJSON(data, indent=0):
 
 # Generate a shot chart for a specific game ID from the NHL API
 def generate_shot_chart_html(gameId):
-    shot_chart_img = generate_shot_chart_for_game(gameId)
-    server_time = dt.now().isoformat()
+    try:
+        shot_chart_img = generate_shot_chart_for_game(gameId)
+        server_time = dt.now().isoformat()
 
-    # Generate the HTML response with the embedded shot chart image
-    img_byte_arr = io.BytesIO()
-    shot_chart_img.savefig(img_byte_arr, format='png', bbox_inches='tight')
-    img_byte_arr.seek(0)
-    shot_chart_img_base64 = base64.b64encode(img_byte_arr.getvalue()).decode('utf-8')
+        # Generate the HTML response with the embedded shot chart image
+        img_byte_arr = io.BytesIO()
+        shot_chart_img.savefig(img_byte_arr, format='png', bbox_inches='tight')
+        img_byte_arr.seek(0)
+        shot_chart_img_base64 = base64.b64encode(img_byte_arr.getvalue()).decode('utf-8')
 
-    # Generate a QR code
-    qr_code_img_base64 = generate_qr_code_base64(gameId)
+        # Generate a QR code
+        qr_code_img_base64 = generate_qr_code_base64(gameId)
 
-    # Generate HTML
-    html_content = f"""
-    <html>
-    <body>
-        <div align="center">
-            <img src="data:image/png;base64,{shot_chart_img_base64}" alt="NHL Shot Chart">
-            <p align="center">Generated at {server_time} for Game ID <a href="https://www.nhl.com/gamecenter/{gameId}" target="_blank">{gameId}</a></p>
-            <a href="https://www.nhl.com/gamecenter/{gameId}" target="_blank">
-                <img src="data:image/png;base64,{qr_code_img_base64}" alt="QR Code for NHL shot chart">
-            </a>
-        </div>
-    </body>
-    </html>
-    """
+        # Generate HTML
+        html_content = f"""
+        <html>
+        <body>
+            <div align="center">
+                <img src="data:image/png;base64,{shot_chart_img_base64}" alt="NHL Shot Chart">
+                <p align="center">Generated at {server_time} for Game ID <a href="https://www.nhl.com/gamecenter/{gameId}" target="_blank">{gameId}</a></p>
+                <a href="https://www.nhl.com/gamecenter/{gameId}" target="_blank">
+                    <img src="data:image/png;base64,{qr_code_img_base64}" alt="QR Code for NHL shot chart">
+                </a>
+            </div>
+        </body>
+        </html>
+        """
 
-    return HTMLResponse(content=html_content, status_code=200)
+        return HTMLResponse(content=html_content, status_code=200)
+
+    except Exception as e:
+        error_html_content = f"""
+        <html>
+        <body>
+            <h1>Error Generating Shot Chart</h1>
+            <p>
+                Sorry. We are unable to generate the shot chart for 
+                    <a href="https://www.nhl.com/gamecenter/{gameId}" target="_blank">
+                    this game
+                    </a>
+            </p>
+            <br />
+            Please double-check to make sure you have supplied a valid NHL Game ID.
+        </body>
+        </html>
+        """
+
+        return HTMLResponse(content=error_html_content, status_code=500)
 
 # Generate a shot chart for a specific game ID from the NHL API
 def generate_shot_chart_for_game(gameId):
@@ -180,25 +186,9 @@ def generate_shot_chart_for_game(gameId):
     rink = NHLRink()
     ax = rink.draw()
 
-    # Log
-    # DEBUG: Review events received from the API
-    # eventLog = "-- BEGIN GAME --"
-
     # Plot our elements on the chart
     elements = data["game"]["charts"]["shotChart"]["data"]
     for e in elements:
-        # DEBUG: Review events received from the API
-        # eventDescription = e["event_description"]
-        # eventDetails = e["event_details"]
-        # eventLog = "Period {0} - {1} ({2} remaining) -> {4} {3}".format(
-        #     eventDetails["period"],
-        #     eventDetails["periodTime"],
-        #     eventDetails["periodTimeRemaining"],
-        #     eventDescription,
-        #     e["team"],
-        # )
-        # print(eventLog)
-
         plt.plot(
             e["x_calculated_shot_chart"],
             e["y_calculated_shot_chart"],
@@ -220,27 +210,11 @@ def generate_shot_chart_for_game(gameId):
 
     # Add title
     plt.title(title)
-    # CAPTION
+
+    # Add caption
     plt.text(0, -53, detail_line, ha="center", fontsize=11, alpha=0.9)
 
-    # OPTIONAL: Save our plot to a PNG file
-    # saveToFile = (
-    #     OUTPUT_SHOT_CHART_DIRECTORY_AND_FILENAME_PREFIX
-    #     + str(gameId)
-    #     + "-"
-    #     + gameStartLocalDateTime.replace(" ", "_").replace(":", "")
-    #     + "-"
-    #     + away_team
-    #     + "-vs-"
-    #     + home_team
-    #     + ".png"
-    # )  # Example - ./images/shot-chart-2022020711-2023-01-17_6:00pm-SEA-vs-EDM.png
-    # plt.savefig(saveToFile)
-
     return plt
-    # OPTIONAL: Display chart before the program finishes executing
-    # plt.show()
-    # --------------------------------------------------------------------------------------------------------
 
 
 # Load live data for a specific game ID from the NHL API
@@ -521,18 +495,3 @@ def parse_game_details(gameId):
     gameData["homeGoals"] = home_goals
 
     return response
-
-
-# # ------------------------------------------------------------------------------------------------
-# # Generate our shot chart (using the original example code from
-# # https://github.com/ztandrews/NHLShotCharts/blob/main/NHLGameShotChart.py as a reference)
-# # ------------------------------------------------------------------------------------------------
-# try:
-#     generate_shot_chart_for_game(NHL_GAME_ID)
-# except:
-#     print(
-#         "\nUnable to generate a shot chart for NHL_GAME_ID "
-#         + str(NHL_GAME_ID)
-#         + ".\nExpected data is not available for processing.\n"
-#     )
-# # ------------------------------------------------------------------------------------------------
