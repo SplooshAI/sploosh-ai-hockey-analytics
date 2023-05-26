@@ -11,7 +11,7 @@ import requests
 from datetime import datetime as dt
 from fastapi.responses import HTMLResponse
 from hockey_rink import NHLRink
-from lib.qrcode_generator import generate_qr_code_base64
+from lib.qrcode.qrcode_generator import generate_qr_code_base64
 
 
 # Global settings - Set to False if you do not want to display certain visual elements
