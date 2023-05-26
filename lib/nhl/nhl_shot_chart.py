@@ -1,14 +1,19 @@
 # SOURCE - https://github.com/ztandrews/NHLShotCharts/blob/main/NHLGameShotChart.py
 
 import arrow
+import base64
+import io
 import json
 import matplotlib.pyplot as plt
 import os
 import requests
 
 from datetime import datetime as dt
+from fastapi.responses import HTMLResponse
 from hockey_rink import NHLRink
 from PIL import Image
+
+from lib.qrcode_generator import generate_qr_code_base64
 
 from matplotlib import image
 from matplotlib import cm
@@ -73,6 +78,37 @@ def printJSON(data, indent=0):
     else:
         print(OUTPUT_SEPARATOR + json.dumps(data, indent=indent) + OUTPUT_SEPARATOR)
 
+
+# Generate a shot chart for a specific game ID from the NHL API
+def generate_shot_chart_html(gameId):
+    shot_chart_img = generate_shot_chart_for_game(gameId)
+    server_time = dt.now().isoformat()
+
+    # Generate the HTML response with the embedded shot chart image
+    img_byte_arr = io.BytesIO()
+    shot_chart_img.savefig(img_byte_arr, format='png', bbox_inches='tight')
+    img_byte_arr.seek(0)
+    shot_chart_img_base64 = base64.b64encode(img_byte_arr.getvalue()).decode('utf-8')
+
+    # Generate a QR code
+    qr_code_img_base64 = generate_qr_code_base64(gameId)
+
+    # Generate HTML
+    html_content = f"""
+    <html>
+    <body>
+        <div align="center">
+            <img src="data:image/png;base64,{shot_chart_img_base64}" alt="NHL Shot Chart">
+            <p align="center">Generated at {server_time} for Game ID <a href="https://www.nhl.com/gamecenter/{gameId}" target="_blank">{gameId}</a></p>
+            <a href="https://www.nhl.com/gamecenter/{gameId}" target="_blank">
+                <img src="data:image/png;base64,{qr_code_img_base64}" alt="QR Code for NHL shot chart">
+            </a>
+        </div>
+    </body>
+    </html>
+    """
+
+    return HTMLResponse(content=html_content, status_code=200)
 
 # Generate a shot chart for a specific game ID from the NHL API
 def generate_shot_chart_for_game(gameId):
