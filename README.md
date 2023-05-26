@@ -5,19 +5,15 @@ You can view the [demo](https://nhl-shot-chart-on-vercel-with-fastapi.vercel.app
 
 ![](./__screenshots__/01.png)
 
-If you know the NHL game ID you would like to generate a shot chart for, you can add the `?gameId=XXXXXXXXXX` parameter to the URL. 
+TL;DR Feel free to try the following sample URLs:
 
-For example, clicking on Gamecenter in the NHL scoreboard would take you to a URL that looks something like `https://www.nhl.com/gamecenter/vgk-vs-dal/2023/05/25/2022030324#game=2022030324,game_state=final1`
+- [https://nhl-shot-chart-on-vercel-with-fastapi.vercel.app/](https://nhl-shot-chart-on-vercel-with-fastapi.vercel.app/) - Default shot chart
+- [https://nhl-shot-chart-on-vercel-with-fastapi.vercel.app/?gameId=2022030236](https://nhl-shot-chart-on-vercel-with-fastapi.vercel.app/?gameId=2022030236) - Shot chart for a specific gameId from the NHL API
+  - EXAMPLE: Clicking on a specifc Gamecenter link for a game in the NHL scoreboard would take you to a URL that looks something like `https://www.nhl.com/gamecenter/vgk-vs-dal/2023/05/25/2022030324#game=2022030324,game_state=final1` - for this example URL, the `gameId` would be `2022030324`
+- [https://nhl-shot-chart-on-vercel-with-fastapi.vercel.app/nhl-schedule?teamId=55](https://nhl-shot-chart-on-vercel-with-fastapi.vercel.app/nhl-schedule?teamId=55) - View all games for the Seattle Kraken from the 2022-2023 season
+- [https://nhl-shot-chart-on-vercel-with-fastapi.vercel.app/nhl-schedule?teamId=55&seasonId=20212022](https://nhl-shot-chart-on-vercel-with-fastapi.vercel.app/nhl-schedule?teamId=55&seasonId=20212022) - View all games for the Seattle Kraken from their inaugural 2021-2022 season
 
-In this example URL, the `gameId` would be `2022030324`
-
-If you go to the URL [https://nhl-shot-chart-on-vercel-with-fastapi.vercel.app/?gameId=2022030324](https://nhl-shot-chart-on-vercel-with-fastapi.vercel.app/?gameId=2022030324) you will see the shot chart and QR code that links to this particular game:
-
-![](./__screenshots__/02.png)
-
-If you would like to view a shot chart along with the NHL schedule for a single team, you can go to the URL [https://nhl-shot-chart-on-vercel-with-fastapi.vercel.app/nhl-schedule](https://nhl-shot-chart-on-vercel-with-fastapi.vercel.app/nhl-schedule) - and optionally supply parameters for `seasonId`, `teamId`, and `gameId`:
-
-![](./__screenshots__/03.png)
+When you are viewing the `/nhl-schedule` route, you can click links to automatically load team schedules for the current season and game details 🤓
 
 ## Local development
 
