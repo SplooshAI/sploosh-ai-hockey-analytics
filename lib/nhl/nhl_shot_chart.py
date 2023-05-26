@@ -11,17 +11,8 @@ import requests
 from datetime import datetime as dt
 from fastapi.responses import HTMLResponse
 from hockey_rink import NHLRink
-from PIL import Image
-
 from lib.qrcode_generator import generate_qr_code_base64
 
-from matplotlib import image
-from matplotlib import cm
-from matplotlib.patches import Circle, Rectangle, Arc, ConnectionPatch
-from matplotlib.patches import Polygon
-from matplotlib.collections import PatchCollection
-from matplotlib.path import Path
-from matplotlib.patches import PathPatch
 
 # Global settings - Set to False if you do not want to display certain visual elements
 SHOW_GOALS = True
@@ -220,27 +211,11 @@ def generate_shot_chart_for_game(gameId):
 
     # Add title
     plt.title(title)
-    # CAPTION
+
+    # Add caption
     plt.text(0, -53, detail_line, ha="center", fontsize=11, alpha=0.9)
 
-    # OPTIONAL: Save our plot to a PNG file
-    # saveToFile = (
-    #     OUTPUT_SHOT_CHART_DIRECTORY_AND_FILENAME_PREFIX
-    #     + str(gameId)
-    #     + "-"
-    #     + gameStartLocalDateTime.replace(" ", "_").replace(":", "")
-    #     + "-"
-    #     + away_team
-    #     + "-vs-"
-    #     + home_team
-    #     + ".png"
-    # )  # Example - ./images/shot-chart-2022020711-2023-01-17_6:00pm-SEA-vs-EDM.png
-    # plt.savefig(saveToFile)
-
     return plt
-    # OPTIONAL: Display chart before the program finishes executing
-    # plt.show()
-    # --------------------------------------------------------------------------------------------------------
 
 
 # Load live data for a specific game ID from the NHL API
@@ -521,18 +496,3 @@ def parse_game_details(gameId):
     gameData["homeGoals"] = home_goals
 
     return response
-
-
-# # ------------------------------------------------------------------------------------------------
-# # Generate our shot chart (using the original example code from
-# # https://github.com/ztandrews/NHLShotCharts/blob/main/NHLGameShotChart.py as a reference)
-# # ------------------------------------------------------------------------------------------------
-# try:
-#     generate_shot_chart_for_game(NHL_GAME_ID)
-# except:
-#     print(
-#         "\nUnable to generate a shot chart for NHL_GAME_ID "
-#         + str(NHL_GAME_ID)
-#         + ".\nExpected data is not available for processing.\n"
-#     )
-# # ------------------------------------------------------------------------------------------------
