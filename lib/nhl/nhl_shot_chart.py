@@ -144,6 +144,173 @@ def generate_shot_chart_html(gameId):
         return HTMLResponse(content=error_html_content, status_code=500)
 
 # Generate a shot chart for a specific game ID from the NHL API
+def generate_shot_chart_with_schedule_html(gameId, teamId, seasonId):
+    try:
+        server_time = dt.now().isoformat()
+
+        # NHL Gamecenter
+        nhl_gamecenter_title = "NHL Gamecenter"
+        nhl_gamecenter_url = f"""https://www.nhl.com/gamecenter/{gameId}"""
+
+        # Shot chart
+        shot_chart_title = "Shot Chart"
+        shot_chart_url = f"""https://nhl-shot-chart-on-vercel-with-fastapi.vercel.app/?gameId={gameId}"""
+        shot_chart_img = generate_shot_chart_for_game(gameId)
+        shot_chart_img_base64 = generate_base64_image(shot_chart_img)
+
+        # QR codes
+        qr_code_nhl_gamecenter_img_base64 = generate_qr_code_base64(gameId)
+        qr_code_shot_chart_img_base64 = generate_qr_code_for_text(shot_chart_url)
+
+        # Generate HTML with captions
+        html_content = f"""
+        <html>
+            <head>
+                <style>
+                    .qr-code {{
+                        width: 200px;
+                        height: 200px;
+                    }}
+                    .qr-code-container {{
+                        display: flex;
+                        justify-content: center;
+                    }}
+                    #scheduleTable {{
+                        display: flex;
+                        justify-content: center;
+                        align-items: center;
+                        margin: 0 auto;
+                    }}          
+                   #scheduleTable table {{
+                        border-collapse: collapse;
+                        width: 100%;
+                        padding: 10px;
+                    }}
+                    #scheduleTable th, #scheduleTable td {{
+                        padding: 8px;
+                        border: 1px solid black;
+                    }}
+                </style>
+                <script>
+                    const nhl_schedule = 'https://statsapi.web.nhl.com/api/v1/schedule?teamId={teamId}&season={seasonId}'
+
+                    fetch(nhl_schedule)
+                    .then(response => response.json())
+                    .then(data => {{
+                        const schedule = data.dates;
+                        
+                        // Create the table header
+                        let tableHTML = '<table>';
+                        tableHTML += '<tr><th>Date</th><th>gameId</th><th>gameDate</th><th>Away team</th><th>Home team</th></tr>';
+                        
+                        schedule.forEach(game => {{
+                        const date = game.date;
+                        const gameId = game.games[0].gamePk;
+                        const gameDate = game.games[0].gameDate;
+                        const link = game.games[0].link;
+                        const awayTeam = game.games[0].teams.away.team.name;
+                        const awayTeamId = game.games[0].teams.away.team.id;
+                        const awayTeamScore = game.games[0].teams.away.score;
+                        const homeTeam = game.games[0].teams.home.team.name;
+                        const homeTeamId = game.games[0].teams.home.team.id;
+                        const homeTeamScore = game.games[0].teams.home.score;
+
+                        // Format the date in a human-friendly format
+                        const formattedDate = new Date(gameDate).toLocaleDateString('en-US', {{
+                        weekday: 'long',
+                        month: 'long',
+                        day: 'numeric',
+                        year: 'numeric',
+                        hour: 'numeric',
+                        minute: 'numeric',
+                        timeZoneName: 'short'
+                        }});
+
+                        // Create the table row
+                        tableHTML += `
+                            <tr>
+                                <td>${{date}}</td>
+                                <td>${{createShotChartHyperlink(gameId)}}</td>
+                                <td>${{gameDate}} - ${{formattedDate}}</td>
+                                <td>${{createTeamHyperlink(gameId, awayTeamId, awayTeam)}} <strong>${{awayTeamScore}}</strong></td>
+                                <td>${{createTeamHyperlink(gameId, homeTeamId, homeTeam)}} <strong>${{homeTeamScore}}</strong></td>
+                            </tr>`;
+                        }});
+
+                        tableHTML += '</table>';
+
+                        // Display the table in the HTML document
+                        document.getElementById('scheduleTable').innerHTML = tableHTML;
+                    }})
+                    .catch(error => {{
+                        console.error('Error:', error);
+                    }});
+
+                    // Helper function to create a hyperlink
+                    function createHyperlink(text, url) {{
+                    return `<a href="${{url}}">${{text}}</a>`;
+                    }}
+
+                    // Helper function to create a shot chart link
+                    function createShotChartHyperlink(gameId) {{
+                    return `<a href="/nhl-schedule?gameId=${{gameId}}">${{gameId}}</a>`;
+                    }}
+
+                    // Helper function to create a shot chart link
+                    function createTeamHyperlink(gameId, teamId, teamName) {{
+                    return `<a href="/nhl-schedule?gameId=${{gameId}}&teamId=${{teamId}}">${{teamName}}</a>`;
+                    }}
+                    
+                </script>
+            </head>
+            <body>
+                <div align="center">
+                    <figure>
+                        <img src="data:image/png;base64,{shot_chart_img_base64}" alt="{shot_chart_title}">
+                        <figcaption>Shot Chart for Game ID <a href="{nhl_gamecenter_url}" target="_blank">{gameId}</a></figcaption>
+                    </figure>
+                    <p>Generated at {server_time}</p>
+                    <div class="qr-code-container">
+                        <figure>
+                            <a href="{nhl_gamecenter_url}" target="_blank">
+                                <img src="data:image/png;base64,{qr_code_nhl_gamecenter_img_base64}" alt="{nhl_gamecenter_title}" class="qr-code">
+                            </a>
+                            <figcaption>{nhl_gamecenter_title}</figcaption>
+                        </figure>
+                        <figure>
+                            <a href="{shot_chart_url}" target="_blank">
+                                <img src="data:image/png;base64,{qr_code_shot_chart_img_base64}" alt="{shot_chart_title}" class="qr-code">
+                            </a>
+                            <figcaption>{shot_chart_title}</figcaption>
+                        </figure>
+                    </div>
+                </div>
+                <div id="scheduleTable"></div>
+            </body>
+        </html>
+        """
+
+        return HTMLResponse(content=html_content, status_code=200)
+
+    except Exception as e:
+        error_html_content = f"""
+        <html>
+        <body>
+            <h1>Error Generating Shot Chart</h1>
+            <p>
+                Sorry. We are unable to generate the shot chart for 
+                    <a href="https://www.nhl.com/gamecenter/{gameId}" target="_blank">
+                    this game
+                    </a>
+            </p>
+            <pre>{e}</pre>
+        </body>
+        </html>
+        """
+
+        return HTMLResponse(content=error_html_content, status_code=500)
+
+# Generate a shot chart for a specific game ID from the NHL API
 def generate_shot_chart_for_game(gameId):
     data = parse_game_details(gameId)
 

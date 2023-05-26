@@ -1,7 +1,8 @@
 from fastapi import FastAPI
-from lib.qrcode.qrcode_generator import generate_qr_code_html, generate_qr_code_for_download
-from lib.nhl.nhl_shot_chart import generate_shot_chart_html
+from lib.nhl.nhl_shot_chart import generate_shot_chart_html, generate_shot_chart_with_schedule_html
 
+DEFAULT_NHL_SEASON_ID = '20222023'
+DEFAULT_NHL_TEAM_ID = 55 # Seattle Kraken
 DEFAULT_NHL_GAME_ID = 2022030236  # 2023.05.13 Round 2 Game 6 of the 2023 Stanley Cup Playoffs
 
 app = FastAPI()
@@ -10,3 +11,7 @@ app = FastAPI()
 @app.get("/nhl-shot-chart")
 async def nhl_shot_chart(gameId: str = DEFAULT_NHL_GAME_ID):
    return generate_shot_chart_html(gameId)
+
+@app.get("/nhl-schedule")
+async def nhl_shot_chart_with_schedule(gameId: str = DEFAULT_NHL_GAME_ID, teamId: str = DEFAULT_NHL_TEAM_ID, seasonId: str = DEFAULT_NHL_SEASON_ID):
+   return generate_shot_chart_with_schedule_html(gameId, teamId, seasonId)
