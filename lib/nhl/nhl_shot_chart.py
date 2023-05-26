@@ -227,7 +227,14 @@ def generate_shot_chart_with_schedule_html(gameId, teamId, seasonId):
                         }});
 
                         // Create the table row
-                        tableHTML += `<tr><td>${{date}}</td><td>${{createShotChartHyperlink(gameId)}}</td><td>${{gameDate}} - ${{formattedDate}}</td><td>${{createTeamHyperlink(gameId, awayTeamId, awayTeam)}} <strong>${{awayTeamScore}}</strong></td><td>${{createTeamHyperlink(gameId, homeTeamId, homeTeam)}} <strong>${{homeTeamScore}}</strong></td></tr>`;
+                        tableHTML += `
+                            <tr>
+                                <td>${{date}}</td>
+                                <td>${{createShotChartHyperlink(gameId)}}</td>
+                                <td>${{gameDate}} - ${{formattedDate}}</td>
+                                <td>${{createTeamHyperlink(gameId, awayTeamId, awayTeam)}} <strong>${{awayTeamScore}}</strong></td>
+                                <td>${{createTeamHyperlink(gameId, homeTeamId, homeTeam)}} <strong>${{homeTeamScore}}</strong></td>
+                            </tr>`;
                         }});
 
                         tableHTML += '</table>';
