@@ -19,7 +19,7 @@ class QueryParamLoggerMiddleware:
         print(f"{log_message}")
 
         # Log request headers
-        print(f"\n{dashed_line}\nRequest Headers\n{dashed_line}")
+        print(f"\n\nRequest Headers\n{dashed_line}")
         for key, value in request.headers.items():
             print(f"{key}: {value}")
 
