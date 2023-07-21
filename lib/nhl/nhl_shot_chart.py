@@ -7,7 +7,7 @@ import os
 import pytz
 import requests
 
-from datetime import datetime as dt
+from datetime import datetime as dt, timezone, timedelta
 from fastapi.responses import HTMLResponse
 from hockey_rink import NHLRink
 from lib.qrcode.qrcode_generator import generate_qr_code_base64, generate_qr_code_for_text, generate_base64_image
@@ -40,27 +40,26 @@ OUTPUT_SHOT_CHART_DIRECTORY_AND_FILENAME_PREFIX = (
 )
 
 # Date and time
-LOCAL_DATE_TIME_FORMAT_STRING = "YYYY-MM-DD h:mmA"  # '2023-01-19 7:00pm PST'
+LOCAL_DATE_TIME_FORMAT_STRING = "YYYY-MM-DD h:mm A z"  # '2023-01-19 7:00 PM PST'
 
 # NHL API
 NHL_API_BASE_URL = "https://statsapi.web.nhl.com/api/v1"
-NHL_API_DATE_TIME_FORMAT_STRING = "%Y-%m-%dT%H:%M:%SZ"  # '2023-01-20T03:00:00Z'
+NHL_API_DATE_TIME_FORMAT_STRING = "%Y-%m-%dT%H:%M:%S%z"  # '2022-09-27T02:00:00Z'
 
 def convertToLocalDateTimeString(dateTimeString, timezone):
     try:
-        # Convert '2023-01-20T03:00:00Z' to '2023-01-19 7:00pm PDT'
-        localized_dt = arrow.get(dateTimeString).to(timezone)
-        timezone_abbr = localized_dt.format("Z")  # Extract the timezone abbreviation
-        result = localized_dt.format(LOCAL_DATE_TIME_FORMAT_STRING) + " " + timezone_abbr
+        # Convert '2022-09-27T02:00:00Z' to '2022-09-26 07:00 PM PDT'
+        utc_dt = dt.strptime(dateTimeString, NHL_API_DATE_TIME_FORMAT_STRING)
 
-        print("dateTimeString:", dateTimeString)
-        print("timezone:", timezone)
-        print("result -> ", result)
+        # Get the timezone object using pytz
+        local_tz = pytz.timezone(timezone)
+        localized_dt = utc_dt.replace(tzinfo=pytz.utc).astimezone(local_tz)
+        timezone_abbr = localized_dt.strftime('%Z')  # Get the timezone abbreviation
+        result = localized_dt.strftime('%Y-%m-%d %I:%M %p') + ' ' + timezone_abbr
+
         return result
     except Exception as e:
-        print("Error occurred:", e)
-        print("dateTimeString:", dateTimeString)
-        print("timezone:", timezone)
+        print("Error converting to a local datetime string -> ", e)
         return None
     
 # Utility method to either log or pretty print JSON data
