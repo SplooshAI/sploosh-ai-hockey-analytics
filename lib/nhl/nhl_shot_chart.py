@@ -4,9 +4,10 @@ import arrow
 import json
 import matplotlib.pyplot as plt
 import os
+import pytz
 import requests
 
-from datetime import datetime as dt
+from datetime import datetime as dt, timezone, timedelta
 from fastapi.responses import HTMLResponse
 from hockey_rink import NHLRink
 from lib.qrcode.qrcode_generator import generate_qr_code_base64, generate_qr_code_for_text, generate_base64_image
@@ -39,22 +40,28 @@ OUTPUT_SHOT_CHART_DIRECTORY_AND_FILENAME_PREFIX = (
 )
 
 # Date and time
-LOCAL_DATE_TIME_FORMAT_STRING = "YYYY-MM-DD h:mma ZZZ"  # '2023-01-19 7:00pm PST'
+LOCAL_DATE_TIME_FORMAT_STRING = "YYYY-MM-DD h:mm A z"  # '2023-01-19 7:00 PM PST'
 
 # NHL API
 NHL_API_BASE_URL = "https://statsapi.web.nhl.com/api/v1"
-NHL_API_DATE_TIME_FORMAT_STRING = "%Y-%m-%dT%H:%M:%SZ"  # '2023-01-20T03:00:00Z'
+NHL_API_DATE_TIME_FORMAT_STRING = "%Y-%m-%dT%H:%M:%S%z"  # '2022-09-27T02:00:00Z'
 
-def convertToLocalDateTimeString(dateTimeString):
-    # Convert '2023-01-20T03:00:00Z' to '2023-01-19 7:00pm PST'
-    # See https://arrow.readthedocs.io/en/latest/guide.html#supported-tokens
-    return (
-        arrow.get(dt.strptime(dateTimeString, NHL_API_DATE_TIME_FORMAT_STRING))
-        .to("local")
-        .format(LOCAL_DATE_TIME_FORMAT_STRING)
-    )
+def convertToLocalDateTimeString(dateTimeString, timezone):
+    try:
+        # Convert '2022-09-27T02:00:00Z' to '2022-09-26 07:00 PM PDT'
+        utc_dt = dt.strptime(dateTimeString, NHL_API_DATE_TIME_FORMAT_STRING)
 
+        # Get the timezone object using pytz
+        local_tz = pytz.timezone(timezone)
+        localized_dt = utc_dt.replace(tzinfo=pytz.utc).astimezone(local_tz)
+        timezone_abbr = localized_dt.strftime('%Z')  # Get the timezone abbreviation
+        result = localized_dt.strftime('%Y-%m-%d %I:%M %p') + ' ' + timezone_abbr
 
+        return result
+    except Exception as e:
+        print("Error converting to a local datetime string -> ", e)
+        return None
+    
 # Utility method to either log or pretty print JSON data
 def printJSON(data, indent=0):
     if indent == 0:
@@ -64,9 +71,13 @@ def printJSON(data, indent=0):
 
 
 # Generate a shot chart for a specific game ID from the NHL API
-def generate_shot_chart_html(gameId):
+def generate_shot_chart_html(gameId, timezone):
     try:
-        server_time = dt.now().isoformat()
+        # Get the timezone object corresponding to the provided timezone
+        tz = pytz.timezone(timezone)
+
+        # Get the current time with the specified timezone
+        server_time = dt.now(tz).isoformat()
 
         # NHL Gamecenter
         nhl_gamecenter_title = "NHL Gamecenter"
@@ -75,7 +86,7 @@ def generate_shot_chart_html(gameId):
         # Shot chart
         shot_chart_title = "Shot Chart"
         shot_chart_url = f"""https://nhl-shot-chart-on-vercel-with-fastapi.vercel.app/?gameId={gameId}"""
-        shot_chart_img = generate_shot_chart_for_game(gameId)
+        shot_chart_img = generate_shot_chart_for_game(gameId, timezone)
         shot_chart_img_base64 = generate_base64_image(shot_chart_img)
 
         # QR codes
@@ -144,9 +155,13 @@ def generate_shot_chart_html(gameId):
         return HTMLResponse(content=error_html_content, status_code=500)
 
 # Generate a shot chart for a specific game ID from the NHL API
-def generate_shot_chart_with_schedule_html(gameId, teamId, seasonId):
+def generate_shot_chart_with_schedule_html(gameId, teamId, seasonId, timezone):
     try:
-        server_time = dt.now().isoformat()
+        # Get the timezone object corresponding to the provided timezone
+        tz = pytz.timezone(timezone)
+
+        # Get the current time with the specified timezone
+        server_time = dt.now(tz).isoformat()
 
         # NHL Gamecenter
         nhl_gamecenter_title = "NHL Gamecenter"
@@ -155,7 +170,7 @@ def generate_shot_chart_with_schedule_html(gameId, teamId, seasonId):
         # Shot chart
         shot_chart_title = "Shot Chart"
         shot_chart_url = f"""https://nhl-shot-chart-on-vercel-with-fastapi.vercel.app/?gameId={gameId}"""
-        shot_chart_img = generate_shot_chart_for_game(gameId)
+        shot_chart_img = generate_shot_chart_for_game(gameId, timezone)
         shot_chart_img_base64 = generate_base64_image(shot_chart_img)
 
         # QR codes
@@ -192,6 +207,7 @@ def generate_shot_chart_with_schedule_html(gameId, teamId, seasonId):
                     }}
                 </style>
                 <script>
+                    const timezone = encodeURIComponent(Intl.DateTimeFormat().resolvedOptions().timeZone);
                     const nhl_schedule = 'https://statsapi.web.nhl.com/api/v1/schedule?teamId={teamId}&season={seasonId}'
 
                     fetch(nhl_schedule)
@@ -253,12 +269,12 @@ def generate_shot_chart_with_schedule_html(gameId, teamId, seasonId):
 
                     // Helper function to create a shot chart link
                     function createShotChartHyperlink(gameId) {{
-                    return `<a href="/nhl-schedule?gameId=${{gameId}}">${{gameId}}</a>`;
+                    return `<a href="/nhl-schedule?gameId=${{gameId}}&timezone=${{timezone}}">${{gameId}}</a>`;
                     }}
 
                     // Helper function to create a shot chart link
                     function createTeamHyperlink(gameId, teamId, teamName) {{
-                    return `<a href="/nhl-schedule?gameId=${{gameId}}&teamId=${{teamId}}">${{teamName}}</a>`;
+                    return `<a href="/nhl-schedule?gameId=${{gameId}}&teamId=${{teamId}}&timezone=${{timezone}}">${{teamName}}</a>`;
                     }}
                     
                 </script>
@@ -311,8 +327,8 @@ def generate_shot_chart_with_schedule_html(gameId, teamId, seasonId):
         return HTMLResponse(content=error_html_content, status_code=500)
 
 # Generate a shot chart for a specific game ID from the NHL API
-def generate_shot_chart_for_game(gameId):
-    data = parse_game_details(gameId)
+def generate_shot_chart_for_game(gameId, timezone):
+    data = parse_game_details(gameId, timezone)
 
     # Title elements
     result = data["game"]
@@ -421,7 +437,7 @@ def load_live_data_for_game(gameId):
     return live_data
 
 
-def parse_game_details(gameId):
+def parse_game_details(gameId, timezone):
     # Initialize counters for processing all plays from the game
     home_shot_attempts = 0
     home_sog = 0
@@ -453,7 +469,7 @@ def parse_game_details(gameId):
 
     # Contains the start and end time for the game
     date = game_data["datetime"]
-    gameStartLocalDateTime = convertToLocalDateTimeString(date["dateTime"])
+    gameStartLocalDateTime = convertToLocalDateTimeString(date["dateTime"], timezone)
 
     # Team details
     teams = game_data["teams"]
