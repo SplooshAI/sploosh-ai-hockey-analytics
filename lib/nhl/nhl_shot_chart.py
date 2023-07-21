@@ -90,7 +90,7 @@ def generate_shot_chart_html(gameId, timezone):
         shot_chart_img_base64 = generate_base64_image(shot_chart_img)
 
         # QR codes
-        qr_code_nhl_gamecenter_img_base64 = generate_qr_code_base64(gameId)
+        qr_code_nhl_gamecenter_img_base64 = generate_qr_code_for_text(nhl_gamecenter_url)
         qr_code_shot_chart_img_base64 = generate_qr_code_for_text(shot_chart_url)
 
         # Generate HTML with captions
@@ -174,7 +174,7 @@ def generate_shot_chart_with_schedule_html(gameId, teamId, seasonId, timezone):
         shot_chart_img_base64 = generate_base64_image(shot_chart_img)
 
         # QR codes
-        qr_code_nhl_gamecenter_img_base64 = generate_qr_code_base64(gameId)
+        qr_code_nhl_gamecenter_img_base64 = generate_qr_code_for_text(nhl_gamecenter_url)
         qr_code_shot_chart_img_base64 = generate_qr_code_for_text(shot_chart_url)
 
         # Generate HTML with captions
