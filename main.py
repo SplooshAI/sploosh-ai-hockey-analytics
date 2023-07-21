@@ -14,9 +14,9 @@ app.add_middleware(QueryParamLoggerMiddleware)
 
 @app.get("/")
 @app.get("/nhl-shot-chart")
-async def nhl_shot_chart(gameId: str = DEFAULT_NHL_GAME_ID):
-   return generate_shot_chart_html(gameId)
+async def nhl_shot_chart(gameId: str = DEFAULT_NHL_GAME_ID, timezone: str = "UTC"):
+   return generate_shot_chart_html(gameId, timezone)
 
 @app.get("/nhl-schedule")
-async def nhl_shot_chart_with_schedule(gameId: str = DEFAULT_NHL_GAME_ID, teamId: str = DEFAULT_NHL_TEAM_ID, seasonId: str = DEFAULT_NHL_SEASON_ID):
-   return generate_shot_chart_with_schedule_html(gameId, teamId, seasonId)
+async def nhl_shot_chart_with_schedule(gameId: str = DEFAULT_NHL_GAME_ID, teamId: str = DEFAULT_NHL_TEAM_ID, seasonId: str = DEFAULT_NHL_SEASON_ID, timezone: str = "UTC"):
+   return generate_shot_chart_with_schedule_html(gameId, teamId, seasonId, timezone)
