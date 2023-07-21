@@ -85,7 +85,7 @@ def generate_shot_chart_html(gameId, timezone):
 
         # Shot chart
         shot_chart_title = "Shot Chart"
-        shot_chart_url = f"""/?gameId={gameId}&timezone={timezone}"""
+        shot_chart_url = f"""https://nhl-shot-chart-on-vercel-with-fastapi.vercel.app/?gameId={gameId}&timezone={timezone}"""
         shot_chart_img = generate_shot_chart_for_game(gameId, timezone)
         shot_chart_img_base64 = generate_base64_image(shot_chart_img)
 
@@ -169,7 +169,7 @@ def generate_shot_chart_with_schedule_html(gameId, teamId, seasonId, timezone):
 
         # Shot chart
         shot_chart_title = "Shot Chart"
-        shot_chart_url = f"""/?gameId={gameId}&timezone={timezone}"""
+        shot_chart_url = f"""https://nhl-shot-chart-on-vercel-with-fastapi.vercel.app/?gameId={gameId}&timezone={timezone}"""
         shot_chart_img = generate_shot_chart_for_game(gameId, timezone)
         shot_chart_img_base64 = generate_base64_image(shot_chart_img)
 
