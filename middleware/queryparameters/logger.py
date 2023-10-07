@@ -1,5 +1,4 @@
 from fastapi import FastAPI, Request
-# import time
 
 class QueryParamLoggerMiddleware:
     def __init__(self, app: FastAPI):
