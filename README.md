@@ -52,7 +52,7 @@ When you are viewing the `/nhl-schedule` route, you can click links to automatic
 (.venv) % pip install hockey-rink
 
 # Install Python testing packages
-(.venv) % pip install "fastapi[all]" pytest
+(.venv) % pip install "fastapi[all]" pytest pytest-asyncio
 (.venv) % pip install pytest-cov
 
 # When you are ready to generate a requirements.txt file
