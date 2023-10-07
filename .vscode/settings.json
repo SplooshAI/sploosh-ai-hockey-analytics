@@ -1,3 +1,12 @@
 {
-  "cSpell.words": ["pytz"]
+  "cSpell.words": [
+    "fastapi",
+    "Gamecenter",
+    "matplotlib",
+    "pytz",
+    "qrcode",
+    "simplejson",
+    "uvicorn",
+    "venv"
+  ]
 }
