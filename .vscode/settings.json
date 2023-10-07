@@ -12,6 +12,7 @@
     "markertype",
     "matplotlib",
     "MPLCONFIGDIR",
+    "pytest",
     "pytz",
     "qrcode",
     "queryparameters",
