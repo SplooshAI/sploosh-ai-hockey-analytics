@@ -98,6 +98,7 @@ def generate_shot_chart_html(gameId, timezone):
         html_content = f"""
         <html>
             <head>
+                <link rel="icon" href="/static/favicon.ico" type="image/x-icon">
                 <style>
                     .qr-code {{
                         width: 200px;
@@ -182,6 +183,7 @@ def generate_shot_chart_with_schedule_html(gameId, teamId, seasonId, timezone):
         html_content = f"""
         <html>
             <head>
+                <link rel="icon" href="/static/favicon.ico" type="image/x-icon">
                 <style>
                     .qr-code {{
                         width: 200px;
