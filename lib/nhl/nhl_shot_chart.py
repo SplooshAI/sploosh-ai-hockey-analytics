@@ -2,8 +2,9 @@
 
 import arrow
 import json
-import matplotlib.pyplot as plt
 import os
+os.environ['MPLCONFIGDIR'] = os.path.join(os.getcwd(), 'configs')
+import matplotlib.pyplot as plt
 import pytz
 import requests
 
