@@ -1,12 +1,24 @@
 {
   "cSpell.words": [
+    "datapoint",
     "fastapi",
+    "figcaption",
+    "figsize",
+    "fontsize",
     "Gamecenter",
+    "horizontalalignment",
+    "linescore",
+    "markersize",
+    "markertype",
     "matplotlib",
+    "MPLCONFIGDIR",
     "pytz",
     "qrcode",
+    "queryparameters",
     "simplejson",
     "uvicorn",
-    "venv"
+    "venv",
+    "xlim",
+    "ylim"
   ]
 }
