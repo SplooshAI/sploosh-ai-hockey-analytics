@@ -35,6 +35,3 @@ class TestNHLShotCharts(unittest.TestCase):
         sys.stdout = backup
 
         self.assertEqual(output, '\n\n*****\n\n"{\\"key\\": \\"value\\"}"\n\n*****\n\n\n')
-
-if __name__ == '__main__':
-    unittest.main()
