@@ -53,6 +53,7 @@ When you are viewing the `/nhl-schedule` route, you can click links to automatic
 
 # Install Python testing packages
 (.venv) % pip install "fastapi[all]" pytest
+(.venv) % pip install pytest-cov
 
 # When you are ready to generate a requirements.txt file
 (.venv) % pip freeze > requirements.txt
@@ -71,5 +72,34 @@ When you are viewing the `/nhl-schedule` route, you can click links to automatic
 
 # To run a specific unit test:
 (.venv) % pytest test_main.py
+=================================================================================== test session starts ===================================================================================
+platform darwin -- Python 3.11.1, pytest-7.4.2, pluggy-1.3.0
+rootdir: /Users/rob/repos/nhl-shot-chart-on-vercel-with-fastapi
+plugins: cov-4.1.0, anyio-3.6.2
+collected 1 item
+
+test_main.py .                                                                                                                                                                      [100%]
+
+==================================================================================== 1 passed in 0.44s ====================================================================================
+
+# To see code coverage for a specific test:
+(.venv) % pytest --cov=main test_main.py
+=================================================================================== test session starts ===================================================================================
+platform darwin -- Python 3.11.1, pytest-7.4.2, pluggy-1.3.0
+rootdir: /Users/rob/repos/nhl-shot-chart-on-vercel-with-fastapi
+plugins: cov-4.1.0, anyio-3.6.2
+collected 1 item
+
+test_main.py .                                                                                                                                                                      [100%]
+
+---------- coverage: platform darwin, python 3.11.1-final-0 ----------
+Name      Stmts   Miss  Cover
+-----------------------------
+main.py      35      0   100%
+-----------------------------
+TOTAL        35      0   100%
+
+
+==================================================================================== 1 passed in 0.63s ====================================================================================
 
 ```
