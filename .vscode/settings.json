@@ -1,5 +1,6 @@
 {
   "cSpell.words": [
+    "capfd",
     "datapoint",
     "fastapi",
     "figcaption",
@@ -7,6 +8,7 @@
     "fontsize",
     "Gamecenter",
     "horizontalalignment",
+    "htmlcov",
     "linescore",
     "markersize",
     "markertype",
