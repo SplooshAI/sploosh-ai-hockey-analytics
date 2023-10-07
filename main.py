@@ -18,6 +18,18 @@ app.mount("/static", StaticFiles(directory="static"), name="static")
 # Apply the middleware to your FastAPI application
 app.add_middleware(QueryParamLoggerMiddleware)
 
+@app.options("/")
+async def get_options():
+    return {
+        "allowed_methods": ["GET", "POST", "OPTIONS"]
+    }
+
+@app.options("/{path:path}")
+async def get_options_for_all_paths(path: str):
+    return {
+        "allowed_methods": ["GET", "POST", "OPTIONS"]
+    }
+
 @app.get("/favicon.ico")
 async def get_favicon():
     return FileResponse(os.path.join("static", "favicon.ico"), media_type="image/x-icon")
