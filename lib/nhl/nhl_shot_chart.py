@@ -659,9 +659,6 @@ def parse_game_details(gameId, timezone):
 
             if isGoal and event["about"]["periodType"] != "SHOOTOUT":
                 home_goals += 1
-            # elif isGoal:
-            #     isShotOnGoal = False
-            #     home_shootout_goals += 1
 
             if isShotOnGoal and event["about"]["periodType"] != "SHOOTOUT":
                 home_sog += 1
@@ -674,9 +671,6 @@ def parse_game_details(gameId, timezone):
                     away_goals += 1
                 if isShotOnGoal and event["about"]["periodType"] != "SHOOTOUT":
                     away_sog += 1
-            # elif isGoal and event["about"]["periodType"] == "SHOOTOUT":
-            #     isShotOnGoal = False
-            #     away_shootout_goals += 1
 
         # Reset our booleans
         isShotAttempt = False
