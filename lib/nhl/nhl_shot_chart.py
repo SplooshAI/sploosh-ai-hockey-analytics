@@ -584,7 +584,7 @@ def parse_game_details(gameId, timezone):
                     # FUTURE - Should isShotAttempt be set to False here? 🤔
                     isShotAttempt = True
 
-                try:
+                # try:
                     # Track our goal - shootout or otherwise
                     datapoint["event_description"] = eventDescription
                     datapoint["x"] = x
@@ -605,8 +605,8 @@ def parse_game_details(gameId, timezone):
                     if SHOW_GOALS:
                         chartElements.append(datapoint)
 
-                except:
-                    print("An exception was raised processing data. Please revisit.")
+                # except:
+                #     print("An exception was raised processing data. Please revisit.")
 
             elif eventDescription == "Shot":
                 # Is this a shot on goal?
