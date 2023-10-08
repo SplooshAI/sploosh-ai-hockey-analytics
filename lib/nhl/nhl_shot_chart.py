@@ -538,13 +538,6 @@ def parse_game_details(gameId, timezone):
 
             # Where did this event take place?
             coords = event["coordinates"]
-
-            # # Fix bug where "Shot" event type was received in the data without any coordinates
-            # try:
-            #     x = int(coords["x"])
-            #     y = int(coords["y"])
-            # except (KeyError, ValueError):
-            #     continue
             x = int(coords["x"])
             y = int(coords["y"])
 
