@@ -73,4 +73,7 @@ When you are viewing the `/nhl-schedule` route, you can click links to automatic
 # To run unit tests and automatically view the HTML coverage report on macOS:
 (.venv) % pytest --cov=. --cov-report=html && open htmlcov/index.html
 
+# To run a single unit test
+(.venv) % pytest lib/nhl/test_parse_game_details.py
+
 ```
