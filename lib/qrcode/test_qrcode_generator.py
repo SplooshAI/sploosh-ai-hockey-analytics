@@ -47,6 +47,3 @@ class TestQRCodeGenerator(unittest.TestCase):
         mock_qrcode.QRCode().make_image.return_value = self.mock_img
         result = generate_qr_code_for_download(self.sample_gameId)
         mock_file_response.assert_called_once()
-
-if __name__ == '__main__':
-    unittest.main()
