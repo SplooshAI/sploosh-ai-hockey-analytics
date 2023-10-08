@@ -1,7 +1,10 @@
-.venv
 __pycache__
-tmp
+.coverage
 .DS_Store
-.vercel
 .env
+.pytest_cache
+.venv
+.vercel
 configs
+htmlcov
+tmp

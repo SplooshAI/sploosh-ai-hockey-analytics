@@ -51,6 +51,10 @@ When you are viewing the `/nhl-schedule` route, you can click links to automatic
 (.venv) % pip install requests
 (.venv) % pip install hockey-rink
 
+# Install Python testing packages
+(.venv) % pip install "fastapi[all]" pytest pytest-asyncio
+(.venv) % pip install pytest-cov
+
 # When you are ready to generate a requirements.txt file
 (.venv) % pip freeze > requirements.txt
 
@@ -62,4 +66,11 @@ When you are viewing the `/nhl-schedule` route, you can click links to automatic
 
 # Let's start our FastAPI server - Available at http://127.0.0.1:8000/
 (.venv) % uvicorn main:app --reload
+
+# To run unit tests:
+(.venv) % pytest
+
+# To run unit tests and automatically view the HTML coverage report on macOS:
+(.venv) % pytest --cov=. --cov-report=html && open htmlcov/index.html
+
 ```
