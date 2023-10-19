@@ -331,33 +331,40 @@ def generate_shot_chart_with_schedule_html(gameId, teamId, seasonId, timezone):
 
 # Generate a shot chart for a specific game ID from the NHL API
 def generate_shot_chart_for_game(gameId, timezone):
-    data = parse_game_details(gameId, timezone)
+    try:
+        data = parse_game_details(gameId, timezone)
+    except Exception as e:
+        print(f"Error parsing game details: {e}")
+        data = {}  # default to empty data dict
 
-    # Title elements
-    result = data["game"]
+    # Set default values
+    gameStartLocalDateTime = ""
+    currentPeriodTimeRemaining = ""
+    currentPeriodOrdinal = ""
+    away_team = "AWAY"
+    away_goals = 0
+    away_sog = 0
+    away_shot_attempts = 0
+    home_team = "HOME"
+    home_goals = 0
+    home_sog = 0
+    home_shot_attempts = 0
 
-    gameStartLocalDateTime = result["gameStart"]
-    currentPeriodTimeRemaining = result["currentPeriodTimeRemaining"]
-    currentPeriodOrdinal = result["currentPeriodOrdinal"]
+    # Attempt to fetch actual values
+    if "game" in data:
+        result = data["game"]
+        gameStartLocalDateTime = result.get("gameStart", gameStartLocalDateTime)
+        currentPeriodTimeRemaining = result.get("currentPeriodTimeRemaining", currentPeriodTimeRemaining)
+        currentPeriodOrdinal = result.get("currentPeriodOrdinal", currentPeriodOrdinal)
+        away_team = result.get("awayTeam", away_team)
+        away_goals = result.get("awayGoals", away_goals)
+        away_sog = result.get("awayShotsOnGoal", away_sog)
+        away_shot_attempts = result.get("awayShotAttempts", away_shot_attempts)
+        home_team = result.get("homeTeam", home_team)
+        home_goals = result.get("homeGoals", home_goals)
+        home_sog = result.get("homeShotsOnGoal", home_sog)
+        home_shot_attempts = result.get("homeShotAttempts", home_shot_attempts)
 
-    if "OT" in currentPeriodOrdinal or currentPeriodOrdinal == "SO":
-        gameStatus = currentPeriodTimeRemaining + "/" + currentPeriodOrdinal
-    elif currentPeriodTimeRemaining == "Final":
-        gameStatus = currentPeriodTimeRemaining
-    else:
-        gameStatus = currentPeriodTimeRemaining + " " + currentPeriodOrdinal
-
-    away_team = result["awayTeam"]
-    away_goals = result["awayGoals"]
-    away_sog = result["awayShotsOnGoal"]
-    away_shot_attempts = result["awayShotAttempts"]
-
-    home_team = result["homeTeam"]
-    home_goals = result["homeGoals"]
-    home_sog = result["homeShotsOnGoal"]
-    home_shot_attempts = result["homeShotAttempts"]
-
-    # Build our title
     title = (
         away_team
         + " "
@@ -367,7 +374,9 @@ def generate_shot_chart_for_game(gameId, timezone):
         + " "
         + str(home_goals)
         + "\n"
-        + gameStatus
+        + currentPeriodTimeRemaining
+        + " "
+        + currentPeriodOrdinal
     )
     detail_line = (
         away_team
@@ -386,49 +395,40 @@ def generate_shot_chart_for_game(gameId, timezone):
         + "\n"
         + gameStartLocalDateTime
     )
-    # --------------------------------------------------------------------------------------------------------
 
-    # --------------------------------------------------------------------------------------------------------
-    # Define our scatter plot
-    # --------------------------------------------------------------------------------------------------------
     fig = plt.figure(figsize=(10, 10))
     plt.xlim([0, 100])
     plt.ylim([-42.5, 42.5])
 
-    # Use a predefined NHL rink with markings to overlay our scatter plot
     rink = NHLRink()
     ax = rink.draw()
 
-    # Plot our elements on the chart
-    elements = data["game"]["charts"]["shotChart"]["data"]
-    for e in elements:
-        plt.plot(
-            e["x_calculated_shot_chart"],
-            e["y_calculated_shot_chart"],
-            e["markertype"],
-            color=e["color"],
-            markersize=int(e["markersize"]),
-        )
-
-        if SHOW_SHOT_ATTEMPTS_ANNOTATION:
-            plt.text(
-                e["x_calculated_shot_chart"] - 1.2,
-                e["y_calculated_shot_chart"] - 1,
-                e["shot_attempts"],
-                horizontalalignment="left",
-                size="medium",
-                color="black",
-                weight="normal",
+    if "game" in data and "charts" in data["game"] and "shotChart" in data["game"]["charts"]:
+        elements = data["game"]["charts"]["shotChart"]["data"]
+        for e in elements:
+            plt.plot(
+                e["x_calculated_shot_chart"],
+                e["y_calculated_shot_chart"],
+                e["markertype"],
+                color=e["color"],
+                markersize=int(e["markersize"]),
             )
 
-    # Add title
-    plt.title(title)
+            if SHOW_SHOT_ATTEMPTS_ANNOTATION:
+                plt.text(
+                    e["x_calculated_shot_chart"] - 1.2,
+                    e["y_calculated_shot_chart"] - 1,
+                    e["shot_attempts"],
+                    horizontalalignment="left",
+                    size="medium",
+                    color="black",
+                    weight="normal",
+                )
 
-    # Add caption
+    plt.title(title)
     plt.text(0, -53, detail_line, ha="center", fontsize=11, alpha=0.9)
 
     return plt
-
 
 # Load live data for a specific game ID from the NHL API
 def load_live_data_for_game(gameId):
