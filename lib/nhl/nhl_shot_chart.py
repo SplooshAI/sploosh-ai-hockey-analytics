@@ -439,7 +439,6 @@ def load_live_data_for_game(gameId):
     live_data = requests.get(NHL_API_LIVE_GAME_DATA_URL).json()
     return live_data
 
-
 def parse_game_details(gameId, timezone):
     # Initialize counters for processing all plays from the game
     home_shot_attempts = 0
@@ -451,140 +450,166 @@ def parse_game_details(gameId, timezone):
     away_goals = 0
     away_shootout_goals = 0
 
-    # --------------------------------------------------------------------------------------------------------
-    # Load data for a specific game ID from the NHL API
-    # --------------------------------------------------------------------------------------------------------
-    content = load_live_data_for_game(gameId)
+    try:
+        # Load data for a specific game ID from the NHL API
+        content = load_live_data_for_game(gameId)
 
-    # --------------------------------------------------------------------------------------------------------
-    # Game details
-    # --------------------------------------------------------------------------------------------------------
-    # Contains details about the game, status, teams, players, and venue
-    game_data = content["gameData"]
+        # Game details
+        game_data = content["gameData"]
+        eventDescription = content["liveData"]
 
-    # Contains plays, linescore, box score, and decisions from the game
-    eventDescription = content["liveData"]
+        date = game_data["datetime"]
+        gameStartLocalDateTime = convertToLocalDateTimeString(date["dateTime"], timezone)
 
-    # Contains current period information, shootout details if applicable, and more
-    linescore = eventDescription["linescore"]
-    currentPeriodTimeRemaining = linescore["currentPeriodTimeRemaining"]
-    currentPeriodOrdinal = linescore["currentPeriodOrdinal"]
+        teams = game_data["teams"]
+        away = teams["away"]
+        home = teams["home"]
+        away_team = away["abbreviation"]
+        home_team = home["abbreviation"]
 
-    # Contains the start and end time for the game
-    date = game_data["datetime"]
-    gameStartLocalDateTime = convertToLocalDateTimeString(date["dateTime"], timezone)
+        linescore = eventDescription.get("linescore", {})
 
-    # Team details
-    teams = game_data["teams"]
-    away = teams["away"]
-    home = teams["home"]
-    away_team = away["abbreviation"]
-    home_team = home["abbreviation"]
+        try:
+            currentPeriodTimeRemaining = linescore["currentPeriodTimeRemaining"]
+        except KeyError:
+            currentPeriodTimeRemaining = ""  # or any default value you'd like to provide
 
-    # Build our result dictionary
-    response = dict()
-    response["game"] = dict()
+        try:
+            currentPeriodOrdinal = linescore["currentPeriodOrdinal"]
+        except KeyError:
+            currentPeriodOrdinal = ""  # or any default value you'd like to provide
 
-    # Capture raw data returned from the NHL API
-    response["source_data"] = content
+    except Exception as e:
+        print(f"Error while parsing game details: {e}")
+        return {
+            "error": f"Error while parsing game details: {e}"
+        }
 
-    # Build our customized summary object
-    gameData = response["game"]
+    response = {
+        "game": {
+            "gameStart": gameStartLocalDateTime,
+            "currentPeriodTimeRemaining": currentPeriodTimeRemaining,
+            "currentPeriodOrdinal": currentPeriodOrdinal,
+            "charts": {
+                "shotChart": {
+                    "data": []
+                }
+            },
+            "awayTeam": away_team,
+            "homeTeam": home_team
+        },
+        "source_data": content
+    }
 
-    # Game details
-    gameData["gameStart"] = gameStartLocalDateTime
-    gameData["currentPeriodTimeRemaining"] = currentPeriodTimeRemaining
-    gameData["currentPeriodOrdinal"] = currentPeriodOrdinal
-
-    # Charts and graphs
-    gameData["charts"] = dict()
-    charts = gameData["charts"]
-
-    # Shot chart
-    charts["shotChart"] = dict()
-    shotChart = charts["shotChart"]
-    shotChart["data"] = []
-    chartElements = shotChart["data"]
-
-    # --------------------------------------------------------------------------------------------------------
     # Process all event data
-    # --------------------------------------------------------------------------------------------------------
-    plays = eventDescription["plays"]
-    all_plays = plays["allPlays"]
+    try:
+        # Charts and graphs
+        charts = response["game"]["charts"]
 
-    for event in all_plays:
-        result = event["result"]  # Details for the event
+        # Shot chart
+        shotChart = charts["shotChart"]
+        chartElements = shotChart["data"]
 
-        # Description of the event (e.g. Game Scheduled, Goal, Shot, Missed Shot, etc.)
-        eventDescription = result["event"]
+        plays = eventDescription["plays"]
+        all_plays = plays["allPlays"]
 
-        if (
-            eventDescription == "Goal"
-            or eventDescription == "Shot"
-            or eventDescription == "Missed Shot"
-        ):
-            datapoint = dict()
-            eventDetails = event["about"]
+        for event in all_plays:
+            result = event["result"]  # Details for the event
 
-            # Which team fired this shot?
-            team_info = event["team"]
-            team = team_info["triCode"]
+            # Description of the event (e.g. Game Scheduled, Goal, Shot, Missed Shot, etc.)
+            eventDescription = result["event"]
 
-            # Let's determine what counters we need to update at the end of our processing
-            isHomeTeam = team == home_team
-            isGoal = False
-            isShotAttempt = False
-            isShotOnGoal = False
+            if (
+                eventDescription == "Goal"
+                or eventDescription == "Shot"
+                or eventDescription == "Missed Shot"
+            ):
+                datapoint = dict()
+                eventDetails = event["about"]
 
-            # Where did this event take place?
-            coords = event["coordinates"]
-            x = int(coords["x"])
-            y = int(coords["y"])
+                # Which team fired this shot?
+                team_info = event["team"]
+                team = team_info["triCode"]
 
-            # For shot charts, we need to adjust the (x,y) location when both teams switch ends
-            if isHomeTeam:
-                if x < 0:
-                    x_calculated_shot_chart = abs(x)
-                    y_calculated_shot_chart = y * -1
-                else:
-                    x_calculated_shot_chart = x
-                    y_calculated_shot_chart = y
-            else:
-                if x > 0:
-                    x_calculated_shot_chart = -x
-                    y_calculated_shot_chart = -y
-                else:
-                    x_calculated_shot_chart = x
-                    y_calculated_shot_chart = y
+                # Let's determine what counters we need to update at the end of our processing
+                isHomeTeam = team == home_team
+                isGoal = False
+                isShotAttempt = False
+                isShotOnGoal = False
 
-            # Is this a goal?
-            if eventDescription == "Goal":
-                # Account for shootout shots and goals
-                if event["about"]["periodType"] == "SHOOTOUT":
-                    isGoal = False
-                    isShotOnGoal = False
-                    isShotAttempt = False
+                # Where did this event take place?
+                coords = event["coordinates"]
+                x = int(coords["x"])
+                y = int(coords["y"])
 
-                    # Keep track of shootout goals separately
-                    if isHomeTeam:
-                        home_shootout_goals += 1
+                # For shot charts, we need to adjust the (x,y) location when both teams switch ends
+                if isHomeTeam:
+                    if x < 0:
+                        x_calculated_shot_chart = abs(x)
+                        y_calculated_shot_chart = y * -1
                     else:
-                        away_shootout_goals += 1
+                        x_calculated_shot_chart = x
+                        y_calculated_shot_chart = y
                 else:
-                    isGoal = True
-                    isShotOnGoal = True
-                    # FUTURE - Should isShotAttempt be set to False here? 🤔
-                    isShotAttempt = True
+                    if x > 0:
+                        x_calculated_shot_chart = -x
+                        y_calculated_shot_chart = -y
+                    else:
+                        x_calculated_shot_chart = x
+                        y_calculated_shot_chart = y
 
-                    # Track our goal - shootout or otherwise
+                # Is this a goal?
+                if eventDescription == "Goal":
+                    # Account for shootout shots and goals
+                    if event["about"]["periodType"] == "SHOOTOUT":
+                        isGoal = False
+                        isShotOnGoal = False
+                        isShotAttempt = False
+
+                        # Keep track of shootout goals separately
+                        if isHomeTeam:
+                            home_shootout_goals += 1
+                        else:
+                            away_shootout_goals += 1
+                    else:
+                        isGoal = True
+                        isShotOnGoal = True
+                        # FUTURE - Should isShotAttempt be set to False here? 🤔
+                        isShotAttempt = True
+
+                        # Track our goal - shootout or otherwise
+                        datapoint["event_description"] = eventDescription
+                        datapoint["x"] = x
+                        datapoint["y"] = y
+                        datapoint["x_calculated_shot_chart"] = x_calculated_shot_chart
+                        datapoint["y_calculated_shot_chart"] = y_calculated_shot_chart
+                        datapoint["markertype"] = GOAL_MARKER_TYPE
+                        datapoint["color"] = GOAL_COLOR
+                        datapoint["markersize"] = GOAL_MARKER_SIZE
+                        datapoint["event_details"] = eventDetails
+                        datapoint["team"] = team
+
+                        if isHomeTeam:
+                            datapoint["shot_attempts"] = home_shot_attempts
+                        else:
+                            datapoint["shot_attempts"] = away_shot_attempts
+
+                        if SHOW_GOALS:
+                            chartElements.append(datapoint)
+
+                elif eventDescription == "Shot":
+                    # Is this a shot on goal?
+                    isShotAttempt = True
+                    isShotOnGoal = True
+
                     datapoint["event_description"] = eventDescription
                     datapoint["x"] = x
                     datapoint["y"] = y
                     datapoint["x_calculated_shot_chart"] = x_calculated_shot_chart
                     datapoint["y_calculated_shot_chart"] = y_calculated_shot_chart
-                    datapoint["markertype"] = GOAL_MARKER_TYPE
-                    datapoint["color"] = GOAL_COLOR
-                    datapoint["markersize"] = GOAL_MARKER_SIZE
+                    datapoint["markertype"] = SHOT_ON_GOAL_MARKER_TYPE
+                    datapoint["color"] = SHOT_ON_GOAL_COLOR
+                    datapoint["markersize"] = SHOT_ON_GOAL_MARKER_SIZE
                     datapoint["event_details"] = eventDetails
                     datapoint["team"] = team
 
@@ -593,83 +618,64 @@ def parse_game_details(gameId, timezone):
                     else:
                         datapoint["shot_attempts"] = away_shot_attempts
 
-                    if SHOW_GOALS:
+                    if SHOW_SHOTS_ON_GOAL:
                         chartElements.append(datapoint)
-
-            elif eventDescription == "Shot":
-                # Is this a shot on goal?
-                isShotAttempt = True
-                isShotOnGoal = True
-
-                datapoint["event_description"] = eventDescription
-                datapoint["x"] = x
-                datapoint["y"] = y
-                datapoint["x_calculated_shot_chart"] = x_calculated_shot_chart
-                datapoint["y_calculated_shot_chart"] = y_calculated_shot_chart
-                datapoint["markertype"] = SHOT_ON_GOAL_MARKER_TYPE
-                datapoint["color"] = SHOT_ON_GOAL_COLOR
-                datapoint["markersize"] = SHOT_ON_GOAL_MARKER_SIZE
-                datapoint["event_details"] = eventDetails
-                datapoint["team"] = team
-
-                if isHomeTeam:
-                    datapoint["shot_attempts"] = home_shot_attempts
                 else:
-                    datapoint["shot_attempts"] = away_shot_attempts
+                    # Is this a missed shot?
+                    isShotAttempt = True
+                    isShotOnGoal = False
 
-                if SHOW_SHOTS_ON_GOAL:
-                    chartElements.append(datapoint)
+                    datapoint["event_description"] = eventDescription
+                    datapoint["x"] = x
+                    datapoint["y"] = y
+                    datapoint["x_calculated_shot_chart"] = x_calculated_shot_chart
+                    datapoint["y_calculated_shot_chart"] = y_calculated_shot_chart
+                    datapoint["markertype"] = SHOT_ATTEMPT_MARKER_TYPE
+                    datapoint["color"] = SHOT_ATTEMPT_COLOR
+                    datapoint["markersize"] = SHOT_ATTEMPT_MARKER_SIZE
+                    datapoint["event_details"] = eventDetails
+                    datapoint["team"] = team
+
+                    if isHomeTeam:
+                        datapoint["shot_attempts"] = home_shot_attempts
+                    else:
+                        datapoint["shot_attempts"] = away_shot_attempts
+
+                    if SHOW_SHOT_ATTEMPTS:
+                        chartElements.append(datapoint)
             else:
-                # Is this a missed shot?
-                isShotAttempt = True
-                isShotOnGoal = False
+                continue
 
-                datapoint["event_description"] = eventDescription
-                datapoint["x"] = x
-                datapoint["y"] = y
-                datapoint["x_calculated_shot_chart"] = x_calculated_shot_chart
-                datapoint["y_calculated_shot_chart"] = y_calculated_shot_chart
-                datapoint["markertype"] = SHOT_ATTEMPT_MARKER_TYPE
-                datapoint["color"] = SHOT_ATTEMPT_COLOR
-                datapoint["markersize"] = SHOT_ATTEMPT_MARKER_SIZE
-                datapoint["event_details"] = eventDetails
-                datapoint["team"] = team
-
-                if isHomeTeam:
-                    datapoint["shot_attempts"] = home_shot_attempts
-                else:
-                    datapoint["shot_attempts"] = away_shot_attempts
-
-                if SHOW_SHOT_ATTEMPTS:
-                    chartElements.append(datapoint)
-        else:
-            continue
-
-        # Increment the appropriate counters
-        if isHomeTeam:
-            if isShotAttempt and event["about"]["periodType"] != "SHOOTOUT":
-                home_shot_attempts += 1
-
-            if isGoal and event["about"]["periodType"] != "SHOOTOUT":
-                home_goals += 1
-
-            if isShotOnGoal and event["about"]["periodType"] != "SHOOTOUT":
-                home_sog += 1
-        else:
-            if event["about"]["periodType"] != "SHOOTOUT":
+            # Increment the appropriate counters
+            if isHomeTeam:
                 if isShotAttempt and event["about"]["periodType"] != "SHOOTOUT":
-                    away_shot_attempts += 1
+                    home_shot_attempts += 1
 
                 if isGoal and event["about"]["periodType"] != "SHOOTOUT":
-                    away_goals += 1
+                    home_goals += 1
+
                 if isShotOnGoal and event["about"]["periodType"] != "SHOOTOUT":
-                    away_sog += 1
+                    home_sog += 1
+            else:
+                if event["about"]["periodType"] != "SHOOTOUT":
+                    if isShotAttempt and event["about"]["periodType"] != "SHOOTOUT":
+                        away_shot_attempts += 1
 
-        # Reset our booleans
-        isShotAttempt = False
-        isShotOnGoal = False
-        isGoal = False
+                    if isGoal and event["about"]["periodType"] != "SHOOTOUT":
+                        away_goals += 1
+                    if isShotOnGoal and event["about"]["periodType"] != "SHOOTOUT":
+                        away_sog += 1
 
+            # Reset our booleans
+            isShotAttempt = False
+            isShotOnGoal = False
+            isGoal = False
+
+
+    except Exception as e:
+        print(f"Error processing event data: {e}")
+
+    # The final section for updating the response with team information, shot attempts, and goals
     # Add +1 goal to whomever has the most shootout goals
     if home_shootout_goals > away_shootout_goals:
         home_goals += 1
@@ -678,15 +684,15 @@ def parse_game_details(gameId, timezone):
 
     # Add away and home team information to our response
     # Away team stats and information
-    gameData["awayTeam"] = away_team
-    gameData["awayShotAttempts"] = away_shot_attempts
-    gameData["awayShotsOnGoal"] = away_sog
-    gameData["awayGoals"] = away_goals
+    response["game"]["awayTeam"] = away_team
+    response["game"]["awayShotAttempts"] = away_shot_attempts
+    response["game"]["awayShotsOnGoal"] = away_sog
+    response["game"]["awayGoals"] = away_goals
 
     # Home team stats and information
-    gameData["homeTeam"] = home_team
-    gameData["homeShotAttempts"] = home_shot_attempts
-    gameData["homeShotsOnGoal"] = home_sog
-    gameData["homeGoals"] = home_goals
+    response["game"]["homeTeam"] = home_team
+    response["game"]["homeShotAttempts"] = home_shot_attempts
+    response["game"]["homeShotsOnGoal"] = home_sog
+    response["game"]["homeGoals"] = home_goals
 
     return response
