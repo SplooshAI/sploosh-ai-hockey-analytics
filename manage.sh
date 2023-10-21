@@ -53,7 +53,7 @@ run_tests() {
 
     # Check for coverage flag
     if [[ "$1" == "--coverage" ]]; then
-        pytest --cov=. --cov-report=html && open htmlcov/index.html
+        pytest --cov=. --cov-config=.coveragerc --cov-report=html && open htmlcov/index.html
     else
         pytest
     fi

@@ -6,6 +6,8 @@ You can view the [demo](https://nhl-shot-chart.vercel.app/) on Vercel at [https:
 
 ![](./apps/nhl-shot-chart-fastapi/__screenshots__/01.png)
 
+![](./apps/nhl-shot-chart-fastapi/__screenshots__/02.png)
+
 ## Getting started
 
 ### Prerequisites
