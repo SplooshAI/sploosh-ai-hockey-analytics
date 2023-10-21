@@ -54,6 +54,9 @@ run_tests() {
     # Check for coverage flag
     if [[ "$1" == "--coverage" ]]; then
         pytest --cov=. --cov-config=.coveragerc --cov-report=html && open htmlcov/index.html
+
+        # Generate our code coverage badge
+        coverage-badge -o coverage.svg
     else
         pytest
     fi
