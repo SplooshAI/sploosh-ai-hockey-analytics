@@ -14,6 +14,7 @@
     "markertype",
     "matplotlib",
     "MPLCONFIGDIR",
+    "precomposed",
     "pytest",
     "pytz",
     "qrcode",
