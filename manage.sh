@@ -56,6 +56,7 @@ run_tests() {
         pytest --cov=. --cov-config=.coveragerc --cov-report=html && open htmlcov/index.html
 
         # Generate our code coverage badge
+        rm ./__screenshots__/coverage.svg
         coverage-badge -o ./__screenshots__/coverage.svg
     else
         pytest
