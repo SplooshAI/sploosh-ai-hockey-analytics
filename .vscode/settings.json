@@ -19,6 +19,7 @@
     "qrcode",
     "queryparameters",
     "simplejson",
+    "sploosh",
     "uvicorn",
     "venv",
     "xlim",
