@@ -20,7 +20,10 @@ class QueryParamLoggerMiddleware:
 
             headers = dict(scope["headers"])
             formatted_headers = "\n".join([f"{k.decode('utf-8')}: {v.decode('utf-8')}" for k, v in headers.items()])
-            logger.info(f"\n{log_message}\n\n{'-'*15}\nRequest Headers:\n{'-'*15}\n{formatted_headers}\n")
+
+            # logger.info(f"\n{log_message}\n\n{'-'*15}\nRequest Headers:\n{'-'*15}\n{formatted_headers}\n")
+            # Vercel logging uses the print function
+            print(f"\n{log_message}\n\n{'-'*15}\nRequest Headers:\n{'-'*15}\n{formatted_headers}\n")
 
         response = await self.app(scope, receive, send)
         return response
