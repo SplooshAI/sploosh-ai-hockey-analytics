@@ -7,9 +7,9 @@ from middleware.queryparameters.logger import QueryParamLoggerMiddleware
 import os
 
 # ==============[ CONSTANTS ]==============
-DEFAULT_NHL_SEASON_ID = '20222023'
+DEFAULT_NHL_SEASON_ID = '20232024'
 DEFAULT_NHL_TEAM_ID = 55  # Seattle Kraken
-DEFAULT_NHL_GAME_ID = 2022030236  # 2023.05.13 Round 2 Game 6 of the 2023 Stanley Cup Playoffs
+DEFAULT_NHL_GAME_ID = 2023020046  # 2023.10.17 - Colorado Avalanche vs. Seattle Kraken
 
 # ==============[ FASTAPI SETUP ]==============
 # Create your FastAPI application
@@ -40,21 +40,10 @@ async def get_options_for_all_paths(path: str):
 async def get_favicon():
     return FileResponse(os.path.join("static", "favicon.ico"), media_type="image/x-icon")
 
-# Default route handler
+# Default route handler - NHL shot chart
 @app.get("/")
 @app.head("/")
-# NHL shot chart route handler
-@app.get("/nhl-shot-chart")
-@app.head("/nhl-shot-chart")
 async def nhl_shot_chart(request: Request, gameId: str = DEFAULT_NHL_GAME_ID, timezone: str = "UTC"):
     if request.method == "HEAD":
         return Response(headers={"Content-Type": "text/html"})
     return generate_shot_chart_html(gameId, timezone)
-
-# NHL shot chart with schedule route handler
-@app.get("/nhl-schedule")
-@app.head("/nhl-schedule")
-async def nhl_shot_chart_with_schedule(request: Request, gameId: str = DEFAULT_NHL_GAME_ID, teamId: str = DEFAULT_NHL_TEAM_ID, seasonId: str = DEFAULT_NHL_SEASON_ID, timezone: str = "UTC"):
-    if request.method == "HEAD":
-        return Response(headers={"Content-Type": "text/html"})
-    return generate_shot_chart_with_schedule_html(gameId, teamId, seasonId, timezone)

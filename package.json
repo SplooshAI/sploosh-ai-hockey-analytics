@@ -1,0 +1,21 @@
+{
+  "name": "sploosh-ai-nhl-shot-chart",
+  "version": "0.0.0",
+  "scripts": {
+    "setup": "./manage.sh setup",
+    "start": "./manage.sh start",
+    "test": "./manage.sh test",
+    "test:coverage": "./manage.sh test --coverage",
+    "destroy": "./manage.sh destroy"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/SplooshAI/sploosh-ai-nhl-shot-chart.git"
+  },
+  "author": "Rob Brennan <rob@therobbrennan.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/SplooshAI/sploosh-ai-nhl-shot-chart/issues"
+  },
+  "homepage": "https://github.com/SplooshAI/sploosh-ai-nhl-shot-chart#readme"
+}

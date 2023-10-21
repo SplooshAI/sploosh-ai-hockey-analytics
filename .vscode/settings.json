@@ -19,6 +19,8 @@
     "qrcode",
     "queryparameters",
     "simplejson",
+    "Sonoma",
+    "sploosh",
     "uvicorn",
     "venv",
     "xlim",
