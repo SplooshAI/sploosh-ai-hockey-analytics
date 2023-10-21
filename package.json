@@ -2,11 +2,11 @@
   "name": "sploosh-ai-nhl-shot-chart",
   "version": "0.0.0",
   "scripts": {
-    "setup": "./manage.sh setup",
-    "start": "./manage.sh start",
-    "test": "./manage.sh test",
-    "test:coverage": "./manage.sh test --coverage",
-    "destroy": "./manage.sh destroy"
+    "setup": "clear && ./manage.sh setup",
+    "start": "clear && ./manage.sh start",
+    "test": "clear && ./manage.sh test",
+    "test:coverage": "clear && ./manage.sh test --coverage",
+    "destroy": "clear && ./manage.sh destroy"
   },
   "repository": {
     "type": "git",
