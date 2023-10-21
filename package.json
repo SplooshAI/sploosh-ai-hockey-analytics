@@ -1,7 +1,6 @@
 {
   "name": "sploosh-ai-nhl-shot-chart",
   "version": "0.0.0",
-  "main": "index.js",
   "scripts": {
     "setup": "./manage.sh setup",
     "start": "./manage.sh start",
