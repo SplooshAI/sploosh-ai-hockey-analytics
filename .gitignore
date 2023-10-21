@@ -8,3 +8,4 @@ __pycache__
 configs
 htmlcov
 tmp
+node_modules
