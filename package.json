@@ -8,11 +8,6 @@
     "test:coverage": "clear && ./manage.sh test --coverage",
     "destroy": "clear && ./manage.sh destroy"
   },
-  "husky": {
-    "hooks": {
-      "pre-commit": "npm run test:coverage"
-    }
-  },  
   "repository": {
     "type": "git",
     "url": "git+https://github.com/SplooshAI/sploosh-ai-nhl-shot-chart.git"
@@ -22,8 +17,5 @@
   "bugs": {
     "url": "https://github.com/SplooshAI/sploosh-ai-nhl-shot-chart/issues"
   },
-  "homepage": "https://github.com/SplooshAI/sploosh-ai-nhl-shot-chart#readme",
-  "devDependencies": {
-    "husky": "^8.0.3"
-  }
+  "homepage": "https://github.com/SplooshAI/sploosh-ai-nhl-shot-chart#readme"
 }
