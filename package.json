@@ -8,6 +8,11 @@
     "test:coverage": "clear && ./manage.sh test --coverage",
     "destroy": "clear && ./manage.sh destroy"
   },
+  "husky": {
+    "hooks": {
+      "pre-commit": "npm run test:coverage"
+    }
+  },  
   "repository": {
     "type": "git",
     "url": "git+https://github.com/SplooshAI/sploosh-ai-nhl-shot-chart.git"
