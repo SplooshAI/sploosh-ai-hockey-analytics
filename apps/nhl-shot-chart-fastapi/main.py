@@ -22,6 +22,21 @@ app.mount("/static", StaticFiles(directory="static"), name="static")
 app.add_middleware(QueryParamLoggerMiddleware)
 
 # ==============[ ROUTE HANDLERS ]==============
+# Favicon route handler
+@app.get("/favicon.ico")
+async def get_favicon():
+    return FileResponse(os.path.join("static", "favicon.ico"), media_type="image/x-icon")
+
+# apple-touch-icon.png route handler
+@app.get("/apple-touch-icon.png")
+async def get_apple_touch_icon():
+    return FileResponse(os.path.join("static", "apple-touch-icon.png"), media_type="image/png")
+
+# apple-touch-icon-precomposed.png route handler
+@app.get("/apple-touch-icon-precomposed.png")
+async def get_apple_touch_icon_precomposed():
+    return FileResponse(os.path.join("static", "apple-touch-icon-precomposed.png"), media_type="image/png")
+
 # OPTIONS route handlers
 @app.options("/")
 async def get_options():
@@ -34,11 +49,6 @@ async def get_options_for_all_paths(path: str):
     return {
         "allowed_methods": ["GET", "POST", "OPTIONS", "HEAD"]
     }
-
-# Favicon route handler
-@app.get("/favicon.ico")
-async def get_favicon():
-    return FileResponse(os.path.join("static", "favicon.ico"), media_type="image/x-icon")
 
 # Default route handler - NHL shot chart
 @app.get("/")

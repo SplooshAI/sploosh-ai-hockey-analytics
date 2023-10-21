@@ -17,6 +17,22 @@ def test_get_favicon(mock_file_response, mock_os_join):
     assert response.status_code == 200
     assert response.text == "Mocked content"
 
+# Test for apple-touch-icon.png route handler
+@patch('os.path.join', return_value='static_path')
+@patch('main.FileResponse', side_effect=mocked_file_response)
+def test_get_apple_touch_icon(mock_file_response, mock_os_join):
+    response = client.get("/apple-touch-icon.png")
+    assert response.status_code == 200
+    assert response.text == "Mocked content"
+
+# Test for apple-touch-icon-precomposed.png route handler
+@patch('os.path.join', return_value='static_path')
+@patch('main.FileResponse', side_effect=mocked_file_response)
+def test_get_apple_touch_icon_precomposed(mock_file_response, mock_os_join):
+    response = client.get("/apple-touch-icon-precomposed.png")
+    assert response.status_code == 200
+    assert response.text == "Mocked content"
+
 # Test for the OPTIONS route
 def test_get_options():
     response = client.options("/")
