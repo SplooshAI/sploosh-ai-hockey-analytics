@@ -17,5 +17,8 @@
   "bugs": {
     "url": "https://github.com/SplooshAI/sploosh-ai-nhl-shot-chart/issues"
   },
-  "homepage": "https://github.com/SplooshAI/sploosh-ai-nhl-shot-chart#readme"
+  "homepage": "https://github.com/SplooshAI/sploosh-ai-nhl-shot-chart#readme",
+  "devDependencies": {
+    "husky": "^8.0.3"
+  }
 }
