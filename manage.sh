@@ -17,6 +17,9 @@ setup_venv() {
         # Activate the virtual environment
         source "$VENV_DIR/bin/activate"
 
+        # Upgrade pip
+        pip install --upgrade pip
+
         # Install dependencies
         pip install -r requirements.txt
 
