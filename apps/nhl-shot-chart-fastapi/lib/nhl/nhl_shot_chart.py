@@ -502,178 +502,178 @@ def parse_game_details(gameId, timezone):
     }
 
     # Process all event data
-    try:
-        # Charts and graphs
-        charts = response["game"]["charts"]
+    # try:
+    # Charts and graphs
+    charts = response["game"]["charts"]
 
-        # Shot chart
-        shotChart = charts["shotChart"]
-        chartElements = shotChart["data"]
+    # Shot chart
+    shotChart = charts["shotChart"]
+    chartElements = shotChart["data"]
 
-        plays = eventDescription["plays"]
-        all_plays = plays["allPlays"]
+    plays = eventDescription["plays"]
+    all_plays = plays["allPlays"]
 
-        for event in all_plays:
-            result = event["result"]  # Details for the event
+    for event in all_plays:
+        result = event["result"]  # Details for the event
 
-            # Description of the event (e.g. Game Scheduled, Goal, Shot, Missed Shot, etc.)
-            eventDescription = result["event"]
+        # Description of the event (e.g. Game Scheduled, Goal, Shot, Missed Shot, etc.)
+        eventDescription = result["event"]
 
-            if (
-                eventDescription == "Goal"
-                or eventDescription == "Shot"
-                or eventDescription == "Missed Shot"
-            ):
-                datapoint = dict()
-                eventDetails = event["about"]
+        if (
+            eventDescription == "Goal"
+            or eventDescription == "Shot"
+            or eventDescription == "Missed Shot"
+        ):
+            datapoint = dict()
+            eventDetails = event["about"]
 
-                # Which team fired this shot?
-                team_info = event["team"]
-                team = team_info["triCode"]
+            # Which team fired this shot?
+            team_info = event["team"]
+            team = team_info["triCode"]
 
-                # Let's determine what counters we need to update at the end of our processing
-                isHomeTeam = team == home_team
-                isGoal = False
-                isShotAttempt = False
-                isShotOnGoal = False
-
-                # Where did this event take place?
-                coords = event["coordinates"]
-                x = int(coords["x"])
-                y = int(coords["y"])
-
-                # For shot charts, we need to adjust the (x,y) location when both teams switch ends
-                if isHomeTeam:
-                    if x < 0:
-                        x_calculated_shot_chart = abs(x)
-                        y_calculated_shot_chart = y * -1
-                    else:
-                        x_calculated_shot_chart = x
-                        y_calculated_shot_chart = y
-                else:
-                    if x > 0:
-                        x_calculated_shot_chart = -x
-                        y_calculated_shot_chart = -y
-                    else:
-                        x_calculated_shot_chart = x
-                        y_calculated_shot_chart = y
-
-                # Is this a goal?
-                if eventDescription == "Goal":
-                    # Account for shootout shots and goals
-                    if event["about"]["periodType"] == "SHOOTOUT":
-                        isGoal = False
-                        isShotOnGoal = False
-                        isShotAttempt = False
-
-                        # Keep track of shootout goals separately
-                        if isHomeTeam:
-                            home_shootout_goals += 1
-                        else:
-                            away_shootout_goals += 1
-                    else:
-                        isGoal = True
-                        isShotOnGoal = True
-                        # FUTURE - Should isShotAttempt be set to False here? 🤔
-                        isShotAttempt = True
-
-                        # Track our goal - shootout or otherwise
-                        datapoint["event_description"] = eventDescription
-                        datapoint["x"] = x
-                        datapoint["y"] = y
-                        datapoint["x_calculated_shot_chart"] = x_calculated_shot_chart
-                        datapoint["y_calculated_shot_chart"] = y_calculated_shot_chart
-                        datapoint["markertype"] = GOAL_MARKER_TYPE
-                        datapoint["color"] = GOAL_COLOR
-                        datapoint["markersize"] = GOAL_MARKER_SIZE
-                        datapoint["event_details"] = eventDetails
-                        datapoint["team"] = team
-
-                        if isHomeTeam:
-                            datapoint["shot_attempts"] = home_shot_attempts
-                        else:
-                            datapoint["shot_attempts"] = away_shot_attempts
-
-                        if SHOW_GOALS:
-                            chartElements.append(datapoint)
-
-                elif eventDescription == "Shot":
-                    # Is this a shot on goal?
-                    isShotAttempt = True
-                    isShotOnGoal = True
-
-                    datapoint["event_description"] = eventDescription
-                    datapoint["x"] = x
-                    datapoint["y"] = y
-                    datapoint["x_calculated_shot_chart"] = x_calculated_shot_chart
-                    datapoint["y_calculated_shot_chart"] = y_calculated_shot_chart
-                    datapoint["markertype"] = SHOT_ON_GOAL_MARKER_TYPE
-                    datapoint["color"] = SHOT_ON_GOAL_COLOR
-                    datapoint["markersize"] = SHOT_ON_GOAL_MARKER_SIZE
-                    datapoint["event_details"] = eventDetails
-                    datapoint["team"] = team
-
-                    if isHomeTeam:
-                        datapoint["shot_attempts"] = home_shot_attempts
-                    else:
-                        datapoint["shot_attempts"] = away_shot_attempts
-
-                    if SHOW_SHOTS_ON_GOAL:
-                        chartElements.append(datapoint)
-                else:
-                    # Is this a missed shot?
-                    isShotAttempt = True
-                    isShotOnGoal = False
-
-                    datapoint["event_description"] = eventDescription
-                    datapoint["x"] = x
-                    datapoint["y"] = y
-                    datapoint["x_calculated_shot_chart"] = x_calculated_shot_chart
-                    datapoint["y_calculated_shot_chart"] = y_calculated_shot_chart
-                    datapoint["markertype"] = SHOT_ATTEMPT_MARKER_TYPE
-                    datapoint["color"] = SHOT_ATTEMPT_COLOR
-                    datapoint["markersize"] = SHOT_ATTEMPT_MARKER_SIZE
-                    datapoint["event_details"] = eventDetails
-                    datapoint["team"] = team
-
-                    if isHomeTeam:
-                        datapoint["shot_attempts"] = home_shot_attempts
-                    else:
-                        datapoint["shot_attempts"] = away_shot_attempts
-
-                    if SHOW_SHOT_ATTEMPTS:
-                        chartElements.append(datapoint)
-            else:
-                continue
-
-            # Increment the appropriate counters
-            if isHomeTeam:
-                if isShotAttempt and event["about"]["periodType"] != "SHOOTOUT":
-                    home_shot_attempts += 1
-
-                if isGoal and event["about"]["periodType"] != "SHOOTOUT":
-                    home_goals += 1
-
-                if isShotOnGoal and event["about"]["periodType"] != "SHOOTOUT":
-                    home_sog += 1
-            else:
-                if event["about"]["periodType"] != "SHOOTOUT":
-                    if isShotAttempt and event["about"]["periodType"] != "SHOOTOUT":
-                        away_shot_attempts += 1
-
-                    if isGoal and event["about"]["periodType"] != "SHOOTOUT":
-                        away_goals += 1
-                    if isShotOnGoal and event["about"]["periodType"] != "SHOOTOUT":
-                        away_sog += 1
-
-            # Reset our booleans
+            # Let's determine what counters we need to update at the end of our processing
+            isHomeTeam = team == home_team
+            isGoal = False
             isShotAttempt = False
             isShotOnGoal = False
-            isGoal = False
+
+            # Where did this event take place?
+            coords = event["coordinates"]
+            x = int(coords["x"])
+            y = int(coords["y"])
+
+            # For shot charts, we need to adjust the (x,y) location when both teams switch ends
+            if isHomeTeam:
+                if x < 0:
+                    x_calculated_shot_chart = abs(x)
+                    y_calculated_shot_chart = y * -1
+                else:
+                    x_calculated_shot_chart = x
+                    y_calculated_shot_chart = y
+            else:
+                if x > 0:
+                    x_calculated_shot_chart = -x
+                    y_calculated_shot_chart = -y
+                else:
+                    x_calculated_shot_chart = x
+                    y_calculated_shot_chart = y
+
+            # Is this a goal?
+            if eventDescription == "Goal":
+                # Account for shootout shots and goals
+                if event["about"]["periodType"] == "SHOOTOUT":
+                    isGoal = False
+                    isShotOnGoal = False
+                    isShotAttempt = False
+
+                    # Keep track of shootout goals separately
+                    if isHomeTeam:
+                        home_shootout_goals += 1
+                    else:
+                        away_shootout_goals += 1
+                else:
+                    isGoal = True
+                    isShotOnGoal = True
+                    # FUTURE - Should isShotAttempt be set to False here? 🤔
+                    isShotAttempt = True
+
+                    # Track our goal - shootout or otherwise
+                    datapoint["event_description"] = eventDescription
+                    datapoint["x"] = x
+                    datapoint["y"] = y
+                    datapoint["x_calculated_shot_chart"] = x_calculated_shot_chart
+                    datapoint["y_calculated_shot_chart"] = y_calculated_shot_chart
+                    datapoint["markertype"] = GOAL_MARKER_TYPE
+                    datapoint["color"] = GOAL_COLOR
+                    datapoint["markersize"] = GOAL_MARKER_SIZE
+                    datapoint["event_details"] = eventDetails
+                    datapoint["team"] = team
+
+                    if isHomeTeam:
+                        datapoint["shot_attempts"] = home_shot_attempts
+                    else:
+                        datapoint["shot_attempts"] = away_shot_attempts
+
+                    if SHOW_GOALS:
+                        chartElements.append(datapoint)
+
+            elif eventDescription == "Shot":
+                # Is this a shot on goal?
+                isShotAttempt = True
+                isShotOnGoal = True
+
+                datapoint["event_description"] = eventDescription
+                datapoint["x"] = x
+                datapoint["y"] = y
+                datapoint["x_calculated_shot_chart"] = x_calculated_shot_chart
+                datapoint["y_calculated_shot_chart"] = y_calculated_shot_chart
+                datapoint["markertype"] = SHOT_ON_GOAL_MARKER_TYPE
+                datapoint["color"] = SHOT_ON_GOAL_COLOR
+                datapoint["markersize"] = SHOT_ON_GOAL_MARKER_SIZE
+                datapoint["event_details"] = eventDetails
+                datapoint["team"] = team
+
+                if isHomeTeam:
+                    datapoint["shot_attempts"] = home_shot_attempts
+                else:
+                    datapoint["shot_attempts"] = away_shot_attempts
+
+                if SHOW_SHOTS_ON_GOAL:
+                    chartElements.append(datapoint)
+            else:
+                # Is this a missed shot?
+                isShotAttempt = True
+                isShotOnGoal = False
+
+                datapoint["event_description"] = eventDescription
+                datapoint["x"] = x
+                datapoint["y"] = y
+                datapoint["x_calculated_shot_chart"] = x_calculated_shot_chart
+                datapoint["y_calculated_shot_chart"] = y_calculated_shot_chart
+                datapoint["markertype"] = SHOT_ATTEMPT_MARKER_TYPE
+                datapoint["color"] = SHOT_ATTEMPT_COLOR
+                datapoint["markersize"] = SHOT_ATTEMPT_MARKER_SIZE
+                datapoint["event_details"] = eventDetails
+                datapoint["team"] = team
+
+                if isHomeTeam:
+                    datapoint["shot_attempts"] = home_shot_attempts
+                else:
+                    datapoint["shot_attempts"] = away_shot_attempts
+
+                if SHOW_SHOT_ATTEMPTS:
+                    chartElements.append(datapoint)
+        else:
+            continue
+
+        # Increment the appropriate counters
+        if isHomeTeam:
+            if isShotAttempt and event["about"]["periodType"] != "SHOOTOUT":
+                home_shot_attempts += 1
+
+            if isGoal and event["about"]["periodType"] != "SHOOTOUT":
+                home_goals += 1
+
+            if isShotOnGoal and event["about"]["periodType"] != "SHOOTOUT":
+                home_sog += 1
+        else:
+            if event["about"]["periodType"] != "SHOOTOUT":
+                if isShotAttempt and event["about"]["periodType"] != "SHOOTOUT":
+                    away_shot_attempts += 1
+
+                if isGoal and event["about"]["periodType"] != "SHOOTOUT":
+                    away_goals += 1
+                if isShotOnGoal and event["about"]["periodType"] != "SHOOTOUT":
+                    away_sog += 1
+
+        # Reset our booleans
+        isShotAttempt = False
+        isShotOnGoal = False
+        isGoal = False
 
 
-    except Exception as e:
-        print(f"Error processing event data: {e}")
+    # except Exception as e:
+    #     print(f"Error processing event data: {e}")
 
     # The final section for updating the response with team information, shot attempts, and goals
     # Add +1 goal to whomever has the most shootout goals

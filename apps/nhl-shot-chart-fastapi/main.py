@@ -2,7 +2,7 @@
 from fastapi import FastAPI, Request
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import FileResponse, Response
-from lib.nhl.nhl_shot_chart import generate_shot_chart_html, generate_shot_chart_with_schedule_html
+from lib.nhl.nhl_shot_chart import generate_shot_chart_html
 from middleware.queryparameters.logger import QueryParamLoggerMiddleware
 import os
 
