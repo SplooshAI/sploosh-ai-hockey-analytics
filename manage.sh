@@ -59,6 +59,16 @@ run_tests() {
     deactivate
 }
 
+# Function to destroy the virtual environment
+destroy_venv() {
+    if [[ -d "$VENV_DIR" ]]; then
+        rm -rf "$VENV_DIR"
+        echo "Virtual environment '$VENV_DIR' has been removed."
+    else
+        echo "Virtual environment '$VENV_DIR' does not exist."
+    fi
+}
+
 # Main execution
 case $1 in
     "setup")
@@ -70,6 +80,9 @@ case $1 in
         ;;
     "test")
         run_tests $2
+        ;;
+    "destroy")
+        destroy_venv
         ;;
     *)
         echo "Usage: $0 {setup|start|test [--coverage]}"

@@ -6,7 +6,8 @@
     "setup": "./manage.sh setup",
     "start": "./manage.sh start",
     "test": "./manage.sh test",
-    "test:coverage": "./manage.sh test --coverage"
+    "test:coverage": "./manage.sh test --coverage",
+    "destroy": "./manage.sh destroy"
   },
   "repository": {
     "type": "git",
