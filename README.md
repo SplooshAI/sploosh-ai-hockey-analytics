@@ -1,4 +1,5 @@
 # Welcome
+
 This project generates a shot chart using game data provided by the NHL.
 
 ![](./apps/nhl-shot-chart-fastapi/__screenshots__/coverage.svg)

@@ -1,6 +1,8 @@
 # Welcome
 
-This project generates a shot chart from the NHL API.
+This project generates a shot chart using game data provided by the NHL.
+
+![](./__screenshots__/coverage.svg)
 
 You can view the [demo](https://nhl-shot-chart.vercel.app/) on Vercel at [https://nhl-shot-chart.vercel.app/](https://nhl-shot-chart.vercel.app/)
 
