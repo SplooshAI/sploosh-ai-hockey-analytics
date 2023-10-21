@@ -1,13 +1,13 @@
 import unittest
 from unittest.mock import patch, call
-import nhl_shot_chart as nsc
+from .. import nhl_shot_chart as nsc
 import io
 import sys
 
 class TestNHLShotChart(unittest.TestCase):
 
-    @patch('nhl_shot_chart.parse_game_details')
-    @patch('nhl_shot_chart.plt.text')
+    @patch.object(nsc, 'parse_game_details')
+    @patch.object(nsc.plt, 'text')
     def test_generate_shot_chart_for_game_with_shot_attempts_annotation(self, mock_plt_text, mock_parse_game_details):
         # Mock the parse_game_details function to return predefined game details
         mock_parse_game_details.return_value = {

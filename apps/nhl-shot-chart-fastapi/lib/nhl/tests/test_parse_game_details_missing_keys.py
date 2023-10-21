@@ -1,10 +1,10 @@
 import unittest
 from unittest.mock import patch
-import nhl_shot_chart as nsc
+from .. import nhl_shot_chart as nsc
 
 class TestNHLShotChart(unittest.TestCase):
 
-    @patch('nhl_shot_chart.load_live_data_for_game')
+    @patch.object(nsc, 'load_live_data_for_game')
     def test_parse_game_details_missing_keys(self, mock_load_live_data_for_game):
         # Mock data that doesn't contain the keys 'currentPeriodTimeRemaining' and 'currentPeriodOrdinal'
         mock_load_live_data_for_game.return_value = {

@@ -1,5 +1,5 @@
 from unittest.mock import patch
-from nhl_shot_chart import parse_game_details
+from ..nhl_shot_chart import parse_game_details
 
 def test_basic_game_details_extraction_home_shootout_winner():
     NHL_GAME_ID = 2022020530  # 2022.12.22 - Seattle Kraken vs. Vancouver Canucks - Vancouver wins 6-5 in a shootout at home
