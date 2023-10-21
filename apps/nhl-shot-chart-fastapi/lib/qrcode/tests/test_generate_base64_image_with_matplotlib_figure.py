@@ -1,5 +1,5 @@
 import matplotlib.pyplot as plt
-from qrcode_generator import (
+from ..qrcode_generator import (
     generate_base64_image
 )
 

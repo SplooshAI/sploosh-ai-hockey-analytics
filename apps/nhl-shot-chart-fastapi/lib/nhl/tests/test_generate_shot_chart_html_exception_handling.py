@@ -1,11 +1,11 @@
 import unittest
 from unittest.mock import patch
-import nhl_shot_chart as nsc
+from .. import nhl_shot_chart as nsc
 from fastapi.responses import HTMLResponse
 
 class TestNHLShotChart(unittest.TestCase):
     
-    @patch('nhl_shot_chart.generate_shot_chart_for_game')
+    @patch.object(nsc, 'generate_shot_chart_for_game')
     def test_generate_shot_chart_html_exception_handling(self, mock_generate_shot_chart_for_game):
         # Mock the generate_shot_chart_for_game function to raise an exception
         mock_generate_shot_chart_for_game.side_effect = Exception("Test Exception")

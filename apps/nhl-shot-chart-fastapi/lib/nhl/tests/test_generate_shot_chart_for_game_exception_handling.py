@@ -1,12 +1,12 @@
 import unittest
 from unittest.mock import patch
-import nhl_shot_chart as nsc
+from .. import nhl_shot_chart as nsc
 import io
 import sys
 
 class TestNHLShotChart(unittest.TestCase):
 
-    @patch('nhl_shot_chart.parse_game_details')
+    @patch.object(nsc, 'parse_game_details')
     def test_generate_shot_chart_for_game_exception_handling(self, mock_parse_game_details):
         # Mock the parse_game_details function to raise an exception
         mock_parse_game_details.side_effect = Exception("Test Exception in parse_game_details")

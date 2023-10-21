@@ -1,6 +1,6 @@
 import pytest
 from unittest.mock import AsyncMock
-from logger import QueryParamLoggerMiddleware, FastAPI
+from ..logger import QueryParamLoggerMiddleware, FastAPI
 
 @pytest.mark.asyncio
 async def test_log_message(capfd):

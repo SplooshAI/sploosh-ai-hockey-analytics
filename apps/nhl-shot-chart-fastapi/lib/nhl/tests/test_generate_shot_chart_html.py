@@ -1,5 +1,5 @@
 import unittest
-from nhl_shot_chart import generate_shot_chart_html
+from .. import nhl_shot_chart as nsc
 
 class TestGenerateShotChartHtml(unittest.TestCase):
 
@@ -7,7 +7,7 @@ class TestGenerateShotChartHtml(unittest.TestCase):
         # Test successful generation of shot chart HTML
         gameId = "2022030236"
         timezone = "America/Los_Angeles"
-        response = generate_shot_chart_html(gameId, timezone)
+        response = nsc.generate_shot_chart_html(gameId, timezone)
         self.assertEqual(response.status_code, 200)
         self.assertIn(b"<html>", response.body)
         self.assertIn(b"Shot Chart for Game ID", response.body)
@@ -17,5 +17,5 @@ class TestGenerateShotChartHtml(unittest.TestCase):
         # Test error handling when generating shot chart HTML
         gameId = "invalid_game_id"
         timezone = "America/Los_Angeles"
-        response = generate_shot_chart_html(gameId, timezone)
+        response = nsc.generate_shot_chart_html(gameId, timezone)
         self.assertEqual(response.status_code, 200)
