@@ -51,4 +51,4 @@ async def get_options_for_all_paths(path: str):
 async def nhl_shot_chart(request: Request, gameId: str, timezone: str = "UTC"):
     if request.method == "HEAD":
         return Response(headers={"Content-Type": "text/html"})
-    return generate_html_response()
+    return generate_html_response(gameId, timezone)
