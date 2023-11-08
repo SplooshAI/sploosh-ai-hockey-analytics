@@ -43,8 +43,11 @@ OUTPUT_SHOT_CHART_DIRECTORY_AND_FILENAME_PREFIX = (
 # Date and time
 LOCAL_DATE_TIME_FORMAT_STRING = "YYYY-MM-DD h:mm A z"  # '2023-01-19 7:00 PM PST'
 
-# NHL API
-NHL_API_BASE_URL = "https://statsapi.web.nhl.com/api/v1"
+# NHL Edge API
+NHL_API_BASE_URL = "https://api-web.nhle.com/v1"
+# TODO: Add support for an example NHL Edge API landing route - https://api-web.nhle.com/v1/gamecenter/2023020185/landing
+# TODO: Add support for an example NHL Edge API box score route - https://api-web.nhle.com/v1/gamecenter/2023020185/boxscore
+# TODO: Add support for an example NHL Edge API play-by-play route - https://api-web.nhle.com/v1/gamecenter/2023020185/play-by-play
 NHL_API_DATE_TIME_FORMAT_STRING = "%Y-%m-%dT%H:%M:%S%z"  # '2022-09-27T02:00:00Z'
 
 def convertToLocalDateTimeString(dateTimeString, timezone):
@@ -432,9 +435,9 @@ def generate_shot_chart_for_game(gameId, timezone):
 
 # Load live data for a specific game ID from the NHL API
 def load_live_data_for_game(gameId):
-    # https://statsapi.web.nhl.com/api/v1/game/2022020728/feed/live
+    # https://api-web.nhle.com/v1/gamecenter/2023020185/play-by-play
     NHL_API_LIVE_GAME_DATA_URL = (
-        NHL_API_BASE_URL + "/game/" + str(gameId) + "/feed/live"
+        NHL_API_BASE_URL + "/gamecenter/" + str(gameId) + "/play-by-play"
     )
     live_data = requests.get(NHL_API_LIVE_GAME_DATA_URL).json()
     return live_data
