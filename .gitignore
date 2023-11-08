@@ -9,3 +9,6 @@ configs
 htmlcov
 tmp
 node_modules
+
+# Ignore raw JSON automatically saved for NHL Edge debugging purposes
+apps/nhl-shot-chart-fastapi/lib/nhl_edge/json
