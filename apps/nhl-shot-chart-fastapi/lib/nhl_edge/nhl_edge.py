@@ -50,9 +50,9 @@ async def load_data_for_game_and_timezone(gameId: str, timezone: str = "UTC"):
 
        # Save the data to files
         await asyncio.gather(
-            save_json_to_file(landing_data, 'landing.json'),
-            save_json_to_file(boxscore_data, 'boxscore.json'),
-            save_json_to_file(play_by_play_data, 'play-by-play.json')
+            save_json_to_file(landing_data, f"{gameId}-landing.json"),
+            save_json_to_file(boxscore_data, f"{gameId}-boxscore.json"),
+            save_json_to_file(play_by_play_data, f"{gameId}-play-by-play.json")
         )
   
         # Generate HTML content with the game data and timezone
