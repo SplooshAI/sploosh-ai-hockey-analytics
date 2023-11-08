@@ -2,3 +2,4 @@
 omit =
     test_*.py
     __init__.py
+    lib/nhl/*.py
