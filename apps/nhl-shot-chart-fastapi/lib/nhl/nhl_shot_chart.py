@@ -45,9 +45,6 @@ LOCAL_DATE_TIME_FORMAT_STRING = "YYYY-MM-DD h:mm A z"  # '2023-01-19 7:00 PM PST
 
 # NHL Edge API
 NHL_API_BASE_URL = "https://api-web.nhle.com/v1"
-# TODO: Add support for an example NHL Edge API landing route - https://api-web.nhle.com/v1/gamecenter/2023020185/landing
-# TODO: Add support for an example NHL Edge API box score route - https://api-web.nhle.com/v1/gamecenter/2023020185/boxscore
-# TODO: Add support for an example NHL Edge API play-by-play route - https://api-web.nhle.com/v1/gamecenter/2023020185/play-by-play
 NHL_API_DATE_TIME_FORMAT_STRING = "%Y-%m-%dT%H:%M:%S%z"  # '2022-09-27T02:00:00Z'
 
 def convertToLocalDateTimeString(dateTimeString, timezone):
@@ -577,7 +574,6 @@ def parse_game_details(gameId, timezone):
                 else:
                     isGoal = True
                     isShotOnGoal = True
-                    # FUTURE - Should isShotAttempt be set to False here? 🤔
                     isShotAttempt = True
 
                     # Track our goal - shootout or otherwise
