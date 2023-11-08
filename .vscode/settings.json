@@ -1,5 +1,7 @@
 {
   "cSpell.words": [
+    "aiohttp",
+    "boxscore",
     "capfd",
     "datapoint",
     "fastapi",
@@ -7,6 +9,7 @@
     "figsize",
     "fontsize",
     "Gamecenter",
+    "GAMEID",
     "horizontalalignment",
     "htmlcov",
     "linescore",
