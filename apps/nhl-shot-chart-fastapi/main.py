@@ -2,7 +2,7 @@
 from fastapi import FastAPI, Request
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import FileResponse, Response
-from lib.nhl.nhl_shot_chart import generate_shot_chart_html
+from lib.nhl_edge.nhl_edge import generate_html_response
 from middleware.queryparameters.logger import QueryParamLoggerMiddleware
 import os
 
@@ -56,4 +56,4 @@ async def get_options_for_all_paths(path: str):
 async def nhl_shot_chart(request: Request, gameId: str = DEFAULT_NHL_GAME_ID, timezone: str = "UTC"):
     if request.method == "HEAD":
         return Response(headers={"Content-Type": "text/html"})
-    return generate_shot_chart_html(gameId, timezone)
+    return generate_html_response()
