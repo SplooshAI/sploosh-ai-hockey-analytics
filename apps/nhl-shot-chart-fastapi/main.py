@@ -6,11 +6,6 @@ from lib.nhl_edge.nhl_edge import generate_html_response
 from middleware.queryparameters.logger import QueryParamLoggerMiddleware
 import os
 
-# ==============[ CONSTANTS ]==============
-DEFAULT_NHL_SEASON_ID = '20232024'
-DEFAULT_NHL_TEAM_ID = 55  # Seattle Kraken
-DEFAULT_NHL_GAME_ID = 2023020046  # 2023.10.17 - Colorado Avalanche vs. Seattle Kraken
-
 # ==============[ FASTAPI SETUP ]==============
 # Create your FastAPI application
 app = FastAPI()
@@ -53,7 +48,7 @@ async def get_options_for_all_paths(path: str):
 # Default route handler - NHL shot chart
 @app.get("/")
 @app.head("/")
-async def nhl_shot_chart(request: Request, gameId: str = DEFAULT_NHL_GAME_ID, timezone: str = "UTC"):
+async def nhl_shot_chart(request: Request, gameId: str, timezone: str = "UTC"):
     if request.method == "HEAD":
         return Response(headers={"Content-Type": "text/html"})
     return generate_html_response()
