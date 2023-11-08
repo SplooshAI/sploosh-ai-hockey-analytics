@@ -1,0 +1,19 @@
+{
+  // Use IntelliSense to learn about possible attributes.
+  // Hover to view descriptions of existing attributes.
+  // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+  "version": "0.2.0",
+  "configurations": [
+    {
+      // IMPORTANT: Be sure to select the correct path to the Python interpreter (e.g. "./apps/nhl-shot-chart-fastapi/.venv/bin/python") for the Python Debug Console to work
+      "name": "Python: NHL shot chart",
+      "cwd": "${workspaceFolder}/apps/nhl-shot-chart-fastapi",
+      "type": "python",
+      "request": "launch",
+      "module": "uvicorn",
+      "args": ["main:app"],
+      "jinja": true,
+      "justMyCode": true
+    }
+  ]
+}
