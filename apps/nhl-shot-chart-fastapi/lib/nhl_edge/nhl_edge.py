@@ -5,15 +5,19 @@ import aiohttp
 import asyncio
 import json
 
+# Define the base NHL Edge API URL as a constant
+NHL_EDGE_BASE_API_GAMECENTER = "https://api-web.nhle.com/v1/gamecenter"
+
 async def fetch_url(session, url):
     async with session.get(url) as response:
         return await response.json()
 
 async def load_data_for_game_and_timezone(gameId: str, timezone: str = "UTC"):
+    # Use the base API URL constant and append the gameId and specific endpoint
     urls = [
-        f"https://api-web.nhle.com/v1/gamecenter/{gameId}/landing",
-        f"https://api-web.nhle.com/v1/gamecenter/{gameId}/boxscore",
-        f"https://api-web.nhle.com/v1/gamecenter/{gameId}/play-by-play"
+        f"{NHL_EDGE_BASE_API_GAMECENTER}/{gameId}/landing",
+        f"{NHL_EDGE_BASE_API_GAMECENTER}/{gameId}/boxscore",
+        f"{NHL_EDGE_BASE_API_GAMECENTER}/{gameId}/play-by-play"
     ]
 
     async with aiohttp.ClientSession() as session:
