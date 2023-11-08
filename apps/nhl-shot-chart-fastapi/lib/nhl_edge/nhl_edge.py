@@ -48,12 +48,3 @@ async def load_data_for_game_and_timezone(gameId: str, timezone: str = "UTC"):
         </html>
         """
         return HTMLResponse(content=html_content)
-
-# Synchronous wrapper to run the async function
-def main(gameId: str, timezone: str = "UTC"):
-    return asyncio.run(load_data_for_game_and_timezone(gameId, timezone))
-
-# If this script is run directly, execute main with a default gameId
-if __name__ == "__main__":
-    html_response = main("2023020185")
-    print(html_response.body.decode())  # For demonstration purposes, print the HTML response body
