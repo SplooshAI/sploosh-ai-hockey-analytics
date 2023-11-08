@@ -11,7 +11,7 @@
       "type": "python",
       "request": "launch",
       "module": "uvicorn",
-      "args": ["main:app"],
+      "args": ["main:app", "--reload"],
       "jinja": true,
       "justMyCode": true
     }

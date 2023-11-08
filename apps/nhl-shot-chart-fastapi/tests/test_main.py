@@ -1,58 +1,52 @@
-from fastapi.responses import Response
+# tests/test_main.py
+
 from fastapi.testclient import TestClient
-import pytest
-from main import app  # Import the app from your module
-from unittest.mock import patch
+from main import app
+import os
+import unittest
 
 client = TestClient(app)
 
-def mocked_file_response(*args, **kwargs):
-    return Response(content="Mocked content")
+class TestMain(unittest.TestCase):
 
-# Test for favicon
-@patch('os.path.join', return_value='static_path')
-@patch('main.FileResponse', side_effect=mocked_file_response)
-def test_get_favicon(mock_file_response, mock_os_join):
-    response = client.get("/favicon.ico")
-    assert response.status_code == 200
-    assert response.text == "Mocked content"
+    def test_get_favicon(self):
+        response = client.get("/favicon.ico")
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.headers['content-type'], "image/x-icon")
 
-# Test for apple-touch-icon.png route handler
-@patch('os.path.join', return_value='static_path')
-@patch('main.FileResponse', side_effect=mocked_file_response)
-def test_get_apple_touch_icon(mock_file_response, mock_os_join):
-    response = client.get("/apple-touch-icon.png")
-    assert response.status_code == 200
-    assert response.text == "Mocked content"
+    def test_get_apple_touch_icon(self):
+        response = client.get("/apple-touch-icon.png")
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.headers['content-type'], "image/png")
 
-# Test for apple-touch-icon-precomposed.png route handler
-@patch('os.path.join', return_value='static_path')
-@patch('main.FileResponse', side_effect=mocked_file_response)
-def test_get_apple_touch_icon_precomposed(mock_file_response, mock_os_join):
-    response = client.get("/apple-touch-icon-precomposed.png")
-    assert response.status_code == 200
-    assert response.text == "Mocked content"
+    def test_get_apple_touch_icon_precomposed(self):
+        response = client.get("/apple-touch-icon-precomposed.png")
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.headers['content-type'], "image/png")
 
-# Test for the OPTIONS route
-def test_get_options():
-    response = client.options("/")
-    assert response.status_code == 200
-    assert response.json() == {"allowed_methods": ["GET", "POST", "OPTIONS", "HEAD"]}
+    def test_options_root(self):
+        response = client.options("/")
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json(), {"allowed_methods": ["GET", "POST", "OPTIONS", "HEAD"]})
 
-# Test for the OPTIONS route with path
-def test_get_options_for_all_paths():
-    response = client.options("/some/path")
-    assert response.status_code == 200
-    assert response.json() == {"allowed_methods": ["GET", "POST", "OPTIONS", "HEAD"]}
+    def test_options_for_all_paths(self):
+        response = client.options("/some/path")
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json(), {"allowed_methods": ["GET", "POST", "OPTIONS", "HEAD"]})
 
-# Test for default route with HEAD method
-def test_nhl_shot_chart_head():
-    response = client.head("/")
-    assert response.status_code == 200
-    assert response.headers["Content-Type"] == "text/html"
+    def test_nhl_shot_chart_get(self):
+        gameId = "test_game_id"
+        timezone = "America/Los_Angeles"
+        response = client.get(f"/?gameId={gameId}&timezone={timezone}")
+        self.assertEqual(response.status_code, 200)
+        self.assertIn(gameId, response.text)
+        self.assertIn(timezone, response.text)
 
-# Test for default route with GET method
-@patch('main.generate_shot_chart_html')
-def test_nhl_shot_chart_get(mock_generate_shot_chart_html):
-    response = client.get("/")
-    assert response.status_code == 200
+    def test_nhl_shot_chart_head(self):
+        gameId = "test_game_id"
+        response = client.head(f"/?gameId={gameId}")
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.headers['content-type'], "text/html")
+
+if __name__ == '__main__':
+    unittest.main()
