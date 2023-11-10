@@ -2,9 +2,11 @@
   "cSpell.words": [
     "aiofiles",
     "aiohttp",
+    "aioresponses",
     "boxscore",
     "capfd",
     "datapoint",
+    "excinfo",
     "fastapi",
     "figcaption",
     "figsize",
