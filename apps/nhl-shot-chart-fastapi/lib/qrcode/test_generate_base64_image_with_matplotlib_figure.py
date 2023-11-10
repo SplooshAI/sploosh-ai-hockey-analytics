@@ -1,7 +1,5 @@
 import matplotlib.pyplot as plt
-from ..qrcode_generator import (
-    generate_base64_image
-)
+from .qrcode_generator import generate_base64_image
 
 def test_generate_base64_image_with_matplotlib_figure():
     # Create a simple matplotlib figure
