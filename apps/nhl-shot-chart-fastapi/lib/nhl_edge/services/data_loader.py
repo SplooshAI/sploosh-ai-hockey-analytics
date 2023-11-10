@@ -1,34 +1,13 @@
-# nhl_edge.py
-
-from fastapi.responses import HTMLResponse
 import aiohttp
 import asyncio
 import json
-import os
-import aiofiles  # Import aiofiles for asynchronous file operations
+from fastapi.responses import HTMLResponse
+from ..utils.fetch import fetch_url
+from ..utils.file_operations import save_json_to_file
 
-# Define the base NHL Edge API URL as a constant
 NHL_EDGE_BASE_API_GAMECENTER = "https://api-web.nhle.com/v1/gamecenter"
-NHL_EDGE_RAW_JSON_LOCAL_DIRECTORY = "./lib/nhl_edge/json"
-
-async def fetch_url(session, url):
-    async with session.get(url) as response:
-        return await response.json()
-
-async def save_json_to_file(data, filename):
-    try:
-        directory = NHL_EDGE_RAW_JSON_LOCAL_DIRECTORY
-        if not os.path.exists(directory):
-            os.makedirs(directory)
-
-        path = f"{directory}/{filename}"
-        async with aiofiles.open(path, 'w') as outfile:
-            await outfile.write(json.dumps(data, indent=2))
-    except Exception as e:
-        print(f"An error occurred while saving {filename}: {e}")
 
 async def load_data_for_game_and_timezone(gameId: str, timezone: str = "UTC"):
-    # Use the base API URL constant and append the gameId and specific endpoint
     urls = [
         f"{NHL_EDGE_BASE_API_GAMECENTER}/{gameId}/landing",
         f"{NHL_EDGE_BASE_API_GAMECENTER}/{gameId}/boxscore",
@@ -73,4 +52,5 @@ async def load_data_for_game_and_timezone(gameId: str, timezone: str = "UTC"):
             </body>
         </html>
         """
+
         return HTMLResponse(content=html_content)

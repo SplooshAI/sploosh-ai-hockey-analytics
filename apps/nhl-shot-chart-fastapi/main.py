@@ -2,11 +2,11 @@
 from fastapi import FastAPI, Request
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import FileResponse, Response
-from lib.nhl_edge.nhl_edge import load_data_for_game_and_timezone
+from lib.nhl_edge.main import load_data_for_game_and_timezone
 from middleware.queryparameters.logger import QueryParamLoggerMiddleware
 import os
 
-DEFAULT_NHL_GAMEID = "2023020185" # https://www.nhl.com/gamecenter/ari-vs-sea/2023/11/07/2023020185 - Seattle loses 4-3 to Arizona in a shootout on the road
+DEFAULT_NHL_GAMEID = "2023020201" # https://www.nhl.com/gamecenter/col-vs-sea/2023/11/09/2023020201 - Seattle wins 4-3 on the road against the Colorado Avalanche
 
 # ==============[ FASTAPI SETUP ]==============
 # Create your FastAPI application
