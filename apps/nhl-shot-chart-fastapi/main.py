@@ -2,7 +2,7 @@
 from fastapi import FastAPI, Request
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import FileResponse, Response
-from lib.nhl_edge.nhl_edge import load_data_for_game_and_timezone
+from lib.nhl_edge.main import load_data_for_game_and_timezone
 from middleware.queryparameters.logger import QueryParamLoggerMiddleware
 import os
 
