@@ -5,7 +5,7 @@
   "version": "0.2.0",
   "configurations": [
     {
-      // IMPORTANT: Be sure to select the correct path to the Python interpreter (e.g. "./apps/nhl-shot-chart-fastapi/.venv/bin/python") for the Python Debug Console to work
+      // IMPORTANT: Be sure to select the correct path to the Python interpreter (e.g. "./src/.venv/bin/python") for the Python Debug Console to work
       "name": "Python: NHL shot chart",
       "cwd": "${workspaceFolder}/src",
       "type": "python",
