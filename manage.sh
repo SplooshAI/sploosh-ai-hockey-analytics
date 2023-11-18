@@ -7,7 +7,7 @@ set -e
 VENV_DIR=".venv"
 
 # Change to the specified directory
-cd apps/nhl-shot-chart-fastapi
+cd src
 
 # Function to set up the virtual environment
 setup_venv() {

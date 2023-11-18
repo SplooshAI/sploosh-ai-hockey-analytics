@@ -1,0 +1,780 @@
+{
+  "id": 2023020201,
+  "season": 20232024,
+  "gameType": 2,
+  "gameDate": "2023-11-09",
+  "venue": {
+    "default": "Ball Arena"
+  },
+  "startTimeUTC": "2023-11-10T02:00:00Z",
+  "easternUTCOffset": "-05:00",
+  "venueUTCOffset": "-07:00",
+  "venueTimezone": "America/Denver",
+  "tvBroadcasts": [
+    {
+      "id": 2,
+      "market": "H",
+      "countryCode": "US",
+      "network": "ALT"
+    },
+    {
+      "id": 281,
+      "market": "N",
+      "countryCode": "CA",
+      "network": "TVAS"
+    },
+    {
+      "id": 386,
+      "market": "A",
+      "countryCode": "US",
+      "network": "ROOT-NW"
+    }
+  ],
+  "gameState": "OFF",
+  "gameScheduleState": "OK",
+  "awayTeam": {
+    "id": 55,
+    "name": {
+      "default": "Kraken"
+    },
+    "abbrev": "SEA",
+    "placeName": {
+      "default": "Seattle"
+    },
+    "score": 4,
+    "sog": 22,
+    "logo": "https://assets.nhle.com/logos/nhl/svg/SEA_light.svg"
+  },
+  "homeTeam": {
+    "id": 21,
+    "name": {
+      "default": "Avalanche"
+    },
+    "abbrev": "COL",
+    "placeName": {
+      "default": "Colorado"
+    },
+    "score": 3,
+    "sog": 26,
+    "logo": "https://assets.nhle.com/logos/nhl/svg/COL_light.svg"
+  },
+  "shootoutInUse": true,
+  "maxPeriods": 5,
+  "regPeriods": 3,
+  "otInUse": true,
+  "tiesInUse": false,
+  "clock": {
+    "timeRemaining": "00:00",
+    "secondsRemaining": 0,
+    "running": false,
+    "inIntermission": false
+  },
+  "summary": {
+    "linescore": {
+      "byPeriod": [
+        {
+          "period": 1,
+          "periodDescriptor": {
+            "number": 1,
+            "periodType": "REG"
+          },
+          "away": 1,
+          "home": 0
+        },
+        {
+          "period": 2,
+          "periodDescriptor": {
+            "number": 2,
+            "periodType": "REG"
+          },
+          "away": 2,
+          "home": 2
+        },
+        {
+          "period": 3,
+          "periodDescriptor": {
+            "number": 3,
+            "periodType": "REG"
+          },
+          "away": 1,
+          "home": 1
+        }
+      ],
+      "totals": {
+        "away": 4,
+        "home": 3
+      }
+    },
+    "scoring": [
+      {
+        "period": 1,
+        "periodDescriptor": {
+          "number": 1,
+          "periodType": "REG"
+        },
+        "goals": [
+          {
+            "situationCode": "1551",
+            "strength": "ev",
+            "playerId": 8475768,
+            "firstName": "Jaden",
+            "lastName": "Schwartz",
+            "name": "J. Schwartz",
+            "teamAbbrev": "SEA",
+            "headshot": "https://assets.nhle.com/mugs/nhl/20232024/SEA/8475768.png",
+            "highlightClip": 6340838377112,
+            "highlightClipFr": 6340838854112,
+            "goalsToDate": 7,
+            "awayScore": 1,
+            "homeScore": 0,
+            "leadingTeamAbbrev": "SEA",
+            "timeInPeriod": "18:39",
+            "shotType": "wrist",
+            "goalModifier": "none",
+            "assists": [
+              {
+                "playerId": 8481789,
+                "firstName": "Tye",
+                "lastName": "Kartye",
+                "assistsToDate": 2
+              },
+              {
+                "playerId": 8478407,
+                "firstName": "Vince",
+                "lastName": "Dunn",
+                "assistsToDate": 9
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "period": 2,
+        "periodDescriptor": {
+          "number": 2,
+          "periodType": "REG"
+        },
+        "goals": [
+          {
+            "situationCode": "1551",
+            "strength": "ev",
+            "playerId": 8477416,
+            "firstName": "Oliver",
+            "lastName": "Bjorkstrand",
+            "name": "O. Bjorkstrand",
+            "teamAbbrev": "SEA",
+            "headshot": "https://assets.nhle.com/mugs/nhl/20232024/SEA/8477416.png",
+            "highlightClip": 6340840745112,
+            "highlightClipFr": 6340841336112,
+            "goalsToDate": 5,
+            "awayScore": 2,
+            "homeScore": 0,
+            "leadingTeamAbbrev": "SEA",
+            "timeInPeriod": "04:29",
+            "shotType": "wrist",
+            "goalModifier": "none",
+            "assists": [
+              {
+                "playerId": 8476467,
+                "firstName": "Jamie",
+                "lastName": "Oleksiak",
+                "assistsToDate": 3
+              },
+              {
+                "playerId": 8476457,
+                "firstName": "Adam",
+                "lastName": "Larsson",
+                "assistsToDate": 1
+              }
+            ]
+          },
+          {
+            "situationCode": "1551",
+            "strength": "ev",
+            "playerId": 8481524,
+            "firstName": "Bowen",
+            "lastName": "Byram",
+            "name": "B. Byram",
+            "teamAbbrev": "COL",
+            "headshot": "https://assets.nhle.com/mugs/nhl/20232024/COL/8481524.png",
+            "highlightClip": 6340840853112,
+            "highlightClipFr": 6340840749112,
+            "goalsToDate": 3,
+            "awayScore": 2,
+            "homeScore": 1,
+            "leadingTeamAbbrev": "SEA",
+            "timeInPeriod": "04:57",
+            "shotType": "wrist",
+            "goalModifier": "none",
+            "assists": [
+              {
+                "playerId": 8477492,
+                "firstName": "Nathan",
+                "lastName": "MacKinnon",
+                "assistsToDate": 7
+              },
+              {
+                "playerId": 8477476,
+                "firstName": "Artturi",
+                "lastName": "Lehkonen",
+                "assistsToDate": 5
+              }
+            ]
+          },
+          {
+            "situationCode": "1541",
+            "strength": "pp",
+            "playerId": 8482665,
+            "firstName": "Matty",
+            "lastName": "Beniers",
+            "name": "M. Beniers",
+            "teamAbbrev": "SEA",
+            "headshot": "https://assets.nhle.com/mugs/nhl/20232024/SEA/8482665.png",
+            "highlightClip": 6340840872112,
+            "highlightClipFr": 6340841543112,
+            "goalsToDate": 1,
+            "awayScore": 3,
+            "homeScore": 1,
+            "leadingTeamAbbrev": "SEA",
+            "timeInPeriod": "11:35",
+            "shotType": "wrist",
+            "goalModifier": "none",
+            "assists": [
+              {
+                "playerId": 8478407,
+                "firstName": "Vince",
+                "lastName": "Dunn",
+                "assistsToDate": 10
+              },
+              {
+                "playerId": 8475768,
+                "firstName": "Jaden",
+                "lastName": "Schwartz",
+                "assistsToDate": 6
+              }
+            ]
+          },
+          {
+            "situationCode": "1551",
+            "strength": "ev",
+            "playerId": 8477492,
+            "firstName": "Nathan",
+            "lastName": "MacKinnon",
+            "name": "N. MacKinnon",
+            "teamAbbrev": "COL",
+            "headshot": "https://assets.nhle.com/mugs/nhl/20232024/COL/8477492.png",
+            "highlightClip": 6340842431112,
+            "highlightClipFr": 6340842623112,
+            "goalsToDate": 6,
+            "awayScore": 3,
+            "homeScore": 2,
+            "leadingTeamAbbrev": "SEA",
+            "timeInPeriod": "15:40",
+            "shotType": "wrist",
+            "goalModifier": "none",
+            "assists": [
+              {
+                "playerId": 8480069,
+                "firstName": "Cale",
+                "lastName": "Makar",
+                "assistsToDate": 12
+              },
+              {
+                "playerId": 8478420,
+                "firstName": "Mikko",
+                "lastName": "Rantanen",
+                "assistsToDate": 10
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "period": 3,
+        "periodDescriptor": {
+          "number": 3,
+          "periodType": "REG"
+        },
+        "goals": [
+          {
+            "situationCode": "1551",
+            "strength": "ev",
+            "playerId": 8477501,
+            "firstName": "Valeri",
+            "lastName": "Nichushkin",
+            "name": "V. Nichushkin",
+            "teamAbbrev": "COL",
+            "headshot": "https://assets.nhle.com/mugs/nhl/20232024/COL/8477501.png",
+            "highlightClip": 6340842899112,
+            "highlightClipFr": 6340842604112,
+            "goalsToDate": 2,
+            "awayScore": 3,
+            "homeScore": 3,
+            "timeInPeriod": "12:15",
+            "shotType": "tip-in",
+            "goalModifier": "none",
+            "assists": [
+              {
+                "playerId": 8478038,
+                "firstName": "Devon",
+                "lastName": "Toews",
+                "assistsToDate": 4
+              },
+              {
+                "playerId": 8477492,
+                "firstName": "Nathan",
+                "lastName": "MacKinnon",
+                "assistsToDate": 8
+              }
+            ]
+          },
+          {
+            "situationCode": "1551",
+            "strength": "ev",
+            "playerId": 8477416,
+            "firstName": "Oliver",
+            "lastName": "Bjorkstrand",
+            "name": "O. Bjorkstrand",
+            "teamAbbrev": "SEA",
+            "headshot": "https://assets.nhle.com/mugs/nhl/20232024/SEA/8477416.png",
+            "highlightClip": 6340845150112,
+            "highlightClipFr": 6340843512112,
+            "goalsToDate": 6,
+            "awayScore": 4,
+            "homeScore": 3,
+            "leadingTeamAbbrev": "SEA",
+            "timeInPeriod": "19:28",
+            "shotType": "wrist",
+            "goalModifier": "none",
+            "assists": [
+              {
+                "playerId": 8480009,
+                "firstName": "Eeli",
+                "lastName": "Tolvanen",
+                "assistsToDate": 5
+              },
+              {
+                "playerId": 8476457,
+                "firstName": "Adam",
+                "lastName": "Larsson",
+                "assistsToDate": 2
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    "shootout": [],
+    "threeStars": [
+      {
+        "star": 1,
+        "playerId": 8477416,
+        "teamAbbrev": "SEA",
+        "headshot": "https://assets.nhle.com/mugs/nhl/20232024/SEA/8477416.png",
+        "name": "O. Bjorkstrand",
+        "firstName": "Oliver",
+        "lastName": "Bjorkstrand",
+        "sweaterNo": 22,
+        "position": "R",
+        "goals": 2,
+        "assists": 0,
+        "points": 2
+      },
+      {
+        "star": 2,
+        "playerId": 8477492,
+        "teamAbbrev": "COL",
+        "headshot": "https://assets.nhle.com/mugs/nhl/20232024/COL/8477492.png",
+        "name": "N. MacKinnon",
+        "firstName": "Nathan",
+        "lastName": "MacKinnon",
+        "sweaterNo": 29,
+        "position": "C",
+        "goals": 1,
+        "assists": 2,
+        "points": 3
+      },
+      {
+        "star": 3,
+        "playerId": 8475768,
+        "teamAbbrev": "SEA",
+        "headshot": "https://assets.nhle.com/mugs/nhl/20232024/SEA/8475768.png",
+        "name": "J. Schwartz",
+        "firstName": "Jaden",
+        "lastName": "Schwartz",
+        "sweaterNo": 17,
+        "position": "C",
+        "goals": 1,
+        "assists": 1,
+        "points": 2
+      }
+    ],
+    "teamGameStats": [
+      {
+        "category": "sog",
+        "awayValue": "22",
+        "homeValue": "26"
+      },
+      {
+        "category": "faceoffPctg",
+        "awayValue": "43.6",
+        "homeValue": "56.4"
+      },
+      {
+        "category": "powerPlay",
+        "awayValue": "1/4",
+        "homeValue": "0/3"
+      },
+      {
+        "category": "pim",
+        "awayValue": "8",
+        "homeValue": "10"
+      },
+      {
+        "category": "hits",
+        "awayValue": "21",
+        "homeValue": "19"
+      },
+      {
+        "category": "blockedShots",
+        "awayValue": "22",
+        "homeValue": "13"
+      },
+      {
+        "category": "giveaways",
+        "awayValue": "6",
+        "homeValue": "4"
+      },
+      {
+        "category": "takeaways",
+        "awayValue": "4",
+        "homeValue": "8"
+      }
+    ],
+    "shotsByPeriod": [
+      {
+        "period": 1,
+        "periodDescriptor": {
+          "number": 1,
+          "periodType": "REG"
+        },
+        "away": 8,
+        "home": 10
+      },
+      {
+        "period": 2,
+        "periodDescriptor": {
+          "number": 2,
+          "periodType": "REG"
+        },
+        "away": 9,
+        "home": 9
+      },
+      {
+        "period": 3,
+        "periodDescriptor": {
+          "number": 3,
+          "periodType": "REG"
+        },
+        "away": 5,
+        "home": 7
+      }
+    ],
+    "penalties": [
+      {
+        "period": 2,
+        "periodDescriptor": {
+          "number": 2,
+          "periodType": "REG"
+        },
+        "penalties": [
+          {
+            "timeInPeriod": "06:49",
+            "type": "MIN",
+            "duration": 2,
+            "committedByPlayer": "Josh Manson",
+            "teamAbbrev": "COL",
+            "drawnBy": "Shane Wright",
+            "descKey": "cross-checking"
+          },
+          {
+            "timeInPeriod": "10:41",
+            "type": "BEN",
+            "duration": 2,
+            "teamAbbrev": "COL",
+            "descKey": "too-many-men-on-the-ice",
+            "servedBy": "Tomas Tatar"
+          },
+          {
+            "timeInPeriod": "12:11",
+            "type": "MIN",
+            "duration": 2,
+            "committedByPlayer": "Adam Larsson",
+            "teamAbbrev": "SEA",
+            "drawnBy": "Mikko Rantanen",
+            "descKey": "cross-checking"
+          },
+          {
+            "timeInPeriod": "17:41",
+            "type": "MIN",
+            "duration": 2,
+            "committedByPlayer": "Will Borgen",
+            "teamAbbrev": "SEA",
+            "drawnBy": "Nathan MacKinnon",
+            "descKey": "holding"
+          }
+        ]
+      },
+      {
+        "period": 3,
+        "periodDescriptor": {
+          "number": 3,
+          "periodType": "REG"
+        },
+        "penalties": [
+          {
+            "timeInPeriod": "03:39",
+            "type": "MIN",
+            "duration": 2,
+            "committedByPlayer": "Valeri Nichushkin",
+            "teamAbbrev": "COL",
+            "drawnBy": "Oliver Bjorkstrand",
+            "descKey": "interference"
+          },
+          {
+            "timeInPeriod": "13:18",
+            "type": "MIN",
+            "duration": 2,
+            "committedByPlayer": "Bowen Byram",
+            "teamAbbrev": "COL",
+            "drawnBy": "Vince Dunn",
+            "descKey": "roughing",
+            "servedBy": "Tomas Tatar"
+          },
+          {
+            "timeInPeriod": "13:18",
+            "type": "MIN",
+            "duration": 2,
+            "committedByPlayer": "Bowen Byram",
+            "teamAbbrev": "COL",
+            "drawnBy": "Vince Dunn",
+            "descKey": "roughing"
+          },
+          {
+            "timeInPeriod": "13:18",
+            "type": "MIN",
+            "duration": 2,
+            "committedByPlayer": "Vince Dunn",
+            "teamAbbrev": "SEA",
+            "drawnBy": "Bowen Byram",
+            "descKey": "roughing"
+          },
+          {
+            "timeInPeriod": "14:57",
+            "type": "MIN",
+            "duration": 2,
+            "committedByPlayer": "Jaden Schwartz",
+            "teamAbbrev": "SEA",
+            "drawnBy": "Andrew Cogliano",
+            "descKey": "slashing"
+          }
+        ]
+      }
+    ],
+    "seasonSeries": [
+      {
+        "id": 2023020046,
+        "season": 20232024,
+        "gameType": 2,
+        "gameDate": "2023-10-17",
+        "startTimeUTC": "2023-10-18T02:00:00Z",
+        "easternUTCOffset": "-04:00",
+        "venueUTCOffset": "-07:00",
+        "gameState": "OFF",
+        "gameScheduleState": "OK",
+        "awayTeam": {
+          "id": 21,
+          "abbrev": "COL",
+          "logo": "https://assets.nhle.com/logos/nhl/svg/COL_light.svg",
+          "score": 4
+        },
+        "homeTeam": {
+          "id": 55,
+          "abbrev": "SEA",
+          "logo": "https://assets.nhle.com/logos/nhl/svg/SEA_light.svg",
+          "score": 1
+        },
+        "clock": {
+          "timeRemaining": "00:00",
+          "secondsRemaining": 0,
+          "running": false,
+          "inIntermission": false
+        },
+        "period": 3,
+        "periodDescriptor": {
+          "number": 3,
+          "periodType": "REG"
+        },
+        "gameOutcome": {
+          "lastPeriodType": "REG"
+        }
+      },
+      {
+        "id": 2023020201,
+        "season": 20232024,
+        "gameType": 2,
+        "gameDate": "2023-11-09",
+        "startTimeUTC": "2023-11-10T02:00:00Z",
+        "easternUTCOffset": "-05:00",
+        "venueUTCOffset": "-07:00",
+        "gameState": "OFF",
+        "gameScheduleState": "OK",
+        "awayTeam": {
+          "id": 55,
+          "abbrev": "SEA",
+          "logo": "https://assets.nhle.com/logos/nhl/svg/SEA_light.svg",
+          "score": 4
+        },
+        "homeTeam": {
+          "id": 21,
+          "abbrev": "COL",
+          "logo": "https://assets.nhle.com/logos/nhl/svg/COL_light.svg",
+          "score": 3
+        },
+        "clock": {
+          "timeRemaining": "00:00",
+          "secondsRemaining": 0,
+          "running": false,
+          "inIntermission": false
+        },
+        "period": 3,
+        "periodDescriptor": {
+          "number": 3,
+          "periodType": "REG"
+        },
+        "gameOutcome": {
+          "lastPeriodType": "REG"
+        }
+      },
+      {
+        "id": 2023020228,
+        "season": 20232024,
+        "gameType": 2,
+        "gameDate": "2023-11-13",
+        "startTimeUTC": "2023-11-14T03:00:00Z",
+        "easternUTCOffset": "-05:00",
+        "venueUTCOffset": "-08:00",
+        "gameState": "OFF",
+        "gameScheduleState": "OK",
+        "awayTeam": {
+          "id": 21,
+          "abbrev": "COL",
+          "logo": "https://assets.nhle.com/logos/nhl/svg/COL_light.svg",
+          "score": 5
+        },
+        "homeTeam": {
+          "id": 55,
+          "abbrev": "SEA",
+          "logo": "https://assets.nhle.com/logos/nhl/svg/SEA_light.svg",
+          "score": 1
+        },
+        "clock": {
+          "timeRemaining": "00:00",
+          "secondsRemaining": 0,
+          "running": false,
+          "inIntermission": false
+        },
+        "period": 3,
+        "periodDescriptor": {
+          "number": 3,
+          "periodType": "REG"
+        },
+        "gameOutcome": {
+          "lastPeriodType": "REG"
+        }
+      }
+    ],
+    "gameInfo": {
+      "referees": [
+        {
+          "default": "Kelly Sutherland"
+        },
+        {
+          "default": "Peter MacDougall"
+        }
+      ],
+      "linesmen": [
+        {
+          "default": "Steve Barton"
+        },
+        {
+          "default": "Jonny Murray"
+        }
+      ],
+      "awayTeam": {
+        "headCoach": {
+          "default": "Dave Hakstol"
+        },
+        "scratches": [
+          {
+            "id": 8474586,
+            "firstName": {
+              "default": "Jordan"
+            },
+            "lastName": {
+              "default": "Eberle"
+            }
+          },
+          {
+            "id": 8477034,
+            "firstName": {
+              "default": "Jaycob"
+            },
+            "lastName": {
+              "default": "Megna"
+            }
+          },
+          {
+            "id": 8477930,
+            "firstName": {
+              "default": "Pierre-Edouard"
+            },
+            "lastName": {
+              "default": "Bellemare"
+            }
+          }
+        ]
+      },
+      "homeTeam": {
+        "headCoach": {
+          "default": "Jared Bednar"
+        },
+        "scratches": [
+          {
+            "id": 8477073,
+            "firstName": {
+              "default": "Kurtis"
+            },
+            "lastName": {
+              "default": "MacDermid"
+            }
+          },
+          {
+            "id": 8477494,
+            "firstName": {
+              "default": "Jonathan"
+            },
+            "lastName": {
+              "default": "Drouin"
+            }
+          }
+        ]
+      }
+    },
+    "gameVideo": {
+      "threeMinRecap": 6340845476112,
+      "threeMinRecapFr": 6340845860112,
+      "condensedGame": 6340845475112
+    }
+  }
+}
