@@ -6,7 +6,7 @@ from lib.nhl_edge.main import load_data_for_game_and_timezone
 from middleware.queryparameters.logger import QueryParamLoggerMiddleware
 import os
 
-DEFAULT_NHL_GAMEID = "2023020201" # https://www.nhl.com/gamecenter/col-vs-sea/2023/11/09/2023020201 - Seattle wins 4-3 on the road against the Colorado Avalanche
+DEFAULT_NHL_GAMEID = "2023020248" # https://www.nhl.com/gamecenter/nyi-vs-sea/2023/11/16/2023020248 - Seattle wins their first shootout in 579 days in eight rounds over the New York Islanders
 
 # ==============[ FASTAPI SETUP ]==============
 # Create your FastAPI application
