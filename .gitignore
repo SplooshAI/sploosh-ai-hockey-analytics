@@ -9,3 +9,6 @@ configs
 htmlcov
 tmp
 node_modules
+
+# Ignore NHL Edge JSON files
+src/lib/nhl_edge/json/*.json
