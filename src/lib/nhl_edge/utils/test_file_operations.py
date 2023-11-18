@@ -10,7 +10,7 @@ async def test_save_json_to_file_success(tmp_path):
     filename = 'testfile.json'
     
     # Mock the NHL_EDGE_RAW_JSON_LOCAL_DIRECTORY to use tmp_path
-    with patch('lib.nhl_edge.utils.file_operations.NHL_EDGE_RAW_JSON_LOCAL_DIRECTORY', str(tmp_path)):
+    with patch('src.lib.nhl_edge.utils.file_operations.NHL_EDGE_RAW_JSON_LOCAL_DIRECTORY', str(tmp_path)):
         await save_json_to_file(data, filename)
 
         # Check if file is created and contains correct data
@@ -37,7 +37,7 @@ async def test_save_json_to_file_error():
     data = {'test': 'data'}
     filename = '/invalid/testfile.json'  # Invalid file path to trigger an error
     
-    with patch('lib.nhl_edge.utils.file_operations.print') as mock_print:
+    with patch('src.lib.nhl_edge.utils.file_operations.print') as mock_print:
         await save_json_to_file(data, filename)
 
         # Check if the exception is caught and print is called
