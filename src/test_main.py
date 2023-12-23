@@ -70,3 +70,29 @@ def test_load_game_data_and_return_json_with_params():
     response = client.get("/api/load-game-data?gameId=2023020185&timezone=America/Los_Angeles")
     assert response.status_code == 200
     # Additional assertions for this specific gameId and timezone
+
+# ==============[ SHOT CHART TESTS ]==============
+
+# Test for /shot-chart route with default parameters
+def test_load_game_data_and_return_shot_chart_html_default():
+    response = client.get("/shot-chart")
+    assert response.status_code == 200
+    # Include more assertions here based on expected response content, like HTML structure
+
+# Test for /shot-chart route with specific game ID
+def test_load_game_data_and_return_shot_chart_html_with_game_id():
+    response = client.get("/shot-chart?gameId=2023020185")
+    assert response.status_code == 200
+    # Include assertions based on the specific game data
+
+# Test for /shot-chart route with specific timezone
+def test_load_game_data_and_return_shot_chart_html_with_timezone():
+    response = client.get("/shot-chart?timezone=America/Los_Angeles")
+    assert response.status_code == 200
+    # Include assertions based on the specific timezone
+
+# Test for /shot-chart route with both game ID and timezone
+def test_load_game_data_and_return_shot_chart_html_with_params():
+    response = client.get("/shot-chart?gameId=2023020185&timezone=America/Los_Angeles")
+    assert response.status_code == 200
+    # Include assertions based on both gameId and timezone

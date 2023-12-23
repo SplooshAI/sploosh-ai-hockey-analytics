@@ -55,6 +55,24 @@ async def load_data_for_game_and_return_html(gameId: str, timezone: str = "UTC")
 
         return HTMLResponse(content=html_content)
 
+async def generate_shot_chart_html(gameId: str, timezone: str = "UTC", plays: list = []):
+        # Generate HTML content with the game data and timezone
+        html_content = f"""
+        <html>
+            <head>
+                <title>NHL Data for Game {gameId}</title>
+            </head>
+            <body>
+                <h1>NHL Data for Game <a href="https://www.nhl.com/gamecenter/{gameId}" target="_blank">{gameId}</a></h1>
+                <p>Timezone: <strong>{timezone}</strong></p>
+                <h2>Plays</h2>
+                <pre>{json.dumps(plays, indent=2)}</pre>
+            </body>
+        </html>
+        """
+
+        return HTMLResponse(content=html_content)
+
 async def load_data_for_game_and_timezone(gameId: str, timezone: str = "UTC"):
     urls = [
         f"{NHL_EDGE_BASE_API_GAMECENTER}/{gameId}/landing",
