@@ -51,20 +51,20 @@ async def get_options_for_all_paths(path: str):
 # Default route handler
 @app.get("/")
 @app.head("/")
-async def load_game_data_and_return_html(request: Request, gameId: str = DEFAULT_NHL_GAMEID, timezone: str = "UTC"):
+async def load_game_data_and_return_html(request: Request, gameId: str = DEFAULT_NHL_GAMEID, timezone: str = DEFAULT_TIMEZONE):
     if request.method == "HEAD":
         return Response(headers={"Content-Type": "text/html"})
     return await load_data_for_game_and_return_html(gameId, timezone)
 
 # Shot chart
 @app.get("/shot-chart")
-async def load_game_data_and_return_shot_chart_html(gameId: str = DEFAULT_NHL_GAMEID, timezone: str = "UTC"):
+async def load_game_data_and_return_shot_chart_html(gameId: str = DEFAULT_NHL_GAMEID, timezone: str = DEFAULT_TIMEZONE):
     data = await load_data_for_game_and_timezone(gameId, timezone)
     plays = data['play_by_play_data']['plays']  # Extract plays object
     return await generate_shot_chart_html(gameId, timezone, plays)
 
 # New route handler for returning JSON data
 @app.get("/api/load-game-data")
-async def load_game_data_and_return_json(gameId: str = DEFAULT_NHL_GAMEID, timezone: str = "UTC"):
+async def load_game_data_and_return_json(gameId: str = DEFAULT_NHL_GAMEID, timezone: str = DEFAULT_TIMEZONE):
     data = await load_data_for_game_and_timezone(gameId, timezone)
     return JSONResponse(content=data)
