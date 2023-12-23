@@ -2,11 +2,12 @@
 from fastapi import FastAPI, Request
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import FileResponse, Response, JSONResponse
-from lib.nhl_edge.main import load_data_for_game_and_return_html, load_data_for_game_and_timezone
+from lib.nhl_edge.main import load_data_for_game_and_return_html, load_data_for_game_and_timezone, generate_shot_chart_html
 from middleware.queryparameters.logger import QueryParamLoggerMiddleware
 import os
 
 DEFAULT_NHL_GAMEID = "2023020248" # https://www.nhl.com/gamecenter/nyi-vs-sea/2023/11/16/2023020248 - Seattle wins their first shootout in 579 days in eight rounds over the New York Islanders
+DEFAULT_TIMEZONE = "America/Los_Angeles"
 
 # ==============[ FASTAPI SETUP ]==============
 # Create your FastAPI application
@@ -54,6 +55,13 @@ async def load_game_data_and_return_html(request: Request, gameId: str = DEFAULT
     if request.method == "HEAD":
         return Response(headers={"Content-Type": "text/html"})
     return await load_data_for_game_and_return_html(gameId, timezone)
+
+# Shot chart
+@app.get("/shot-chart")
+async def load_game_data_and_return_shot_chart_html(gameId: str = DEFAULT_NHL_GAMEID, timezone: str = "UTC"):
+    data = await load_data_for_game_and_timezone(gameId, timezone)
+    plays = data['play_by_play_data']['plays']  # Extract plays object
+    return await generate_shot_chart_html(gameId, timezone, plays)
 
 # New route handler for returning JSON data
 @app.get("/api/load-game-data")
