@@ -7,6 +7,7 @@ from middleware.queryparameters.logger import QueryParamLoggerMiddleware
 import os
 
 DEFAULT_NHL_GAMEID = "2023020248" # https://www.nhl.com/gamecenter/nyi-vs-sea/2023/11/16/2023020248 - Seattle wins their first shootout in 579 days in eight rounds over the New York Islanders
+DEFAULT_TIMEZONE = "America/Los_Angeles"
 
 # ==============[ FASTAPI SETUP ]==============
 # Create your FastAPI application

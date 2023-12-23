@@ -1,6 +1,6 @@
 # ==============[ IMPORTS ]==============
 from fastapi.testclient import TestClient
-from src.main import app
+from src.main import app, DEFAULT_NHL_GAMEID, DEFAULT_TIMEZONE
 
 client = TestClient(app)
 
@@ -50,7 +50,7 @@ def test_load_game_data_and_return_html_head():
 
 # Test for load_game_data_and_return_html route with different query parameters
 def test_load_game_data_and_return_html_with_params():
-    response = client.get("/?gameId=2023020185&timezone=America/Los_Angeles")
+    response = client.get(f"/?gameId={DEFAULT_NHL_GAMEID}&timezone={DEFAULT_TIMEZONE}")
     assert response.status_code == 200
     # Add more assertions based on the expected output
 
@@ -67,7 +67,7 @@ def test_load_game_data_and_return_json():
 
 # Test for /load-game-data route with query parameters
 def test_load_game_data_and_return_json_with_params():
-    response = client.get("/api/load-game-data?gameId=2023020185&timezone=America/Los_Angeles")
+    response = client.get(f"/api/load-game-data?gameId={DEFAULT_NHL_GAMEID}&timezone={DEFAULT_TIMEZONE}")
     assert response.status_code == 200
     # Additional assertions for this specific gameId and timezone
 
@@ -81,18 +81,18 @@ def test_load_game_data_and_return_shot_chart_html_default():
 
 # Test for /shot-chart route with specific game ID
 def test_load_game_data_and_return_shot_chart_html_with_game_id():
-    response = client.get("/shot-chart?gameId=2023020185")
+    response = client.get(f"/shot-chart?gameId={DEFAULT_NHL_GAMEID}")
     assert response.status_code == 200
     # Include assertions based on the specific game data
 
 # Test for /shot-chart route with specific timezone
 def test_load_game_data_and_return_shot_chart_html_with_timezone():
-    response = client.get("/shot-chart?timezone=America/Los_Angeles")
+    response = client.get(f"/shot-chart?timezone={DEFAULT_TIMEZONE}")
     assert response.status_code == 200
     # Include assertions based on the specific timezone
 
 # Test for /shot-chart route with both game ID and timezone
 def test_load_game_data_and_return_shot_chart_html_with_params():
-    response = client.get("/shot-chart?gameId=2023020185&timezone=America/Los_Angeles")
+    response = client.get(f"/shot-chart?gameId={DEFAULT_NHL_GAMEID}&timezone={DEFAULT_TIMEZONE}")
     assert response.status_code == 200
     # Include assertions based on both gameId and timezone
