@@ -7,7 +7,7 @@ from ..utils.file_operations import save_json_to_file
 
 NHL_EDGE_BASE_API_GAMECENTER = "https://api-web.nhle.com/v1/gamecenter"
 
-async def load_data_for_game_and_timezone(gameId: str, timezone: str = "UTC"):
+async def load_data_for_game_and_return_html(gameId: str, timezone: str = "UTC"):
     urls = [
         f"{NHL_EDGE_BASE_API_GAMECENTER}/{gameId}/landing",
         f"{NHL_EDGE_BASE_API_GAMECENTER}/{gameId}/boxscore",
