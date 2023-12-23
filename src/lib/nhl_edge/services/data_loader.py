@@ -69,9 +69,15 @@ async def load_data_for_game_and_timezone(gameId: str, timezone: str = "UTC"):
         # Unpack the results
         landing_data, boxscore_data, play_by_play_data = results
 
-        # Return the data as an object
-        return {
+        # Build our response object
+        data = {
             "landing_data": landing_data,
             "boxscore_data": boxscore_data,
             "play_by_play_data": play_by_play_data
         }
+
+        # Save the data to files
+        await save_json_to_file(data, f"{gameId}-results.json")
+
+        # Return the data as an object
+        return data
