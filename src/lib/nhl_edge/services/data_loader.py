@@ -1,6 +1,7 @@
 import aiohttp
 import asyncio
 import json
+import os
 from fastapi.responses import HTMLResponse
 from ..utils.fetch import fetch_url
 from ..utils.file_operations import save_json_to_file
@@ -27,12 +28,14 @@ async def load_data_for_game_and_return_html(gameId: str, timezone: str = "UTC")
         print("Boxscore Data:", json.dumps(boxscore_data, indent=2))
         print("Play-by-Play Data:", json.dumps(play_by_play_data, indent=2))
 
-       # Save the data to files
-        await asyncio.gather(
-            save_json_to_file(landing_data, f"{gameId}-landing.json"),
-            save_json_to_file(boxscore_data, f"{gameId}-boxscore.json"),
-            save_json_to_file(play_by_play_data, f"{gameId}-play-by-play.json")
-        )
+        # Save the data to files
+        # Check if running on Vercel and conditionally save the data to files
+        if not os.getenv('VERCEL'):  # Check for the Vercel environment
+            await asyncio.gather(
+                save_json_to_file(landing_data, f"{gameId}-landing.json"),
+                save_json_to_file(boxscore_data, f"{gameId}-boxscore.json"),
+                save_json_to_file(play_by_play_data, f"{gameId}-play-by-play.json")
+            )
   
         # Generate HTML content with the game data and timezone
         html_content = f"""
@@ -95,7 +98,9 @@ async def load_data_for_game_and_timezone(gameId: str, timezone: str = "UTC"):
         }
 
         # Save the data to files
-        await save_json_to_file(data, f"{gameId}-results.json")
+        # Check if running on Vercel and conditionally save the data to files
+        if not os.getenv('VERCEL'):  # Check for the Vercel environment
+            await save_json_to_file(data, f"{gameId}-results.json")
 
         # Return the data as an object
         return data
