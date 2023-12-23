@@ -2,7 +2,7 @@
 from fastapi import FastAPI, Request
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import FileResponse, Response
-from lib.nhl_edge.main import load_data_for_game_and_return_html
+from lib.nhl_edge.main import load_data_for_game_and_return_html, load_data_for_game_and_timezone
 from middleware.queryparameters.logger import QueryParamLoggerMiddleware
 import os
 
@@ -47,7 +47,7 @@ async def get_options_for_all_paths(path: str):
         "allowed_methods": ["GET", "POST", "OPTIONS", "HEAD"]
     }
 
-# Default route handler - NHL shot chart
+# Default route handler
 @app.get("/")
 @app.head("/")
 async def nhl_shot_chart(request: Request, gameId: str = DEFAULT_NHL_GAMEID, timezone: str = "UTC"):
