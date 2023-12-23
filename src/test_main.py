@@ -36,24 +36,37 @@ def test_get_options_for_all_paths():
     assert response.status_code == 200
     assert response.json() == {"allowed_methods": ["GET", "POST", "OPTIONS", "HEAD"]}
 
-# Test for default route (GET method)
-def test_nhl_shot_chart_get():
+# Test for load_game_data_and_return_html route (GET method)
+def test_load_game_data_and_return_html_get():
     response = client.get("/")
     assert response.status_code == 200
     # Include more assertions here based on expected response content
 
-# Test for default route (HEAD method)
-def test_nhl_shot_chart_head():
+# Test for load_game_data_and_return_html route (HEAD method)
+def test_load_game_data_and_return_html_head():
     response = client.head("/")
     assert response.status_code == 200
     assert response.headers["content-type"] == "text/html"
 
-# Additional tests for the default route with different query parameters
-def test_nhl_shot_chart_with_params():
+# Test for load_game_data_and_return_html route with different query parameters
+def test_load_game_data_and_return_html_with_params():
     response = client.get("/?gameId=2023020185&timezone=America/Los_Angeles")
     assert response.status_code == 200
     # Add more assertions based on the expected output
 
-# ==============[ ADDITIONAL TESTS ]==============
-# You may need to add additional tests if there are more functions, error handling,
-# or specific scenarios that need to be covered.
+# Test for /load-game-data route
+def test_load_game_data_and_return_json():
+    response = client.get("/api/load-game-data")
+    assert response.status_code == 200
+    assert "application/json" in response.headers["content-type"]
+    # Assert the structure of the JSON response
+    data = response.json()
+    assert "landing_data" in data
+    assert "boxscore_data" in data
+    assert "play_by_play_data" in data
+
+# Test for /load-game-data route with query parameters
+def test_load_game_data_and_return_json_with_params():
+    response = client.get("/api/load-game-data?gameId=2023020185&timezone=America/Los_Angeles")
+    assert response.status_code == 200
+    # Additional assertions for this specific gameId and timezone

@@ -1,7 +1,7 @@
 # ==============[ IMPORTS ]==============
 from fastapi import FastAPI, Request
 from fastapi.staticfiles import StaticFiles
-from fastapi.responses import FileResponse, Response
+from fastapi.responses import FileResponse, Response, JSONResponse
 from lib.nhl_edge.main import load_data_for_game_and_return_html, load_data_for_game_and_timezone
 from middleware.queryparameters.logger import QueryParamLoggerMiddleware
 import os
@@ -50,7 +50,13 @@ async def get_options_for_all_paths(path: str):
 # Default route handler
 @app.get("/")
 @app.head("/")
-async def nhl_shot_chart(request: Request, gameId: str = DEFAULT_NHL_GAMEID, timezone: str = "UTC"):
+async def load_game_data_and_return_html(request: Request, gameId: str = DEFAULT_NHL_GAMEID, timezone: str = "UTC"):
     if request.method == "HEAD":
         return Response(headers={"Content-Type": "text/html"})
     return await load_data_for_game_and_return_html(gameId, timezone)
+
+# New route handler for returning JSON data
+@app.get("/api/load-game-data")
+async def load_game_data_and_return_json(gameId: str = DEFAULT_NHL_GAMEID, timezone: str = "UTC"):
+    data = await load_data_for_game_and_timezone(gameId, timezone)
+    return JSONResponse(content=data)
