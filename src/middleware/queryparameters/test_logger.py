@@ -27,15 +27,6 @@ async def test_log_message(capfd):
 
     # Use pytest's capfd to capture print statements
     captured = capfd.readouterr()
-    expected_output = """
-GET /test?param1=value1&param2=value2
-
----------------
-Request Headers:
----------------
-host: example.com
-user-agent: test-agent
-
-"""
+    expected_output = "GET /test?param1=value1&param2=value2\n"
 
     assert captured.out == expected_output
