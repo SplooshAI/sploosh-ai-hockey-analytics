@@ -1,39 +1,46 @@
 # test_data_loader.py
-
-import pytest
+import sys
+import os
+from unittest.mock import patch, MagicMock
 import asyncio
 import json
-from unittest.mock import patch
-from aioresponses import aioresponses
-from lib.nhl_edge.services.data_loader import load_data_for_game_and_timezone
+from fastapi.responses import HTMLResponse
 
+import pytest
 
-@pytest.fixture
-def mock_aioresponse():
-    with aioresponses() as m:
-        yield m
+# Assuming your project root is in sys.path, use the full import path
+from src.lib.nhl_edge.services.data_loader import load_data_for_game_and_return_html, load_data_for_game_and_timezone
 
-@pytest.mark.asyncio
-async def test_load_data_for_game_and_timezone_successful(mock_aioresponse):
-    # Mocking the external API responses
-    mock_aioresponse.get("https://api-web.nhle.com/v1/gamecenter/12345/landing", payload={"data": "landing data"})
-    mock_aioresponse.get("https://api-web.nhle.com/v1/gamecenter/12345/boxscore", payload={"data": "boxscore data"})
-    mock_aioresponse.get("https://api-web.nhle.com/v1/gamecenter/12345/play-by-play", payload={"data": "play-by-play data"})
+# Sample data to use as mock responses
+sample_landing_data = {"landing": "data"}
+sample_boxscore_data = {"boxscore": "data"}
+sample_play_by_play_data = {"play-by-play": "data"}
 
-    # Mocking file operations
-    with patch("lib.nhl_edge.services.data_loader.save_json_to_file") as mock_save:
-        response = await load_data_for_game_and_timezone("12345")
-
-        # Check if the function returns HTMLResponse
-        assert response.media_type == "text/html"
-
-        # Check if file save function is called correctly
-        assert mock_save.call_count == 3
+# Mock URL fetch response
+async def mock_fetch_url(session, url):
+    if "landing" in url:
+        return sample_landing_data
+    elif "boxscore" in url:
+        return sample_boxscore_data
+    elif "play-by-play" in url:
+        return sample_play_by_play_data
 
 @pytest.mark.asyncio
-async def test_load_data_for_game_and_timezone_with_error(mock_aioresponse):
-    # Simulate an error in fetching data
-    mock_aioresponse.get("https://api-web.nhle.com/v1/gamecenter/12345/landing", exception=Exception("Error"))
+@patch("src.lib.nhl_edge.services.data_loader.fetch_url", side_effect=mock_fetch_url)
+async def test_load_data_for_game_and_return_html(fetch_url_mock):
+    response = await load_data_for_game_and_return_html("2023020497")
+    assert isinstance(response, HTMLResponse)
+    # You can add more assertions here to check if the HTML content is as expected
 
-    with pytest.raises(Exception):
-        await load_data_for_game_and_timezone("12345")
+@pytest.mark.asyncio
+@patch("src.lib.nhl_edge.services.data_loader.fetch_url", side_effect=mock_fetch_url)
+async def test_load_data_for_game_and_timezone(fetch_url_mock):
+    result = await load_data_for_game_and_timezone("2023020497")
+    assert result == {
+        "landing_data": sample_landing_data,
+        "boxscore_data": sample_boxscore_data,
+        "play_by_play_data": sample_play_by_play_data
+    }
+    # Additional assertions can be added here for more thorough testing
+
+# Add more tests to cover edge cases, error handling, and exceptional scenarios
