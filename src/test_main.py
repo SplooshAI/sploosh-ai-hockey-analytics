@@ -99,7 +99,7 @@ def test_load_game_data_and_return_shot_chart_html_with_params():
 
 # Test for /shot-chart/test route using test local data
 def test_load_shot_chart_using_test_local_data():
-    response = client.get("/shot-chart/test")
+    response = client.get("/shot-chart/file")
     assert response.status_code == 200
     # Assert that the response content-type is HTML
     assert "text/html" in response.headers["content-type"]
