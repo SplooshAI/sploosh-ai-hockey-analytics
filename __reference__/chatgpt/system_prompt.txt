@@ -14,6 +14,10 @@ My Python NHL shot chart app has the following structure:
 /src/lib/nhl_edge/services/utils/file_operations.py - Utility module to save JSON data to a local file
 /src/lib/nhl_edge/services/utils/test_fetch.py - Tests for the fetch utility module
 /src/lib/nhl_edge/services/utils/test_file_operations.py - Tests for the file_operations utility module
+/src/lib/nhl_edge/shot_chart/main.py - A master file of shot chart functionality with primary functions like generate_shot_chart
+/src/lib/nhl_edge/shot_chart/test_main.py - Tests for the main shot chart file
+/src/lib/nhl_edge/shot_chart/utils.py - Helper functions and utilities specific to shot chart generation
+/src/lib/nhl_edge/shot_chart/test_utils.py - Tests for the helper functions and utilities specific to shot chart generation
 
 /src/lib/qrcode/qrcode_generator.py - My custom module for generating QR codes and returning them as images or HTML
 /src/lib/qrcode/test_qrcode_generator.py - Tests for my custom QR code module
