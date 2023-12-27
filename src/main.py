@@ -65,6 +65,12 @@ async def load_game_data_and_return_shot_chart_html(gameId: str = DEFAULT_NHL_GA
     html_content = await generate_shot_chart(gameId, timezone, data, use_local_json)
     return Response(content=html_content, media_type="text/html")
 
+@app.get("/shot-chart/test")
+async def load_shot_chart_using_test_local_data(timezone: str = DEFAULT_TIMEZONE):
+    json_file_path = os.path.join("lib", "nhl_edge", "json", "2023020497-results.json")
+    html_content = await generate_shot_chart("2023020497", timezone, use_local_json=True, file_path=json_file_path)
+    return Response(content=html_content, media_type="text/html")
+
 # New route handler for returning JSON data
 @app.get("/api/load-game-data")
 async def load_game_data_and_return_json(gameId: str = DEFAULT_NHL_GAMEID, timezone: str = DEFAULT_TIMEZONE):
