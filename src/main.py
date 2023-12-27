@@ -2,7 +2,8 @@
 from fastapi import FastAPI, Request
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import FileResponse, Response, JSONResponse
-from lib.nhl_edge.main import load_data_for_game_and_return_html, load_data_for_game_and_timezone, generate_shot_chart_html
+from lib.nhl_edge.main import load_data_for_game_and_return_html, load_data_for_game_and_timezone
+from lib.nhl_edge.shot_chart.main import generate_shot_chart
 from middleware.queryparameters.logger import QueryParamLoggerMiddleware
 import os
 
@@ -56,12 +57,21 @@ async def load_game_data_and_return_html(request: Request, gameId: str = DEFAULT
         return Response(headers={"Content-Type": "text/html"})
     return await load_data_for_game_and_return_html(gameId, timezone)
 
-# Shot chart
+# Shot chart route handler using the new shot_chart module
 @app.get("/shot-chart")
-async def load_game_data_and_return_shot_chart_html(gameId: str = DEFAULT_NHL_GAMEID, timezone: str = DEFAULT_TIMEZONE):
-    data = await load_data_for_game_and_timezone(gameId, timezone)
-    plays = data['play_by_play_data']['plays']  # Extract plays object
-    return await generate_shot_chart_html(gameId, timezone, plays)
+async def load_game_data_and_return_shot_chart_html(gameId: str = DEFAULT_NHL_GAMEID, timezone: str = DEFAULT_TIMEZONE, use_local_json: bool = False):
+    # Load data from API or local file based on 'use_local_json' flag
+    data = await load_data_for_game_and_timezone(gameId, timezone) if not use_local_json else None
+    html_content = await generate_shot_chart(gameId, timezone, data, use_local_json)
+    return Response(content=html_content, media_type="text/html")
+
+# Shot chart route handler using local JSON files instead of the NHL Edge API
+@app.get("/shot-chart/file")
+async def load_shot_chart_using_test_local_data(gameId: str = "2023020497", timezone: str = DEFAULT_TIMEZONE):
+    json_file_name = f"{gameId}-results.json"
+    json_file_path = os.path.join("lib", "nhl_edge", "json", json_file_name)
+    html_content = await generate_shot_chart(gameId, timezone, use_local_json=True, file_path=json_file_path)
+    return Response(content=html_content, media_type="text/html")
 
 # New route handler for returning JSON data
 @app.get("/api/load-game-data")

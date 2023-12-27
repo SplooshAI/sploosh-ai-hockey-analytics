@@ -96,3 +96,12 @@ def test_load_game_data_and_return_shot_chart_html_with_params():
     response = client.get(f"/shot-chart?gameId={DEFAULT_NHL_GAMEID}&timezone={DEFAULT_TIMEZONE}")
     assert response.status_code == 200
     # Include assertions based on both gameId and timezone
+
+# Test for /shot-chart/test route using test local data
+def test_load_shot_chart_using_test_local_data():
+    response = client.get("/shot-chart/file")
+    assert response.status_code == 200
+    # Assert that the response content-type is HTML
+    assert "text/html" in response.headers["content-type"]
+    # Include more assertions here based on expected response content, like HTML structure
+    # For example, you might check for certain elements in the HTML that are unique to the shot chart
