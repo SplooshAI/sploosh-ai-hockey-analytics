@@ -59,10 +59,9 @@ async def load_game_data_and_return_html(request: Request, gameId: str = DEFAULT
 
 # Shot chart route handler using the new shot_chart module
 @app.get("/shot-chart")
-async def load_game_data_and_return_shot_chart_html(gameId: str = DEFAULT_NHL_GAMEID, timezone: str = DEFAULT_TIMEZONE, use_local_json: bool = False):
-    # Load data from API or local file based on 'use_local_json' flag
-    data = await load_data_for_game_and_timezone(gameId, timezone) if not use_local_json else None
-    html_content = await generate_shot_chart(gameId, timezone, data, use_local_json)
+async def load_game_data_and_return_shot_chart_html(gameId: str = DEFAULT_NHL_GAMEID, timezone: str = DEFAULT_TIMEZONE):
+    # Load data from the NHL Edge API
+    html_content = await generate_shot_chart(gameId, timezone)
     return Response(content=html_content, media_type="text/html")
 
 # Shot chart route handler using local JSON files instead of the NHL Edge API

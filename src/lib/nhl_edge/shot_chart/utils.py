@@ -6,8 +6,26 @@ from PIL import Image
 
 def parse_data_for_shot_chart(data):
     # Parse and process the data here
+    plays = data.get('play_by_play_data', {}).get('plays', [])
+    filtered_plays = []
+
+    for play in plays:
+        type_desc_key = play.get('typeDescKey')
+        if type_desc_key in ['missed-shot', 'shot-on-goal', 'blocked-shot', 'goal']:
+            filtered_plays.append(play)
+
     # This is a placeholder function
-    return data
+    return filtered_plays
+
+def get_all_play_by_play_typeDescKeys(data):
+    plays = data.get('play_by_play_data', {}).get('plays', [])
+    typeDescKeys = set()
+
+    for play in plays:
+        type_desc_key = play.get('typeDescKey')
+        typeDescKeys.add(type_desc_key)
+
+    return typeDescKeys
 
 def generate_base64_image(data, gameId):
     # Generate a simple placeholder image
