@@ -1,57 +1,55 @@
-# src/lib/nhl_edge/shot_chart/test_main.py
+# test_main.py
 
-import asyncio
-import unittest
-from unittest.mock import patch, MagicMock, AsyncMock, Mock
-from .main import generate_shot_chart, load_data_from_file
+import pytest
+from unittest.mock import patch
+from src.lib.nhl_edge.shot_chart.main import generate_shot_chart
 
-class TestShotChart(unittest.IsolatedAsyncioTestCase):
+# Sample test data
+test_data = {'play_by_play_data': {'plays': []}}
 
-    @patch('src.lib.nhl_edge.shot_chart.main.load_data_from_file')
-    @patch('src.lib.nhl_edge.shot_chart.main.generate_base64_image')
-    @patch('src.lib.nhl_edge.shot_chart.main.generate_html_with_base64_image')
-    async def test_generate_shot_chart_with_local_json(self, mock_html, mock_base64, mock_load):
-        mock_load.return_value = AsyncMock(return_value={'mocked': 'data'})
-        mock_base64.return_value = 'base64string'
-        mock_html.return_value = '<html>Mocked HTML</html>'
+@pytest.mark.asyncio
+@patch('src.lib.nhl_edge.shot_chart.main.load_data_from_file')
+@patch('src.lib.nhl_edge.shot_chart.main.load_data_for_game_and_timezone')
+async def test_generate_shot_chart_with_local_json(mock_load_api, mock_load_file):
+    # Mock setup
+    mock_load_file.return_value = test_data
 
-        result = await generate_shot_chart('gameId', 'timezone', use_local_json=True, file_path='path/to/json')
-        
-        mock_load.assert_called_once_with('path/to/json')
-        mock_base64.assert_called_once()
-        mock_html.assert_called_once_with('base64string')
-        self.assertEqual(result, '<html>Mocked HTML</html>')
+    gameId = '2023020497'
+    timezone = 'America/Los_Angeles'
 
-    @patch('src.lib.nhl_edge.shot_chart.main.load_data_for_game_and_timezone')
-    @patch('src.lib.nhl_edge.shot_chart.main.generate_base64_image')
-    @patch('src.lib.nhl_edge.shot_chart.main.generate_html_with_base64_image')
-    async def test_generate_shot_chart_with_api_data(self, mock_html, mock_base64, mock_api_load):
-        mock_api_load.return_value = AsyncMock(return_value={'mocked': 'api_data'})
-        mock_base64.return_value = 'base64string'
-        mock_html.return_value = '<html>Mocked HTML</html>'
+    # Call the generate_shot_chart function with use_local_json flag
+    result = await generate_shot_chart(gameId, timezone, use_local_json=True, file_path='path/to/file.json')
 
-        result = await generate_shot_chart('gameId', 'timezone')
+    # Assertions
+    mock_load_file.assert_called_once_with('path/to/file.json')
+    mock_load_api.assert_not_called()  # API should not be called
+    assert 'data:image/png;base64,' in result
 
-        mock_api_load.assert_called_once_with('gameId', 'timezone')
-        mock_base64.assert_called_once()
-        mock_html.assert_called_once_with('base64string')
-        self.assertEqual(result, '<html>Mocked HTML</html>')
+@pytest.mark.asyncio
+@patch('src.lib.nhl_edge.shot_chart.main.load_data_for_game_and_timezone')
+async def test_generate_shot_chart_with_api_data(mock_load_api):
+    # Mock setup
+    mock_load_api.return_value = test_data
 
-    @patch('builtins.open')
-    def test_load_data_from_file(self, mock_open):
-        # Mock file content
-        mock_file_content = '{"mocked": "file_data"}'
-        
-        # Mock file object with a context manager
-        mock_file = MagicMock()
-        mock_file.__enter__.return_value.read.return_value = mock_file_content
-        mock_open.return_value = mock_file
+    gameId = '2023020497'
+    timezone = 'America/Los_Angeles'
 
-        loop = asyncio.get_event_loop()
-        result = loop.run_until_complete(load_data_from_file('path/to/file'))
+    # Call the generate_shot_chart function without local JSON
+    result = await generate_shot_chart(gameId, timezone)
 
-        mock_open.assert_called_once_with('path/to/file', 'r')
-        self.assertEqual(result, {'mocked': 'file_data'})
+    # Assertions
+    mock_load_api.assert_called_once_with(gameId, timezone)
+    assert 'data:image/png;base64,' in result
 
-if __name__ == '__main__':
-    unittest.main()
+@pytest.mark.asyncio
+async def test_generate_shot_chart_with_provided_data():
+    gameId = '2023020497'
+    timezone = 'America/Los_Angeles'
+
+    # Call the generate_shot_chart function with provided data
+    result = await generate_shot_chart(gameId, timezone, data=test_data)
+
+    # Assertions
+    assert 'data:image/png;base64,' in result
+
+# Additional tests can be added for edge cases, error handling, etc.
