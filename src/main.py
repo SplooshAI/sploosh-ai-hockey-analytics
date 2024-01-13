@@ -7,7 +7,7 @@ from lib.nhl_edge.shot_chart.main import generate_shot_chart
 from middleware.queryparameters.logger import QueryParamLoggerMiddleware
 import os
 
-DEFAULT_NHL_GAMEID = "2023020248" # https://www.nhl.com/gamecenter/nyi-vs-sea/2023/11/16/2023020248 - Seattle wins their first shootout in 579 days in eight rounds over the New York Islanders
+DEFAULT_NHL_GAMEID = "2023020573" # https://www.nhl.com/gamecenter/sea-vs-vgk/2024/01/01/2023020573 - Seattle wins the 2024 Winter Classic with Joey Daccord in net with a 3-0 shutout over the Las Vegas Golden Knights
 DEFAULT_TIMEZONE = "America/Los_Angeles"
 
 # ==============[ FASTAPI SETUP ]==============
