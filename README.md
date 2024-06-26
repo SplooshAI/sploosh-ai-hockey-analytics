@@ -2,16 +2,18 @@
 
 This project generates a shot chart using game data provided by the NHL.
 
+**IMPORTANT:** The NHL Edge API is publicly available; however it is undocumented and subject to change. [@Zmalski](https://github.com/Zmalski) has created an excellent repo at [https://github.com/Zmalski/NHL-API-Reference](https://github.com/Zmalski/NHL-API-Reference) which is an excellent guide for working with the NHL Edge API in your projects.
+
 ![](./apps/nhl-shot-chart-fastapi/__screenshots__/coverage.svg)
 
 You can view the [demo](https://nhl-shot-chart.vercel.app/) on Vercel at [https://nhl-shot-chart.vercel.app/](https://nhl-shot-chart.vercel.app/)
 
 ![](./apps/nhl-shot-chart-fastapi/__screenshots__/01.png)
 
-
 ## Getting started
 
 ### Prerequisites
+
 Please make sure that you have the following installed on your development environment:
 
 - [Node.js](https://nodejs.org/en)

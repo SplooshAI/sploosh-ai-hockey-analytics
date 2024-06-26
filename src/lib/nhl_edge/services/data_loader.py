@@ -6,6 +6,8 @@ from fastapi.responses import HTMLResponse
 from ..utils.fetch import fetch_url
 from ..utils.file_operations import save_json_to_file
 
+# Please see the NHL Edge API documentation for URLs and endpoints that are available
+# 🙏🏻 Shout-out to https://github.com/Zmalski/NHL-API-Reference for compiling NHL Edge API documentation
 NHL_EDGE_BASE_API_GAMECENTER = "https://api-web.nhle.com/v1/gamecenter"
 
 async def load_data_for_game_and_return_html(gameId: str, timezone: str = "UTC"):
