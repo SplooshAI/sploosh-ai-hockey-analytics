@@ -31,9 +31,9 @@ This code base was initially developed and tested on:
   - Apple M1 Max
   - 64 GB memory
   - 2 TB SSD
-  - macOS Sonoma `14.0`
-    - Node.js `v18.16.0`
-    - npm `9.8.1`
+  - macOS Sonoma `14.5`
+    - Node.js `v20.11.1`
+    - npm `10.8.1`
     - Python `3.11.1`
 
 ### Scripts
