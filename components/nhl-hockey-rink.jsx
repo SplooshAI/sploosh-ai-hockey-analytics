@@ -41,7 +41,7 @@ const NHLHockeyRink = (props) => (
       </pattern>
     </defs>
     <image
-      href="https://assets.nhle.com/logos/nhl/svg/CAR_light.svg"
+      href="https://assets.nhle.com/logos/nhl/svg/SEA_light.svg"
       height={400}
       width={400}
       x={1000}
@@ -54,7 +54,7 @@ const NHLHockeyRink = (props) => (
       transform="rotate(90)"
       className="sc-iSfqCo DqrES"
     >
-      {"SEA"}
+      {"HOME"}
     </text>
     <text
       x={-510}
@@ -63,7 +63,7 @@ const NHLHockeyRink = (props) => (
       transform="rotate(270)"
       className="sc-iSfqCo iHxclF"
     >
-      {"CAR"}
+      {"AWAY"}
     </text>
     <rect x={1194} width={12} height={1020} className="sc-hZlppA eaOGAc" />
     <g>
