@@ -19,9 +19,9 @@
         width="2600"></image>
     </pattern>
   </defs>
-  <image href="https://assets.nhle.com/logos/nhl/svg/VGK_light.svg" height="400" width="400" x="1000" y="310"></image>
-  <text x="510" y="-25" text-anchor="middle" transform="rotate(90)" class="sc-iSfqCo cLdcJN">EDM</text><text x="-510"
-    y="2375" text-anchor="middle" transform="rotate(270)" class="sc-iSfqCo fInzJJ">VGK</text>
+  <image href="https://assets.nhle.com/logos/nhl/svg/SEA_light.svg" height="400" width="400" x="1000" y="310"></image>
+  <text x="510" y="-25" text-anchor="middle" transform="rotate(90)" class="sc-iSfqCo cLdcJN">AWAY</text><text x="-510"
+    y="2375" text-anchor="middle" transform="rotate(270)" class="sc-iSfqCo fInzJJ">HOME</text>
   <rect x="1194" width="12" height="1020" class="sc-hZlppA eaOGAc"></rect>
   <g>
     <path fill="#3366CC"
