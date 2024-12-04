@@ -5,6 +5,7 @@ import os
 from fastapi.responses import HTMLResponse
 from ..utils.fetch import fetch_url
 from ..utils.file_operations import save_json_to_file
+import aiofiles
 
 # Please see the NHL Edge API documentation for URLs and endpoints that are available
 # 🙏🏻 Shout-out to https://github.com/Zmalski/NHL-API-Reference for compiling NHL Edge API documentation
@@ -16,6 +17,17 @@ async def load_data_for_game_and_return_html(gameId: str, timezone: str = "UTC")
         f"{NHL_EDGE_BASE_API_GAMECENTER}/{gameId}/boxscore",
         f"{NHL_EDGE_BASE_API_GAMECENTER}/{gameId}/play-by-play"
     ]
+
+    # Load the SVG file using a proper path
+    current_dir = os.path.dirname(os.path.abspath(__file__))
+    svg_path = os.path.join(current_dir, '..', '..', '..', 'assets', 'nhl-hockey-rink.svg')
+    
+    try:
+        async with aiofiles.open(svg_path, mode='r') as svg_file:
+            nhl_rink_svg = await svg_file.read()
+    except Exception as e:
+        print(f"Error loading SVG file: {e}")
+        nhl_rink_svg = '<!-- SVG file not found -->'
 
     async with aiohttp.ClientSession() as session:
         tasks = [fetch_url(session, url) for url in urls]
@@ -48,6 +60,7 @@ async def load_data_for_game_and_return_html(gameId: str, timezone: str = "UTC")
             <body>
                 <h1>NHL Data for Game <a href="https://www.nhl.com/gamecenter/{gameId}" target="_blank">{gameId}</a></h1>
                 <p>Timezone: <strong>{timezone}</strong></p>
+                {nhl_rink_svg}
                 <h2>Landing Data</h2>
                 <pre>{json.dumps(landing_data, indent=2)}</pre>
                 <h2>Boxscore Data</h2>
