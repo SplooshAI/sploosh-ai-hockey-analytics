@@ -1,0 +1,14 @@
+FROM node:20-alpine
+WORKDIR /app
+
+COPY package.json package-lock.json ./
+RUN npm ci
+
+ENV NEXT_TELEMETRY_DISABLED 1
+ENV NODE_ENV development
+ENV PORT 3000
+ENV HOSTNAME "0.0.0.0"
+
+EXPOSE 3000
+
+CMD ["npm", "run", "dev"] 
