@@ -1,15 +1,9 @@
-# Base image
-FROM node:20-alpine AS base
+FROM node:20-alpine
 WORKDIR /app
 
-# Install dependencies
 COPY package.json package-lock.json ./
 RUN npm ci
 
-# Copy application code
-COPY . .
-
-# Development specific settings
 ENV NEXT_TELEMETRY_DISABLED 1
 ENV NODE_ENV development
 ENV PORT 3000
