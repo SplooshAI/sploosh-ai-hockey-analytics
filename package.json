@@ -1,13 +1,8 @@
 {
   "name": "sploosh-ai-nhl-shot-chart",
   "version": "0.0.0",
-  "scripts": {
-    "setup": "clear && ./manage.sh setup",
-    "start": "clear && ./manage.sh start",
-    "test": "clear && ./manage.sh test",
-    "test:coverage": "clear && ./manage.sh test --coverage",
-    "destroy": "clear && ./manage.sh destroy"
-  },
+  "description": "Generate a shot chart (ice hockey) for NHL games using data from the NHL EDGE API.",
+  "scripts": {},
   "repository": {
     "type": "git",
     "url": "git+https://github.com/SplooshAI/sploosh-ai-nhl-shot-chart.git"
