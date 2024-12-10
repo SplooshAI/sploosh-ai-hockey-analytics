@@ -1,14 +1,1 @@
-__pycache__
-.coverage
 .DS_Store
-.env
-.pytest_cache
-.venv
-.vercel
-configs
-htmlcov
-tmp
-node_modules
-
-# Ignore NHL Edge JSON files
-src/lib/nhl_edge/json/*.json
