@@ -4,7 +4,9 @@ interface NHLEdgeHockeyRinkProps {
   className?: string;
   awayTeamName?: string;
   homeTeamName?: string;
-  centerIceLogo?: string;  
+  centerIceLogo?: string;
+  centerIceLogoHeight?: number;
+  centerIceLogoWidth?: number;
   iceTexturePattern?: string;
   zamboniImage?: string;
 }
@@ -17,6 +19,8 @@ const NHLEdgeHockeyRink = ({
   awayTeamName = "",
   homeTeamName = "",
   centerIceLogo = DEFAULT_CENTER_ICE_LOGO_SEATTLE_KRAKEN_LIGHT,
+  centerIceLogoHeight = 400,
+  centerIceLogoWidth = 400,
   iceTexturePattern = DEFAULT_ICE_TEXTURE_PATTERN_URL,
   zamboniImage = DEFAULT_ZAMBONI_IMAGE
 }: NHLEdgeHockeyRinkProps) => (
@@ -63,8 +67,8 @@ const NHLEdgeHockeyRink = ({
     <image
       // PROP: Logo to be displayed at center ice
       href={centerIceLogo}
-      height={400}
-      width={400}
+      height={centerIceLogoHeight}
+      width={centerIceLogoWidth}
       x={1000}
       y={310}
     />
