@@ -1,4 +1,4 @@
-import { getVersionInfo } from '@/lib/version'
+import { getVersionInfo } from '../../lib/version'
 
 export function Version() {
   const { version, gitHash, gitDate, nextJsVersion } = getVersionInfo()

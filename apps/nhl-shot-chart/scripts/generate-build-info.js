@@ -29,6 +29,6 @@ const getBuildInfo = () => {
 const buildInfo = getBuildInfo();
 
 fs.writeFileSync(
-  './src/lib/build-info.json',
+  './lib/build-info.json',
   JSON.stringify(buildInfo, null, 2)
 );
