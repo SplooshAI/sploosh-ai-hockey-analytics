@@ -1,5 +1,5 @@
-import packageJson from '../../package.json';
-import buildInfo from '../lib/build-info.json';
+import packageJson from '../package.json';
+import buildInfo from './build-info.json';
 
 const version = packageJson.version;
 

@@ -1,5 +1,5 @@
-import NHLEdgeHockeyRink from '@/components/nhl-edge-hockey-rink/nhl-edge-hockey-rink';
-import { Version } from '@/components/version/version';
+import NHLEdgeHockeyRink from '../components/nhl-edge-hockey-rink/nhl-edge-hockey-rink';
+import { Version } from '../components/version/version';
 
 export default function Home() {
   return (
