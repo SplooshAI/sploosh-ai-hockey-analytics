@@ -1,7 +1,7 @@
 import { getVersionInfo } from '@/lib/version'
 
 export function Version() {
-  const { version, gitHash } = getVersionInfo()
+  const { version, gitHash, nextJsVersion } = getVersionInfo()
   
   return (
     <div className="text-xs text-muted-foreground">
@@ -12,6 +12,8 @@ export function Version() {
           <span>{gitHash.substring(0, 7)}</span>
         </>
       )}
+      <span className="mx-1">•</span>
+      <span>Next.js {nextJsVersion}</span>
     </div>
   )
 }
