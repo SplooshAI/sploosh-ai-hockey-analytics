@@ -1,6 +1,5 @@
 import * as React from "react";
-
-const NHLEdgeHockeyRink = (props: React.SVGProps<SVGSVGElement>) => (
+const NHLEdgeHockeyRink = (props: React.JSX.IntrinsicAttributes & React.SVGProps<SVGSVGElement>) => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
     xmlnsXlink="http://www.w3.org/1999/xlink"
@@ -42,7 +41,7 @@ const NHLEdgeHockeyRink = (props: React.SVGProps<SVGSVGElement>) => (
       </pattern>
     </defs>
     <image
-      href="https://assets.nhle.com/logos/nhl/svg/VGK_light.svg"
+      href="https://assets.nhle.com/logos/nhl/svg/SEA_light.svg"
       height={400}
       width={400}
       x={1000}
@@ -55,7 +54,7 @@ const NHLEdgeHockeyRink = (props: React.SVGProps<SVGSVGElement>) => (
       transform="rotate(90)"
       className="sc-iSfqCo cLdcJN"
     >
-      {"EDM"}
+      {"AWAY"}
     </text>
     <text
       x={-510}
@@ -64,7 +63,7 @@ const NHLEdgeHockeyRink = (props: React.SVGProps<SVGSVGElement>) => (
       transform="rotate(270)"
       className="sc-iSfqCo fInzJJ"
     >
-      {"VGK"}
+      {"HOME"}
     </text>
     <rect x={1194} width={12} height={1020} className="sc-hZlppA eaOGAc" />
     <g>
