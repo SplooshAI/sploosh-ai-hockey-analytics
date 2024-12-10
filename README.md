@@ -12,18 +12,40 @@ Work is underway to rewrite the NHL shot chart to accommodate the new endpoints 
 
 **IMPORTANT:** The NHL Edge API is publicly available; however, it is undocumented and subject to change. [@Zmalski](https://github.com/Zmalski) has created an excellent repo at [https://github.com/Zmalski/NHL-API-Reference](https://github.com/Zmalski/NHL-API-Reference) which is a fantastic guide for working with the NHL Edge API in your projects.
 
-## Prerequisites
+## Demo
 
-Please make sure that you have the following installed on your development environment:
+This application is deployed on Vercel and can be accessed at <https://nhl-shot-chart.vercel.app/>
 
-- [Node.js](https://nodejs.org/en)
+## Development
 
-This code base was initially developed and tested on:
+The application will be available at <http://localhost:3000> regardless of which method you choose.
 
-- 2021 14" MacBook Pro
-  - Apple M1 Max
-  - 64 GB memory
-  - 2 TB SSD
-  - macOS Sequoia `15.1.1`
-    - Node.js `v20.18.0`
-    - npm `10.8.2`
+### Option 1: Local Development
+
+Install dependencies and start the development server:
+
+```bash
+# Navigate to the app
+cd apps/nhl-shot-chart
+
+# Install dependencies
+npm install
+
+# Start the development server
+npm run dev
+```
+
+### Option 2: Using Docker
+
+If you prefer to use Docker, you can use these commands:
+
+```bash
+# Build and start the container
+npm run docker:up
+
+# Run in detached mode (optional)
+npm run docker:up:detach
+
+# Stop the container
+npm run docker:down
+```
