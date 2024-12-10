@@ -7,6 +7,7 @@ services:
       dockerfile: ../../docker/nhl-shot-chart/development/app/Dockerfile
       args:
         GIT_HASH: ${GIT_HASH:-unknown}
+        GIT_DATE: ${GIT_DATE:-unknown}
     ports:
       - "3000:3000"
     volumes:
