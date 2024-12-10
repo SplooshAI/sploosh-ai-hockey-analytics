@@ -13,7 +13,7 @@
     "docker:down": "npm run docker:nhl:dev:down",
     "docker:nhl:dev:up": "docker compose -f docker/nhl-shot-chart/development/docker-compose.yml -p nhl-shot-chart-dev up",
     "docker:nhl:dev:up:detach": "docker compose -f docker/nhl-shot-chart/development/docker-compose.yml -p nhl-shot-chart-dev up -d",
-    "docker:nhl:dev:build": "docker compose -f docker/nhl-shot-chart/development/docker-compose.yml -p nhl-shot-chart-dev up --build",
+    "docker:nhl:dev:build": "GIT_HASH=$(git rev-parse HEAD) docker compose -f docker/nhl-shot-chart/development/docker-compose.yml -p nhl-shot-chart-dev up --build",
     "docker:nhl:dev:down": "docker compose -f docker/nhl-shot-chart/development/docker-compose.yml -p nhl-shot-chart-dev down"
   },
   "repository": {

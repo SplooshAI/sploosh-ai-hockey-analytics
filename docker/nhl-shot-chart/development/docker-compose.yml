@@ -5,6 +5,8 @@ services:
       context: ../../../apps/nhl-shot-chart
       # This is the path to the Dockerfile relative to your application source
       dockerfile: ../../docker/nhl-shot-chart/development/app/Dockerfile
+      args:
+        GIT_HASH: ${GIT_HASH:-unknown}
     ports:
       - "3000:3000"
     volumes:
