@@ -16,7 +16,7 @@ export default function Home() {
           <NHLEdgeHockeyRink className="w-full h-auto" />
         </div>
         <div className="flex justify-center items-center w-full h-full">
-          <NHLEdgeHockeyRink className="w-full h-auto" centerIceLogo='/sploosh.ai/sploosh-ai-character-transparent.png' centerIceLogoHeight={358} centerIceLogoWidth={400} />
+          <NHLEdgeHockeyRink className="w-full h-auto" centerIceLogo='/sploosh.ai/sploosh-ai-character-transparent.png' centerIceLogoHeight={358} centerIceLogoWidth={400} displayZamboni={true} />
         </div>
       </div>
     </main>

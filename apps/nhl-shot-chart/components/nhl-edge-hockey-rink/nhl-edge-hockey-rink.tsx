@@ -9,6 +9,7 @@ interface NHLEdgeHockeyRinkProps {
   centerIceLogoWidth?: number;
   iceTexturePattern?: string;
   zamboniImage?: string;
+  displayZamboni?: boolean;
 }
 
 const DEFAULT_CENTER_ICE_LOGO_SEATTLE_KRAKEN_LIGHT = "https://assets.nhle.com/logos/nhl/svg/SEA_light.svg"
@@ -23,7 +24,8 @@ const NHLEdgeHockeyRink = ({
   centerIceLogoWidth = 400,
   className = "w-full h-auto",
   iceTexturePattern = DEFAULT_ICE_TEXTURE_PATTERN_URL,
-  zamboniImage = DEFAULT_ZAMBONI_IMAGE
+  zamboniImage = DEFAULT_ZAMBONI_IMAGE,
+  displayZamboni = false
 }: NHLEdgeHockeyRinkProps) => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
@@ -126,7 +128,7 @@ const NHLEdgeHockeyRink = ({
           <circle fill="none" cx={372} cy={246} r={180} />
           <path
             fill="#CC3333"
-            d="M372,68c24.03,0,47.34,4.71,69.29,13.99c21.2,8.97,40.23,21.8,56.58,38.15s29.18,35.38,38.15,56.58 C545.29,198.66,550,221.97,550,246s-4.71,47.34-13.99,69.29c-8.97,21.2-21.8,40.23-38.15,56.58 c-16.35,16.35-35.38,29.18-56.58,38.15C419.34,419.29,396.03,424,372,424s-47.34-4.71-69.29-13.99 c-21.2-8.97-40.23-21.8-56.58-38.15c-16.35-16.35-29.18-35.38-38.15-56.58C198.71,293.34,194,270.03,194,246 s4.71-47.34,13.99-69.29c8.97-21.2,21.8-40.23,38.15-56.58s35.38-29.18,56.58-38.15C324.66,72.71,347.97,68,372,68 M372,66 c-99.41,0-180,80.59-180,180s80.59,180,180,180s180-80.59,180-180S471.41,66,372,66L372,66z"
+            d="M372,68c24.03,0,47.34,4.71,69.29,13.99c21.2,8.97,40.23,21.8,56.58,38.15s29.18,35.38,38.15,56.58 C545.29,198.66,550,221.97,550,246s-4.71,47.34-13.99,69.29c-8.97,21.2-21.8,40.23-38.15,56.58 c-16.35,16.35-35.38,29.18-56.58,38.15C419.34,419.29,396.03,424,372,424s-47.34-4.71-69.29-13.99 c-21.2-8.97-40.23-21.8-56.58-38.15c-16.35-16.35-29.18-35.38-38.15-56.58C198.71,293.34,194,270.03,194,246 s4.71-47.34,13.99-69.29c8.97-21.2,21.8-40.23,38.15-56.58c16.35-16.35,35.38-29.18,56.58-38.15C324.66,72.71,347.97,68,372,68 M372,66 c-99.41,0-180,80.59-180,180s80.59,180,180,180s180-80.59,180-180S471.41,66,372,66L372,66z"
           />
         </g>
         <path
@@ -461,7 +463,12 @@ const NHLEdgeHockeyRink = ({
     <g>
       <circle fill="#3366CC" cx={1200} cy={510} r={6} />
     </g>
-    <path
+
+    {/* Wrap any Zamboni-related elements in a conditional render */}
+    {displayZamboni && (
+      <>
+        {/* Insert Zamboni-related SVG elements here */}
+        <path
       id="path1"
       fill="none"
       stroke="none"
@@ -552,6 +559,10 @@ const NHLEdgeHockeyRink = ({
         xlinkHref={zamboniImage}
       />
     </defs>
+      </>
+    )}
+
+    
   </svg>
 );
 export default NHLEdgeHockeyRink;
