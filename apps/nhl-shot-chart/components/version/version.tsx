@@ -2,15 +2,30 @@
 import { getVersionInfo } from '../../lib/version'
 import { parseISO } from 'date-fns'
 import { useSearchParams } from 'next/navigation'
+import { useState, useEffect } from 'react'
 
 export function Version() {
   const { version, gitHash, gitDate, nextJsVersion } = getVersionInfo()
   const searchParams = useSearchParams()
-  const timezone = searchParams.get('tz') || Intl.DateTimeFormat().resolvedOptions().timeZone
+  const [formattedDate, setFormattedDate] = useState<string>('')
   
-  const formatCommitDate = (dateString: string) => {
-    const date = parseISO(dateString)
-    return new Intl.DateTimeFormat('en-US', {
+  useEffect(() => {
+    if (!gitDate) return
+    
+    const timezone = searchParams.get('tz') || Intl.DateTimeFormat().resolvedOptions().timeZone
+    const date = parseISO(gitDate)
+    
+    const getOrdinalSuffix = (day: number) => {
+      if (day > 3 && day < 21) return 'th'
+      switch (day % 10) {
+        case 1: return 'st'
+        case 2: return 'nd'
+        case 3: return 'rd'
+        default: return 'th'
+      }
+    }
+    
+    const formatted = new Intl.DateTimeFormat('en-US', {
       weekday: 'long',
       year: 'numeric',
       month: 'long',
@@ -22,23 +37,14 @@ export function Version() {
       timeZone: timezone,
       timeZoneName: 'short'
     }).format(date)
-  }
-  
-  // // Debug timezone info
-  // const debugTimezone = () => {
-  //   return (
-  //     <div className="text-xs">
-  //       <div>Timezone: {timezone}</div>
-  //       <div>Browser Timezone: {Intl.DateTimeFormat().resolvedOptions().timeZone}</div>
-  //       <div>Offset: {new Date().getTimezoneOffset() / -60}hrs</div>
-  //       <div>System Date: {new Date().toString()}</div>
-  //     </div>
-  //   )
-  // }
+      .replace(/(\d+),/, (_, d) => `${d}${getOrdinalSuffix(parseInt(d))},`)
+      .replace(' at ', ' @ ')
+    
+    setFormattedDate(formatted)
+  }, [gitDate, searchParams])
   
   return (
     <div className="text-xs text-muted-foreground">
-      {/* {debugTimezone()} */}
       <span>Next.js {nextJsVersion}</span>
       <span className="mx-1">•</span>
       <span>v{version}</span>
@@ -47,7 +53,7 @@ export function Version() {
           <span className="mx-1">•</span>
           <span>{gitHash.substring(0, 7)}</span>
           <span className="mx-1">•</span>
-          <span>{gitDate ? formatCommitDate(gitDate).replace(' at ', ' @ ') : ''}</span>
+          <span>{formattedDate}</span>
         </>
       )}
     </div>
