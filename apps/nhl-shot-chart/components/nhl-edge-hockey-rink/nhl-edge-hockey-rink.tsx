@@ -55,7 +55,6 @@ const NHLEdgeHockeyRink = ({
         height={1}
       >
         <image
-          // PROP: Ice texture pattern
           href={iceTexturePattern}
           x={-100}
           y={-100}
@@ -65,7 +64,6 @@ const NHLEdgeHockeyRink = ({
       </pattern>
     </defs>
     <image
-      // PROP: Logo to be displayed at center ice
       href={centerIceLogo}
       height={centerIceLogoHeight}
       width={centerIceLogoWidth}
@@ -79,7 +77,6 @@ const NHLEdgeHockeyRink = ({
       transform="rotate(90)"
       className="sc-iSfqCo cLdcJN"
     >
-      {/* PROP: Away team name */}
       {awayTeamName}
     </text>
     <text
@@ -89,7 +86,6 @@ const NHLEdgeHockeyRink = ({
       transform="rotate(270)"
       className="sc-iSfqCo fInzJJ"
     >
-      {/* PROP: Home team name */}
       {homeTeamName}
     </text>
     <rect x={1194} width={12} height={1020} className="sc-hZlppA eaOGAc" />
@@ -552,7 +548,6 @@ const NHLEdgeHockeyRink = ({
         id="ice_resurfacer"
         width={132}
         height={66}
-        // Zamboni image
         xlinkHref={zamboniImage}
       />
     </defs>
