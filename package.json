@@ -8,6 +8,7 @@
     "start": "npm run start --prefix apps/nhl-shot-chart",
     "lint": "npm run lint --prefix apps/nhl-shot-chart",
     "docker:up": "docker compose -p sploosh-ai-nhl-shot-chart up",
+    "docker:up:detach": "docker compose -p sploosh-ai-nhl-shot-chart up -d",
     "docker:build": "docker compose -p sploosh-ai-nhl-shot-chart up --build",
     "docker:down": "docker compose -p sploosh-ai-nhl-shot-chart down"
   },
