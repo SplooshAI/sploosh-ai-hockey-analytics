@@ -13,12 +13,8 @@ export default function Home() {
           </Suspense>
         </div>
         <div className="flex justify-center items-center w-full h-full">
-          {/* DEFAULT: Seattle Kraken logo at center ice */}
           <NHLEdgeHockeyRink className="w-full h-auto" />
-        </div>
-        <div className="flex justify-center items-center w-full h-full">
-          {/* EXAMPLE: Sploosh.AI Logo at center ice */}
-          <NHLEdgeHockeyRink className="w-full h-auto" centerIceLogo='/sploosh.ai/sploosh-ai-character-transparent.png' centerIceLogoHeight={358} centerIceLogoWidth={400} />
+          {/* <NHLEdgeHockeyRink className="w-full h-auto" centerIceLogo='/sploosh.ai/sploosh-ai-character-transparent.png' centerIceLogoHeight={358} centerIceLogoWidth={400} /> */}
         </div>
       </div>
     </main>
