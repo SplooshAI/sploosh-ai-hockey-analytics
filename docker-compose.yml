@@ -1,0 +1,18 @@
+version: '3.8'
+
+services:
+  nhl-shot-chart-app:
+    build:
+      context: ./apps/nhl-shot-chart
+      dockerfile: ../../docker/nhl-shot-chart/app/development/Dockerfile
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./apps/nhl-shot-chart:/app
+      - /app/node_modules
+      - /app/.next
+    environment:
+      - NODE_ENV=development
+    labels:
+      com.example.application: "Next.js"
+      com.example.project: "sploosh-ai-nhl-shot-chart"

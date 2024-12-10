@@ -7,9 +7,9 @@
     "build": "npm run build --prefix apps/nhl-shot-chart",
     "start": "npm run start --prefix apps/nhl-shot-chart",
     "lint": "npm run lint --prefix apps/nhl-shot-chart",
-    "docker:up": "docker compose -p sploosh-ai-nhl-shot-chart -f docker/development/docker-compose.yml up -d",
-    "docker:build": "docker compose -p sploosh-ai-nhl-shot-chart -f docker/development/docker-compose.yml up --build",
-    "docker:down": "docker compose -p sploosh-ai-nhl-shot-chart -f docker/development/docker-compose.yml down"
+    "docker:up": "docker compose -p sploosh-ai-nhl-shot-chart up",
+    "docker:build": "docker compose -p sploosh-ai-nhl-shot-chart up --build",
+    "docker:down": "docker compose -p sploosh-ai-nhl-shot-chart down"
   },
   "repository": {
     "type": "git",
