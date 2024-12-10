@@ -1,4 +1,6 @@
 import packageJson from '../../package.json';
+import buildInfo from '../lib/build-info.json';
+
 const version = packageJson.version;
 
 export interface VersionInfo {
@@ -8,12 +10,11 @@ export interface VersionInfo {
   nextJsVersion: string;
 }
 
-
 export function getVersionInfo(): VersionInfo {
   return {
     version: version,
-    gitHash: process.env.NEXT_PUBLIC_GIT_HASH || 'unknown',
-    gitDate: process.env.NEXT_PUBLIC_GIT_DATE || 'unknown',
+    gitHash: buildInfo.commitHash,
+    gitDate: buildInfo.buildTime,
     nextJsVersion: packageJson.dependencies.next
   }
 }
