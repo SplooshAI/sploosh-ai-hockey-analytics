@@ -21,6 +21,7 @@ const NHLEdgeHockeyRink = ({
   centerIceLogo = DEFAULT_CENTER_ICE_LOGO_SEATTLE_KRAKEN_LIGHT,
   centerIceLogoHeight = 400,
   centerIceLogoWidth = 400,
+  className = "w-full h-auto",
   iceTexturePattern = DEFAULT_ICE_TEXTURE_PATTERN_URL,
   zamboniImage = DEFAULT_ZAMBONI_IMAGE
 }: NHLEdgeHockeyRinkProps) => (
@@ -28,7 +29,7 @@ const NHLEdgeHockeyRink = ({
     xmlns="http://www.w3.org/2000/svg"
     xmlnsXlink="http://www.w3.org/1999/xlink"
     viewBox="-75 -75 2550 1170"
-    className="sc-BWpyN dZMOMo"
+    className={className}
   >
     <g>
       <path
