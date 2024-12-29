@@ -33,14 +33,14 @@ export function GameCard({ game }: GameCardProps) {
 
     return (
         <div className="p-3 rounded-lg bg-background hover:bg-accent cursor-pointer">
-            <div className="flex justify-between items-center">
+            <div className="grid grid-cols-[1fr_40px] items-center">
                 <div className="space-y-1">
                     <div className="text-sm font-medium">{game.awayTeam.abbrev}</div>
                     <div className="text-sm font-medium">{game.homeTeam.abbrev}</div>
                 </div>
                 <div className="text-lg font-bold">
-                    <div>{game.awayTeam.score ?? '-'}</div>
-                    <div>{game.homeTeam.score ?? '-'}</div>
+                    <div className="text-right tabular-nums">{String(game.awayTeam.score ?? '-').trim()}</div>
+                    <div className="text-right tabular-nums">{String(game.homeTeam.score ?? '-').trim()}</div>
                 </div>
             </div>
             <div className="text-xs text-muted-foreground mt-2">
