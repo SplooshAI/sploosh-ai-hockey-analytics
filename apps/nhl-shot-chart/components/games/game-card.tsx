@@ -7,13 +7,17 @@ interface GameCardProps {
 
 export function GameCard({ game }: GameCardProps) {
     const getGameStatus = () => {
-        if (game.gameState === 'LIVE') {
-            return `Period ${game.period} - ${game.clock?.timeRemaining}`
+        switch (game.gameState) {
+            case 'LIVE':
+                return `Period ${game.period} - ${game.clock?.timeRemaining}`
+            case 'FUT':
+            case 'PRE':
+                return format(parseISO(game.startTimeUTC), 'h:mm a')
+            case 'FINAL':
+                return 'Final'
+            default:
+                return game.gameState
         }
-        if (game.gameState === 'FUT') {
-            return format(parseISO(game.startTimeUTC), 'h:mm a')
-        }
-        return 'Final'
     }
 
     return (
