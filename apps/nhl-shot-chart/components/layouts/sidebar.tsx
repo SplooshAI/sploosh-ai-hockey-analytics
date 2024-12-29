@@ -4,6 +4,7 @@ import { useState } from 'react'
 import { Calendar as CalendarIcon, X } from 'lucide-react'
 // import { DatePicker } from '../ui/date-picker'
 import { GamesList } from '../games/games-list'
+import { Version } from '../version/version'
 
 interface SidebarProps {
     onClose?: () => void
@@ -37,9 +38,16 @@ export default function Sidebar({ onClose }: SidebarProps) {
 
             {/* Scrollable content section */}
             <div className="flex-1 overflow-y-auto">
-                <div className="p-4 space-y-2">
-                    <h3 className="text-sm font-medium">Today's Games</h3>
-                    <GamesList date={date} />
+                <div className="p-4 space-y-4">
+                    <div className="space-y-2">
+                        <h3 className="text-sm font-medium">Today's Games</h3>
+                        <GamesList date={date} />
+                    </div>
+
+                    {/* Version info at bottom of scroll area */}
+                    <div className="pt-4 mt-4 border-t border-border/50">
+                        <Version />
+                    </div>
                 </div>
             </div>
         </div>
