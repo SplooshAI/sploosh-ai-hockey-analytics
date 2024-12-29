@@ -2,60 +2,67 @@
 import { getVersionInfo } from '../../lib/version'
 import { parseISO } from 'date-fns'
 import { useSearchParams } from 'next/navigation'
-import { useState, useEffect } from 'react'
+import { useState, useEffect, Suspense } from 'react'
 
-export function Version() {
-  const { version, gitHash, gitDate, nextJsVersion } = getVersionInfo()
+function VersionContent() {
+  const { version, gitHash, gitDate, nextJsVersion, repoUrl } = getVersionInfo()
   const searchParams = useSearchParams()
   const [formattedDate, setFormattedDate] = useState<string>('')
-  
+
   useEffect(() => {
     if (!gitDate) return
-    
+
     const timezone = searchParams.get('tz') || Intl.DateTimeFormat().resolvedOptions().timeZone
     const date = parseISO(gitDate)
-    
-    const getOrdinalSuffix = (day: number) => {
-      if (day > 3 && day < 21) return 'th'
-      switch (day % 10) {
-        case 1: return 'st'
-        case 2: return 'nd'
-        case 3: return 'rd'
-        default: return 'th'
-      }
-    }
-    
+
     const formatted = new Intl.DateTimeFormat('en-US', {
-      weekday: 'long',
       year: 'numeric',
-      month: 'long',
-      day: 'numeric',
+      month: '2-digit',
+      day: '2-digit',
       hour: 'numeric',
       minute: '2-digit',
-      second: '2-digit',
-      hour12: true,
       timeZone: timezone,
-      timeZoneName: 'short'
+      timeZoneName: 'short',
+      hour12: true
     }).format(date)
-      .replace(/(\d+),/, (_, d) => `${d}${getOrdinalSuffix(parseInt(d))},`)
-      .replace(' at ', ' @ ')
-    
-    setFormattedDate(formatted)
+
+    const [datePart, timePart] = formatted.split(', ')
+    const [month, day, year] = datePart.split('/')
+    const formattedString = `Released ${year}.${month}.${day} @ ${timePart}`
+
+    setFormattedDate(formattedString)
   }, [gitDate, searchParams])
-  
+
   return (
     <div className="text-xs text-muted-foreground">
-      <span>Next.js {nextJsVersion}</span>
-      <span className="mx-1">•</span>
-      <span>v{version}</span>
-      {gitHash && (
-        <>
-          <span className="mx-1">•</span>
-          <span>{gitHash.substring(0, 7)}</span>
-          <span className="mx-1">•</span>
-          <span>{formattedDate}</span>
-        </>
-      )}
+      <p>
+        Next.js {nextJsVersion}
+        <span className="mx-1">•</span>
+        v{version}
+        <span className="mx-1">•</span>
+        {gitHash && (
+          <>
+            <a
+              href={`${repoUrl}/commit/${gitHash}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="hover:underline"
+            >
+              {gitHash.substring(0, 7)}
+            </a>
+            <br />
+            {formattedDate}
+          </>
+        )}
+      </p>
     </div>
+  )
+}
+
+export function Version() {
+  return (
+    <Suspense fallback={<div className="text-xs text-muted-foreground">Loading version info...</div>}>
+      <VersionContent />
+    </Suspense>
   )
 }
