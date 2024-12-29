@@ -5,7 +5,7 @@ import { useSearchParams } from 'next/navigation'
 import { useState, useEffect } from 'react'
 
 export function Version() {
-  const { version, gitHash, gitDate, nextJsVersion } = getVersionInfo()
+  const { version, gitHash, gitDate, nextJsVersion, repoUrl } = getVersionInfo()
   const searchParams = useSearchParams()
   const [formattedDate, setFormattedDate] = useState<string>('')
 
@@ -42,7 +42,14 @@ export function Version() {
         <span className="mx-1">•</span>
         {gitHash && (
           <>
-            {gitHash.substring(0, 7)}
+            <a
+              href={`${repoUrl}/commit/${gitHash}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="hover:underline"
+            >
+              {gitHash.substring(0, 7)}
+            </a>
             <br />
             {formattedDate}
           </>
