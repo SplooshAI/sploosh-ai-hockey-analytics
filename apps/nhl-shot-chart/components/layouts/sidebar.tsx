@@ -13,26 +13,30 @@ export default function Sidebar({ onClose }: SidebarProps) {
     const [date, setDate] = useState<Date>(new Date())
 
     return (
-        <div className="w-64 h-screen bg-secondary p-4 relative">
-            {/* Close button for mobile */}
-            <button
-                onClick={onClose}
-                className="lg:hidden absolute top-4 right-4 p-1 rounded-md hover:bg-background/10"
-            >
-                <X className="h-5 w-5" />
-            </button>
+        <div className="w-64 h-screen bg-secondary flex flex-col">
+            {/* Fixed header section */}
+            <div className="p-4 border-b border-border/50">
+                {/* Close button for mobile */}
+                <button
+                    onClick={onClose}
+                    className="lg:hidden absolute top-4 right-4 p-1 rounded-md hover:bg-background/10"
+                >
+                    <X className="h-5 w-5" />
+                </button>
 
-            <div className="space-y-4">
                 <h2 className="text-lg font-semibold">NHL Games</h2>
 
-                <div className="flex items-center space-x-2">
+                <div className="flex items-center space-x-2 mt-4">
                     {/* <DatePicker
                         date={date}
                         onDateChange={setDate}
                     /> */}
                 </div>
+            </div>
 
-                <div className="space-y-2">
+            {/* Scrollable content section */}
+            <div className="flex-1 overflow-y-auto">
+                <div className="p-4 space-y-2">
                     <h3 className="text-sm font-medium">Today's Games</h3>
                     <GamesList date={date} />
                 </div>
