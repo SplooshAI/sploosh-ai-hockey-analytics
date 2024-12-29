@@ -15,7 +15,7 @@ export default function Sidebar({ onClose }: SidebarProps) {
     return (
         <div className="w-64 h-screen bg-secondary flex flex-col">
             {/* Fixed header section */}
-            <div className="p-4 border-b border-border/50">
+            <div className="h-20 lg:h-auto p-4 border-b border-border/50 flex items-center">
                 {/* Close button for mobile */}
                 <button
                     onClick={onClose}
@@ -24,9 +24,10 @@ export default function Sidebar({ onClose }: SidebarProps) {
                     <X className="h-5 w-5" />
                 </button>
 
-                <h2 className="text-lg font-semibold">NHL Games</h2>
+                {/* Simple centered title */}
+                <h2 className="text-lg font-semibold w-full text-center lg:text-left">NHL Games</h2>
 
-                <div className="flex items-center space-x-2 mt-4">
+                <div className="hidden lg:flex items-center space-x-2 mt-4">
                     {/* <DatePicker
                         date={date}
                         onDateChange={setDate}
