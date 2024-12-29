@@ -1,5 +1,5 @@
 import { NHLGame } from '@/types/nhl'
-import { format, parseISO } from 'date-fns'
+import { parseISO } from 'date-fns'
 import { formatInTimeZone } from 'date-fns-tz'
 
 interface GameCardProps {

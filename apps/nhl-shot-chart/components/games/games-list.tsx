@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react'
 import { format } from 'date-fns'
 import { GameCard } from './game-card'
-import { NHLScheduleResponse, NHLGame } from '@/types/nhl'
+import type { NHLScheduleResponse } from '@/types/nhl'
 
 interface GamesListProps {
     date: Date

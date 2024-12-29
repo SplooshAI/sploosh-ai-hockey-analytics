@@ -2,9 +2,9 @@
 import { getVersionInfo } from '../../lib/version'
 import { parseISO } from 'date-fns'
 import { useSearchParams } from 'next/navigation'
-import { useState, useEffect } from 'react'
+import { useState, useEffect, Suspense } from 'react'
 
-export function Version() {
+function VersionContent() {
   const { version, gitHash, gitDate, nextJsVersion, repoUrl } = getVersionInfo()
   const searchParams = useSearchParams()
   const [formattedDate, setFormattedDate] = useState<string>('')
@@ -28,7 +28,7 @@ export function Version() {
 
     const [datePart, timePart] = formatted.split(', ')
     const [month, day, year] = datePart.split('/')
-    const formattedString = `${year}.${month}.${day} @ ${timePart}`
+    const formattedString = `Released ${year}.${month}.${day} @ ${timePart}`
 
     setFormattedDate(formattedString)
   }, [gitDate, searchParams])
@@ -56,5 +56,13 @@ export function Version() {
         )}
       </p>
     </div>
+  )
+}
+
+export function Version() {
+  return (
+    <Suspense fallback={<div className="text-xs text-muted-foreground">Loading version info...</div>}>
+      <VersionContent />
+    </Suspense>
   )
 }
