@@ -26,7 +26,7 @@ export interface NHLGame {
     period?: number
     clock?: {
         timeRemaining: string
-        isIntermission: boolean
+        inIntermission: boolean
     }
 }
 

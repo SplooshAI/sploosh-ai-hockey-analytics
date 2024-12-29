@@ -11,8 +11,8 @@ export function GameCard({ game }: GameCardProps) {
         switch (game.gameState) {
             case 'CRIT':
             case 'LIVE':
-                if (game.clock?.isIntermission) {
-                    return `INT${game.period}`
+                if (game.clock?.inIntermission) {
+                    return `INT${game.period} - ${game.clock?.timeRemaining}`
                 }
                 return `Period ${game.period} - ${game.clock?.timeRemaining}`
             case 'FUT':
