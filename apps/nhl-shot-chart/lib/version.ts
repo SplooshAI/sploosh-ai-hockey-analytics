@@ -1,4 +1,3 @@
-import rootPackageJson from '../../../package.json';
 import appPackageJson from '../package.json';
 import buildInfo from './build-info.json';
 
@@ -11,12 +10,11 @@ export interface VersionInfo {
 }
 
 export function getVersionInfo(): VersionInfo {
-  const repoUrl = rootPackageJson.repository.url
-    .replace('git+', '')  // Remove git+ prefix
-    .replace('.git', '')  // Remove .git suffix
+  // Default repository URL if not in development
+  const repoUrl = 'https://github.com/SplooshAI/sploosh-ai-nhl-shot-chart';
 
   return {
-    version: rootPackageJson.version,
+    version: appPackageJson.version,
     gitHash: process.env.NEXT_PUBLIC_GIT_HASH ?? buildInfo.commitHash,
     gitDate: process.env.NEXT_PUBLIC_GIT_DATE ?? buildInfo.buildTime,
     nextJsVersion: appPackageJson.dependencies.next ?? '',
