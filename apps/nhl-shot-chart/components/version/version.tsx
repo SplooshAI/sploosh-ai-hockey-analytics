@@ -15,32 +15,27 @@ export function Version() {
     const timezone = searchParams.get('tz') || Intl.DateTimeFormat().resolvedOptions().timeZone
     const date = parseISO(gitDate)
 
-    const getOrdinalSuffix = (day: number) => {
-      if (day > 3 && day < 21) return 'th'
-      switch (day % 10) {
-        case 1: return 'st'
-        case 2: return 'nd'
-        case 3: return 'rd'
-        default: return 'th'
-      }
-    }
-
     const formatted = new Intl.DateTimeFormat('en-US', {
-      month: 'short',
-      day: 'numeric',
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit',
       hour: 'numeric',
       minute: '2-digit',
       timeZone: timezone,
-      timeZoneName: 'short'
+      timeZoneName: 'short',
+      hour12: true
     }).format(date)
 
-    setFormattedDate(formatted)
+    const [datePart, timePart] = formatted.split(', ')
+    const [month, day, year] = datePart.split('/')
+    const formattedString = `${year}.${month}.${day} @ ${timePart}`
+
+    setFormattedDate(formattedString)
   }, [gitDate, searchParams])
 
   return (
     <div className="text-xs text-muted-foreground">
       <p>
-
         Next.js {nextJsVersion}
         <span className="mx-1">•</span>
         v{version}
@@ -49,7 +44,7 @@ export function Version() {
           <>
             {gitHash.substring(0, 7)}
             <br />
-            Rev. {formattedDate}
+            {formattedDate}
           </>
         )}
       </p>
