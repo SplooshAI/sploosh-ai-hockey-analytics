@@ -10,6 +10,9 @@ export function GameCard({ game }: GameCardProps) {
     const getGameStatus = () => {
         switch (game.gameState) {
             case 'LIVE':
+                if (game.clock?.isIntermission) {
+                    return `INT${game.period}`
+                }
                 return `Period ${game.period} - ${game.clock?.timeRemaining}`
             case 'FUT':
             case 'PRE':
