@@ -9,6 +9,7 @@ interface GameCardProps {
 export function GameCard({ game }: GameCardProps) {
     const getGameStatus = () => {
         switch (game.gameState) {
+            case 'CRIT':
             case 'LIVE':
                 if (game.clock?.isIntermission) {
                     return `INT${game.period}`
@@ -23,6 +24,8 @@ export function GameCard({ game }: GameCardProps) {
                 )
             case 'FINAL':
                 return 'Final'
+
+            // TODO: Add notification for an unexpected game state
             default:
                 return game.gameState
         }

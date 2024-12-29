@@ -18,7 +18,7 @@ export interface NHLGame {
     gameType: number
     gameDate: string
     startTimeUTC: string
-    gameState: 'LIVE' | 'FUT' | 'PRE' | 'FINAL'
+    gameState: 'LIVE' | 'FUT' | 'PRE' | 'CRIT' | 'FINAL'
     gameScheduleState: string
     awayTeam: NHLTeam
     homeTeam: NHLTeam
