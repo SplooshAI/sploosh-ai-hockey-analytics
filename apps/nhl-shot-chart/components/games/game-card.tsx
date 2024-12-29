@@ -23,10 +23,15 @@ export function GameCard({ game }: GameCardProps) {
                     'h:mm a zzz'
                 )
             case 'FINAL':
+                // Game has ended but stats may still be getting finalized or post-game reviews are happening
+                return 'Final'
+            case 'OFF':
+                // Game is official with all stats finalized
                 return 'Final'
 
             // TODO: Add notification for an unexpected game state
             default:
+                console.error(`Unexpected game state: ${game.gameState}`)
                 return game.gameState
         }
     }
