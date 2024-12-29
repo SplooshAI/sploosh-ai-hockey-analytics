@@ -1,5 +1,6 @@
 import { NHLGame } from '@/types/nhl'
 import { format, parseISO } from 'date-fns'
+import { formatInTimeZone } from 'date-fns-tz'
 
 interface GameCardProps {
     game: NHLGame
@@ -12,7 +13,11 @@ export function GameCard({ game }: GameCardProps) {
                 return `Period ${game.period} - ${game.clock?.timeRemaining}`
             case 'FUT':
             case 'PRE':
-                return format(parseISO(game.startTimeUTC), 'h:mm a')
+                return formatInTimeZone(
+                    parseISO(game.startTimeUTC),
+                    Intl.DateTimeFormat().resolvedOptions().timeZone,
+                    'h:mm a zzz'
+                )
             case 'FINAL':
                 return 'Final'
             default:
