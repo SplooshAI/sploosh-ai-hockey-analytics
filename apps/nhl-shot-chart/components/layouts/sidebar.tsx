@@ -34,7 +34,9 @@ export default function Sidebar({ onClose }: SidebarProps) {
             <div className="flex-1 min-h-0 overflow-y-auto pb-safe">
                 <div className="p-4 space-y-4">
                     <div className="space-y-2">
-                        <h3 className="text-sm font-medium">Today&apos;s Games</h3>
+                        <div className="flex items-center justify-between">
+                            <h3 className="text-sm font-medium">Today&apos;s Games</h3>
+                        </div>
                         <GamesList date={date} />
                     </div>
 

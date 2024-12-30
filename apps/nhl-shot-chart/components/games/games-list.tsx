@@ -1,8 +1,9 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useCallback } from 'react'
 import { format } from 'date-fns'
 import { GameCard } from './game-card'
+import { RefreshSettings } from './refresh-settings'
 import type { NHLScheduleResponse } from '@/types/nhl'
 
 interface GamesListProps {
@@ -13,30 +14,47 @@ export function GamesList({ date }: GamesListProps) {
     const [scheduleData, setScheduleData] = useState<NHLScheduleResponse | null>(null)
     const [loading, setLoading] = useState(true)
     const [error, setError] = useState<string | null>(null)
+    const [lastRefreshTime, setLastRefreshTime] = useState<Date | null>(null)
+    const [autoRefreshEnabled, setAutoRefreshEnabled] = useState(false)
+
+    const fetchGames = useCallback(async () => {
+        try {
+            setLoading(true)
+            const formattedDate = format(date, 'yyyy-MM-dd')
+            const response = await fetch(`/api/nhl/scores?date=${formattedDate}`)
+
+            if (!response.ok) {
+                throw new Error('Failed to fetch games')
+            }
+
+            const data: NHLScheduleResponse = await response.json()
+            setScheduleData(data)
+            setLastRefreshTime(new Date())
+        } catch (err) {
+            console.error('Error fetching games:', err)
+            setError('Failed to load games')
+        } finally {
+            setLoading(false)
+        }
+    }, [date])
 
     useEffect(() => {
-        async function fetchGames() {
-            try {
-                setLoading(true)
-                const formattedDate = format(date, 'yyyy-MM-dd')
-                const response = await fetch(`/api/nhl/scores?date=${formattedDate}`)
+        fetchGames()
+    }, [fetchGames])
 
-                if (!response.ok) {
-                    throw new Error('Failed to fetch games')
-                }
+    useEffect(() => {
+        let timer: NodeJS.Timeout | null = null
 
-                const data: NHLScheduleResponse = await response.json()
-                setScheduleData(data)
-            } catch (err) {
-                console.error('Error fetching games:', err)
-                setError('Failed to load games')
-            } finally {
-                setLoading(false)
-            }
+        if (autoRefreshEnabled) {
+            timer = setInterval(fetchGames, 20000) // 20 seconds
         }
 
-        fetchGames()
-    }, [date])
+        return () => {
+            if (timer) {
+                clearInterval(timer)
+            }
+        }
+    }, [autoRefreshEnabled, fetchGames])
 
     if (loading) return (
         <div className="flex justify-center items-center p-4">
@@ -57,10 +75,18 @@ export function GamesList({ date }: GamesListProps) {
     )
 
     return (
-        <div className="space-y-2">
-            {scheduleData.games.map((game) => (
-                <GameCard key={game.id} game={game} />
-            ))}
+        <div className="space-y-4">
+            <RefreshSettings
+                isEnabled={autoRefreshEnabled}
+                onToggle={setAutoRefreshEnabled}
+                lastRefreshTime={lastRefreshTime}
+            />
+
+            <div className="space-y-2">
+                {scheduleData.games.map((game) => (
+                    <GameCard key={game.id} game={game} />
+                ))}
+            </div>
         </div>
     )
 } 
