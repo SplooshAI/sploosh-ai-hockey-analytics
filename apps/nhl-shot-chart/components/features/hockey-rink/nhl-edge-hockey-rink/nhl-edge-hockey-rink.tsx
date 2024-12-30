@@ -16,7 +16,7 @@ const DEFAULT_CENTER_ICE_LOGO_SEATTLE_KRAKEN_LIGHT = "https://assets.nhle.com/lo
 const DEFAULT_ICE_TEXTURE_PATTERN_URL = "https://wsr.nhle.com/static/js/../images/f7597e93d3f2a4b23d41.png"
 const DEFAULT_ZAMBONI_IMAGE = "nhl-edge/nhl-edge-zamboni.png"
 
-const NHLEdgeHockeyRink = ({
+export const NHLEdgeHockeyRink = ({
   awayTeamName = "",
   homeTeamName = "",
   centerIceLogo = DEFAULT_CENTER_ICE_LOGO_SEATTLE_KRAKEN_LIGHT,
@@ -565,4 +565,3 @@ const NHLEdgeHockeyRink = ({
 
   </svg>
 );
-export default NHLEdgeHockeyRink;

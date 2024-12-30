@@ -2,12 +2,13 @@
 
 import { useState } from 'react'
 import { MainLayout } from '@/components/layouts/main-layout'
-import NHLEdgeHockeyRink from '@/components/features/hockey-rink/nhl-edge-hockey-rink/nhl-edge-hockey-rink'
+import { NHLEdgeHockeyRink } from '@/components/features/hockey-rink/nhl-edge-hockey-rink/nhl-edge-hockey-rink'
 import { getPlayByPlay } from '@/lib/api/nhl-edge/services/play-by-play'
 import { Copy, Check, ArrowUp } from 'lucide-react'
+import type { NHLEdgePlayByPlay } from '@/types/nhl-edge'
 
 export default function Home() {
-  const [playByPlayData, setPlayByPlayData] = useState<any>(null)
+  const [playByPlayData, setPlayByPlayData] = useState<NHLEdgePlayByPlay | null>(null)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [copied, setCopied] = useState(false)

@@ -123,12 +123,12 @@ export function GameCard({ game, onSelectGame }: GameCardProps) {
                 </div>
             </div>
 
-            <div className="flex justify-end mt-2">
+            <div className="flex justify-center gap-2 mt-2">
                 <button
                     onClick={handleGameCenterClick}
-                    className="text-xs text-muted-foreground hover:text-foreground"
+                    className="text-xs px-3 py-1.5 rounded-md bg-primary/10 hover:bg-primary/20 text-primary transition-colors"
                 >
-                    Game Center ↗
+                    NHL Game Center
                 </button>
             </div>
         </div>

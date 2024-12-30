@@ -37,4 +37,48 @@ export interface NHLEdgeTeam {
     id: number
     name: string
     score?: number
+}
+
+// Play-by-play types
+export interface NHLEdgePlayByPlay {
+    gameDate: string
+    gameId: number
+    plays: NHLEdgePlay[]
+    periodDescriptor: NHLEdgePeriodDescriptor[]
+    rosterSpots: NHLEdgeRosterSpot[]
+    gameState: string
+    gameType: number
+    season: number
+}
+
+export interface NHLEdgePlay {
+    eventId: number
+    period: number
+    timeInPeriod: string
+    timeRemaining: string
+    situationCode: string
+    typeCode: string
+    typeDescKey: string
+    details: Record<string, unknown>
+    coordinates?: {
+        x: number
+        y: number
+    }
+}
+
+export interface NHLEdgePeriodDescriptor {
+    id: number
+    periodType: string
+    ordinalNum: string
+    abbreviation: string
+}
+
+export interface NHLEdgeRosterSpot {
+    id: number
+    teamId: number
+    playerId: number
+    firstName: string
+    lastName: string
+    jerseyNumber: string
+    position: string
 } 
