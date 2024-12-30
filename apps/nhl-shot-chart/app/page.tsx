@@ -8,7 +8,8 @@ import { Copy, Check, ArrowUp } from 'lucide-react'
 import type { NHLEdgePlayByPlay } from '@/types/nhl-edge'
 
 export default function Home() {
-  const [playByPlayData, setPlayByPlayData] = useState<NHLEdgePlayByPlay | null>(null)
+  const [selectedGameId, setSelectedGameId] = useState<number | null>(null)
+  const [playByPlayData, setPlayByPlayData] = useState<any>(null)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [copied, setCopied] = useState(false)
@@ -43,10 +44,6 @@ export default function Home() {
     <div className="h-screen overflow-y-auto" style={{ scrollBehavior: 'smooth' }}>
       <MainLayout onGameSelect={handleGameSelect}>
         <div className="max-w-7xl mx-auto space-y-6">
-          <div id="top" className="flex flex-col items-center gap-1">
-            <h1 className="text-4xl font-bold">NHL Shot Chart</h1>
-          </div>
-
           <div className="text-center text-muted-foreground">
             <div className="flex justify-center items-center w-full h-full">
               <NHLEdgeHockeyRink
