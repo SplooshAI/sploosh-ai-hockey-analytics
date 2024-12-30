@@ -1,5 +1,5 @@
 import Image from 'next/image'
-import { NHLEdgeGame, NHLEdgeGameState } from '@/types/nhl-edge'
+import { NHLEdgeGame } from '@/types/nhl-edge'
 import { parseISO } from 'date-fns'
 import { formatInTimeZone } from 'date-fns-tz'
 
