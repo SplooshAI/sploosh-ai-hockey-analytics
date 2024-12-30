@@ -40,8 +40,22 @@ export function GameCard({ game }: GameCardProps) {
         <div className="p-3 rounded-lg bg-background hover:bg-accent cursor-pointer">
             <div className="grid grid-cols-[1fr_40px] items-center">
                 <div className="space-y-1">
-                    <div className="text-sm font-medium">{game.awayTeam.abbrev}</div>
-                    <div className="text-sm font-medium">{game.homeTeam.abbrev}</div>
+                    <div className="flex items-center gap-2">
+                        <img
+                            src={`https://assets.nhle.com/logos/nhl/svg/${game.awayTeam.abbrev}_light.svg`}
+                            alt={`${game.awayTeam.name} logo`}
+                            className="w-5 h-5"
+                        />
+                        <div className="text-sm font-medium">{game.awayTeam.abbrev}</div>
+                    </div>
+                    <div className="flex items-center gap-2">
+                        <img
+                            src={`https://assets.nhle.com/logos/nhl/svg/${game.homeTeam.abbrev}_light.svg`}
+                            alt={`${game.homeTeam.name} logo`}
+                            className="w-5 h-5"
+                        />
+                        <div className="text-sm font-medium">{game.homeTeam.abbrev}</div>
+                    </div>
                 </div>
                 <div className="text-lg font-bold">
                     <div className="text-right tabular-nums">{String(game.awayTeam.score ?? '-').trim()}</div>
