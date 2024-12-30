@@ -2,7 +2,7 @@
 
 import { ReactNode, useState } from 'react'
 import Sidebar from './sidebar/sidebar'
-import { Menu } from 'lucide-react'
+import { Menu, ArrowUp } from 'lucide-react'
 
 interface MainLayoutProps {
     children: ReactNode
@@ -19,11 +19,12 @@ export function MainLayout({ children, onGameSelect }: MainLayoutProps) {
     }
 
     return (
-        <div className="flex h-screen relative">
-            {/* Mobile menu button */}
+        <div className="flex h-[100dvh] relative">
+            {/* Mobile menu button - aligned with header height */}
             <button
                 onClick={() => setIsSidebarOpen(!isSidebarOpen)}
-                className="lg:hidden fixed top-4 left-4 z-50 p-2 rounded-md bg-background border"
+                className="lg:hidden fixed left-4 z-50 p-2 rounded-md bg-background border h-10 my-3"
+                style={{ top: '0' }}
             >
                 <Menu className="h-6 w-6" />
             </button>
@@ -49,10 +50,27 @@ export function MainLayout({ children, onGameSelect }: MainLayoutProps) {
             </div>
 
             {/* Main content */}
-            <main className="flex-1 overflow-auto p-4 lg:p-6">
-                <div className="pt-12 lg:pt-0">
+            <main className="flex-1 overflow-auto relative" id="main-content">
+                <div className="h-16 flex items-center justify-center px-4 lg:px-6 fixed top-0 left-0 right-0 bg-background/80 backdrop-blur-sm z-20">
+                    <h1 className="text-xl font-semibold">NHL Shot Chart</h1>
+                </div>
+                <div className="pt-16 p-4 lg:p-6">
                     {children}
                 </div>
+
+                {/* Scroll to top button - now targets main content */}
+                <button
+                    onClick={() => {
+                        document.getElementById('main-content')?.scrollTo({
+                            top: 0,
+                            behavior: 'smooth'
+                        });
+                    }}
+                    className="fixed bottom-8 right-8 bg-primary hover:bg-primary/90 text-primary-foreground p-4 rounded-full shadow-lg flex items-center justify-center z-50"
+                    aria-label="Scroll to top"
+                >
+                    <ArrowUp className="h-6 w-6" />
+                </button>
             </main>
         </div>
     )
