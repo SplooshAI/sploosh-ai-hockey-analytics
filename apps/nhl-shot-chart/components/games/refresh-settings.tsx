@@ -33,7 +33,7 @@ export function RefreshSettings({ isEnabled, onToggle, lastRefreshTime }: Refres
 
             {lastRefreshTime && (
                 <div className="text-xs text-muted-foreground border-t border-border/50 pt-2">
-                    Last updated: {format(lastRefreshTime, 'h:mm:ss a zzz', { timeZone })}
+                    Last updated @ {format(lastRefreshTime, 'h:mm:ss a zzz', { timeZone })}
                 </div>
             )}
         </div>

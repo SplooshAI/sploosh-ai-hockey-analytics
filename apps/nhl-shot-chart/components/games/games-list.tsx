@@ -52,15 +52,20 @@ export function GamesList({ date }: GamesListProps) {
         }
     }, [date])
 
+    // Initial fetch on mount
     useEffect(() => {
         fetchGames()
     }, [fetchGames])
 
+    // Auto-refresh effect
     useEffect(() => {
         let timer: NodeJS.Timeout | null = null
 
         if (autoRefreshEnabled) {
-            timer = setInterval(fetchGames, 20000) // 20 seconds
+            // Immediate fetch when enabled
+            fetchGames()
+            // Then set up the interval
+            timer = setInterval(fetchGames, 20000)
         }
 
         return () => {
