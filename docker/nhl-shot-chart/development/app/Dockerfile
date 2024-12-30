@@ -2,7 +2,7 @@ FROM node:22-alpine
 WORKDIR /app
 
 COPY package.json package-lock.json ./
-RUN npm ci
+RUN npm install
 
 ARG GIT_HASH=unknown
 ARG GIT_DATE=unknown

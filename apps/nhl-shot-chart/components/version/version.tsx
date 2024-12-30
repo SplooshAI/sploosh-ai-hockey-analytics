@@ -12,25 +12,34 @@ function VersionContent() {
   useEffect(() => {
     if (!gitDate) return
 
-    const timezone = searchParams.get('tz') || Intl.DateTimeFormat().resolvedOptions().timeZone
-    const date = parseISO(gitDate)
+    try {
+      const timezone = searchParams.get('tz') || Intl.DateTimeFormat().resolvedOptions().timeZone
+      const date = parseISO(gitDate)
 
-    const formatted = new Intl.DateTimeFormat('en-US', {
-      year: 'numeric',
-      month: '2-digit',
-      day: '2-digit',
-      hour: 'numeric',
-      minute: '2-digit',
-      timeZone: timezone,
-      timeZoneName: 'short',
-      hour12: true
-    }).format(date)
+      if (isNaN(date.getTime())) {
+        console.warn('Invalid date:', gitDate);
+        return;
+      }
 
-    const [datePart, timePart] = formatted.split(', ')
-    const [month, day, year] = datePart.split('/')
-    const formattedString = `Released ${year}.${month}.${day} @ ${timePart}`
+      const formatted = new Intl.DateTimeFormat('en-US', {
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit',
+        hour: 'numeric',
+        minute: '2-digit',
+        timeZone: timezone,
+        timeZoneName: 'short',
+        hour12: true
+      }).format(date)
 
-    setFormattedDate(formattedString)
+      const [datePart, timePart] = formatted.split(', ')
+      const [month, day, year] = datePart.split('/')
+      const formattedString = `Released ${year}.${month}.${day} @ ${timePart}`
+
+      setFormattedDate(formattedString)
+    } catch (error) {
+      console.error('Error formatting date:', error);
+    }
   }, [gitDate, searchParams])
 
   return (
