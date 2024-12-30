@@ -1,5 +1,5 @@
 import Image from 'next/image'
-import { NHLEdgeGame } from '@/types/nhl-edge'
+import { NHLEdgeGame, NHLEdgeGameState } from '@/types/nhl-edge'
 import { parseISO } from 'date-fns'
 import { formatInTimeZone } from 'date-fns-tz'
 
@@ -8,6 +8,15 @@ interface GameCardProps {
 }
 
 export function GameCard({ game }: GameCardProps) {
+    const getTeamLogoUrl = (teamAbbrev: string) => {
+        return `https://assets.nhle.com/logos/nhl/svg/${teamAbbrev}_light.svg`
+    }
+
+    const handleGameClick = () => {
+        const url = `https://www.nhl.com/gamecenter/${game.id}`
+        window.open(url, '_blank', 'noopener,noreferrer')
+    }
+
     const getGameStatus = () => {
         switch (game.gameState) {
             case 'CRIT':
@@ -24,7 +33,7 @@ export function GameCard({ game }: GameCardProps) {
                     'h:mm a zzz'
                 )
             case 'FINAL':
-                // Game has ended but stats may still be getting finalized or post-game reviews are happening
+                // Game has ended but stats may still be getting finalized
                 return 'Final'
             case 'OFF':
                 // Game is official with all stats finalized
@@ -37,14 +46,25 @@ export function GameCard({ game }: GameCardProps) {
         }
     }
 
-    const handleGameClick = () => {
-        const url = `https://www.nhl.com/gamecenter/${game.id}`
-        window.open(url, '_blank', 'noopener,noreferrer')
+    const getGameStateClass = () => {
+        switch (game.gameState) {
+            case 'LIVE':
+            case 'CRIT':
+                return 'text-green-500 dark:text-green-400'
+            case 'FINAL':
+            case 'OFF':
+                return 'text-gray-500 dark:text-gray-400'
+            case 'PRE':
+            case 'FUT':
+                return 'text-muted-foreground'
+            default:
+                return 'text-muted-foreground'
+        }
     }
 
     return (
         <div
-            className="p-3 rounded-lg bg-background hover:bg-accent cursor-pointer"
+            className="rounded-lg bg-card p-4 shadow-sm cursor-pointer hover:bg-accent/50 transition-colors"
             onClick={handleGameClick}
             role="button"
             tabIndex={0}
@@ -54,38 +74,42 @@ export function GameCard({ game }: GameCardProps) {
                 }
             }}
         >
-            <div className="grid grid-cols-[1fr_40px] items-center">
-                <div className="space-y-1">
+            <div className="flex flex-col gap-2">
+                <div className="flex items-center justify-between gap-4">
                     <div className="flex items-center gap-2">
-                        <div className="team-logo">
+                        <div className="relative w-8 h-8">
                             <Image
-                                src={`/path/to/team/logos/${game.awayTeam.abbrev}.png`}
+                                src={getTeamLogoUrl(game.awayTeam.abbrev)}
                                 alt={`${game.awayTeam.name} logo`}
-                                width={32}
-                                height={32}
+                                fill
+                                className="object-contain"
                             />
                         </div>
-                        <div className="text-sm font-medium">{game.awayTeam.abbrev}</div>
+                        <span className="font-medium">{game.awayTeam.abbrev}</span>
+                        {game.awayTeam.score !== undefined && (
+                            <span className="font-bold">{game.awayTeam.score}</span>
+                        )}
                     </div>
+
                     <div className="flex items-center gap-2">
-                        <div className="team-logo">
+                        {game.homeTeam.score !== undefined && (
+                            <span className="font-bold">{game.homeTeam.score}</span>
+                        )}
+                        <span className="font-medium">{game.homeTeam.abbrev}</span>
+                        <div className="relative w-8 h-8">
                             <Image
-                                src={`/path/to/team/logos/${game.homeTeam.abbrev}.png`}
+                                src={getTeamLogoUrl(game.homeTeam.abbrev)}
                                 alt={`${game.homeTeam.name} logo`}
-                                width={32}
-                                height={32}
+                                fill
+                                className="object-contain"
                             />
                         </div>
-                        <div className="text-sm font-medium">{game.homeTeam.abbrev}</div>
                     </div>
                 </div>
-                <div className="text-lg font-bold">
-                    <div className="text-right tabular-nums">{String(game.awayTeam.score ?? '-').trim()}</div>
-                    <div className="text-right tabular-nums">{String(game.homeTeam.score ?? '-').trim()}</div>
+
+                <div className={`text-sm text-center ${getGameStateClass()}`}>
+                    {getGameStatus()}
                 </div>
-            </div>
-            <div className="text-xs text-muted-foreground mt-2">
-                {getGameStatus()}
             </div>
         </div>
     )

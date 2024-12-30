@@ -10,9 +10,12 @@ const nextConfig: NextConfig = {
     disableOptimizedLoading: true,
   },
   images: {
-    domains: [
-      // Add any domains that host your team logos
-      'assets.nhle.com',  // NHL's asset domain
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: 'assets.nhle.com',
+        pathname: '/logos/nhl/svg/**',
+      }
     ],
   },
 };
