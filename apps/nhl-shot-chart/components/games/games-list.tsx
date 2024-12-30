@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState, useCallback } from 'react'
+import { useEffect, useState, useCallback, useRef } from 'react'
 import { format } from 'date-fns'
 import { GameCard } from './game-card'
 import { RefreshSettings } from './refresh-settings'
@@ -16,10 +16,14 @@ export function GamesList({ date }: GamesListProps) {
     const [error, setError] = useState<string | null>(null)
     const [lastRefreshTime, setLastRefreshTime] = useState<Date | null>(null)
     const [autoRefreshEnabled, setAutoRefreshEnabled] = useState(false)
+    const containerRef = useRef<HTMLDivElement>(null)
 
     const fetchGames = useCallback(async () => {
         try {
-            setLoading(true)
+            // Store current scroll position
+            const scrollContainer = containerRef.current?.closest('.overflow-y-auto')
+            const scrollPosition = scrollContainer?.scrollTop
+
             const formattedDate = format(date, 'yyyy-MM-dd')
             const response = await fetch(`/api/nhl/scores?date=${formattedDate}`)
 
@@ -30,6 +34,16 @@ export function GamesList({ date }: GamesListProps) {
             const data: NHLScheduleResponse = await response.json()
             setScheduleData(data)
             setLastRefreshTime(new Date())
+
+            // Restore scroll position after state update
+            if (scrollPosition !== undefined) {
+                requestAnimationFrame(() => {
+                    scrollContainer?.scrollTo({
+                        top: scrollPosition,
+                        behavior: 'instant'
+                    })
+                })
+            }
         } catch (err) {
             console.error('Error fetching games:', err)
             setError('Failed to load games')
@@ -75,7 +89,7 @@ export function GamesList({ date }: GamesListProps) {
     )
 
     return (
-        <div className="space-y-4">
+        <div className="space-y-4" ref={containerRef}>
             <RefreshSettings
                 isEnabled={autoRefreshEnabled}
                 onToggle={setAutoRefreshEnabled}
