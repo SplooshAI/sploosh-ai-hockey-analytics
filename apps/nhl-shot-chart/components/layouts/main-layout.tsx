@@ -6,9 +6,10 @@ import { Menu } from 'lucide-react'
 
 interface MainLayoutProps {
     children: ReactNode
+    onGameSelect?: (gameId: number) => void
 }
 
-export function MainLayout({ children }: MainLayoutProps) {
+export function MainLayout({ children, onGameSelect }: MainLayoutProps) {
     const [isSidebarOpen, setIsSidebarOpen] = useState(false)
 
     // Add handler to close sidebar
@@ -44,7 +45,7 @@ export function MainLayout({ children }: MainLayoutProps) {
                 ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}
                 z-40 w-64
             `}>
-                <Sidebar onClose={() => setIsSidebarOpen(false)} />
+                <Sidebar onClose={() => setIsSidebarOpen(false)} onGameSelect={onGameSelect} />
             </div>
 
             {/* Main content */}
