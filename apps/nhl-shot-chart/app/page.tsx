@@ -16,6 +16,7 @@ export default function Home() {
     try {
       setLoading(true)
       setError(null)
+      setPlayByPlayData(null)
       const data = await getPlayByPlay(gameId.toString())
       setPlayByPlayData(data)
     } catch (err) {
