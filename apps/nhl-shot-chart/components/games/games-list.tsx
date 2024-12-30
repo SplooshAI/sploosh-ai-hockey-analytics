@@ -1,8 +1,9 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useCallback, useRef } from 'react'
 import { format } from 'date-fns'
 import { GameCard } from './game-card'
+import { RefreshSettings } from './refresh-settings'
 import type { NHLScheduleResponse } from '@/types/nhl'
 
 interface GamesListProps {
@@ -13,30 +14,66 @@ export function GamesList({ date }: GamesListProps) {
     const [scheduleData, setScheduleData] = useState<NHLScheduleResponse | null>(null)
     const [loading, setLoading] = useState(true)
     const [error, setError] = useState<string | null>(null)
+    const [lastRefreshTime, setLastRefreshTime] = useState<Date | null>(null)
+    const [autoRefreshEnabled, setAutoRefreshEnabled] = useState(false)
+    const containerRef = useRef<HTMLDivElement>(null)
 
-    useEffect(() => {
-        async function fetchGames() {
-            try {
-                setLoading(true)
-                const formattedDate = format(date, 'yyyy-MM-dd')
-                const response = await fetch(`/api/nhl/scores?date=${formattedDate}`)
+    const fetchGames = useCallback(async () => {
+        try {
+            // Store current scroll position
+            const scrollContainer = containerRef.current?.closest('.overflow-y-auto')
+            const scrollPosition = scrollContainer?.scrollTop
 
-                if (!response.ok) {
-                    throw new Error('Failed to fetch games')
-                }
+            const formattedDate = format(date, 'yyyy-MM-dd')
+            const response = await fetch(`/api/nhl/scores?date=${formattedDate}`)
 
-                const data: NHLScheduleResponse = await response.json()
-                setScheduleData(data)
-            } catch (err) {
-                console.error('Error fetching games:', err)
-                setError('Failed to load games')
-            } finally {
-                setLoading(false)
+            if (!response.ok) {
+                throw new Error('Failed to fetch games')
             }
+
+            const data: NHLScheduleResponse = await response.json()
+            setScheduleData(data)
+            setLastRefreshTime(new Date())
+
+            // Restore scroll position after state update
+            if (scrollPosition !== undefined) {
+                requestAnimationFrame(() => {
+                    scrollContainer?.scrollTo({
+                        top: scrollPosition,
+                        behavior: 'instant'
+                    })
+                })
+            }
+        } catch (err) {
+            console.error('Error fetching games:', err)
+            setError('Failed to load games')
+        } finally {
+            setLoading(false)
+        }
+    }, [date])
+
+    // Initial fetch on mount
+    useEffect(() => {
+        fetchGames()
+    }, [fetchGames])
+
+    // Auto-refresh effect
+    useEffect(() => {
+        let timer: NodeJS.Timeout | null = null
+
+        if (autoRefreshEnabled) {
+            // Immediate fetch when enabled
+            fetchGames()
+            // Then set up the interval
+            timer = setInterval(fetchGames, 20000)
         }
 
-        fetchGames()
-    }, [date])
+        return () => {
+            if (timer) {
+                clearInterval(timer)
+            }
+        }
+    }, [autoRefreshEnabled, fetchGames])
 
     if (loading) return (
         <div className="flex justify-center items-center p-4">
@@ -57,10 +94,26 @@ export function GamesList({ date }: GamesListProps) {
     )
 
     return (
-        <div className="space-y-2">
-            {scheduleData.games.map((game) => (
-                <GameCard key={game.id} game={game} />
-            ))}
+        <div className="space-y-4" ref={containerRef}>
+            <RefreshSettings
+                isEnabled={autoRefreshEnabled}
+                onToggle={setAutoRefreshEnabled}
+                lastRefreshTime={lastRefreshTime}
+            />
+
+            <div className="space-y-2">
+                {scheduleData.games.map((game) => (
+                    <GameCard key={game.id} game={game} />
+                ))}
+            </div>
+
+            <div className="pt-4 mt-4 border-t border-border/50">
+                <RefreshSettings
+                    isEnabled={autoRefreshEnabled}
+                    onToggle={setAutoRefreshEnabled}
+                    lastRefreshTime={lastRefreshTime}
+                />
+            </div>
         </div>
     )
 } 
