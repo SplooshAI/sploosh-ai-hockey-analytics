@@ -6,9 +6,10 @@ import { formatInTimeZone } from 'date-fns-tz'
 interface GameCardProps {
     game: NHLEdgeGame
     onSelectGame?: (gameId: number) => void
+    onClose?: () => void
 }
 
-export function GameCard({ game, onSelectGame }: GameCardProps) {
+export function GameCard({ game, onSelectGame, onClose }: GameCardProps) {
     const getTeamLogoUrl = (teamAbbrev: string) => {
         return `https://assets.nhle.com/logos/nhl/svg/${teamAbbrev}_light.svg`
     }
@@ -16,6 +17,9 @@ export function GameCard({ game, onSelectGame }: GameCardProps) {
     const handleGameClick = (e: React.MouseEvent) => {
         if (onSelectGame) {
             onSelectGame(game.id)
+            if (onClose) {
+                onClose()
+            }
             e.preventDefault()
             e.stopPropagation()
         }

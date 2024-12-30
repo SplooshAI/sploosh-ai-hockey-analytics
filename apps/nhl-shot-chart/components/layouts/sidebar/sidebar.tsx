@@ -38,7 +38,11 @@ export default function Sidebar({ onClose, onGameSelect }: SidebarProps) {
 
             <div className="flex-1 min-h-0 overflow-y-auto pb-safe">
                 <div className="p-4">
-                    <GamesList date={selectedDate} onGameSelect={onGameSelect} />
+                    <GamesList
+                        date={selectedDate}
+                        onGameSelect={onGameSelect}
+                        onClose={onClose}
+                    />
                     <div className="pt-4 mt-4 border-t border-border/50">
                         <Version />
                     </div>
