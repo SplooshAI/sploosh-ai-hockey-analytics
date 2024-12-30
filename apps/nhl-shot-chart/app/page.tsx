@@ -4,11 +4,13 @@ import { useState } from 'react'
 import { MainLayout } from '@/components/layouts/main-layout'
 import NHLEdgeHockeyRink from '@/components/features/hockey-rink/nhl-edge-hockey-rink/nhl-edge-hockey-rink'
 import { getPlayByPlay } from '@/lib/api/nhl-edge/services/play-by-play'
+import { Copy, Check } from 'lucide-react'
 
 export default function Home() {
   const [playByPlayData, setPlayByPlayData] = useState<any>(null)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const [copied, setCopied] = useState(false)
 
   const handleGameSelect = async (gameId: number) => {
     try {
@@ -21,6 +23,17 @@ export default function Home() {
       console.error(err)
     } finally {
       setLoading(false)
+    }
+  }
+
+  const handleCopyJson = async () => {
+    if (!playByPlayData) return
+    try {
+      await navigator.clipboard.writeText(JSON.stringify(playByPlayData, null, 2))
+      setCopied(true)
+      setTimeout(() => setCopied(false), 2000)
+    } catch (err) {
+      console.error('Failed to copy JSON:', err)
     }
   }
 
@@ -56,7 +69,18 @@ export default function Home() {
         )}
 
         {playByPlayData && (
-          <div className="overflow-auto">
+          <div className="overflow-auto relative">
+            <button
+              onClick={handleCopyJson}
+              className="absolute top-2 right-2 p-2 rounded-md hover:bg-background/10 transition-colors"
+              title="Copy JSON"
+            >
+              {copied ? (
+                <Check className="h-4 w-4 text-green-500" />
+              ) : (
+                <Copy className="h-4 w-4" />
+              )}
+            </button>
             <pre className="text-xs p-4 bg-muted rounded-lg">
               {JSON.stringify(playByPlayData, null, 2)}
             </pre>
