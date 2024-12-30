@@ -4,14 +4,14 @@ import { useEffect, useState, useCallback, useRef } from 'react'
 import { format } from 'date-fns'
 import { GameCard } from '../card/game-card'
 import { RefreshSettings } from '@/components/shared/refresh/refresh-settings'
-import type { NHLScheduleResponse } from '@/types/nhl'
+import type { NHLEdgeScheduleResponse } from '@/types/nhl-edge'
 
 interface GamesListProps {
     date: Date
 }
 
 export function GamesList({ date }: GamesListProps) {
-    const [scheduleData, setScheduleData] = useState<NHLScheduleResponse | null>(null)
+    const [scheduleData, setScheduleData] = useState<NHLEdgeScheduleResponse | null>(null)
     const [loading, setLoading] = useState(true)
     const [error, setError] = useState<string | null>(null)
     const [lastRefreshTime, setLastRefreshTime] = useState<Date | null>(null)
@@ -31,7 +31,7 @@ export function GamesList({ date }: GamesListProps) {
                 throw new Error('Failed to fetch games')
             }
 
-            const data: NHLScheduleResponse = await response.json()
+            const data: NHLEdgeScheduleResponse = await response.json()
             setScheduleData(data)
             setLastRefreshTime(new Date())
 

@@ -1,9 +1,9 @@
-import { NHLGame } from '@/types/nhl'
+import { NHLEdgeGame } from '@/types/nhl-edge'
 import { parseISO } from 'date-fns'
 import { formatInTimeZone } from 'date-fns-tz'
 
 interface GameCardProps {
-    game: NHLGame
+    game: NHLEdgeGame
 }
 
 export function GameCard({ game }: GameCardProps) {
