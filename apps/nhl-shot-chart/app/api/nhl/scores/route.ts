@@ -1,4 +1,7 @@
 import { NextResponse } from 'next/server'
+import { fetchNHLEdge, ApiError } from '@/lib/api/nhl-edge/server/client'
+import { NHL_EDGE_ENDPOINTS } from '@/lib/api/nhl-edge/endpoints'
+import type { NHLEdgeScheduleResponse } from '@/types/nhl-edge'
 
 export async function GET(request: Request) {
     const { searchParams } = new URL(request.url)
@@ -9,20 +12,18 @@ export async function GET(request: Request) {
     }
 
     try {
-        const response = await fetch(`https://api-web.nhle.com/v1/score/${date}`, {
-            headers: {
-                'Accept': 'application/json',
-            },
-        })
-
-        if (!response.ok) {
-            throw new Error(`NHL Edge API responded with status: ${response.status}`)
-        }
-
-        const data = await response.json()
+        const data = await fetchNHLEdge<NHLEdgeScheduleResponse>(NHL_EDGE_ENDPOINTS.scores(date))
         return NextResponse.json(data)
     } catch (error) {
         console.error('NHL Edge API Error:', error)
+
+        if (error instanceof ApiError) {
+            return NextResponse.json(
+                { error: error.message },
+                { status: error.status }
+            )
+        }
+
         return NextResponse.json(
             { error: 'Failed to fetch data from the NHL Edge API' },
             { status: 500 }
