@@ -106,6 +106,14 @@ export function GamesList({ date }: GamesListProps) {
                     <GameCard key={game.id} game={game} />
                 ))}
             </div>
+
+            <div className="pt-4 mt-4 border-t border-border/50">
+                <RefreshSettings
+                    isEnabled={autoRefreshEnabled}
+                    onToggle={setAutoRefreshEnabled}
+                    lastRefreshTime={lastRefreshTime}
+                />
+            </div>
         </div>
     )
 } 
