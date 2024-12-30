@@ -62,9 +62,7 @@ export function GamesList({ date }: GamesListProps) {
         let timer: NodeJS.Timeout | null = null
 
         if (autoRefreshEnabled) {
-            // Immediate fetch when enabled
-            fetchGames()
-            // Then set up the interval
+            // Only set up the interval, no immediate fetch
             timer = setInterval(fetchGames, 20000)
         }
 
