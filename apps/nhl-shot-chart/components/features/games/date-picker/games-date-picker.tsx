@@ -1,5 +1,6 @@
 import { ChevronLeft, ChevronRight } from 'lucide-react'
 import { format, isToday, addDays, subDays } from 'date-fns'
+import { formatDateWithOrdinal } from '@/lib/utils'
 
 interface GamesDatePickerProps {
     date: Date
@@ -54,7 +55,7 @@ export function GamesDatePicker({ date, onDateChange }: GamesDatePickerProps) {
                     {format(date, 'EEEE')}
                 </div>
                 <div className="text-sm text-muted-foreground">
-                    {format(date, 'MMMM d, yyyy')}
+                    {formatDateWithOrdinal(date)}
                 </div>
             </div>
         </div>
