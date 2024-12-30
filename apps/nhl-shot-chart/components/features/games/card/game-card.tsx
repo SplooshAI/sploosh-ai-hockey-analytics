@@ -49,6 +49,11 @@ export function GameCard({ game, onSelectGame, onClose }: GameCardProps) {
                 )
             case 'FINAL':
             case 'OFF':
+                if (game.periodDescriptor?.periodType === 'OT') {
+                    return 'Final (OT)'
+                } else if (game.periodDescriptor?.periodType === 'SO') {
+                    return 'Final (SO)'
+                }
                 return 'Final'
             default:
                 console.error(`Unexpected game state: ${game.gameState}`)

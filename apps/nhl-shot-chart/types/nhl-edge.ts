@@ -12,9 +12,16 @@ export interface NHLEdgeGame {
     homeTeam: NHLEdgeTeam
     id: number
     period?: number
+    periodDescriptor?: {
+        number: number
+        periodType: NHLEdgePeriodType
+        maxRegulationPeriods: number
+    }
     season: number
     startTimeUTC: string
 }
+
+export type NHLEdgePeriodType = 'REG' | 'OT' | 'SO'
 
 export interface NHLEdgeGameWeekDay {
     date: string
