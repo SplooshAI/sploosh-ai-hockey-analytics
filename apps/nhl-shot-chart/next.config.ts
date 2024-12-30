@@ -9,6 +9,12 @@ const nextConfig: NextConfig = {
   experimental: {
     disableOptimizedLoading: true,
   },
+  images: {
+    domains: [
+      // Add any domains that host your team logos
+      'assets.nhle.com',  // NHL's asset domain
+    ],
+  },
 };
 
 export default nextConfig; 
