@@ -33,13 +33,8 @@ export function GameCard({ game }: GameCardProps) {
                     'h:mm a zzz'
                 )
             case 'FINAL':
-                // Game has ended but stats may still be getting finalized
-                return 'Final'
             case 'OFF':
-                // Game is official with all stats finalized
                 return 'Final'
-
-            // TODO: Add notification for an unexpected game state
             default:
                 console.error(`Unexpected game state: ${game.gameState}`)
                 return game.gameState
@@ -64,7 +59,7 @@ export function GameCard({ game }: GameCardProps) {
 
     return (
         <div
-            className="rounded-lg bg-card p-4 shadow-sm cursor-pointer hover:bg-accent/50 transition-colors"
+            className="rounded-lg bg-card px-6 py-4 shadow-sm cursor-pointer hover:bg-accent/50 transition-colors w-full"
             onClick={handleGameClick}
             role="button"
             tabIndex={0}
@@ -74,36 +69,41 @@ export function GameCard({ game }: GameCardProps) {
                 }
             }}
         >
-            <div className="flex flex-col gap-2">
-                <div className="flex items-center justify-between gap-4">
-                    <div className="flex items-center gap-2">
-                        <div className="relative w-8 h-8">
-                            <Image
-                                src={getTeamLogoUrl(game.awayTeam.abbrev)}
-                                alt={`${game.awayTeam.name} logo`}
-                                fill
-                                className="object-contain"
-                            />
-                        </div>
-                        <span className="font-medium">{game.awayTeam.abbrev}</span>
-                        {game.awayTeam.score !== undefined && (
-                            <span className="font-bold">{game.awayTeam.score}</span>
-                        )}
+            <div className="flex flex-col gap-1">
+                <div className="grid grid-cols-[24px_40px_24px_24px_40px_24px] items-center justify-center gap-2">
+                    {/* Away Team Logo */}
+                    <div className="relative w-6 h-6">
+                        <Image
+                            src={getTeamLogoUrl(game.awayTeam.abbrev)}
+                            alt={`${game.awayTeam.name} logo`}
+                            fill
+                            className="object-contain"
+                        />
                     </div>
 
-                    <div className="flex items-center gap-2">
-                        {game.homeTeam.score !== undefined && (
-                            <span className="font-bold">{game.homeTeam.score}</span>
-                        )}
-                        <span className="font-medium">{game.homeTeam.abbrev}</span>
-                        <div className="relative w-8 h-8">
-                            <Image
-                                src={getTeamLogoUrl(game.homeTeam.abbrev)}
-                                alt={`${game.homeTeam.name} logo`}
-                                fill
-                                className="object-contain"
-                            />
-                        </div>
+                    {/* Away Team Abbreviation */}
+                    <span className="font-medium text-right">{game.awayTeam.abbrev}</span>
+
+                    {/* Scores */}
+                    <span className="font-bold text-center">
+                        {game.awayTeam.score !== undefined && game.awayTeam.score}
+                    </span>
+
+                    <span className="font-bold text-center">
+                        {game.homeTeam.score !== undefined && game.homeTeam.score}
+                    </span>
+
+                    {/* Home Team Abbreviation */}
+                    <span className="font-medium text-left">{game.homeTeam.abbrev}</span>
+
+                    {/* Home Team Logo */}
+                    <div className="relative w-6 h-6">
+                        <Image
+                            src={getTeamLogoUrl(game.homeTeam.abbrev)}
+                            alt={`${game.homeTeam.name} logo`}
+                            fill
+                            className="object-contain"
+                        />
                     </div>
                 </div>
 
