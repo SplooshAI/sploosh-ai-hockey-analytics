@@ -38,6 +38,9 @@ export default function Sidebar({ onClose }: SidebarProps) {
             <div className="flex-1 min-h-0 overflow-y-auto pb-safe">
                 <div className="p-4">
                     <GamesList date={selectedDate} />
+                    <div className="pt-4 mt-4 border-t border-border/50">
+                        <Version />
+                    </div>
                 </div>
             </div>
         </div>
