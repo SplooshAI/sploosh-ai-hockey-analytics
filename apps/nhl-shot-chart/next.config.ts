@@ -9,6 +9,15 @@ const nextConfig: NextConfig = {
   experimental: {
     disableOptimizedLoading: true,
   },
+  images: {
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: 'assets.nhle.com',
+        pathname: '/logos/nhl/svg/**',
+      }
+    ],
+  },
 };
 
 export default nextConfig; 

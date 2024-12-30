@@ -1,3 +1,4 @@
+import Image from 'next/image'
 import { NHLEdgeGame } from '@/types/nhl-edge'
 import { parseISO } from 'date-fns'
 import { formatInTimeZone } from 'date-fns-tz'
@@ -7,6 +8,15 @@ interface GameCardProps {
 }
 
 export function GameCard({ game }: GameCardProps) {
+    const getTeamLogoUrl = (teamAbbrev: string) => {
+        return `https://assets.nhle.com/logos/nhl/svg/${teamAbbrev}_light.svg`
+    }
+
+    const handleGameClick = () => {
+        const url = `https://www.nhl.com/gamecenter/${game.id}`
+        window.open(url, '_blank', 'noopener,noreferrer')
+    }
+
     const getGameStatus = () => {
         switch (game.gameState) {
             case 'CRIT':
@@ -23,27 +33,33 @@ export function GameCard({ game }: GameCardProps) {
                     'h:mm a zzz'
                 )
             case 'FINAL':
-                // Game has ended but stats may still be getting finalized or post-game reviews are happening
-                return 'Final'
             case 'OFF':
-                // Game is official with all stats finalized
                 return 'Final'
-
-            // TODO: Add notification for an unexpected game state
             default:
                 console.error(`Unexpected game state: ${game.gameState}`)
                 return game.gameState
         }
     }
 
-    const handleGameClick = () => {
-        const url = `https://www.nhl.com/gamecenter/${game.id}`
-        window.open(url, '_blank', 'noopener,noreferrer')
+    const getGameStateClass = () => {
+        switch (game.gameState) {
+            case 'LIVE':
+            case 'CRIT':
+                return 'text-green-500 dark:text-green-400'
+            case 'FINAL':
+            case 'OFF':
+                return 'text-gray-500 dark:text-gray-400'
+            case 'PRE':
+            case 'FUT':
+                return 'text-muted-foreground'
+            default:
+                return 'text-muted-foreground'
+        }
     }
 
     return (
         <div
-            className="p-3 rounded-lg bg-background hover:bg-accent cursor-pointer"
+            className="rounded-lg bg-card px-6 py-4 shadow-sm cursor-pointer hover:bg-accent/50 transition-colors w-full"
             onClick={handleGameClick}
             role="button"
             tabIndex={0}
@@ -53,32 +69,47 @@ export function GameCard({ game }: GameCardProps) {
                 }
             }}
         >
-            <div className="grid grid-cols-[1fr_40px] items-center">
-                <div className="space-y-1">
-                    <div className="flex items-center gap-2">
-                        <img
-                            src={`https://assets.nhle.com/logos/nhl/svg/${game.awayTeam.abbrev}_light.svg`}
+            <div className="flex flex-col gap-1">
+                <div className="grid grid-cols-[24px_40px_24px_24px_40px_24px] items-center justify-center gap-2">
+                    {/* Away Team Logo */}
+                    <div className="relative w-6 h-6">
+                        <Image
+                            src={getTeamLogoUrl(game.awayTeam.abbrev)}
                             alt={`${game.awayTeam.name} logo`}
-                            className="w-5 h-5"
+                            fill
+                            className="object-contain"
                         />
-                        <div className="text-sm font-medium">{game.awayTeam.abbrev}</div>
                     </div>
-                    <div className="flex items-center gap-2">
-                        <img
-                            src={`https://assets.nhle.com/logos/nhl/svg/${game.homeTeam.abbrev}_light.svg`}
+
+                    {/* Away Team Abbreviation */}
+                    <span className="font-medium text-right">{game.awayTeam.abbrev}</span>
+
+                    {/* Scores */}
+                    <span className="font-bold text-center">
+                        {game.awayTeam.score !== undefined && game.awayTeam.score}
+                    </span>
+
+                    <span className="font-bold text-center">
+                        {game.homeTeam.score !== undefined && game.homeTeam.score}
+                    </span>
+
+                    {/* Home Team Abbreviation */}
+                    <span className="font-medium text-left">{game.homeTeam.abbrev}</span>
+
+                    {/* Home Team Logo */}
+                    <div className="relative w-6 h-6">
+                        <Image
+                            src={getTeamLogoUrl(game.homeTeam.abbrev)}
                             alt={`${game.homeTeam.name} logo`}
-                            className="w-5 h-5"
+                            fill
+                            className="object-contain"
                         />
-                        <div className="text-sm font-medium">{game.homeTeam.abbrev}</div>
                     </div>
                 </div>
-                <div className="text-lg font-bold">
-                    <div className="text-right tabular-nums">{String(game.awayTeam.score ?? '-').trim()}</div>
-                    <div className="text-right tabular-nums">{String(game.homeTeam.score ?? '-').trim()}</div>
+
+                <div className={`text-sm text-center ${getGameStateClass()}`}>
+                    {getGameStatus()}
                 </div>
-            </div>
-            <div className="text-xs text-muted-foreground mt-2">
-                {getGameStatus()}
             </div>
         </div>
     )

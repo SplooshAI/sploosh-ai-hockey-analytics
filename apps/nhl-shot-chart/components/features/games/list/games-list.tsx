@@ -5,6 +5,7 @@ import { format } from 'date-fns'
 import { GameCard } from '../card/game-card'
 import { RefreshSettings } from '@/components/shared/refresh/refresh-settings'
 import type { NHLEdgeScheduleResponse } from '@/types/nhl-edge'
+import { getScores } from '@/lib/api/nhl-edge'
 
 interface GamesListProps {
     date: Date
@@ -20,22 +21,15 @@ export function GamesList({ date }: GamesListProps) {
 
     const fetchGames = useCallback(async () => {
         try {
-            // Store current scroll position
             const scrollContainer = containerRef.current?.closest('.overflow-y-auto')
             const scrollPosition = scrollContainer?.scrollTop
 
             const formattedDate = format(date, 'yyyy-MM-dd')
-            const response = await fetch(`/api/nhl/scores?date=${formattedDate}`)
+            const data = await getScores(formattedDate)
 
-            if (!response.ok) {
-                throw new Error('Failed to fetch games')
-            }
-
-            const data: NHLEdgeScheduleResponse = await response.json()
             setScheduleData(data)
             setLastRefreshTime(new Date())
 
-            // Restore scroll position after state update
             if (scrollPosition !== undefined) {
                 requestAnimationFrame(() => {
                     scrollContainer?.scrollTo({
