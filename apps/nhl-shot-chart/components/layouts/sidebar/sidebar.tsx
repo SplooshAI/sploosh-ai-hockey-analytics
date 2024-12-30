@@ -2,8 +2,8 @@
 
 import { useState } from 'react'
 import { X } from 'lucide-react'
-import { GamesList } from '../games/games-list'
-import { Version } from '../version/version'
+import { GamesList } from '@/components/features/games/list/games-list'
+import { Version } from '../../shared/version/version'
 
 interface SidebarProps {
     onClose?: () => void

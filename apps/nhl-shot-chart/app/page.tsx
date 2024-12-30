@@ -1,5 +1,5 @@
 import { MainLayout } from '@/components/layouts/main-layout'
-import NHLEdgeHockeyRink from '@/components/nhl-edge-hockey-rink/nhl-edge-hockey-rink'
+import NHLEdgeHockeyRink from '@/components/features/hockey-rink/nhl-edge-hockey-rink/nhl-edge-hockey-rink'
 
 export default function Home() {
   return (

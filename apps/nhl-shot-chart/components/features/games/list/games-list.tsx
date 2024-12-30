@@ -2,8 +2,8 @@
 
 import { useEffect, useState, useCallback, useRef } from 'react'
 import { format } from 'date-fns'
-import { GameCard } from './game-card'
-import { RefreshSettings } from './refresh-settings'
+import { GameCard } from '../card/game-card'
+import { RefreshSettings } from '@/components/shared/refresh/refresh-settings'
 import type { NHLScheduleResponse } from '@/types/nhl'
 
 interface GamesListProps {

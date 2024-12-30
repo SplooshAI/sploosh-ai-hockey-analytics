@@ -16,15 +16,15 @@ export async function GET(request: Request) {
         })
 
         if (!response.ok) {
-            throw new Error(`NHL API responded with status: ${response.status}`)
+            throw new Error(`NHL Edge API responded with status: ${response.status}`)
         }
 
         const data = await response.json()
         return NextResponse.json(data)
     } catch (error) {
-        console.error('NHL API Error:', error)
+        console.error('NHL Edge API Error:', error)
         return NextResponse.json(
-            { error: 'Failed to fetch NHL data' },
+            { error: 'Failed to fetch data from the NHL Edge API' },
             { status: 500 }
         )
     }

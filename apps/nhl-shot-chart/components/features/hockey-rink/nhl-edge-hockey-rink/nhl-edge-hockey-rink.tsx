@@ -469,100 +469,100 @@ const NHLEdgeHockeyRink = ({
       <>
         {/* Insert Zamboni-related SVG elements here */}
         <path
-      id="path1"
-      fill="none"
-      stroke="none"
-      strokeWidth="10px"
-      d="m 2031 936 H 369 C 227 932 90 847 84 622 V 428 C 86 218 239 132 461 124 H 1939 C 2092 125 2260 250 2260 372 C 2256 499 2090 586 1937 588 H 461 C 315 584 186 550 180 435 C 182 302 335 248 461 240 H 1939 C 2098 244 2243 334 2252 475 C 2254 717 2086 697 1939 704 H 461 C 331 697 184 659 180 530 C 178 389 323 364 461 356 H 1939 C 2096 354 2243 453 2243 618 C 2237 737 2080 824 1939 820 H 461 C 285 820 140 794 138 644 C 136 497 325 473 450 472 H 1939 C 2080 469 2239 572 2235 733 C 2233 822 2117 937 2031 936"
-    />
-    <path
-      id="path2"
-      fill="none"
-      stroke="none"
-      strokeWidth="10px"
-      d="m 369 84 H 2031 C 2209 89 2313 194 2316 398 V 527 C 2310 687 2167 881 1939 896 H 461 C 308 895 140 770 140 648 C 144 521 310 434 463 432 H 1939 C 2085 436 2214 470 2220 585 C 2218 718 2065 772 1939 780 H 461 C 302 776 157 686 148 545 C 146 303 314 323 461 316 H 1939 C 2069 323 2216 361 2220 490 C 2222 631 2077 656 1939 664 H 462 C 304 666 157 567 157 402 C 163 283 320 196 461 200 H 1935 C 2115 200 2260 226 2262 376 C 2264 523 2075 547 1950 548 H 463 C 320 551 161 448 165 287 C 167 198 283 83 369 84"
-    />
-    <g filter="url(#ice_resurfacer_filter)">
-      <rect
-        x={-105}
-        width={168}
-        height={84}
-        fill="url(#ice_resurfacer_pattern)"
-        shapeRendering="geometricPrecision"
-      />
-      <animateMotion dur={200} repeatCount="indefinite" rotate="auto-reverse">
-        <mpath xlinkHref="#path1" />
-      </animateMotion>
-    </g>
-    <g filter="url(#ice_resurfacer_filter)">
-      <rect
-        x={-105}
-        width={168}
-        height={84}
-        fill="url(#ice_resurfacer_pattern)"
-        shapeRendering="geometricPrecision"
-      />
-      <animateMotion dur={200} repeatCount="indefinite" rotate="auto-reverse">
-        <mpath xlinkHref="#path2" />
-      </animateMotion>
-    </g>
-    <defs>
-      <filter
-        id="ice_resurfacer_filter"
-        x={-105}
-        y={0}
-        width={176}
-        height={92}
-        filterUnits="userSpaceOnUse"
-        colorInterpolationFilters="sRGB"
-      >
-        <feFlood floodOpacity={0} result="BackgroundImageFix" />
-        <feColorMatrix
-          in="SourceAlpha"
-          type="matrix"
-          values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0"
-          result="hardAlpha"
+          id="path1"
+          fill="none"
+          stroke="none"
+          strokeWidth="10px"
+          d="m 2031 936 H 369 C 227 932 90 847 84 622 V 428 C 86 218 239 132 461 124 H 1939 C 2092 125 2260 250 2260 372 C 2256 499 2090 586 1937 588 H 461 C 315 584 186 550 180 435 C 182 302 335 248 461 240 H 1939 C 2098 244 2243 334 2252 475 C 2254 717 2086 697 1939 704 H 461 C 331 697 184 659 180 530 C 178 389 323 364 461 356 H 1939 C 2096 354 2243 453 2243 618 C 2237 737 2080 824 1939 820 H 461 C 285 820 140 794 138 644 C 136 497 325 473 450 472 H 1939 C 2080 469 2239 572 2235 733 C 2233 822 2117 937 2031 936"
         />
-        <feGaussianBlur stdDeviation={2} />
-        <feComposite in2="hardAlpha" operator="out" />
-        <feColorMatrix
-          type="matrix"
-          values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.25 0"
+        <path
+          id="path2"
+          fill="none"
+          stroke="none"
+          strokeWidth="10px"
+          d="m 369 84 H 2031 C 2209 89 2313 194 2316 398 V 527 C 2310 687 2167 881 1939 896 H 461 C 308 895 140 770 140 648 C 144 521 310 434 463 432 H 1939 C 2085 436 2214 470 2220 585 C 2218 718 2065 772 1939 780 H 461 C 302 776 157 686 148 545 C 146 303 314 323 461 316 H 1939 C 2069 323 2216 361 2220 490 C 2222 631 2077 656 1939 664 H 462 C 304 666 157 567 157 402 C 163 283 320 196 461 200 H 1935 C 2115 200 2260 226 2262 376 C 2264 523 2075 547 1950 548 H 463 C 320 551 161 448 165 287 C 167 198 283 83 369 84"
         />
-        <feBlend
-          mode="normal"
-          in2="BackgroundImageFix"
-          result="effect1_dropShadow_59_3"
-        />
-        <feBlend
-          mode="normal"
-          in="SourceGraphic"
-          in2="effect1_dropShadow_59_3"
-          result="shape"
-        />
-      </filter>
-      <pattern
-        id="ice_resurfacer_pattern"
-        patternContentUnits="objectBoundingBox"
-        width={1}
-        height={1}
-      >
-        <use
-          xlinkHref="#ice_resurfacer"
-          transform="scale(0.00757576 0.0151515)"
-        />
-      </pattern>
-      <image
-        id="ice_resurfacer"
-        width={132}
-        height={66}
-        xlinkHref={zamboniImage}
-      />
-    </defs>
+        <g filter="url(#ice_resurfacer_filter)">
+          <rect
+            x={-105}
+            width={168}
+            height={84}
+            fill="url(#ice_resurfacer_pattern)"
+            shapeRendering="geometricPrecision"
+          />
+          <animateMotion dur={200} repeatCount="indefinite" rotate="auto-reverse">
+            <mpath xlinkHref="#path1" />
+          </animateMotion>
+        </g>
+        <g filter="url(#ice_resurfacer_filter)">
+          <rect
+            x={-105}
+            width={168}
+            height={84}
+            fill="url(#ice_resurfacer_pattern)"
+            shapeRendering="geometricPrecision"
+          />
+          <animateMotion dur={200} repeatCount="indefinite" rotate="auto-reverse">
+            <mpath xlinkHref="#path2" />
+          </animateMotion>
+        </g>
+        <defs>
+          <filter
+            id="ice_resurfacer_filter"
+            x={-105}
+            y={0}
+            width={176}
+            height={92}
+            filterUnits="userSpaceOnUse"
+            colorInterpolationFilters="sRGB"
+          >
+            <feFlood floodOpacity={0} result="BackgroundImageFix" />
+            <feColorMatrix
+              in="SourceAlpha"
+              type="matrix"
+              values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0"
+              result="hardAlpha"
+            />
+            <feGaussianBlur stdDeviation={2} />
+            <feComposite in2="hardAlpha" operator="out" />
+            <feColorMatrix
+              type="matrix"
+              values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.25 0"
+            />
+            <feBlend
+              mode="normal"
+              in2="BackgroundImageFix"
+              result="effect1_dropShadow_59_3"
+            />
+            <feBlend
+              mode="normal"
+              in="SourceGraphic"
+              in2="effect1_dropShadow_59_3"
+              result="shape"
+            />
+          </filter>
+          <pattern
+            id="ice_resurfacer_pattern"
+            patternContentUnits="objectBoundingBox"
+            width={1}
+            height={1}
+          >
+            <use
+              xlinkHref="#ice_resurfacer"
+              transform="scale(0.00757576 0.0151515)"
+            />
+          </pattern>
+          <image
+            id="ice_resurfacer"
+            width={132}
+            height={66}
+            xlinkHref={zamboniImage}
+          />
+        </defs>
       </>
     )}
 
-    
+
   </svg>
 );
 export default NHLEdgeHockeyRink;

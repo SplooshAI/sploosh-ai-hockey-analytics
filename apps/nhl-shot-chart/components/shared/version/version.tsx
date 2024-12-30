@@ -1,5 +1,5 @@
 'use client'
-import { getVersionInfo } from '../../lib/version'
+import { getVersionInfo } from '../../../lib/version'
 import { parseISO } from 'date-fns'
 import { useSearchParams } from 'next/navigation'
 import { useState, useEffect, Suspense } from 'react'
