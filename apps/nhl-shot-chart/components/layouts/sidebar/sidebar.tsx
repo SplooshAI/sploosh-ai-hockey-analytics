@@ -8,9 +8,10 @@ import { GamesDatePicker } from '@/components/features/games/date-picker/games-d
 
 interface SidebarProps {
     onClose?: () => void
+    onGameSelect?: (gameId: number) => void
 }
 
-export default function Sidebar({ onClose }: SidebarProps) {
+export default function Sidebar({ onClose, onGameSelect }: SidebarProps) {
     const [selectedDate, setSelectedDate] = useState<Date>(new Date())
 
     return (
@@ -37,7 +38,11 @@ export default function Sidebar({ onClose }: SidebarProps) {
 
             <div className="flex-1 min-h-0 overflow-y-auto pb-safe">
                 <div className="p-4">
-                    <GamesList date={selectedDate} />
+                    <GamesList
+                        date={selectedDate}
+                        onGameSelect={onGameSelect}
+                        onClose={onClose}
+                    />
                     <div className="pt-4 mt-4 border-t border-border/50">
                         <Version />
                     </div>

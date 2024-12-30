@@ -5,14 +5,29 @@ import { formatInTimeZone } from 'date-fns-tz'
 
 interface GameCardProps {
     game: NHLEdgeGame
+    onSelectGame?: (gameId: number) => void
+    onClose?: () => void
 }
 
-export function GameCard({ game }: GameCardProps) {
+export function GameCard({ game, onSelectGame, onClose }: GameCardProps) {
     const getTeamLogoUrl = (teamAbbrev: string) => {
         return `https://assets.nhle.com/logos/nhl/svg/${teamAbbrev}_light.svg`
     }
 
-    const handleGameClick = () => {
+    const handleGameClick = (e: React.MouseEvent) => {
+        if (onSelectGame) {
+            onSelectGame(game.id)
+            if (onClose) {
+                onClose()
+            }
+            e.preventDefault()
+            e.stopPropagation()
+        }
+    }
+
+    const handleGameCenterClick = (e: React.MouseEvent) => {
+        e.preventDefault()
+        e.stopPropagation()
         const url = `https://www.nhl.com/gamecenter/${game.id}`
         window.open(url, '_blank', 'noopener,noreferrer')
     }
@@ -65,7 +80,7 @@ export function GameCard({ game }: GameCardProps) {
             tabIndex={0}
             onKeyDown={(e) => {
                 if (e.key === 'Enter' || e.key === ' ') {
-                    handleGameClick()
+                    handleGameClick({} as React.MouseEvent)
                 }
             }}
         >
@@ -110,6 +125,15 @@ export function GameCard({ game }: GameCardProps) {
                 <div className={`text-sm text-center ${getGameStateClass()}`}>
                     {getGameStatus()}
                 </div>
+            </div>
+
+            <div className="flex justify-center gap-2 mt-2">
+                <button
+                    onClick={handleGameCenterClick}
+                    className="text-xs px-3 py-1.5 rounded-md bg-primary/10 hover:bg-primary/20 text-primary transition-colors"
+                >
+                    NHL Game Center
+                </button>
             </div>
         </div>
     )

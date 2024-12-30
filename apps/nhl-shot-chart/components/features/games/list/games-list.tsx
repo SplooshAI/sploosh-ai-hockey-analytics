@@ -9,9 +9,11 @@ import { getScores } from '@/lib/api/nhl-edge'
 
 interface GamesListProps {
     date: Date
+    onGameSelect?: (gameId: number) => void
+    onClose?: () => void
 }
 
-export function GamesList({ date }: GamesListProps) {
+export function GamesList({ date, onGameSelect, onClose }: GamesListProps) {
     const [scheduleData, setScheduleData] = useState<NHLEdgeScheduleResponse | null>(null)
     const [loading, setLoading] = useState(true)
     const [error, setError] = useState<string | null>(null)
@@ -95,7 +97,12 @@ export function GamesList({ date }: GamesListProps) {
 
             <div className="space-y-2">
                 {scheduleData.games.map((game) => (
-                    <GameCard key={game.id} game={game} />
+                    <GameCard
+                        key={game.id}
+                        game={game}
+                        onSelectGame={onGameSelect}
+                        onClose={onClose}
+                    />
                 ))}
             </div>
 
