@@ -36,8 +36,23 @@ export function GameCard({ game }: GameCardProps) {
         }
     }
 
+    const handleGameClick = () => {
+        const url = `https://www.nhl.com/gamecenter/${game.id}`
+        window.open(url, '_blank', 'noopener,noreferrer')
+    }
+
     return (
-        <div className="p-3 rounded-lg bg-background hover:bg-accent cursor-pointer">
+        <div
+            className="p-3 rounded-lg bg-background hover:bg-accent cursor-pointer"
+            onClick={handleGameClick}
+            role="button"
+            tabIndex={0}
+            onKeyDown={(e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                    handleGameClick()
+                }
+            }}
+        >
             <div className="grid grid-cols-[1fr_40px] items-center">
                 <div className="space-y-1">
                     <div className="flex items-center gap-2">
