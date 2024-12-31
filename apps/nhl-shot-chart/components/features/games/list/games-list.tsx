@@ -112,6 +112,7 @@ export function GamesList({ date, onGameSelect, onClose }: GamesListProps) {
                 isEnabled={autoRefreshEnabled}
                 onToggle={setAutoRefreshEnabled}
                 lastRefreshTime={lastRefreshTime}
+                defaultEnabled={true}
             />
 
             <div className="space-y-2">
@@ -130,6 +131,7 @@ export function GamesList({ date, onGameSelect, onClose }: GamesListProps) {
                     isEnabled={autoRefreshEnabled}
                     onToggle={setAutoRefreshEnabled}
                     lastRefreshTime={lastRefreshTime}
+                    defaultEnabled={true}
                 />
             </div>
         </div>
