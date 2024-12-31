@@ -3,7 +3,7 @@
 import { useState } from 'react'
 import { MainLayout } from '@/components/layouts/main-layout'
 import { NHLEdgeHockeyRink } from '@/components/features/hockey-rink/nhl-edge-hockey-rink/nhl-edge-hockey-rink'
-import { Check, Copy } from 'lucide-react'
+import { Check, Copy, Download } from 'lucide-react'
 import type { NHLEdgePlayByPlay } from '@/types/nhl-edge'
 
 export default function Home() {
@@ -36,6 +36,23 @@ export default function Home() {
     }
   }
 
+  const handleDownloadJson = () => {
+    if (playByPlayData) {
+      const gameDate = playByPlayData.gameDate.split('T')[0].replace(/-/g, '')
+      const filename = `${gameDate}-${playByPlayData.awayTeam.abbrev}-vs-${playByPlayData.homeTeam.abbrev}-${playByPlayData.id}.json`
+      const json = JSON.stringify(playByPlayData, null, 2)
+      const blob = new Blob([json], { type: 'application/json' })
+      const url = window.URL.createObjectURL(blob)
+      const link = document.createElement('a')
+      link.href = url
+      link.download = filename
+      document.body.appendChild(link)
+      link.click()
+      document.body.removeChild(link)
+      window.URL.revokeObjectURL(url)
+    }
+  }
+
   return (
     <MainLayout onGameSelect={handleGameSelect}>
       <div className="text-center text-muted-foreground">
@@ -64,17 +81,26 @@ export default function Home() {
 
       {playByPlayData && (
         <div className="overflow-auto relative">
-          <button
-            onClick={handleCopyJson}
-            className="absolute top-2 right-2 p-2 rounded-md hover:bg-background/10 transition-colors"
-            title="Copy JSON"
-          >
-            {copied ? (
-              <Check className="h-4 w-4 text-green-500" />
-            ) : (
-              <Copy className="h-4 w-4" />
-            )}
-          </button>
+          <div className="absolute top-2 right-2 flex gap-2">
+            <button
+              onClick={handleDownloadJson}
+              className="p-2 rounded-md hover:bg-background/10 transition-colors"
+              title="Download JSON"
+            >
+              <Download className="h-4 w-4" />
+            </button>
+            <button
+              onClick={handleCopyJson}
+              className="p-2 rounded-md hover:bg-background/10 transition-colors"
+              title="Copy JSON"
+            >
+              {copied ? (
+                <Check className="h-4 w-4 text-green-500" />
+              ) : (
+                <Copy className="h-4 w-4" />
+              )}
+            </button>
+          </div>
           <pre className="text-xs p-4 bg-muted rounded-lg">
             {JSON.stringify(playByPlayData, null, 2)}
           </pre>

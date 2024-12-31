@@ -59,6 +59,7 @@ export interface NHLEdgeTeam {
 
 // Play-by-play types
 export interface NHLEdgePlayByPlay {
+    id: number
     gameDate: string
     gameId: number
     plays: NHLEdgePlay[]
@@ -67,6 +68,8 @@ export interface NHLEdgePlayByPlay {
     gameState: string
     gameType: number
     season: number
+    awayTeam: { abbrev: string }
+    homeTeam: { abbrev: string }
 }
 
 export interface NHLEdgePlay {
