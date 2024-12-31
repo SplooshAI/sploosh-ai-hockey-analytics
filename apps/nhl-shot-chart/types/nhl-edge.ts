@@ -19,6 +19,17 @@ export interface NHLEdgeGame {
     }
     season: number
     startTimeUTC: string
+    specialEvent?: {
+        parentId: number
+        name: {
+            default: string
+            fr?: string
+        }
+        lightLogoUrl: {
+            default: string
+            fr?: string
+        }
+    }
 }
 
 export type NHLEdgePeriodType = 'REG' | 'OT' | 'SO'
