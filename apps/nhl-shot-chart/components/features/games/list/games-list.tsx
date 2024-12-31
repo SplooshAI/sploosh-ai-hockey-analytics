@@ -4,7 +4,7 @@ import { useEffect, useState, useCallback, useRef } from 'react'
 import { format } from 'date-fns'
 import { GameCard } from '../card/game-card'
 import { RefreshSettings } from '@/components/shared/refresh/refresh-settings'
-import type { NHLEdgeScheduleResponse } from '@/types/nhl-edge'
+import type { NHLEdgeGame } from '@/types/nhl-edge'
 import { getScores } from '@/lib/api/nhl-edge'
 
 interface GamesListProps {
@@ -14,7 +14,7 @@ interface GamesListProps {
 }
 
 export function GamesList({ date, onGameSelect, onClose }: GamesListProps) {
-    const [scheduleData, setScheduleData] = useState<NHLEdgeScheduleResponse | null>(null)
+    const [games, setGames] = useState<NHLEdgeGame[]>([])
     const [loading, setLoading] = useState(true)
     const [error, setError] = useState<string | null>(null)
     const [lastRefreshTime, setLastRefreshTime] = useState<Date | null>(null)
@@ -27,9 +27,28 @@ export function GamesList({ date, onGameSelect, onClose }: GamesListProps) {
             const scrollPosition = scrollContainer?.scrollTop
 
             const formattedDate = format(date, 'yyyy-MM-dd')
-            const data = await getScores(formattedDate)
+            const scheduleData = await getScores(formattedDate)
 
-            setScheduleData(data)
+            // Fetch game center data for each game to get special event info
+            const gamesWithSpecialEvents = await Promise.all(
+                scheduleData.games.map(async (game) => {
+                    try {
+                        const response = await fetch(`/api/nhl/game-center?gameId=${game.id}`)
+                        if (response.ok) {
+                            const gameCenterData = await response.json()
+                            return {
+                                ...game,
+                                specialEvent: gameCenterData.specialEvent
+                            }
+                        }
+                    } catch (error) {
+                        console.error(`Failed to fetch game center data for game ${game.id}:`, error)
+                    }
+                    return game
+                })
+            )
+
+            setGames(gamesWithSpecialEvents)
             setLastRefreshTime(new Date())
 
             if (scrollPosition !== undefined) {
@@ -81,7 +100,7 @@ export function GamesList({ date, onGameSelect, onClose }: GamesListProps) {
         </div>
     )
 
-    if (!scheduleData?.games || scheduleData.games.length === 0) return (
+    if (!games || games.length === 0) return (
         <div className="p-4">
             <div className="text-sm text-muted-foreground">No games scheduled</div>
         </div>
@@ -96,7 +115,7 @@ export function GamesList({ date, onGameSelect, onClose }: GamesListProps) {
             />
 
             <div className="space-y-2">
-                {scheduleData.games.map((game) => (
+                {games.map((game) => (
                     <GameCard
                         key={game.id}
                         game={game}

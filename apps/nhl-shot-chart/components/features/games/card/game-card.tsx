@@ -79,7 +79,7 @@ export function GameCard({ game, onSelectGame, onClose }: GameCardProps) {
 
     return (
         <div
-            className="rounded-lg bg-card px-6 py-4 shadow-sm cursor-pointer hover:bg-accent/50 transition-colors w-full"
+            className="rounded-lg bg-card shadow-sm cursor-pointer hover:bg-accent/50 transition-colors w-full overflow-hidden"
             onClick={handleGameClick}
             role="button"
             tabIndex={0}
@@ -89,50 +89,67 @@ export function GameCard({ game, onSelectGame, onClose }: GameCardProps) {
                 }
             }}
         >
-            <div className="flex flex-col gap-1">
-                <div className="grid grid-cols-[24px_40px_24px_24px_40px_24px] items-center justify-center gap-2">
-                    {/* Away Team Logo */}
-                    <div className="relative w-6 h-6">
-                        <Image
-                            src={getTeamLogoUrl(game.awayTeam.abbrev)}
-                            alt={`${game.awayTeam.name} logo`}
-                            fill
-                            className="object-contain"
-                        />
+            {/* Special Event Logo (if present) - Full width at top */}
+            {game.specialEvent && (
+                <div className="relative w-full h-16 bg-white">
+                    <Image
+                        src={game.specialEvent.lightLogoUrl.default}
+                        alt={game.specialEvent.name.default}
+                        fill
+                        className="object-contain"
+                    />
+                </div>
+            )}
+
+            <div className="px-6 pb-4 flex flex-col gap-1.5">
+                {/* Teams and Scores */}
+                <div className="flex items-center justify-center gap-4 mt-1">
+                    {/* Away Team */}
+                    <div className="flex items-center gap-2">
+                        <div className="relative w-6 h-6">
+                            <Image
+                                src={getTeamLogoUrl(game.awayTeam.abbrev)}
+                                alt={`${game.awayTeam.name} logo`}
+                                fill
+                                className="object-contain"
+                            />
+                        </div>
+                        <span className="font-medium">{game.awayTeam.abbrev}</span>
+                        {game.awayTeam.score !== undefined && (
+                            <span className="font-medium">{game.awayTeam.score}</span>
+                        )}
                     </div>
 
-                    {/* Away Team Abbreviation */}
-                    <span className="font-medium text-right">{game.awayTeam.abbrev}</span>
-
-                    {/* Scores */}
-                    <span className="font-bold text-center">
-                        {game.awayTeam.score !== undefined && game.awayTeam.score}
-                    </span>
-
-                    <span className="font-bold text-center">
-                        {game.homeTeam.score !== undefined && game.homeTeam.score}
-                    </span>
-
-                    {/* Home Team Abbreviation */}
-                    <span className="font-medium text-left">{game.homeTeam.abbrev}</span>
-
-                    {/* Home Team Logo */}
-                    <div className="relative w-6 h-6">
-                        <Image
-                            src={getTeamLogoUrl(game.homeTeam.abbrev)}
-                            alt={`${game.homeTeam.name} logo`}
-                            fill
-                            className="object-contain"
-                        />
+                    {/* Home Team */}
+                    <div className="flex items-center gap-2">
+                        {game.homeTeam.score !== undefined && (
+                            <span className="font-medium">{game.homeTeam.score}</span>
+                        )}
+                        <span className="font-medium">{game.homeTeam.abbrev}</span>
+                        <div className="relative w-6 h-6">
+                            <Image
+                                src={getTeamLogoUrl(game.homeTeam.abbrev)}
+                                alt={`${game.homeTeam.name} logo`}
+                                fill
+                                className="object-contain"
+                            />
+                        </div>
                     </div>
                 </div>
 
+                {/* Special Event Name (if present) */}
+                {game.specialEvent && (
+                    <div className="text-xs text-muted-foreground text-center">
+                        {game.specialEvent.name.default}
+                    </div>
+                )}
+
+                {/* Game Status */}
                 <div className={`text-sm text-center ${getGameStateClass()}`}>
                     {getGameStatus()}
                 </div>
-            </div>
 
-            <div className="flex justify-center gap-2 mt-2">
+                {/* NHL Game Center Button */}
                 <button
                     onClick={handleGameCenterClick}
                     className="text-xs px-3 py-1.5 rounded-md bg-primary/10 hover:bg-primary/20 text-primary transition-colors"
