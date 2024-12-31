@@ -3,6 +3,7 @@
 import { ReactNode, useState } from 'react'
 import Sidebar from './sidebar/sidebar'
 import { Menu, ArrowUp } from 'lucide-react'
+import { SITE } from "@/lib/constants"
 
 interface MainLayoutProps {
     children: ReactNode
@@ -51,10 +52,10 @@ export function MainLayout({ children, onGameSelect }: MainLayoutProps) {
 
             {/* Main content */}
             <main className="flex-1 overflow-auto relative" id="main-content">
-                <div className="h-16 flex items-center justify-center px-4 lg:px-6 fixed top-0 left-0 right-0 bg-background/80 backdrop-blur-sm z-20">
-                    <h1 className="text-xl font-semibold">NHL Shot Chart</h1>
+                <div className="h-16 flex items-center justify-center px-4 lg:px-6 bg-background/80 backdrop-blur-sm">
+                    <h1 className="text-xl font-semibold">{SITE.name}</h1>
                 </div>
-                <div className="pt-16 p-4 lg:p-6">
+                <div className="p-4 lg:p-6">
                     {children}
                 </div>
 

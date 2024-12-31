@@ -3,12 +3,13 @@ import { Inter } from "next/font/google"
 import { Analytics } from "@vercel/analytics/next"
 import "./globals.css"
 import { Suspense } from "react"
+import { SITE } from "@/lib/constants"
 
 const inter = Inter({ subsets: ["latin"] })
 
 export const metadata: Metadata = {
-  title: "Sploosh.AI NHL Shot Chart",
-  description: "Visualize NHL shot data",
+  title: SITE.name,
+  description: SITE.description,
 }
 
 export default function RootLayout({
