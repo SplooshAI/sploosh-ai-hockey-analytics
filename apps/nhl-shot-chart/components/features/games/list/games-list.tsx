@@ -4,7 +4,7 @@ import { useEffect, useState, useCallback, useRef } from 'react'
 import { format } from 'date-fns'
 import { GameCard } from '../card/game-card'
 import { RefreshSettings } from '@/components/shared/refresh/refresh-settings'
-import type { NHLEdgeScheduleResponse, NHLEdgeGame } from '@/types/nhl-edge'
+import type { NHLEdgeGame } from '@/types/nhl-edge'
 import { getScores } from '@/lib/api/nhl-edge'
 
 interface GamesListProps {
