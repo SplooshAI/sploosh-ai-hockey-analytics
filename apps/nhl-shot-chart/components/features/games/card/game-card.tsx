@@ -10,11 +10,6 @@ interface GameCardProps {
 }
 
 export function GameCard({ game, onSelectGame, onClose }: GameCardProps) {
-    console.log(`Rendering GameCard for game: ${game.id} - Special Event: ${game.specialEvent?.name.default}`)
-    if (game.id === 2024020592) {
-        console.log(game)
-    }
-
     const getTeamLogoUrl = (teamAbbrev: string) => {
         return `https://assets.nhle.com/logos/nhl/svg/${teamAbbrev}_light.svg`
     }
@@ -84,7 +79,7 @@ export function GameCard({ game, onSelectGame, onClose }: GameCardProps) {
 
     return (
         <div
-            className="rounded-lg bg-card px-6 py-4 shadow-sm cursor-pointer hover:bg-accent/50 transition-colors w-full"
+            className="rounded-lg bg-card shadow-sm cursor-pointer hover:bg-accent/50 transition-colors w-full overflow-hidden"
             onClick={handleGameClick}
             role="button"
             tabIndex={0}
@@ -94,26 +89,21 @@ export function GameCard({ game, onSelectGame, onClose }: GameCardProps) {
                 }
             }}
         >
-            <div className="flex flex-col gap-2">
-                {/* Special Event (if present) */}
-                {game.specialEvent && (
-                    <div className="flex flex-col items-center gap-1 mb-2">
-                        <div className="relative w-24 h-8">
-                            <Image
-                                src={game.specialEvent.lightLogoUrl.default}
-                                alt={game.specialEvent.name.default}
-                                fill
-                                className="object-contain"
-                            />
-                        </div>
-                        <span className="text-xs text-primary font-medium">
-                            {game.specialEvent.name.default}
-                        </span>
-                    </div>
-                )}
+            {/* Special Event Logo (if present) - Full width at top */}
+            {game.specialEvent && (
+                <div className="relative w-full h-16 bg-white">
+                    <Image
+                        src={game.specialEvent.lightLogoUrl.default}
+                        alt={game.specialEvent.name.default}
+                        fill
+                        className="object-contain"
+                    />
+                </div>
+            )}
 
+            <div className="px-6 pb-4 flex flex-col gap-1.5">
                 {/* Teams and Scores */}
-                <div className="flex items-center justify-center gap-4">
+                <div className="flex items-center justify-center gap-4 mt-1">
                     {/* Away Team */}
                     <div className="flex items-center gap-2">
                         <div className="relative w-6 h-6">
@@ -125,10 +115,16 @@ export function GameCard({ game, onSelectGame, onClose }: GameCardProps) {
                             />
                         </div>
                         <span className="font-medium">{game.awayTeam.abbrev}</span>
+                        {game.awayTeam.score !== undefined && (
+                            <span className="font-medium">{game.awayTeam.score}</span>
+                        )}
                     </div>
 
                     {/* Home Team */}
                     <div className="flex items-center gap-2">
+                        {game.homeTeam.score !== undefined && (
+                            <span className="font-medium">{game.homeTeam.score}</span>
+                        )}
                         <span className="font-medium">{game.homeTeam.abbrev}</span>
                         <div className="relative w-6 h-6">
                             <Image
@@ -140,6 +136,13 @@ export function GameCard({ game, onSelectGame, onClose }: GameCardProps) {
                         </div>
                     </div>
                 </div>
+
+                {/* Special Event Name (if present) */}
+                {game.specialEvent && (
+                    <div className="text-xs text-muted-foreground text-center">
+                        {game.specialEvent.name.default}
+                    </div>
+                )}
 
                 {/* Game Status */}
                 <div className={`text-sm text-center ${getGameStateClass()}`}>
