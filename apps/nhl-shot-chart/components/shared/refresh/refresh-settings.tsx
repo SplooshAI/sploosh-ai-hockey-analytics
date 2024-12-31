@@ -6,14 +6,24 @@ interface RefreshSettingsProps {
     isEnabled: boolean
     onToggle: (enabled: boolean) => void
     lastRefreshTime: Date | null
+    defaultEnabled?: boolean
 }
 
-export function RefreshSettings({ isEnabled, onToggle, lastRefreshTime }: RefreshSettingsProps) {
+export function RefreshSettings({ isEnabled, onToggle, lastRefreshTime, defaultEnabled = false }: RefreshSettingsProps) {
     const timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone
     const [countdown, setCountdown] = useState(20)
     const [refreshCount, setRefreshCount] = useState(0)
     const lastRefreshTimeRef = useRef<Date | null>(null)
     const initialEnableRef = useRef(true)
+    const hasSetDefaultRef = useRef(false)
+
+    // Enable auto-refresh by default only once when component mounts
+    useEffect(() => {
+        if (defaultEnabled && !hasSetDefaultRef.current) {
+            hasSetDefaultRef.current = true
+            onToggle(true)
+        }
+    }, [defaultEnabled, onToggle])
 
     useEffect(() => {
         let timer: NodeJS.Timeout | null = null
