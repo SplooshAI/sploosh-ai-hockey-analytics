@@ -1,6 +1,6 @@
 # Welcome
 
-You can view the [demo](https://nhl-shot-chart.vercel.app/) on Vercel at [https://nhl-shot-chart.vercel.app/](https://nhl-shot-chart.vercel.app/)
+You can view the [demo](https://sploosh-ai-hockey-analytics.vercel.app/) on Vercel at [https://sploosh-ai-hockey-analytics.vercel.app/](https://sploosh-ai-hockey-analytics.vercel.app/)
 
 ## Background
 
@@ -14,7 +14,7 @@ Work is underway to rewrite the NHL shot chart to accommodate the new endpoints 
 
 ## Demo
 
-This application is deployed on Vercel and can be accessed at <https://nhl-shot-chart.vercel.app/>
+This application is deployed on Vercel and can be accessed at <https://sploosh-ai-hockey-analytics.vercel.app/>
 
 ## Development
 
@@ -26,7 +26,7 @@ Install dependencies and start the development server:
 
 ```bash
 # Navigate to the app
-cd apps/nhl-shot-chart
+cd apps/sploosh-ai-hockey-analytics
 
 # Install dependencies
 npm install

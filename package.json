@@ -1,29 +1,29 @@
 {
-  "name": "sploosh-ai-nhl-shot-chart",
+  "name": "sploosh-ai-hockey-analytics",
   "version": "0.0.0",
-  "description": "Generate a shot chart (ice hockey) for NHL games using data from the NHL EDGE API.",
+  "description": "Explore hockey data from the NHL EDGE API.",
   "scripts": {
-    "dev": "npm run dev --prefix apps/nhl-shot-chart",
-    "build": "npm run build --prefix apps/nhl-shot-chart",
-    "start": "npm run start --prefix apps/nhl-shot-chart",
-    "lint": "npm run lint --prefix apps/nhl-shot-chart",
+    "dev": "npm run dev --prefix apps/sploosh-ai-hockey-analytics",
+    "build": "npm run build --prefix apps/sploosh-ai-hockey-analytics",
+    "start": "npm run start --prefix apps/sploosh-ai-hockey-analytics",
+    "lint": "npm run lint --prefix apps/sploosh-ai-hockey-analytics",
     "docker:up": "npm run docker:nhl:dev:up",
     "docker:up:detach": "npm run docker:nhl:dev:up:detach",
     "docker:build": "npm run docker:nhl:dev:build",
     "docker:down": "npm run docker:nhl:dev:down",
-    "docker:nhl:dev:up": "docker compose -f docker/nhl-shot-chart/development/docker-compose.yml -p nhl-shot-chart-dev up",
-    "docker:nhl:dev:up:detach": "docker compose -f docker/nhl-shot-chart/development/docker-compose.yml -p nhl-shot-chart-dev up -d",
-    "docker:nhl:dev:build": "GIT_HASH=$(git rev-parse HEAD) GIT_DATE=$(git log -1 --format=%aI) docker compose -f docker/nhl-shot-chart/development/docker-compose.yml -p nhl-shot-chart-dev up --build",
-    "docker:nhl:dev:down": "docker compose -f docker/nhl-shot-chart/development/docker-compose.yml -p nhl-shot-chart-dev down"
+    "docker:nhl:dev:up": "docker compose -f docker/sploosh-ai-hockey-analytics/development/docker-compose.yml -p sploosh-ai-hockey-analytics-dev up",
+    "docker:nhl:dev:up:detach": "docker compose -f docker/sploosh-ai-hockey-analytics/development/docker-compose.yml -p sploosh-ai-hockey-analytics-dev up -d",
+    "docker:nhl:dev:build": "GIT_HASH=$(git rev-parse HEAD) GIT_DATE=$(git log -1 --format=%aI) docker compose -f docker/sploosh-ai-hockey-analytics/development/docker-compose.yml -p sploosh-ai-hockey-analytics-dev up --build",
+    "docker:nhl:dev:down": "docker compose -f docker/sploosh-ai-hockey-analytics/development/docker-compose.yml -p sploosh-ai-hockey-analytics-dev down"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/SplooshAI/sploosh-ai-nhl-shot-chart.git"
+    "url": "git+https://github.com/SplooshAI/sploosh-ai-hockey-analytics.git"
   },
   "author": "Rob Brennan <rob@sploosh.ai>",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/SplooshAI/sploosh-ai-nhl-shot-chart/issues"
+    "url": "https://github.com/SplooshAI/sploosh-ai-hockey-analytics/issues"
   },
-  "homepage": "https://github.com/SplooshAI/sploosh-ai-nhl-shot-chart#readme"
+  "homepage": "https://github.com/SplooshAI/sploosh-ai-hockey-analytics#readme"
 }
