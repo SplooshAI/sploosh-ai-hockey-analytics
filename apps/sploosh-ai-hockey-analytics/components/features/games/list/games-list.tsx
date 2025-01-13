@@ -30,6 +30,7 @@ export function GamesList({ date, onGameSelect, onClose }: GamesListProps) {
     const fetchGames = useCallback(async () => {
         try {
             const isDateChange = format(debouncedDate, 'yyyy-MM-dd') !== format(lastDateRef.current, 'yyyy-MM-dd')
+            const isInitialLoad = gamesRef.current.length === 0
             lastDateRef.current = debouncedDate
 
             const formattedDate = format(debouncedDate, 'yyyy-MM-dd')
@@ -37,11 +38,10 @@ export function GamesList({ date, onGameSelect, onClose }: GamesListProps) {
 
             const updatedGames = await Promise.all(
                 scheduleData.games.map(async (game) => {
-                    if (isDateChange || game.gameState === 'LIVE' || game.gameState === 'CRIT') {
+                    if (isInitialLoad || isDateChange || game.gameState === 'LIVE' || game.gameState === 'CRIT') {
                         try {
                             const response = await fetch(`/api/nhl/game-center?gameId=${game.id}`)
                             if (response.ok) {
-                                // NOTE: You might need to return specific game center data here
                                 const gameCenterData = await response.json()
                                 return {
                                     ...game,
@@ -53,11 +53,12 @@ export function GamesList({ date, onGameSelect, onClose }: GamesListProps) {
                             console.error(`Failed to fetch game center data for game ${game.id}:`, error)
                         }
                     }
-                    if (!isDateChange) {
+                    if (!isDateChange && !isInitialLoad) {
                         const existingGame = gamesRef.current.find(g => g.id === game.id)
                         return {
                             ...game,
-                            specialEvent: existingGame?.specialEvent
+                            specialEvent: existingGame?.specialEvent,
+                            matchup: existingGame?.matchup
                         }
                     }
                     return game
