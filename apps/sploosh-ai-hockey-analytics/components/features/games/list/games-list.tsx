@@ -6,6 +6,7 @@ import { GameCard } from '../card/game-card'
 import { RefreshSettings } from '@/components/shared/refresh/refresh-settings'
 import type { NHLEdgeGame } from '@/types/nhl-edge'
 import { getScores } from '@/lib/api/nhl-edge'
+import { useDebounce } from '@/hooks/use-debounce'
 
 interface GamesListProps {
     date: Date
@@ -23,15 +24,18 @@ export function GamesList({ date, onGameSelect, onClose }: GamesListProps) {
     const gamesRef = useRef<NHLEdgeGame[]>([])
     const lastDateRef = useRef(date)
 
+    // Debounce the date changes with a 300ms delay
+    const debouncedDate = useDebounce(date, 300)
+
     const fetchGames = useCallback(async () => {
         try {
-            const isDateChange = format(date, 'yyyy-MM-dd') !== format(lastDateRef.current, 'yyyy-MM-dd')
-            lastDateRef.current = date
+            const isDateChange = format(debouncedDate, 'yyyy-MM-dd') !== format(lastDateRef.current, 'yyyy-MM-dd')
+            lastDateRef.current = debouncedDate
 
             const scrollContainer = containerRef.current?.closest('.overflow-y-auto')
             const scrollPosition = scrollContainer?.scrollTop
 
-            const formattedDate = format(date, 'yyyy-MM-dd')
+            const formattedDate = format(debouncedDate, 'yyyy-MM-dd')
             const scheduleData = await getScores(formattedDate)
 
             const updatedGames = await Promise.all(
@@ -83,9 +87,9 @@ export function GamesList({ date, onGameSelect, onClose }: GamesListProps) {
         } finally {
             setLoading(false)
         }
-    }, [date])
+    }, [debouncedDate])
 
-    // Initial fetch
+    // Initial fetch and date change handler
     useEffect(() => {
         fetchGames()
     }, [fetchGames])
