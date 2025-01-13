@@ -25,7 +25,8 @@ export function GameCard({ game, onSelectGame, onClose }: GameCardProps) {
 
     const handleGameCenterClick = (e: React.MouseEvent) => {
         e.stopPropagation()
-        window.open(game.gameCenterLink, '_blank')
+        const baseUrl = 'https://www.nhl.com'
+        window.open(`${baseUrl}${game.gameCenterLink}`, '_blank')
     }
 
     const getOrdinalNum = (n: number) => {
