@@ -7,7 +7,7 @@ export async function GET(request: Request) {
     const gameId = searchParams.get('gameId')
 
     if (!gameId) {
-        return NextResponse.json({ error: 'GameId parameter is required' }, { status: 400 })
+        return NextResponse.json({ error: 'gameId parameter is required' }, { status: 400 })
     }
 
     try {
