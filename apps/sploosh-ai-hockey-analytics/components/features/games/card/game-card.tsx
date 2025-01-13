@@ -15,9 +15,11 @@ export function GameCard({ game, onSelectGame, onClose }: GameCardProps) {
     }
 
     const handleGameClick = (e: React.MouseEvent) => {
-        e.preventDefault()
         if (onSelectGame) {
             onSelectGame(game.id)
+            onClose?.()
+            e.preventDefault()
+            e.stopPropagation()
         }
     }
 
@@ -26,22 +28,40 @@ export function GameCard({ game, onSelectGame, onClose }: GameCardProps) {
         window.open(game.gameCenterLink, '_blank')
     }
 
+    const getOrdinalNum = (n: number) => {
+        return n + (n > 0 ? ['th', 'st', 'nd', 'rd'][(n > 3 && n < 21) || n % 10 > 3 ? 0 : n % 10] : '');
+    }
+
     const getGameStatus = () => {
-        if (game.gameState === 'FUT') {
-            return formatInTimeZone(parseISO(game.startTimeUTC), 'America/New_York', 'h:mm a z')
+        switch (game.gameState) {
+            case 'CRIT':
+            case 'LIVE':
+                if (game.clock?.inIntermission) {
+                    return `INT${game.period} - ${game.clock?.timeRemaining}`
+                }
+                if (game.period && game.clock) {
+                    return `${game.period}${getOrdinalNum(game.period)} - ${game.clock.timeRemaining}`
+                }
+                return `Period ${game.period} - ${game.clock?.timeRemaining}`
+            case 'FUT':
+            case 'PRE':
+                return formatInTimeZone(
+                    parseISO(game.startTimeUTC),
+                    Intl.DateTimeFormat().resolvedOptions().timeZone,
+                    'h:mm a zzz'
+                )
+            case 'FINAL':
+            case 'OFF':
+                if (game.periodDescriptor?.periodType === 'OT') {
+                    return 'Final (OT)'
+                } else if (game.periodDescriptor?.periodType === 'SO') {
+                    return 'Final (SO)'
+                }
+                return 'Final'
+            default:
+                console.error(`Unexpected game state: ${game.gameState}`)
+                return game.gameState
         }
-
-        if (game.gameState === 'LIVE') {
-            if (game.period && game.clock) {
-                return `${game.period}${getOrdinalNum(game.period)} - ${game.clock.timeRemaining}`
-            }
-        }
-
-        if (game.gameState === 'OFF') {
-            return 'Final'
-        }
-
-        return game.gameState
     }
 
     const getGameStateClass = () => {
