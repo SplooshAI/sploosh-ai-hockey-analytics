@@ -65,39 +65,37 @@ export function GameCard({ game, onSelectGame, onClose }: GameCardProps) {
         >
             <div className="px-4 pb-4 flex flex-col gap-1.5">
                 {/* Teams and Scores */}
-                <div className="flex items-center justify-center gap-1">
-                    <div className="relative w-8 h-8">
-                        <Image
-                            src={getTeamLogoUrl(game.awayTeam.abbrev)}
-                            alt={`${game.awayTeam.abbrev} logo`}
-                            fill
-                            className="object-contain"
-                        />
-                    </div>
-                    <div className="flex flex-col items-center w-12">
-                        <div>{game.awayTeam.abbrev}</div>
-                        <div className="text-[11px] text-muted-foreground whitespace-nowrap">
-                            {game.awayTeam.sog} SOG
+                <div className="flex flex-col items-center">
+                    <div className="flex items-center justify-center gap-1">
+                        <div className="relative w-8 h-8">
+                            <Image
+                                src={getTeamLogoUrl(game.awayTeam.abbrev)}
+                                alt={`${game.awayTeam.abbrev} logo`}
+                                fill
+                                className="object-contain"
+                            />
                         </div>
-                    </div>
-                    <div className="flex gap-2 mx-1">
-                        <span>{game.awayTeam.score}</span>
-                        <span>-</span>
-                        <span>{game.homeTeam.score}</span>
-                    </div>
-                    <div className="flex flex-col items-center w-12">
-                        <div>{game.homeTeam.abbrev}</div>
-                        <div className="text-[11px] text-muted-foreground whitespace-nowrap">
-                            {game.homeTeam.sog} SOG
+                        <div className="flex flex-col items-center">
+                            <div className="flex items-center gap-2">
+                                <span>{game.awayTeam.abbrev}</span>
+                                <span>{game.awayTeam.score}</span>
+                                <span>-</span>
+                                <span>{game.homeTeam.score}</span>
+                                <span>{game.homeTeam.abbrev}</span>
+                            </div>
+                            <div className="flex items-center gap-2 text-[11px] text-muted-foreground">
+                                <span>{game.awayTeam.sog} SOG</span>
+                                <span>{game.homeTeam.sog} SOG</span>
+                            </div>
                         </div>
-                    </div>
-                    <div className="relative w-8 h-8">
-                        <Image
-                            src={getTeamLogoUrl(game.homeTeam.abbrev)}
-                            alt={`${game.homeTeam.abbrev} logo`}
-                            fill
-                            className="object-contain"
-                        />
+                        <div className="relative w-8 h-8">
+                            <Image
+                                src={getTeamLogoUrl(game.homeTeam.abbrev)}
+                                alt={`${game.homeTeam.abbrev} logo`}
+                                fill
+                                className="object-contain"
+                            />
+                        </div>
                     </div>
                 </div>
 
