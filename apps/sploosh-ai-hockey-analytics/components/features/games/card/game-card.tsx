@@ -83,6 +83,7 @@ export function GameCard({ game, onSelectGame, onClose }: GameCardProps) {
                                 <span>{game.homeTeam.score}</span>
                                 <span>{game.homeTeam.abbrev}</span>
                             </div>
+                            {/* Additional game details row - add new stats here */}
                             <div className="flex items-center gap-2 text-[11px] text-muted-foreground">
                                 <span>{game.awayTeam.sog} SOG</span>
                                 <span>{game.homeTeam.sog} SOG</span>
