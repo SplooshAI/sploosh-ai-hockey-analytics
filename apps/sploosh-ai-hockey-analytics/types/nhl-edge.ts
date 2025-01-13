@@ -51,10 +51,18 @@ export interface NHLEdgeScheduleResponse {
 }
 
 export interface NHLEdgeTeam {
-    abbrev: string
     id: number
-    name: string
+    commonName: {
+        default: string
+    }
+    abbrev: string
     score?: number
+    sog?: number
+    logo: string
+    darkLogo: string
+    placeName: {
+        default: string
+    }
 }
 
 // Play-by-play types

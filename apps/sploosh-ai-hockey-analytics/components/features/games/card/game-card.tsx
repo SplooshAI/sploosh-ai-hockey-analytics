@@ -15,66 +15,40 @@ export function GameCard({ game, onSelectGame, onClose }: GameCardProps) {
     }
 
     const handleGameClick = (e: React.MouseEvent) => {
+        e.preventDefault()
         if (onSelectGame) {
             onSelectGame(game.id)
-            if (onClose) {
-                onClose()
-            }
-            e.preventDefault()
-            e.stopPropagation()
         }
     }
 
     const handleGameCenterClick = (e: React.MouseEvent) => {
-        e.preventDefault()
         e.stopPropagation()
-        const url = `https://www.nhl.com/gamecenter/${game.id}`
-        window.open(url, '_blank', 'noopener,noreferrer')
+        window.open(game.gameCenterLink, '_blank')
     }
 
     const getGameStatus = () => {
-        switch (game.gameState) {
-            case 'CRIT':
-            case 'LIVE':
-                if (game.clock?.inIntermission) {
-                    return `INT${game.period} - ${game.clock?.timeRemaining}`
-                }
-                return `Period ${game.period} - ${game.clock?.timeRemaining}`
-            case 'FUT':
-            case 'PRE':
-                return formatInTimeZone(
-                    parseISO(game.startTimeUTC),
-                    Intl.DateTimeFormat().resolvedOptions().timeZone,
-                    'h:mm a zzz'
-                )
-            case 'FINAL':
-            case 'OFF':
-                if (game.periodDescriptor?.periodType === 'OT') {
-                    return 'Final (OT)'
-                } else if (game.periodDescriptor?.periodType === 'SO') {
-                    return 'Final (SO)'
-                }
-                return 'Final'
-            default:
-                console.error(`Unexpected game state: ${game.gameState}`)
-                return game.gameState
+        if (game.gameState === 'FUT') {
+            return formatInTimeZone(parseISO(game.startTimeUTC), 'America/New_York', 'h:mm a z')
         }
+
+        if (game.gameState === 'LIVE') {
+            if (game.period && game.clock) {
+                return `${game.period}${getOrdinalNum(game.period)} - ${game.clock.timeRemaining}`
+            }
+        }
+
+        if (game.gameState === 'OFF') {
+            return 'Final'
+        }
+
+        return game.gameState
     }
 
     const getGameStateClass = () => {
-        switch (game.gameState) {
-            case 'LIVE':
-            case 'CRIT':
-                return 'text-green-500 dark:text-green-400'
-            case 'FINAL':
-            case 'OFF':
-                return 'text-gray-500 dark:text-gray-400'
-            case 'PRE':
-            case 'FUT':
-                return 'text-muted-foreground'
-            default:
-                return 'text-muted-foreground'
+        if (game.gameState === 'LIVE') {
+            return 'text-red-500'
         }
+        return 'text-muted-foreground'
     }
 
     return (
@@ -89,60 +63,51 @@ export function GameCard({ game, onSelectGame, onClose }: GameCardProps) {
                 }
             }}
         >
-            {/* Special Event Logo (if present) - Full width at top */}
-            {game.specialEvent && (
-                <div className="relative w-full h-16 bg-white">
-                    <Image
-                        src={game.specialEvent.lightLogoUrl.default}
-                        alt={game.specialEvent.name.default}
-                        fill
-                        className="object-contain"
-                    />
-                </div>
-            )}
-
             <div className="px-6 pb-4 flex flex-col gap-1.5">
                 {/* Teams and Scores */}
                 <div className="flex items-center justify-center gap-4 mt-1">
                     {/* Away Team */}
-                    <div className="flex items-center gap-2">
-                        <div className="relative w-6 h-6">
-                            <Image
-                                src={getTeamLogoUrl(game.awayTeam.abbrev)}
-                                alt={`${game.awayTeam.name} logo`}
-                                fill
-                                className="object-contain"
-                            />
+                    <div className="flex flex-col items-center">
+                        <div className="flex items-center gap-2">
+                            <div className="relative w-6 h-6">
+                                <Image
+                                    src={getTeamLogoUrl(game.awayTeam.abbrev)}
+                                    alt={`${game.awayTeam.abbrev} logo`}
+                                    fill
+                                    className="object-contain"
+                                />
+                            </div>
+                            <span className="font-medium">{game.awayTeam.abbrev}</span>
+                            {game.awayTeam.score !== undefined && (
+                                <span className="font-medium">{game.awayTeam.score}</span>
+                            )}
                         </div>
-                        <span className="font-medium">{game.awayTeam.abbrev}</span>
-                        {game.awayTeam.score !== undefined && (
-                            <span className="font-medium">{game.awayTeam.score}</span>
+                        {game.awayTeam.sog !== undefined && (
+                            <span className="text-xs text-muted-foreground">SOG: {game.awayTeam.sog}</span>
                         )}
                     </div>
 
                     {/* Home Team */}
-                    <div className="flex items-center gap-2">
-                        {game.homeTeam.score !== undefined && (
-                            <span className="font-medium">{game.homeTeam.score}</span>
-                        )}
-                        <span className="font-medium">{game.homeTeam.abbrev}</span>
-                        <div className="relative w-6 h-6">
-                            <Image
-                                src={getTeamLogoUrl(game.homeTeam.abbrev)}
-                                alt={`${game.homeTeam.name} logo`}
-                                fill
-                                className="object-contain"
-                            />
+                    <div className="flex flex-col items-center">
+                        <div className="flex items-center gap-2">
+                            {game.homeTeam.score !== undefined && (
+                                <span className="font-medium">{game.homeTeam.score}</span>
+                            )}
+                            <span className="font-medium">{game.homeTeam.abbrev}</span>
+                            <div className="relative w-6 h-6">
+                                <Image
+                                    src={getTeamLogoUrl(game.homeTeam.abbrev)}
+                                    alt={`${game.homeTeam.abbrev} logo`}
+                                    fill
+                                    className="object-contain"
+                                />
+                            </div>
                         </div>
+                        {game.homeTeam.sog !== undefined && (
+                            <span className="text-xs text-muted-foreground">SOG: {game.homeTeam.sog}</span>
+                        )}
                     </div>
                 </div>
-
-                {/* Special Event Name (if present) */}
-                {game.specialEvent && (
-                    <div className="text-xs text-muted-foreground text-center">
-                        {game.specialEvent.name.default}
-                    </div>
-                )}
 
                 {/* Game Status */}
                 <div className={`text-sm text-center ${getGameStateClass()}`}>
