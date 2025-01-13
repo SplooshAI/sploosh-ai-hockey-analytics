@@ -65,48 +65,37 @@ export function GameCard({ game, onSelectGame, onClose }: GameCardProps) {
         >
             <div className="px-6 pb-4 flex flex-col gap-1.5">
                 {/* Teams and Scores */}
-                <div className="flex items-center justify-center gap-4 mt-1">
-                    {/* Away Team */}
-                    <div className="flex flex-col items-center">
-                        <div className="flex items-center gap-2">
-                            <div className="relative w-6 h-6">
-                                <Image
-                                    src={getTeamLogoUrl(game.awayTeam.abbrev)}
-                                    alt={`${game.awayTeam.abbrev} logo`}
-                                    fill
-                                    className="object-contain"
-                                />
-                            </div>
-                            <span className="font-medium">{game.awayTeam.abbrev}</span>
-                            {game.awayTeam.score !== undefined && (
-                                <span className="font-medium">{game.awayTeam.score}</span>
-                            )}
-                        </div>
-                        {game.awayTeam.sog !== undefined && (
-                            <span className="text-xs text-muted-foreground">SOG: {game.awayTeam.sog}</span>
-                        )}
+                <div className="flex items-center justify-center gap-2">
+                    <div className="relative w-6 h-6">
+                        <Image
+                            src={getTeamLogoUrl(game.awayTeam.abbrev)}
+                            alt={`${game.awayTeam.abbrev} logo`}
+                            fill
+                            className="object-contain"
+                        />
                     </div>
+                    <span>{game.awayTeam.abbrev}</span>
+                    <div className="flex gap-2 mx-2">
+                        <span>{game.awayTeam.score}</span>
+                        <span>-</span>
+                        <span>{game.homeTeam.score}</span>
+                    </div>
+                    <span>{game.homeTeam.abbrev}</span>
+                    <div className="relative w-6 h-6">
+                        <Image
+                            src={getTeamLogoUrl(game.homeTeam.abbrev)}
+                            alt={`${game.homeTeam.abbrev} logo`}
+                            fill
+                            className="object-contain"
+                        />
+                    </div>
+                </div>
 
-                    {/* Home Team */}
-                    <div className="flex flex-col items-center">
-                        <div className="flex items-center gap-2">
-                            {game.homeTeam.score !== undefined && (
-                                <span className="font-medium">{game.homeTeam.score}</span>
-                            )}
-                            <span className="font-medium">{game.homeTeam.abbrev}</span>
-                            <div className="relative w-6 h-6">
-                                <Image
-                                    src={getTeamLogoUrl(game.homeTeam.abbrev)}
-                                    alt={`${game.homeTeam.abbrev} logo`}
-                                    fill
-                                    className="object-contain"
-                                />
-                            </div>
-                        </div>
-                        {game.homeTeam.sog !== undefined && (
-                            <span className="text-xs text-muted-foreground">SOG: {game.homeTeam.sog}</span>
-                        )}
-                    </div>
+                {/* Shots on Goal */}
+                <div className="flex justify-center items-center gap-2 text-[11px] text-muted-foreground">
+                    <span>{game.awayTeam.sog} SOG</span>
+                    <span>-</span>
+                    <span>{game.homeTeam.sog} SOG</span>
                 </div>
 
                 {/* Game Status */}
