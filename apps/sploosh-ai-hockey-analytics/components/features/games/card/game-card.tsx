@@ -117,9 +117,15 @@ export function GameCard({ game, onSelectGame, onClose }: GameCardProps) {
                                 <span>{game.homeTeam.abbrev}</span>
                             </div>
                             {/* Additional game details row - add new stats here */}
-                            <div className="flex items-center gap-2 text-[11px] text-muted-foreground">
-                                {game.awayTeam.sog !== undefined && <span>{game.awayTeam.sog} SOG</span>}
-                                {game.homeTeam.sog !== undefined && <span>{game.homeTeam.sog} SOG</span>}
+                            <div className="flex items-center justify-between w-full text-[11px] text-muted-foreground">
+                                <div className="flex items-center gap-2">
+                                    {game.awayTeam.sog !== undefined && <span>{game.awayTeam.sog} SOG</span>}
+                                    {game.awayTeam.record && <span>{game.awayTeam.record}</span>}
+                                </div>
+                                <div className="flex items-center gap-2">
+                                    {game.homeTeam.record && <span>{game.homeTeam.record}</span>}
+                                    {game.homeTeam.sog !== undefined && <span>{game.homeTeam.sog} SOG</span>}
+                                </div>
                             </div>
                         </div>
                         <div className="relative w-8 h-8">

@@ -58,6 +58,7 @@ export interface NHLEdgeTeam {
     abbrev: string
     score?: number
     sog?: number
+    record?: string
     logo: string
     darkLogo: string
     placeName: {
