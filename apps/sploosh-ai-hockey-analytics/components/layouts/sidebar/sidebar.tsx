@@ -5,6 +5,7 @@ import { X } from 'lucide-react'
 import { GamesList } from '@/components/features/games/list/games-list'
 import { Version } from '../../shared/version/version'
 import { GamesDatePicker } from '@/components/features/games/date-picker/games-date-picker'
+import { startOfDay } from 'date-fns'
 
 interface SidebarProps {
     onClose?: () => void
@@ -12,7 +13,10 @@ interface SidebarProps {
 }
 
 export default function Sidebar({ onClose, onGameSelect }: SidebarProps) {
-    const [selectedDate, setSelectedDate] = useState<Date>(new Date())
+    const [selectedDate, setSelectedDate] = useState<Date>(() => {
+        const now = new Date()
+        return startOfDay(new Date(now.getFullYear(), now.getMonth(), now.getDate()))
+    })
 
     return (
         <div className="w-64 h-[100dvh] flex flex-col bg-secondary">

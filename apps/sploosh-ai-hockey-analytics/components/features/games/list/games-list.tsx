@@ -20,35 +20,53 @@ export function GamesList({ date, onGameSelect, onClose }: GamesListProps) {
     const [lastRefreshTime, setLastRefreshTime] = useState<Date | null>(null)
     const [autoRefreshEnabled, setAutoRefreshEnabled] = useState(false)
     const containerRef = useRef<HTMLDivElement>(null)
+    const gamesRef = useRef<NHLEdgeGame[]>([])
+    const lastDateRef = useRef(date)
 
     const fetchGames = useCallback(async () => {
         try {
+            const isDateChange = format(date, 'yyyy-MM-dd') !== format(lastDateRef.current, 'yyyy-MM-dd')
+            lastDateRef.current = date
+
             const scrollContainer = containerRef.current?.closest('.overflow-y-auto')
             const scrollPosition = scrollContainer?.scrollTop
 
             const formattedDate = format(date, 'yyyy-MM-dd')
             const scheduleData = await getScores(formattedDate)
 
-            // Fetch game center data for each game to get special event info
-            const gamesWithSpecialEvents = await Promise.all(
+            const updatedGames = await Promise.all(
                 scheduleData.games.map(async (game) => {
-                    try {
-                        const response = await fetch(`/api/nhl/game-center?gameId=${game.id}`)
-                        if (response.ok) {
-                            const gameCenterData = await response.json()
-                            return {
-                                ...game,
-                                specialEvent: gameCenterData.specialEvent
+                    // Fetch game center data if:
+                    // 1. The date has changed (we need to check all games for special events)
+                    // 2. OR the game is active (for auto-refresh updates)
+                    if (isDateChange || game.gameState === 'LIVE' || game.gameState === 'CRIT') {
+                        try {
+                            const response = await fetch(`/api/nhl/game-center?gameId=${game.id}`)
+                            if (response.ok) {
+                                const gameCenterData = await response.json()
+                                return {
+                                    ...game,
+                                    specialEvent: gameCenterData.specialEvent
+                                }
                             }
+                        } catch (error) {
+                            console.error(`Failed to fetch game center data for game ${game.id}:`, error)
                         }
-                    } catch (error) {
-                        console.error(`Failed to fetch game center data for game ${game.id}:`, error)
+                    }
+                    // Preserve existing special event data for non-active games during auto-refresh
+                    if (!isDateChange) {
+                        const existingGame = gamesRef.current.find(g => g.id === game.id)
+                        return {
+                            ...game,
+                            specialEvent: existingGame?.specialEvent
+                        }
                     }
                     return game
                 })
             )
 
-            setGames(gamesWithSpecialEvents)
+            setGames(updatedGames)
+            gamesRef.current = updatedGames
             setLastRefreshTime(new Date())
 
             if (scrollPosition !== undefined) {
@@ -67,25 +85,18 @@ export function GamesList({ date, onGameSelect, onClose }: GamesListProps) {
         }
     }, [date])
 
-    // Initial fetch on mount
+    // Initial fetch
     useEffect(() => {
         fetchGames()
     }, [fetchGames])
 
-    // Auto-refresh effect
+    // Auto-refresh setup
     useEffect(() => {
-        let timer: NodeJS.Timeout | null = null
+        if (!autoRefreshEnabled) return
 
-        if (autoRefreshEnabled) {
-            // Only set up the interval, no immediate fetch
-            timer = setInterval(fetchGames, 20000)
-        }
+        const intervalId = setInterval(() => fetchGames(), 20000) // 20 seconds
 
-        return () => {
-            if (timer) {
-                clearInterval(timer)
-            }
-        }
+        return () => clearInterval(intervalId)
     }, [autoRefreshEnabled, fetchGames])
 
     if (loading) return (
@@ -112,7 +123,6 @@ export function GamesList({ date, onGameSelect, onClose }: GamesListProps) {
                 isEnabled={autoRefreshEnabled}
                 onToggle={setAutoRefreshEnabled}
                 lastRefreshTime={lastRefreshTime}
-                defaultEnabled={true}
             />
 
             <div className="space-y-2">
@@ -131,7 +141,6 @@ export function GamesList({ date, onGameSelect, onClose }: GamesListProps) {
                     isEnabled={autoRefreshEnabled}
                     onToggle={setAutoRefreshEnabled}
                     lastRefreshTime={lastRefreshTime}
-                    defaultEnabled={true}
                 />
             </div>
         </div>
