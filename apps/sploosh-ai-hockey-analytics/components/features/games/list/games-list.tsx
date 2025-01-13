@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useState, useCallback, useRef } from 'react'
-import { format } from 'date-fns'
+import { format, isToday, isPast } from 'date-fns'
 import { GameCard } from '../card/game-card'
 import { RefreshSettings } from '@/components/shared/refresh/refresh-settings'
 import type { NHLEdgeGame } from '@/types/nhl-edge'
@@ -128,7 +128,7 @@ export function GamesList({ date, onGameSelect, onClose }: GamesListProps) {
                 </div>
             ) : (
                 <div className="p-4">
-                    <div className="text-sm text-muted-foreground">No games scheduled</div>
+                    <div className="text-sm text-muted-foreground"></div>
                 </div>
             )}
 
