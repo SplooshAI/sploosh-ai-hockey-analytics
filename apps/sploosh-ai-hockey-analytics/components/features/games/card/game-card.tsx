@@ -63,6 +63,18 @@ export function GameCard({ game, onSelectGame, onClose }: GameCardProps) {
                 }
             }}
         >
+            {/* Special Event Logo (if present) - Full width at top */}
+            {game.specialEvent && (
+                <div className="relative w-full h-16 bg-white">
+                    <Image
+                        src={game.specialEvent.lightLogoUrl.default}
+                        alt={game.specialEvent.name.default}
+                        fill
+                        className="object-contain"
+                    />
+                </div>
+            )}
+
             <div className="px-4 pb-4 flex flex-col gap-1.5">
                 {/* Teams and Scores */}
                 <div className="flex flex-col items-center">
@@ -99,6 +111,13 @@ export function GameCard({ game, onSelectGame, onClose }: GameCardProps) {
                         </div>
                     </div>
                 </div>
+
+                {/* Special Event Name (if present) */}
+                {game.specialEvent && (
+                    <div className="text-xs text-muted-foreground text-center">
+                        {game.specialEvent.name.default}
+                    </div>
+                )}
 
                 {/* Game Status */}
                 <div className={`text-sm text-center ${getGameStateClass()}`}>
