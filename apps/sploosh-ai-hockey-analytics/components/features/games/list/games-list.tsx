@@ -43,6 +43,8 @@ export function GamesList({ date, onGameSelect, onClose }: GamesListProps) {
                             const response = await fetch(`/api/nhl/game-center?gameId=${game.id}`)
                             if (response.ok) {
                                 const gameCenterData = await response.json()
+
+                                // TODO: This should be refactored so you don't need to duplicate this data shape (below)
                                 return {
                                     ...game,
                                     specialEvent: gameCenterData.specialEvent,
@@ -55,6 +57,8 @@ export function GamesList({ date, onGameSelect, onClose }: GamesListProps) {
                     }
                     if (!isDateChange && !isInitialLoad) {
                         const existingGame = gamesRef.current.find(g => g.id === game.id)
+
+                        // TODO: This should be refactored so you don't need to duplicate this data shape (above)
                         return {
                             ...game,
                             specialEvent: existingGame?.specialEvent,
