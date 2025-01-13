@@ -30,6 +30,7 @@ export interface NHLEdgeGame {
             fr?: string
         }
     }
+    matchup?: NHLEdgeMatchup
 }
 
 export type NHLEdgePeriodType = 'REG' | 'OT' | 'SO'
@@ -111,4 +112,20 @@ export interface NHLEdgeRosterSpot {
     lastName: string
     jerseyNumber: string
     position: string
+}
+
+export interface NHLEdgeTeamLast10Record {
+    record: string
+    streakType: 'W' | 'L' | 'O'
+    streak: number
+}
+
+export interface NHLEdgeLast10Record {
+    awayTeam: NHLEdgeTeamLast10Record
+    homeTeam: NHLEdgeTeamLast10Record
+}
+
+export interface NHLEdgeMatchup {
+    last10Record: NHLEdgeLast10Record
+    // ... other matchup properties if needed ...
 } 

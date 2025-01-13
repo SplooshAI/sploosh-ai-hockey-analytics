@@ -117,14 +117,34 @@ export function GameCard({ game, onSelectGame, onClose }: GameCardProps) {
                                 <span>{game.homeTeam.abbrev}</span>
                             </div>
                             {/* Additional game details row - add new stats here */}
-                            <div className="flex items-center justify-between w-full text-[11px] text-muted-foreground">
-                                <div className="flex items-center gap-2">
-                                    {game.awayTeam.sog !== undefined && <span>{game.awayTeam.sog} SOG</span>}
-                                    {game.awayTeam.record && <span>{game.awayTeam.record}</span>}
+                            <div className="flex items-center justify-between w-full text-[10px] text-muted-foreground">
+                                <div className="flex flex-col items-start gap-0.5">
+                                    <div className="flex items-center gap-2">
+                                        {game.awayTeam.sog !== undefined && <span className="min-w-[45px]">{game.awayTeam.sog} SOG</span>}
+                                        <span>{game.awayTeam.record}</span>
+                                    </div>
+                                    {game.matchup?.last10Record && (
+                                        <span className="text-[9px] opacity-75">
+                                            <span className="mr-1">
+                                                {game.matchup.last10Record.awayTeam.streakType}{game.matchup.last10Record.awayTeam.streak}
+                                            </span>
+                                            {game.matchup.last10Record.awayTeam.record}
+                                        </span>
+                                    )}
                                 </div>
-                                <div className="flex items-center gap-2">
-                                    {game.homeTeam.record && <span>{game.homeTeam.record}</span>}
-                                    {game.homeTeam.sog !== undefined && <span>{game.homeTeam.sog} SOG</span>}
+                                <div className="flex flex-col items-end gap-0.5">
+                                    <div className="flex items-center gap-2">
+                                        <span>{game.homeTeam.record}</span>
+                                        {game.homeTeam.sog !== undefined && <span className="min-w-[45px] text-right">{game.homeTeam.sog} SOG</span>}
+                                    </div>
+                                    {game.matchup?.last10Record && (
+                                        <span className="text-[9px] opacity-75">
+                                            <span className="mr-1">
+                                                {game.matchup.last10Record.homeTeam.streakType}{game.matchup.last10Record.homeTeam.streak}
+                                            </span>
+                                            {game.matchup.last10Record.homeTeam.record}
+                                        </span>
+                                    )}
                                 </div>
                             </div>
                         </div>

@@ -41,10 +41,12 @@ export function GamesList({ date, onGameSelect, onClose }: GamesListProps) {
                         try {
                             const response = await fetch(`/api/nhl/game-center?gameId=${game.id}`)
                             if (response.ok) {
+                                // NOTE: You might need to return specific game center data here
                                 const gameCenterData = await response.json()
                                 return {
                                     ...game,
-                                    specialEvent: gameCenterData.specialEvent
+                                    specialEvent: gameCenterData.specialEvent,
+                                    matchup: gameCenterData.matchup
                                 }
                             }
                         } catch (error) {
