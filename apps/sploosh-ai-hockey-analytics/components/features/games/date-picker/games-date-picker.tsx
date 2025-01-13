@@ -1,6 +1,9 @@
+'use client'
+
 import { ChevronLeft, ChevronRight } from 'lucide-react'
-import { format, isToday, addDays, subDays } from 'date-fns'
+import { addDays, format, isToday, subDays } from 'date-fns'
 import { formatDateWithOrdinal } from '@/lib/utils'
+import { useEffect, useState } from 'react'
 
 interface GamesDatePickerProps {
     date: Date
@@ -8,6 +11,12 @@ interface GamesDatePickerProps {
 }
 
 export function GamesDatePicker({ date, onDateChange }: GamesDatePickerProps) {
+    const [mounted, setMounted] = useState(false)
+
+    useEffect(() => {
+        setMounted(true)
+    }, [])
+
     const handlePreviousDay = () => {
         onDateChange(subDays(date, 1))
     }
@@ -19,6 +28,25 @@ export function GamesDatePicker({ date, onDateChange }: GamesDatePickerProps) {
     const handleTodayClick = () => {
         onDateChange(new Date())
     }
+
+    if (!mounted) {
+        return (
+            <div className="space-y-2">
+                <div className="flex items-center justify-between">
+                    <div className="p-2 rounded-md w-8 h-8" />
+                    <div className="text-xs px-2 py-1 rounded-md">Today</div>
+                    <div className="p-2 rounded-md w-8 h-8" />
+                </div>
+                <div className="text-center">
+                    <div className="text-sm font-medium h-5" />
+                    <div className="text-sm text-muted-foreground h-5" />
+                </div>
+            </div>
+        )
+    }
+
+    const dayName = format(date, 'EEEE')
+    const formattedDate = formatDateWithOrdinal(date)
 
     return (
         <div className="space-y-2">
@@ -52,10 +80,10 @@ export function GamesDatePicker({ date, onDateChange }: GamesDatePickerProps) {
 
             <div className="text-center">
                 <div className="text-sm font-medium">
-                    {format(date, 'EEEE')}
+                    {dayName}
                 </div>
                 <div className="text-sm text-muted-foreground">
-                    {formatDateWithOrdinal(date)}
+                    {formattedDate}
                 </div>
             </div>
         </div>
