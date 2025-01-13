@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useState, useCallback, useRef } from 'react'
-import { format, isToday, isPast } from 'date-fns'
+import { format } from 'date-fns'
 import { GameCard } from '../card/game-card'
 import { RefreshSettings } from '@/components/shared/refresh/refresh-settings'
 import type { NHLEdgeGame } from '@/types/nhl-edge'
