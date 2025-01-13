@@ -24,8 +24,6 @@ export function GamesList({ date, onGameSelect, onClose }: GamesListProps) {
     const containerRef = useRef<HTMLDivElement>(null)
     const gamesRef = useRef<NHLEdgeGame[]>([])
     const lastDateRef = useRef(date)
-
-    // Debounce the date changes with a 300ms delay
     const debouncedDate = useDebounce(date, 300)
     const isNavigating = format(date, 'yyyy-MM-dd') !== format(debouncedDate, 'yyyy-MM-dd')
 
@@ -34,17 +32,11 @@ export function GamesList({ date, onGameSelect, onClose }: GamesListProps) {
             const isDateChange = format(debouncedDate, 'yyyy-MM-dd') !== format(lastDateRef.current, 'yyyy-MM-dd')
             lastDateRef.current = debouncedDate
 
-            const scrollContainer = containerRef.current?.closest('.overflow-y-auto')
-            const scrollPosition = scrollContainer?.scrollTop
-
             const formattedDate = format(debouncedDate, 'yyyy-MM-dd')
             const scheduleData = await getScores(formattedDate)
 
             const updatedGames = await Promise.all(
                 scheduleData.games.map(async (game) => {
-                    // Fetch game center data if:
-                    // 1. The date has changed (we need to check all games for special events)
-                    // 2. OR the game is active (for auto-refresh updates)
                     if (isDateChange || game.gameState === 'LIVE' || game.gameState === 'CRIT') {
                         try {
                             const response = await fetch(`/api/nhl/game-center?gameId=${game.id}`)
@@ -59,7 +51,6 @@ export function GamesList({ date, onGameSelect, onClose }: GamesListProps) {
                             console.error(`Failed to fetch game center data for game ${game.id}:`, error)
                         }
                     }
-                    // Preserve existing special event data for non-active games during auto-refresh
                     if (!isDateChange) {
                         const existingGame = gamesRef.current.find(g => g.id === game.id)
                         return {
@@ -71,18 +62,10 @@ export function GamesList({ date, onGameSelect, onClose }: GamesListProps) {
                 })
             )
 
-            setGames(updatedGames)
             gamesRef.current = updatedGames
+            setGames(updatedGames)
             setLastRefreshTime(new Date())
-
-            if (scrollPosition !== undefined) {
-                requestAnimationFrame(() => {
-                    scrollContainer?.scrollTo({
-                        top: scrollPosition,
-                        behavior: 'instant'
-                    })
-                })
-            }
+            setError(null)
         } catch (err) {
             console.error('Error fetching games:', err)
             setError('Failed to load games')
@@ -91,7 +74,14 @@ export function GamesList({ date, onGameSelect, onClose }: GamesListProps) {
         }
     }, [debouncedDate])
 
-    // Initial fetch and date change handler
+    // Effect for handling navigation state
+    useEffect(() => {
+        if (isNavigating) {
+            setLoading(true)
+        }
+    }, [isNavigating])
+
+    // Effect for fetching games
     useEffect(() => {
         fetchGames()
     }, [fetchGames])
@@ -105,32 +95,17 @@ export function GamesList({ date, onGameSelect, onClose }: GamesListProps) {
         return () => clearInterval(intervalId)
     }, [autoRefreshEnabled, fetchGames])
 
-    // Clear games when navigation starts
-    useEffect(() => {
-        if (isNavigating) {
-            setGames([])
-        }
-    }, [isNavigating])
-
-    if (isNavigating) {
+    if (loading || isNavigating) {
         return <GamesListSkeleton />
     }
 
-    if (loading) {
-        return <GamesListSkeleton />
+    if (error) {
+        return (
+            <div className="p-4">
+                <div className="text-sm text-destructive">{error}</div>
+            </div>
+        )
     }
-
-    if (error) return (
-        <div className="p-4">
-            <div className="text-sm text-destructive">{error}</div>
-        </div>
-    )
-
-    if (!games || games.length === 0) return (
-        <div className="p-4">
-            <div className="text-sm text-muted-foreground">No games scheduled</div>
-        </div>
-    )
 
     return (
         <div className="space-y-4" ref={containerRef}>
@@ -140,16 +115,22 @@ export function GamesList({ date, onGameSelect, onClose }: GamesListProps) {
                 lastRefreshTime={lastRefreshTime}
             />
 
-            <div className="space-y-2">
-                {games.map((game) => (
-                    <GameCard
-                        key={game.id}
-                        game={game}
-                        onSelectGame={onGameSelect}
-                        onClose={onClose}
-                    />
-                ))}
-            </div>
+            {games && games.length > 0 ? (
+                <div className="space-y-2">
+                    {games.map((game) => (
+                        <GameCard
+                            key={game.id}
+                            game={game}
+                            onSelectGame={onGameSelect}
+                            onClose={onClose}
+                        />
+                    ))}
+                </div>
+            ) : (
+                <div className="p-4">
+                    <div className="text-sm text-muted-foreground">No games scheduled</div>
+                </div>
+            )}
 
             <div className="pt-4 mt-4 border-t border-border/50">
                 <RefreshSettings
