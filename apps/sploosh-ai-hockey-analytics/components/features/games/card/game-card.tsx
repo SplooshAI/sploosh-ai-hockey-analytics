@@ -17,19 +17,19 @@ export function GameCard({ game, onSelectGame, onClose }: GameCardProps) {
     const handleGameClick = (e: React.MouseEvent) => {
         if (onSelectGame) {
             onSelectGame(game.id)
-            if (onClose) {
-                onClose()
-            }
+            onClose?.()
             e.preventDefault()
             e.stopPropagation()
         }
     }
 
     const handleGameCenterClick = (e: React.MouseEvent) => {
-        e.preventDefault()
         e.stopPropagation()
-        const url = `https://www.nhl.com/gamecenter/${game.id}`
-        window.open(url, '_blank', 'noopener,noreferrer')
+        window.open(game.gameCenterLink, '_blank')
+    }
+
+    const getOrdinalNum = (n: number) => {
+        return n + (n > 0 ? ['th', 'st', 'nd', 'rd'][(n > 3 && n < 21) || n % 10 > 3 ? 0 : n % 10] : '');
     }
 
     const getGameStatus = () => {
@@ -38,6 +38,9 @@ export function GameCard({ game, onSelectGame, onClose }: GameCardProps) {
             case 'LIVE':
                 if (game.clock?.inIntermission) {
                     return `INT${game.period} - ${game.clock?.timeRemaining}`
+                }
+                if (game.period && game.clock) {
+                    return `${game.period}${getOrdinalNum(game.period)} - ${game.clock.timeRemaining}`
                 }
                 return `Period ${game.period} - ${game.clock?.timeRemaining}`
             case 'FUT':
@@ -62,19 +65,10 @@ export function GameCard({ game, onSelectGame, onClose }: GameCardProps) {
     }
 
     const getGameStateClass = () => {
-        switch (game.gameState) {
-            case 'LIVE':
-            case 'CRIT':
-                return 'text-green-500 dark:text-green-400'
-            case 'FINAL':
-            case 'OFF':
-                return 'text-gray-500 dark:text-gray-400'
-            case 'PRE':
-            case 'FUT':
-                return 'text-muted-foreground'
-            default:
-                return 'text-muted-foreground'
+        if (game.gameState === 'LIVE') {
+            return 'text-red-500'
         }
+        return 'text-muted-foreground'
     }
 
     return (
@@ -101,35 +95,36 @@ export function GameCard({ game, onSelectGame, onClose }: GameCardProps) {
                 </div>
             )}
 
-            <div className="px-6 pb-4 flex flex-col gap-1.5">
+            <div className="px-4 pb-4 flex flex-col gap-1.5">
                 {/* Teams and Scores */}
-                <div className="flex items-center justify-center gap-4 mt-1">
-                    {/* Away Team */}
-                    <div className="flex items-center gap-2">
-                        <div className="relative w-6 h-6">
+                <div className="flex flex-col items-center">
+                    <div className="flex items-center justify-center gap-1">
+                        <div className="relative w-8 h-8">
                             <Image
                                 src={getTeamLogoUrl(game.awayTeam.abbrev)}
-                                alt={`${game.awayTeam.name} logo`}
+                                alt={`${game.awayTeam.abbrev} logo`}
                                 fill
                                 className="object-contain"
                             />
                         </div>
-                        <span className="font-medium">{game.awayTeam.abbrev}</span>
-                        {game.awayTeam.score !== undefined && (
-                            <span className="font-medium">{game.awayTeam.score}</span>
-                        )}
-                    </div>
-
-                    {/* Home Team */}
-                    <div className="flex items-center gap-2">
-                        {game.homeTeam.score !== undefined && (
-                            <span className="font-medium">{game.homeTeam.score}</span>
-                        )}
-                        <span className="font-medium">{game.homeTeam.abbrev}</span>
-                        <div className="relative w-6 h-6">
+                        <div className="flex flex-col items-center">
+                            <div className="flex items-center gap-2">
+                                <span>{game.awayTeam.abbrev}</span>
+                                <span>{game.awayTeam.score}</span>
+                                <span>-</span>
+                                <span>{game.homeTeam.score}</span>
+                                <span>{game.homeTeam.abbrev}</span>
+                            </div>
+                            {/* Additional game details row - add new stats here */}
+                            <div className="flex items-center gap-2 text-[11px] text-muted-foreground">
+                                {game.awayTeam.sog !== undefined && <span>{game.awayTeam.sog} SOG</span>}
+                                {game.homeTeam.sog !== undefined && <span>{game.homeTeam.sog} SOG</span>}
+                            </div>
+                        </div>
+                        <div className="relative w-8 h-8">
                             <Image
                                 src={getTeamLogoUrl(game.homeTeam.abbrev)}
-                                alt={`${game.homeTeam.name} logo`}
+                                alt={`${game.homeTeam.abbrev} logo`}
                                 fill
                                 className="object-contain"
                             />
