@@ -109,11 +109,13 @@ export function GamesList({ date, onGameSelect, onClose }: GamesListProps) {
 
     return (
         <div className="space-y-4" ref={containerRef}>
-            <RefreshSettings
-                isEnabled={autoRefreshEnabled}
-                onToggle={setAutoRefreshEnabled}
-                lastRefreshTime={lastRefreshTime}
-            />
+            {games && games.length > 0 && (
+                <RefreshSettings
+                    isEnabled={autoRefreshEnabled}
+                    onToggle={setAutoRefreshEnabled}
+                    lastRefreshTime={lastRefreshTime}
+                />
+            )}
 
             {games && games.length > 0 ? (
                 <div className="space-y-2">
@@ -128,17 +130,19 @@ export function GamesList({ date, onGameSelect, onClose }: GamesListProps) {
                 </div>
             ) : (
                 <div className="p-4">
-                    <div className="text-sm text-muted-foreground">No games scheduled</div>
+                    <div className="text-sm text-muted-foreground"></div>
                 </div>
             )}
 
-            <div className="pt-4 mt-4 border-t border-border/50">
-                <RefreshSettings
-                    isEnabled={autoRefreshEnabled}
-                    onToggle={setAutoRefreshEnabled}
-                    lastRefreshTime={lastRefreshTime}
-                />
-            </div>
+            {games && games.length > 0 && (
+                <div className="pt-4 mt-4 border-t border-border/50">
+                    <RefreshSettings
+                        isEnabled={autoRefreshEnabled}
+                        onToggle={setAutoRefreshEnabled}
+                        lastRefreshTime={lastRefreshTime}
+                    />
+                </div>
+            )}
         </div>
     )
 } 
