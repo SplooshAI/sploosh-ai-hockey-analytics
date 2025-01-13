@@ -85,8 +85,8 @@ export function GameCard({ game, onSelectGame, onClose }: GameCardProps) {
                             </div>
                             {/* Additional game details row - add new stats here */}
                             <div className="flex items-center gap-2 text-[11px] text-muted-foreground">
-                                <span>{game.awayTeam.sog} SOG</span>
-                                <span>{game.homeTeam.sog} SOG</span>
+                                {game.awayTeam.sog !== undefined && <span>{game.awayTeam.sog} SOG</span>}
+                                {game.homeTeam.sog !== undefined && <span>{game.homeTeam.sog} SOG</span>}
                             </div>
                         </div>
                         <div className="relative w-8 h-8">
