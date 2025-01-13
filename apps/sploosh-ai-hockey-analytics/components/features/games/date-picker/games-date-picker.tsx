@@ -4,6 +4,7 @@ import { ChevronLeft, ChevronRight } from 'lucide-react'
 import { addDays, format, isToday, subDays } from 'date-fns'
 import { formatDateWithOrdinal } from '@/lib/utils'
 import { useEffect, useState } from 'react'
+import { useDebounce } from '@/hooks/use-debounce'
 
 interface GamesDatePickerProps {
     date: Date
@@ -12,6 +13,8 @@ interface GamesDatePickerProps {
 
 export function GamesDatePicker({ date, onDateChange }: GamesDatePickerProps) {
     const [mounted, setMounted] = useState(false)
+    const debouncedDate = useDebounce(date, 300)
+    const isNavigating = format(date, 'yyyy-MM-dd') !== format(debouncedDate, 'yyyy-MM-dd')
 
     useEffect(() => {
         setMounted(true)
@@ -79,10 +82,12 @@ export function GamesDatePicker({ date, onDateChange }: GamesDatePickerProps) {
             </div>
 
             <div className="text-center">
-                <div className="text-sm font-medium">
+                <div className={`text-sm font-medium transition-opacity ${isNavigating ? 'opacity-50' : ''
+                    }`}>
                     {dayName}
                 </div>
-                <div className="text-sm text-muted-foreground">
+                <div className={`text-sm text-muted-foreground transition-opacity ${isNavigating ? 'opacity-50' : ''
+                    }`}>
                     {formattedDate}
                 </div>
             </div>
