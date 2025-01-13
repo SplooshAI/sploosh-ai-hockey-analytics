@@ -7,6 +7,7 @@ import { RefreshSettings } from '@/components/shared/refresh/refresh-settings'
 import type { NHLEdgeGame } from '@/types/nhl-edge'
 import { getScores } from '@/lib/api/nhl-edge'
 import { useDebounce } from '@/hooks/use-debounce'
+import { GamesListSkeleton } from './games-list-skeleton'
 
 interface GamesListProps {
     date: Date
@@ -26,6 +27,7 @@ export function GamesList({ date, onGameSelect, onClose }: GamesListProps) {
 
     // Debounce the date changes with a 300ms delay
     const debouncedDate = useDebounce(date, 300)
+    const isNavigating = format(date, 'yyyy-MM-dd') !== format(debouncedDate, 'yyyy-MM-dd')
 
     const fetchGames = useCallback(async () => {
         try {
@@ -103,11 +105,20 @@ export function GamesList({ date, onGameSelect, onClose }: GamesListProps) {
         return () => clearInterval(intervalId)
     }, [autoRefreshEnabled, fetchGames])
 
-    if (loading) return (
-        <div className="flex justify-center items-center p-4">
-            <div className="text-sm text-muted-foreground">Loading games...</div>
-        </div>
-    )
+    // Clear games when navigation starts
+    useEffect(() => {
+        if (isNavigating) {
+            setGames([])
+        }
+    }, [isNavigating])
+
+    if (isNavigating) {
+        return <GamesListSkeleton />
+    }
+
+    if (loading) {
+        return <GamesListSkeleton />
+    }
 
     if (error) return (
         <div className="p-4">
