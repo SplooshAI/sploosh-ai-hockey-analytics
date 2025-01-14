@@ -1,3 +1,5 @@
+import type { NHLEdgeGame } from '@/types/nhl-edge'
+
 export function shouldEnableAutoRefresh(games: NHLEdgeGame[]): boolean {
     if (!games.length) return false;
 
