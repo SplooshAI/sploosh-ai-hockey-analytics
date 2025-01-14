@@ -52,7 +52,7 @@ export function GameCard({ game, onSelectGame, onClose }: GameCardProps) {
                     return `INT${game.period} - ${game.clock?.timeRemaining}`
                 }
                 if (game.period && game.clock) {
-                    return `${getOrdinalNum(game.period)} - ${game.clock.timeRemaining}`
+                    return `${getOrdinalNum(game.period)} Period - ${game.clock.timeRemaining}`
                 }
                 return `Period ${game.period} - ${game.clock?.timeRemaining}`
             case 'FUT':
@@ -77,8 +77,11 @@ export function GameCard({ game, onSelectGame, onClose }: GameCardProps) {
     }
 
     const getGameStateClass = () => {
-        if (game.gameState === 'LIVE') {
-            return 'text-red-500'
+        if (game.gameState === 'LIVE' || game.gameState === 'CRIT') {
+            if (game.clock?.inIntermission) {
+                return 'text-red-500'
+            }
+            return 'text-green-500'
         }
         return 'text-muted-foreground'
     }
