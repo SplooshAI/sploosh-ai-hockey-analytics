@@ -8,6 +8,7 @@ import type { NHLEdgeGame } from '@/types/nhl-edge'
 import { getScores } from '@/lib/api/nhl-edge'
 import { useDebounce } from '@/hooks/use-debounce'
 import { GamesListSkeleton } from './games-list-skeleton'
+import { shouldEnableAutoRefresh } from '@/lib/utils/game-state'
 
 interface GamesListProps {
     date: Date
@@ -71,6 +72,11 @@ export function GamesList({ date, onGameSelect, onClose }: GamesListProps) {
 
             gamesRef.current = updatedGames
             setGames(updatedGames)
+
+            if (!autoRefreshEnabled && shouldEnableAutoRefresh(updatedGames)) {
+                setAutoRefreshEnabled(true)
+            }
+
             setLastRefreshTime(new Date())
             setError(null)
         } catch (err) {
@@ -121,6 +127,7 @@ export function GamesList({ date, onGameSelect, onClose }: GamesListProps) {
                     isEnabled={autoRefreshEnabled}
                     onToggle={setAutoRefreshEnabled}
                     lastRefreshTime={lastRefreshTime}
+                    defaultEnabled={shouldEnableAutoRefresh(games)}
                 />
             )}
 
@@ -147,6 +154,7 @@ export function GamesList({ date, onGameSelect, onClose }: GamesListProps) {
                         isEnabled={autoRefreshEnabled}
                         onToggle={setAutoRefreshEnabled}
                         lastRefreshTime={lastRefreshTime}
+                        defaultEnabled={shouldEnableAutoRefresh(games)}
                     />
                 </div>
             )}
