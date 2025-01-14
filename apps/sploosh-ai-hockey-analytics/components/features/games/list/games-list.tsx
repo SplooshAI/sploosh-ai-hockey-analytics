@@ -8,6 +8,7 @@ import type { NHLEdgeGame } from '@/types/nhl-edge'
 import { getScores } from '@/lib/api/nhl-edge'
 import { useDebounce } from '@/hooks/use-debounce'
 import { GamesListSkeleton } from './games-list-skeleton'
+import { shouldEnableAutoRefresh } from '@/lib/utils/game-state'
 
 interface GamesListProps {
     date: Date
@@ -23,28 +24,30 @@ export function GamesList({ date, onGameSelect, onClose }: GamesListProps) {
     const [autoRefreshEnabled, setAutoRefreshEnabled] = useState(false)
     const containerRef = useRef<HTMLDivElement>(null)
     const gamesRef = useRef<NHLEdgeGame[]>([])
-    const lastDateRef = useRef(date)
     const debouncedDate = useDebounce(date, 300)
     const isNavigating = format(date, 'yyyy-MM-dd') !== format(debouncedDate, 'yyyy-MM-dd')
+    const initialLoadCompletedRef = useRef(false)
+    const currentDateRef = useRef(format(date, 'yyyy-MM-dd'))
+    const refreshTimeoutRef = useRef<NodeJS.Timeout | null>(null)
 
-    const fetchGames = useCallback(async () => {
+    const fetchGames = useCallback(async (isInitialLoad = false, isDateChange = false) => {
+        if (isNavigating) return
+
         try {
-            const isDateChange = format(debouncedDate, 'yyyy-MM-dd') !== format(lastDateRef.current, 'yyyy-MM-dd')
-            const isInitialLoad = gamesRef.current.length === 0
-            lastDateRef.current = debouncedDate
+            setLoading(true)
+            const formattedDate = format(date, 'yyyy-MM-dd')
 
-            const formattedDate = format(debouncedDate, 'yyyy-MM-dd')
+            // Always get scores, but only get game center data on initial/date change
             const scheduleData = await getScores(formattedDate)
 
             const updatedGames = await Promise.all(
                 scheduleData.games.map(async (game) => {
-                    if (isInitialLoad || isDateChange || game.gameState === 'LIVE' || game.gameState === 'CRIT') {
+                    // Only fetch game center on initial load or date change
+                    if (isInitialLoad || isDateChange) {
                         try {
                             const response = await fetch(`/api/nhl/game-center?gameId=${game.id}`)
                             if (response.ok) {
                                 const gameCenterData = await response.json()
-
-                                // TODO: This should be refactored so you don't need to duplicate this data shape (below)
                                 return {
                                     ...game,
                                     specialEvent: gameCenterData.specialEvent,
@@ -55,17 +58,13 @@ export function GamesList({ date, onGameSelect, onClose }: GamesListProps) {
                             console.error(`Failed to fetch game center data for game ${game.id}:`, error)
                         }
                     }
-                    if (!isDateChange && !isInitialLoad) {
-                        const existingGame = gamesRef.current.find(g => g.id === game.id)
 
-                        // TODO: This should be refactored so you don't need to duplicate this data shape (above)
-                        return {
-                            ...game,
-                            specialEvent: existingGame?.specialEvent,
-                            matchup: existingGame?.matchup
-                        }
+                    const existingGame = gamesRef.current.find(g => g.id === game.id)
+                    return {
+                        ...game,
+                        specialEvent: existingGame?.specialEvent,
+                        matchup: existingGame?.matchup
                     }
-                    return game
                 })
             )
 
@@ -73,83 +72,78 @@ export function GamesList({ date, onGameSelect, onClose }: GamesListProps) {
             setGames(updatedGames)
             setLastRefreshTime(new Date())
             setError(null)
-        } catch (err) {
-            console.error('Error fetching games:', err)
-            setError('Failed to load games')
+        } catch (error) {
+            console.error('Error fetching games:', error)
+            setError('Failed to fetch games')
         } finally {
             setLoading(false)
         }
-    }, [debouncedDate])
+    }, [date, isNavigating, autoRefreshEnabled])
 
-    // Effect for handling navigation state
+    // Initial load
     useEffect(() => {
-        if (isNavigating) {
-            setLoading(true)
+        if (!initialLoadCompletedRef.current) {
+            initialLoadCompletedRef.current = true
+            fetchGames(true, false)
         }
-    }, [isNavigating])
-
-    // Effect for fetching games
-    useEffect(() => {
-        fetchGames()
     }, [fetchGames])
 
-    // Auto-refresh setup
+    // Handle date changes
     useEffect(() => {
-        if (!autoRefreshEnabled) return
+        const formattedDate = format(date, 'yyyy-MM-dd')
+        if (!isNavigating && formattedDate !== currentDateRef.current) {
+            currentDateRef.current = formattedDate
+            fetchGames(false, true)
+        }
+    }, [debouncedDate, fetchGames, isNavigating, date])
 
-        const intervalId = setInterval(() => fetchGames(), 20000) // 20 seconds
+    // Auto-refresh timer
+    useEffect(() => {
+        if (!autoRefreshEnabled) {
+            if (refreshTimeoutRef.current) {
+                clearTimeout(refreshTimeoutRef.current)
+            }
+            return
+        }
 
-        return () => clearInterval(intervalId)
-    }, [autoRefreshEnabled, fetchGames])
+        refreshTimeoutRef.current = setTimeout(() => {
+            fetchGames(false, false)
+        }, 20000) // 20 seconds
 
-    if (loading || isNavigating) {
+        return () => {
+            if (refreshTimeoutRef.current) {
+                clearTimeout(refreshTimeoutRef.current)
+            }
+        }
+    }, [autoRefreshEnabled, lastRefreshTime, fetchGames])
+
+    if (loading && !games.length) {
         return <GamesListSkeleton />
     }
 
-    if (error) {
-        return (
-            <div className="p-4">
-                <div className="text-sm text-destructive">{error}</div>
-            </div>
-        )
-    }
-
     return (
-        <div className="space-y-4" ref={containerRef}>
-            {games && games.length > 0 && (
-                <RefreshSettings
-                    isEnabled={autoRefreshEnabled}
-                    onToggle={setAutoRefreshEnabled}
-                    lastRefreshTime={lastRefreshTime}
-                />
-            )}
-
-            {games && games.length > 0 ? (
-                <div className="space-y-2">
-                    {games.map((game) => (
-                        <GameCard
-                            key={game.id}
-                            game={game}
-                            onSelectGame={onGameSelect}
-                            onClose={onClose}
-                        />
-                    ))}
-                </div>
-            ) : (
-                <div className="p-4">
-                    <div className="text-sm text-muted-foreground"></div>
+        <div ref={containerRef} className="space-y-4">
+            <RefreshSettings
+                isEnabled={autoRefreshEnabled}
+                onToggle={setAutoRefreshEnabled}
+                lastRefreshTime={lastRefreshTime}
+                defaultEnabled={shouldEnableAutoRefresh(games)}
+            />
+            {error && (
+                <div className="text-sm text-destructive">
+                    {error}
                 </div>
             )}
-
-            {games && games.length > 0 && (
-                <div className="pt-4 mt-4 border-t border-border/50">
-                    <RefreshSettings
-                        isEnabled={autoRefreshEnabled}
-                        onToggle={setAutoRefreshEnabled}
-                        lastRefreshTime={lastRefreshTime}
+            <div className="space-y-2">
+                {games.map((game) => (
+                    <GameCard
+                        key={game.id}
+                        game={game}
+                        onSelectGame={onGameSelect}
+                        onClose={onClose}
                     />
-                </div>
-            )}
+                ))}
+            </div>
         </div>
     )
 } 
