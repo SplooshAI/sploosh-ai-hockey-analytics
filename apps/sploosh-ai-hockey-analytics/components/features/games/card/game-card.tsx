@@ -30,7 +30,18 @@ export function GameCard({ game, onSelectGame, onClose }: GameCardProps) {
     }
 
     const getOrdinalNum = (n: number) => {
-        return n + (n > 0 ? ['th', 'st', 'nd', 'rd'][(n > 3 && n < 21) || n % 10 > 3 ? 0 : n % 10] : '');
+        // Special case: 11, 12, 13 always end with "th"
+        if (n % 100 >= 11 && n % 100 <= 13) {
+            return n + 'th';
+        }
+
+        // All other numbers follow the simple pattern
+        switch (n % 10) {
+            case 1: return n + 'st';
+            case 2: return n + 'nd';
+            case 3: return n + 'rd';
+            default: return n + 'th';
+        }
     }
 
     const getGameStatus = () => {
@@ -41,7 +52,7 @@ export function GameCard({ game, onSelectGame, onClose }: GameCardProps) {
                     return `INT${game.period} - ${game.clock?.timeRemaining}`
                 }
                 if (game.period && game.clock) {
-                    return `${game.period}${getOrdinalNum(game.period)} - ${game.clock.timeRemaining}`
+                    return `${getOrdinalNum(game.period)} - ${game.clock.timeRemaining}`
                 }
                 return `Period ${game.period} - ${game.clock?.timeRemaining}`
             case 'FUT':
