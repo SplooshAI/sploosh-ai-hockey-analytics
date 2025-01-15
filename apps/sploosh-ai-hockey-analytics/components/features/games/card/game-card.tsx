@@ -49,13 +49,25 @@ export function GameCard({ game, onSelectGame, onClose }: GameCardProps) {
             case 'CRIT':
             case 'LIVE':
                 if (game.clock?.inIntermission) {
-                    const ordinalPeriod = game.period === 1 ? '1st' :
-                        game.period === 2 ? '2nd' :
-                            game.period === 3 ? '3rd' : `${game.period}th`;
-                    return `${ordinalPeriod} INT - ${game.clock?.timeRemaining}`
+                    if (game.periodDescriptor?.periodType === 'OT') {
+                        return `OT INT - ${game.clock?.timeRemaining}`
+                    } else if (game.periodDescriptor?.periodType === 'SO') {
+                        return `SO INT - ${game.clock?.timeRemaining}`
+                    } else {
+                        const ordinalPeriod = game.periodDescriptor?.number === 1 ? '1st' :
+                            game.periodDescriptor?.number === 2 ? '2nd' :
+                                game.periodDescriptor?.number === 3 ? '3rd' : `${game.periodDescriptor?.number}th`;
+                        return `${ordinalPeriod} INT - ${game.clock?.timeRemaining}`
+                    }
                 }
-                if (game.period && game.clock) {
-                    return `${getOrdinalNum(game.period)} Period - ${game.clock.timeRemaining}`
+                if (game.periodDescriptor) {
+                    if (game.periodDescriptor.periodType === 'OT') {
+                        return `OT - ${game.clock?.timeRemaining}`
+                    } else if (game.periodDescriptor.periodType === 'SO') {
+                        return `SO - ${game.clock?.timeRemaining}`
+                    } else {
+                        return `${getOrdinalNum(game.periodDescriptor.number)} Period - ${game.clock?.timeRemaining}`
+                    }
                 }
                 return `Period ${game.period} - ${game.clock?.timeRemaining}`
             case 'FUT':
