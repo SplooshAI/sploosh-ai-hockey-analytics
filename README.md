@@ -89,5 +89,3 @@ Note: Docker Desktop must be running before using act to test workflows locally.
    - Tests version bump workflow
    - Verifies proper version incrementing
    - Checks synchronization between package.json files
-
-Note: Docker Desktop must be running before using these test scripts.
