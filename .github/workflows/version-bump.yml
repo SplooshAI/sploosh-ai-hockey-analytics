@@ -1,0 +1,69 @@
+name: Version Bump
+
+on:
+  pull_request:
+    types: [closed]
+    branches:
+      - main
+
+jobs:
+  version-bump:
+    if: github.event.pull_request.merged == true
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          
+      - name: Install dependencies
+        run: npm ci
+          
+      - name: Configure Git
+        run: |
+          git config --local user.email "github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "github-actions[bot]"
+          
+      - name: Determine version bump
+        id: bump
+        run: |
+          PR_TITLE="${{ github.event.pull_request.title }}"
+          if [[ $PR_TITLE == feat!:* ]] || [[ $PR_TITLE == fix!:* ]]; then
+            echo "bump=major" >> $GITHUB_OUTPUT
+          elif [[ $PR_TITLE == feat:* ]]; then
+            echo "bump=minor" >> $GITHUB_OUTPUT
+          else
+            echo "bump=patch" >> $GITHUB_OUTPUT
+          fi
+          
+      - name: Bump version
+        run: |
+          BUMP_TYPE=$(echo "${{ steps.bump.outputs.bump }}")
+          
+          # Bump root package.json
+          npm version $BUMP_TYPE --no-git-tag-version
+          
+          # Get new version
+          NEW_VERSION=$(node -p "require('./package.json').version")
+          
+          # Bump app package.json
+          cd apps/sploosh-ai-hockey-analytics
+          npm version $NEW_VERSION --no-git-tag-version
+          
+          # Stage changes
+          git add package.json apps/sploosh-ai-hockey-analytics/package.json
+          
+          # Commit and tag
+          git commit -m "chore: bump version to ${NEW_VERSION}"
+          git tag -a "v${NEW_VERSION}" -m "Version ${NEW_VERSION}"
+          
+      - name: Push changes
+        run: |
+          git push
+          git push --tags
