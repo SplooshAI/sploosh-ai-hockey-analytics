@@ -40,11 +40,11 @@ jobs:
           cd apps/sploosh-ai-hockey-analytics
           npm version $NEW_VERSION --no-git-tag-version
           
-          # Show results
+          # Show results (using grep with exact version line match)
           echo "Root package.json version:"
-          cat ../../package.json | grep version
+          grep '"version":' ../../package.json | head -n 1
           echo "App package.json version:"
-          cat package.json | grep version
+          grep '"version":' package.json | head -n 1
 
 permissions:
   contents: write

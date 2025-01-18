@@ -49,15 +49,17 @@ npm run docker:up:detach
 # Stop the container
 npm run docker:down
 ```
-#### Testing GitHub Actions Locally
+### Testing GitHub Actions Locally
 
-We recommend using [act](https://github.com/nektos/act) to test GitHub Actions workflows locally before pushing changes. 
+We recommend using [act](https://github.com/nektos/act) to test GitHub Actions workflows locally before pushing changes if you are developing on a Mac.
 
-##### Prerequisites for macOS
+The application does not have to be running in Docker to test the workflows, but Docker Desktop must be running for the act tests to run and spin up the necessary containers.
+
+#### Prerequisites for macOS
 - Homebrew
 - Docker Desktop (must be running)
 
-##### Installation
+#### Installation
 
 ```
 # Install act using Homebrew
@@ -68,3 +70,24 @@ act --version  # Should show 0.2.71 or higher
 ```
 
 Note: Docker Desktop must be running before using act to test workflows locally.
+
+
+#### What Each Script Tests
+
+1. `test:workflows`
+   - Runs all workflow tests in sequence
+   - Tests valid PR titles, invalid formats, and breaking changes
+   - Tests version bumping functionality
+   - Provides detailed feedback for each test
+
+2. `test:workflows:semantic`
+   - Tests PR title validation only
+   - Validates against conventional commit format
+   - Checks for proper semantic versioning prefixes
+
+3. `test:workflows:version`
+   - Tests version bump workflow
+   - Verifies proper version incrementing
+   - Checks synchronization between package.json files
+
+Note: Docker Desktop must be running before using these test scripts.
