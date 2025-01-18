@@ -49,3 +49,22 @@ npm run docker:up:detach
 # Stop the container
 npm run docker:down
 ```
+#### Testing GitHub Actions Locally
+
+We recommend using [act](https://github.com/nektos/act) to test GitHub Actions workflows locally before pushing changes. 
+
+##### Prerequisites for macOS
+- Homebrew
+- Docker Desktop (must be running)
+
+##### Installation
+
+```
+# Install act using Homebrew
+brew install act
+
+# Verify installation
+act --version  # Should show 0.2.71 or higher
+```
+
+Note: Docker Desktop must be running before using act to test workflows locally.
