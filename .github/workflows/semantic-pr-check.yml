@@ -30,3 +30,6 @@ jobs:
             The subject "{subject}" found in either PR title or description should:
             - Start with a lowercase letter
           validateSingleCommit: false 
+
+permissions:
+  pull-requests: read 

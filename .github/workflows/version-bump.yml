@@ -45,3 +45,7 @@ jobs:
           cat ../../package.json | grep version
           echo "App package.json version:"
           cat package.json | grep version
+
+permissions:
+  contents: write
+  pull-requests: write
