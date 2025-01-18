@@ -1,6 +1,6 @@
 'use client'
 
-import { ReactNode, useState } from 'react'
+import { ReactNode, useState, useEffect } from 'react'
 import Sidebar from './sidebar/sidebar'
 import { Menu, ArrowUp } from 'lucide-react'
 import { SITE } from "@/lib/constants"
@@ -12,12 +12,22 @@ interface MainLayoutProps {
 
 export function MainLayout({ children, onGameSelect }: MainLayoutProps) {
     const [isSidebarOpen, setIsSidebarOpen] = useState(false)
+    const [hasMounted, setHasMounted] = useState(false)
 
     // Add handler to close sidebar
     const handleOverlayClick = (e: React.MouseEvent) => {
         e.preventDefault()
         setIsSidebarOpen(false)
     }
+
+    // Auto-open sidebar on mobile devices on first load
+    useEffect(() => {
+        if (!hasMounted) {
+            const isMobile = window.innerWidth < 1024 // 1024px matches our lg breakpoint
+            setIsSidebarOpen(isMobile)
+            setHasMounted(true)
+        }
+    }, [hasMounted])
 
     return (
         <div className="flex h-[100dvh] relative">
