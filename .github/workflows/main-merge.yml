@@ -12,6 +12,8 @@ jobs:
     permissions:
       contents: write
       pull-requests: write
+    outputs:
+      pr_number: ${{ steps.get_pr.outputs.pr_number }}
     steps:
       - uses: actions/checkout@v4
         with:
@@ -91,6 +93,7 @@ jobs:
           echo "branch_name=${BRANCH_NAME}" >> $GITHUB_OUTPUT
 
       - name: Create or Update Pull Request
+        id: get_pr
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
@@ -101,11 +104,13 @@ jobs:
           
           if [ -n "$EXISTING_PR" ]; then
             echo "Updating existing PR: $EXISTING_PR"
+            # Get PR number from URL
+            PR_NUMBER=$(echo $EXISTING_PR | grep -o '[0-9]*$')
             # Update the existing PR's branch with our changes
             git push --force-with-lease origin $BRANCH_NAME
           else
             echo "Creating new PR..."
-            # Create new PR
+            # Create new PR and get its URL
             PR_URL=$(gh pr create \
               --title "chore: bump version from ${{ steps.create_branch.outputs.old_version }} to ${{ steps.create_branch.outputs.new_version }}" \
               --body "Automated version bump triggered by merge to main.
@@ -116,13 +121,49 @@ jobs:
               --base main \
               --head $BRANCH_NAME)
             
+            # Extract PR number from URL
+            PR_NUMBER=$(echo $PR_URL | grep -o '[0-9]*$')
             echo "Created PR: $PR_URL"
           fi
           
-          # Try to enable auto-merge, but don't fail if it's not available
-          gh pr merge --auto --merge "$BRANCH_NAME" || {
-            echo "Auto-merge not available. PR needs to be merged manually."
-            echo "To enable auto-merge:"
-            echo "1. Go to repository Settings"
-            echo "2. Under 'Pull Requests', enable 'Allow auto-merge'"
-          } 
+          echo "pr_number=$PR_NUMBER" >> $GITHUB_OUTPUT
+
+  merge-pr:
+    needs: version-bump
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+    steps:
+      - name: Wait for checks
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          echo "Waiting for checks to complete on PR #${{ needs.version-bump.outputs.pr_number }}"
+          
+          # Wait for checks to complete (timeout after 10 minutes)
+          timeout=600
+          while [ $timeout -gt 0 ]; do
+            # Get check status
+            STATUS=$(gh pr checks ${{ needs.version-bump.outputs.pr_number }} --json conclusion -q '.[].conclusion' | grep -v "^$")
+            
+            # If all checks passed
+            if [ "$STATUS" = "success" ]; then
+              echo "All checks passed!"
+              gh pr merge ${{ needs.version-bump.outputs.pr_number }} --merge
+              exit 0
+            fi
+            
+            # If any check failed
+            if echo "$STATUS" | grep -q "failure"; then
+              echo "Checks failed!"
+              exit 1
+            fi
+            
+            echo "Checks still running... ($timeout seconds remaining)"
+            sleep 10
+            timeout=$((timeout - 10))
+          done
+          
+          echo "Timeout waiting for checks!"
+          exit 1 
