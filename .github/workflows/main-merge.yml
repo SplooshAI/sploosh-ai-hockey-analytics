@@ -141,7 +141,7 @@ jobs:
         with:
           fetch-depth: 0
           
-      - name: Wait for checks
+      - name: Wait for checks and merge
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
@@ -171,7 +171,17 @@ jobs:
             
             # If we get here, all checks have completed successfully
             echo "All checks passed!"
+            
+            # Get the branch name before merging
+            BRANCH_NAME=$(gh pr view ${{ needs.version-bump.outputs.pr_number }} --json headRefName --jq '.headRefName')
+            
+            # Merge the PR
             gh pr merge ${{ needs.version-bump.outputs.pr_number }} --merge
+            
+            # Delete the branch after successful merge
+            git push origin --delete $BRANCH_NAME
+            echo "Cleaned up branch: $BRANCH_NAME"
+            
             exit 0
           done
           
