@@ -21,7 +21,6 @@ This application is deployed on Vercel and can be accessed at <https://sploosh-a
 The application will be available at <http://localhost:3000> regardless of which method you choose.
 
 ### Version Control
-
 This project uses semantic versioning. Version numbers are automatically updated based on PR titles:
 - `feat!:` - Major version bump (breaking changes)
 - `feat:` - Minor version bump (new features)
