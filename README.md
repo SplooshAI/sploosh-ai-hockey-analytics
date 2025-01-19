@@ -27,6 +27,10 @@ This project uses semantic versioning. Version numbers are automatically updated
 - `feat:` - Minor version bump (new features)
 - `fix:`, `docs:`, etc. - Patch version bump
 
+Example: 
+- A PR titled `feat: add new feature` will bump 0.1.0 → 0.2.0
+- A PR titled `docs: update readme` will bump 0.1.0 → 0.1.1
+
 ### Option 1: Local Development
 
 Install dependencies and start the development server:
