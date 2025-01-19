@@ -52,7 +52,7 @@ jobs:
           
           # Store original version
           OLD_VERSION=$(node -p "require('./package.json').version")
-          echo "Old version: $OLD_VERSION"
+          echo "old_version=${OLD_VERSION}" >> $GITHUB_OUTPUT
           
           # Determine new version
           BUMP_TYPE=${{ steps.bump-type.outputs.type }}
@@ -72,7 +72,7 @@ jobs:
             }
             console.log(newVersion);
           ")
-          echo "New version: $NEW_VERSION"
+          echo "new_version=${NEW_VERSION}" >> $GITHUB_OUTPUT
           
           # Update root package.json
           jq ".version = \"$NEW_VERSION\"" package.json > temp.json && mv temp.json package.json
@@ -82,48 +82,24 @@ jobs:
           jq ".version = \"$NEW_VERSION\"" package.json > temp.json && mv temp.json package.json
           cd ../..
           
-          # Debug: Show git status
-          echo "Git status before add:"
-          git status
-          
-          # Stage changes
-          git add package.json
-          git add apps/sploosh-ai-hockey-analytics/package.json
-          
-          # Debug: Show what's staged
-          echo "Git status after add:"
-          git status
-          
-          # Commit changes
+          # Stage and commit changes
+          git add package.json apps/sploosh-ai-hockey-analytics/package.json
           git commit -m "chore: bump version from ${OLD_VERSION} to ${NEW_VERSION}"
           
-          # Debug: Show commit
-          echo "Latest commit:"
-          git show --name-status HEAD
-          
           # Push branch
-          git push -f origin $BRANCH_NAME
-          
-          # Set outputs
-          echo "new_version=${NEW_VERSION}" >> $GITHUB_OUTPUT
-          echo "old_version=${OLD_VERSION}" >> $GITHUB_OUTPUT
+          git push origin $BRANCH_NAME
           echo "branch_name=${BRANCH_NAME}" >> $GITHUB_OUTPUT
 
       - name: Create Pull Request
-        uses: peter-evans/create-pull-request@v5
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          commit-message: "chore: bump version from ${{ steps.create_branch.outputs.old_version }} to ${{ steps.create_branch.outputs.new_version }}"
-          branch: ${{ steps.create_branch.outputs.branch_name }}
-          base: main
-          delete-branch: true
-          title: "chore: bump version from ${{ steps.create_branch.outputs.old_version }} to ${{ steps.create_branch.outputs.new_version }}"
-          body: |
-            Automated version bump triggered by merge to main.
-            
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh pr create \
+            --title "chore: bump version from ${{ steps.create_branch.outputs.old_version }} to ${{ steps.create_branch.outputs.new_version }}" \
+            --body "Automated version bump triggered by merge to main.
+
             Changes:
             - Bump version from ${{ steps.create_branch.outputs.old_version }} to ${{ steps.create_branch.outputs.new_version }}
-            - Update version in both package.json files
-          add-paths: |
-            package.json
-            apps/sploosh-ai-hockey-analytics/package.json 
+            - Update version in both package.json files" \
+            --base main \
+            --head ${{ steps.create_branch.outputs.branch_name }} 
