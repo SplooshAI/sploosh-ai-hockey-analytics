@@ -90,20 +90,39 @@ jobs:
           git push --force-with-lease origin $BRANCH_NAME || git push --force origin $BRANCH_NAME
           echo "branch_name=${BRANCH_NAME}" >> $GITHUB_OUTPUT
 
-      - name: Create Pull Request
+      - name: Create or Update Pull Request
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          # Create the PR
-          gh pr create \
-            --title "chore: bump version from ${{ steps.create_branch.outputs.old_version }} to ${{ steps.create_branch.outputs.new_version }}" \
-            --body "Automated version bump triggered by merge to main.
-
-            Changes:
-            - Bump version from ${{ steps.create_branch.outputs.old_version }} to ${{ steps.create_branch.outputs.new_version }}
-            - Update version in both package.json files" \
-            --base main \
-            --head ${{ steps.create_branch.outputs.branch_name }}
+          BRANCH_NAME="${{ steps.create_branch.outputs.branch_name }}"
           
-          # Enable auto-merge on the PR we just created
-          gh pr merge --auto --merge "${{ steps.create_branch.outputs.branch_name }}" 
+          # Check if PR already exists
+          EXISTING_PR=$(gh pr list --head $BRANCH_NAME --json number,url -q '.[0].url')
+          
+          if [ -n "$EXISTING_PR" ]; then
+            echo "Updating existing PR: $EXISTING_PR"
+            # Update the existing PR's branch with our changes
+            git push --force-with-lease origin $BRANCH_NAME
+          else
+            echo "Creating new PR..."
+            # Create new PR
+            PR_URL=$(gh pr create \
+              --title "chore: bump version from ${{ steps.create_branch.outputs.old_version }} to ${{ steps.create_branch.outputs.new_version }}" \
+              --body "Automated version bump triggered by merge to main.
+
+              Changes:
+              - Bump version from ${{ steps.create_branch.outputs.old_version }} to ${{ steps.create_branch.outputs.new_version }}
+              - Update version in both package.json files" \
+              --base main \
+              --head $BRANCH_NAME)
+            
+            echo "Created PR: $PR_URL"
+          fi
+          
+          # Try to enable auto-merge, but don't fail if it's not available
+          gh pr merge --auto --merge "$BRANCH_NAME" || {
+            echo "Auto-merge not available. PR needs to be merged manually."
+            echo "To enable auto-merge:"
+            echo "1. Go to repository Settings"
+            echo "2. Under 'Pull Requests', enable 'Allow auto-merge'"
+          } 
