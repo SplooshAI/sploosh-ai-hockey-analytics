@@ -46,9 +46,6 @@ jobs:
       - name: Create Version Bump Branch
         id: create_branch
         run: |
-          git config --local user.email "action@github.com"
-          git config --local user.name "GitHub Action"
-          
           # Create new branch
           BRANCH_NAME="version-bump-${{ github.sha }}"
           git checkout -b $BRANCH_NAME
@@ -58,7 +55,7 @@ jobs:
           
           # Bump versions
           BUMP_TYPE=${{ steps.bump-type.outputs.type }}
-          npm version $BUMP_TYPE --no-git-tag-version
+          npm version $BUMP_TYPE --no-git-tag-version || true
           
           NEW_VERSION=$(node -p "require('./package.json').version")
           echo "new_version=${NEW_VERSION}" >> $GITHUB_OUTPUT
@@ -66,21 +63,26 @@ jobs:
           
           # Update app version
           cd apps/sploosh-ai-hockey-analytics
-          npm version $NEW_VERSION --no-git-tag-version
+          npm version $NEW_VERSION --no-git-tag-version || true
           cd ../..
           
+          # Verify changes exist
+          if git diff --quiet; then
+            echo "No changes detected"
+            exit 1
+          fi
+          
           # Stage and commit changes
-          git add package.json package-lock.json
-          git add apps/sploosh-ai-hockey-analytics/package.json
+          git add -A
           git commit -m "chore: bump version from ${OLD_VERSION} to ${NEW_VERSION}"
           
-          # Push branch before PR creation
-          git push origin $BRANCH_NAME
+          # Force push branch
+          git push -f origin $BRANCH_NAME
           
-          # Set branch name for PR creation
           echo "branch_name=${BRANCH_NAME}" >> $GITHUB_OUTPUT
       
       - name: Create Pull Request
+        if: success()
         uses: peter-evans/create-pull-request@v5
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
