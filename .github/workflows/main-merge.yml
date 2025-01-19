@@ -62,8 +62,8 @@ jobs:
           NEW_VERSION=$(npm --no-git-tag-version version $BUMP_TYPE)
           NEW_VERSION=${NEW_VERSION:1} # Remove the 'v' prefix
           
-          # Reset any changes npm version made
-          git checkout package.json package-lock.json
+          # Reset package.json (no need to reset package-lock.json)
+          git checkout package.json
           
           # Update root package.json
           jq ".version = \"$NEW_VERSION\"" package.json > temp.json && mv temp.json package.json
