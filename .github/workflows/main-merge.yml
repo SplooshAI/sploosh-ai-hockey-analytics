@@ -53,21 +53,43 @@ jobs:
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
           
+          echo "Current directory:"
+          pwd
+          
+          echo "Directory contents:"
+          ls -la
+          
           # Create new branch for version bump
           git checkout -b version-bump-${{ github.sha }}
           
+          echo "Current package.json version:"
+          cat package.json | grep version
+          
           # Bump versions
           BUMP_TYPE=${{ steps.bump-type.outputs.type }}
+          echo "Bumping version with type: $BUMP_TYPE"
           npm version $BUMP_TYPE --no-git-tag-version
           
+          echo "New package.json version:"
+          cat package.json | grep version
+          
           NEW_VERSION=$(node -p "require('./package.json').version")
+          echo "Detected new version: $NEW_VERSION"
+          
           cd apps/sploosh-ai-hockey-analytics
+          echo "App package.json before bump:"
+          cat package.json | grep version
+          
           npm version $NEW_VERSION --no-git-tag-version
+          
+          echo "App package.json after bump:"
+          cat package.json | grep version
           
           # Commit changes
           cd ../..
           git add .
           git commit -m "chore: bump version to $NEW_VERSION"
+          git status
           
           # Push branch
           git push origin version-bump-${{ github.sha }}
