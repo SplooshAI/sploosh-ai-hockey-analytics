@@ -32,9 +32,6 @@ jobs:
       - name: Determine Version Bump Type
         id: bump-type
         run: |
-          echo "Last commit message:"
-          git log --format=%B -n 1
-          
           COMMIT_MSG=$(git log --format=%B -n 1)
           echo "Commit message: $COMMIT_MSG"
           
@@ -45,66 +42,55 @@ jobs:
           else
             echo "type=patch" >> $GITHUB_OUTPUT
           fi
-          
-          echo "Determined bump type: $(cat $GITHUB_OUTPUT)"
       
       - name: Create Version Bump Branch
+        id: create_branch
         run: |
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
           
-          echo "Current directory:"
-          pwd
-          
-          echo "Directory contents:"
-          ls -la
-          
-          # Create new branch for version bump
-          git checkout -b version-bump-${{ github.sha }}
-          
-          echo "Current package.json version:"
-          cat package.json | grep version
+          # Create new branch
+          BRANCH_NAME="version-bump-${{ github.sha }}"
+          git checkout -b $BRANCH_NAME
           
           # Bump versions
           BUMP_TYPE=${{ steps.bump-type.outputs.type }}
-          echo "Bumping version with type: $BUMP_TYPE"
           npm version $BUMP_TYPE --no-git-tag-version
           
-          echo "New package.json version:"
-          cat package.json | grep version
-          
           NEW_VERSION=$(node -p "require('./package.json').version")
-          echo "Detected new version: $NEW_VERSION"
+          echo "new_version=$NEW_VERSION" >> $GITHUB_OUTPUT
           
           cd apps/sploosh-ai-hockey-analytics
-          echo "App package.json before bump:"
-          cat package.json | grep version
-          
           npm version $NEW_VERSION --no-git-tag-version
-          
-          echo "App package.json after bump:"
-          cat package.json | grep version
-          
-          # Commit changes
           cd ../..
-          git add .
-          git commit -m "chore: bump version to $NEW_VERSION"
-          git status
           
-          # Push branch
-          git push origin version-bump-${{ github.sha }}
+          # Verify changes exist
+          if [[ -n $(git status -s) ]]; then
+            echo "has_changes=true" >> $GITHUB_OUTPUT
+            
+            # Commit changes
+            git add .
+            git commit -m "chore: bump version to $NEW_VERSION"
+            git push origin $BRANCH_NAME
+          else
+            echo "has_changes=false" >> $GITHUB_OUTPUT
+          fi
       
       - name: Create Pull Request
+        if: steps.create_branch.outputs.has_changes == 'true'
         uses: peter-evans/create-pull-request@v5
         with:
-          title: "chore: version bump"
+          token: ${{ secrets.GITHUB_TOKEN }}
+          commit-message: "chore: bump version to ${{ steps.create_branch.outputs.new_version }}"
+          title: "chore: version bump to ${{ steps.create_branch.outputs.new_version }}"
           body: |
             Automated version bump triggered by merge to main.
             
             Changes:
-            - Bump version based on conventional commit type
+            - Bump version from ${{ steps.create_branch.outputs.old_version }} to ${{ steps.create_branch.outputs.new_version }}
             - Sync versions across package.json files
           branch: version-bump-${{ github.sha }}
           base: main
-          labels: version-bump
-          delete-branch: true 
+          labels: |
+            version-bump
+            automated 
