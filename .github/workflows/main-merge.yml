@@ -135,6 +135,10 @@ jobs:
       contents: write
       pull-requests: write
     steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          
       - name: Wait for checks
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
