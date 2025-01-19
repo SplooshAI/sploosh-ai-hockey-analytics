@@ -33,6 +33,7 @@ Examples:
 - `fix: resolve bug` → 0.1.0 → 0.1.1
 - `chore: update deps` → 0.1.0 → 0.1.1
 - `style: format code` → 0.1.0 → 0.1.1
+- `refactor: improve code` → 0.1.0 → 0.1.1
 
 ### Option 1: Local Development
 
