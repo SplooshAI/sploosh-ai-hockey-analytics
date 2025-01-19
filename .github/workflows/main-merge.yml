@@ -94,8 +94,8 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          # Create the PR and capture its number
-          PR_NUMBER=$(gh pr create \
+          # Create the PR
+          gh pr create \
             --title "chore: bump version from ${{ steps.create_branch.outputs.old_version }} to ${{ steps.create_branch.outputs.new_version }}" \
             --body "Automated version bump triggered by merge to main.
 
@@ -103,8 +103,7 @@ jobs:
             - Bump version from ${{ steps.create_branch.outputs.old_version }} to ${{ steps.create_branch.outputs.new_version }}
             - Update version in both package.json files" \
             --base main \
-            --head ${{ steps.create_branch.outputs.branch_name }} \
-            --json number -q .number)
+            --head ${{ steps.create_branch.outputs.branch_name }}
           
-          # Enable auto-merge
-          gh pr merge $PR_NUMBER --auto --merge 
+          # Enable auto-merge on the PR we just created
+          gh pr merge --auto --merge "${{ steps.create_branch.outputs.branch_name }}" 
