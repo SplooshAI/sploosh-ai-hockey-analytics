@@ -58,12 +58,21 @@ jobs:
           BUMP_TYPE=${{ steps.bump-type.outputs.type }}
           echo "Bump type: $BUMP_TYPE"
           
-          # Calculate new version using npm semver capabilities
-          NEW_VERSION=$(npm --no-git-tag-version version $BUMP_TYPE)
-          NEW_VERSION=${NEW_VERSION:1} # Remove the 'v' prefix
-          
-          # Reset package.json (no need to reset package-lock.json)
-          git checkout package.json
+          # Calculate new version using node
+          NEW_VERSION=$(node -e "
+            const [major, minor, patch] = '${OLD_VERSION}'.split('.');
+            const type = '${BUMP_TYPE}';
+            let newVersion;
+            if (type === 'major') {
+              newVersion = \`\${Number(major) + 1}.0.0\`;
+            } else if (type === 'minor') {
+              newVersion = \`\${major}.\${Number(minor) + 1}.0\`;
+            } else {
+              newVersion = \`\${major}.\${minor}.\${Number(patch) + 1}\`;
+            }
+            console.log(newVersion);
+          ")
+          echo "New version: $NEW_VERSION"
           
           # Update root package.json
           jq ".version = \"$NEW_VERSION\"" package.json > temp.json && mv temp.json package.json
