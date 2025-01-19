@@ -68,8 +68,8 @@ jobs:
           
           # Use npm version to calculate new version number only
           NEW_VERSION=$(npm version $BUMP_TYPE --no-git-tag-version)
-          # Reset the change npm version made
-          git checkout package.json package-lock.json
+          # Reset any changes npm version made
+          git reset --hard HEAD
           
           echo "New version: $NEW_VERSION"
           
