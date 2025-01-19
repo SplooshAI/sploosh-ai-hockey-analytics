@@ -134,6 +134,8 @@ jobs:
     permissions:
       contents: write
       pull-requests: write
+      checks: read
+      statuses: read
     steps:
       - uses: actions/checkout@v4
         with:
@@ -149,12 +151,12 @@ jobs:
           timeout=600
           while [ $timeout -gt 0 ]; do
             # Get check status using correct fields
-            STATUSES=$(gh pr checks ${{ needs.version-bump.outputs.pr_number }} --json state,name -q '.[] | "\(.name):\(.state)"')
+            STATUSES=$(gh pr view ${{ needs.version-bump.outputs.pr_number }} --json statusCheckRollup --jq '.statusCheckRollup.[].state')
             echo "Current check statuses:"
             echo "$STATUSES"
             
             # Check if any are still pending
-            if echo "$STATUSES" | grep -q "pending\|in_progress\|queued"; then
+            if echo "$STATUSES" | grep -q "PENDING"; then
               echo "Checks still running... ($timeout seconds remaining)"
               sleep 10
               timeout=$((timeout - 10))
@@ -162,7 +164,7 @@ jobs:
             fi
             
             # Check if any failed
-            if echo "$STATUSES" | grep -q "failure"; then
+            if echo "$STATUSES" | grep -q "FAILURE"; then
               echo "Some checks failed!"
               exit 1
             fi
