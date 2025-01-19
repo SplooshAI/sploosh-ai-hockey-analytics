@@ -4,12 +4,18 @@ on:
   push:
     branches:
       - main
+  workflow_dispatch:
 
 jobs:
   version-bump:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
       
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -30,8 +36,15 @@ jobs:
             echo "type=patch" >> $GITHUB_OUTPUT
           fi
       
-      - name: Bump Version
+      - name: Create Version Bump Branch
         run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          
+          # Create new branch for version bump
+          git checkout -b version-bump-${{ github.sha }}
+          
+          # Bump versions
           BUMP_TYPE=${{ steps.bump-type.outputs.type }}
           npm version $BUMP_TYPE --no-git-tag-version
           
@@ -39,13 +52,25 @@ jobs:
           cd apps/sploosh-ai-hockey-analytics
           npm version $NEW_VERSION --no-git-tag-version
           
-      - name: Commit Version Bump
-        run: |
-          git config --local user.email "action@github.com"
-          git config --local user.name "GitHub Action"
+          # Commit changes
+          cd ../..
           git add .
-          git commit -m "chore: bump version [skip ci]"
-          git push
-
-permissions:
-  contents: write 
+          git commit -m "chore: bump version to $NEW_VERSION"
+          
+          # Push branch
+          git push origin version-bump-${{ github.sha }}
+      
+      - name: Create Pull Request
+        uses: peter-evans/create-pull-request@v5
+        with:
+          title: "chore: version bump"
+          body: |
+            Automated version bump triggered by merge to main.
+            
+            Changes:
+            - Bump version based on conventional commit type
+            - Sync versions across package.json files
+          branch: version-bump-${{ github.sha }}
+          base: main
+          labels: version-bump
+          delete-branch: true 
