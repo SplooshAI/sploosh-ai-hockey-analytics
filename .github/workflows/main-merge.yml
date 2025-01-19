@@ -69,29 +69,21 @@ jobs:
           BUMP_TYPE=${{ steps.bump-type.outputs.type }}
           echo "Bump type: $BUMP_TYPE"
           
-          # Manual version bump since npm version isn't working
-          if [ "$OLD_VERSION" = "0.0.0" ]; then
-            NEW_VERSION="0.0.1"
-          else
-            # Add proper version calculation logic here
-            NEW_VERSION="0.0.1"
-          fi
-          
-          echo "New version: $NEW_VERSION"
-          
           # Update root package.json
-          sed -i "s/\"version\": \"$OLD_VERSION\"/\"version\": \"$NEW_VERSION\"/" package.json
+          npm version $BUMP_TYPE --no-git-tag-version
+          NEW_VERSION=$(node -p "require('./package.json').version")
+          echo "New version: $NEW_VERSION"
           
           # Update app package.json
           cd apps/sploosh-ai-hockey-analytics
-          sed -i "s/\"version\": \"$OLD_VERSION\"/\"version\": \"$NEW_VERSION\"/" package.json
+          npm version $NEW_VERSION --no-git-tag-version
           cd ../..
           
           echo "Updated package.json versions:"
           cat package.json | grep version
           cat apps/sploosh-ai-hockey-analytics/package.json | grep version
           
-          # Stage and commit changes
+          # Stage only package.json files
           git add package.json apps/sploosh-ai-hockey-analytics/package.json
           git commit -m "chore: bump version from ${OLD_VERSION} to ${NEW_VERSION}"
           
