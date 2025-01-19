@@ -82,9 +82,24 @@ jobs:
           jq ".version = \"$NEW_VERSION\"" package.json > temp.json && mv temp.json package.json
           cd ../..
           
-          # Stage and commit changes
-          git add package.json apps/sploosh-ai-hockey-analytics/package.json
+          # Debug: Show git status
+          echo "Git status before add:"
+          git status
+          
+          # Stage changes
+          git add package.json
+          git add apps/sploosh-ai-hockey-analytics/package.json
+          
+          # Debug: Show what's staged
+          echo "Git status after add:"
+          git status
+          
+          # Commit changes
           git commit -m "chore: bump version from ${OLD_VERSION} to ${NEW_VERSION}"
+          
+          # Debug: Show commit
+          echo "Latest commit:"
+          git show --name-status HEAD
           
           # Push branch
           git push -f origin $BRANCH_NAME
