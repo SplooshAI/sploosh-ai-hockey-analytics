@@ -144,25 +144,29 @@ jobs:
           # Wait for checks to complete (timeout after 10 minutes)
           timeout=600
           while [ $timeout -gt 0 ]; do
-            # Get check status
-            STATUS=$(gh pr checks ${{ needs.version-bump.outputs.pr_number }} --json conclusion -q '.[].conclusion' | grep -v "^$")
+            # Get check status using correct fields
+            STATUSES=$(gh pr checks ${{ needs.version-bump.outputs.pr_number }} --json state,name -q '.[] | "\(.name):\(.state)"')
+            echo "Current check statuses:"
+            echo "$STATUSES"
             
-            # If all checks passed
-            if [ "$STATUS" = "success" ]; then
-              echo "All checks passed!"
-              gh pr merge ${{ needs.version-bump.outputs.pr_number }} --merge
-              exit 0
+            # Check if any are still pending
+            if echo "$STATUSES" | grep -q "pending\|in_progress\|queued"; then
+              echo "Checks still running... ($timeout seconds remaining)"
+              sleep 10
+              timeout=$((timeout - 10))
+              continue
             fi
             
-            # If any check failed
-            if echo "$STATUS" | grep -q "failure"; then
-              echo "Checks failed!"
+            # Check if any failed
+            if echo "$STATUSES" | grep -q "failure"; then
+              echo "Some checks failed!"
               exit 1
             fi
             
-            echo "Checks still running... ($timeout seconds remaining)"
-            sleep 10
-            timeout=$((timeout - 10))
+            # If we get here, all checks have completed successfully
+            echo "All checks passed!"
+            gh pr merge ${{ needs.version-bump.outputs.pr_number }} --merge
+            exit 0
           done
           
           echo "Timeout waiting for checks!"
