@@ -31,6 +31,7 @@ Examples:
 - `docs: update readme` → 0.1.0 → 0.1.1
 - `feat!: redesign API` → 0.1.0 → 1.0.0
 - `fix: resolve bug` → 0.1.0 → 0.1.1
+- `chore: update deps` → 0.1.0 → 0.1.1
 
 ### Option 1: Local Development
 
