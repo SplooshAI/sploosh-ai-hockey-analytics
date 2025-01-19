@@ -20,22 +20,26 @@ This application is deployed on Vercel and can be accessed at <https://sploosh-a
 
 The application will be available at <http://localhost:3000> regardless of which method you choose.
 
-### Version Control
-This project uses semantic versioning. Version numbers are automatically updated based on PR titles:
-- `feat!:` - Major version bump (breaking changes)
-- `feat:` - Minor version bump (new features)
-- `fix:`, `docs:`, etc. - Patch version bump
+## Version Control
+This project uses semantic versioning with automated version bumps. When a PR is merged to main:
 
-Examples: 
-- `feat: add new feature` → 0.1.0 → 0.2.0
-- `docs: update readme` → 0.1.0 → 0.1.1
-- `feat!: redesign API` → 0.1.0 → 1.0.0
-- `fix: resolve bug` → 0.1.0 → 0.1.1
-- `chore: update deps` → 0.1.0 → 0.1.1
-- `style: format code` → 0.1.0 → 0.1.1
-- `refactor: improve code` → 0.1.0 → 0.1.1
-- `test: add tests` → 0.1.0 → 0.1.1
-- `perf: optimize code` → 0.1.0 → 0.1.1
+1. The version is automatically bumped based on the PR title:
+   - `feat!:` → Major version (breaking changes)
+   - `feat:` → Minor version (new features)
+   - All others → Patch version (fixes, docs, etc.)
+
+2. A new PR is automatically created with:
+   - Updated version numbers in all package.json files
+   - Automated testing and validation
+   - Auto-merge once checks pass
+
+Examples:
+- `feat: add shot chart` → 1.2.3 → 1.3.0
+- `fix: correct stats calculation` → 1.2.3 → 1.2.4
+- `feat!: new API version` → 1.2.3 → 2.0.0
+- `docs: update readme` → 1.2.3 → 1.2.4
+
+For more details on contributing, see [CONTRIBUTING.md](./.github/CONTRIBUTING.md).
 
 ### Option 1: Local Development
 
