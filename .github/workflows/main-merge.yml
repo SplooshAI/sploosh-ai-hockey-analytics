@@ -58,8 +58,9 @@ jobs:
           BUMP_TYPE=${{ steps.bump-type.outputs.type }}
           echo "Bump type: $BUMP_TYPE"
           
-          # Calculate new version without modifying files
-          NEW_VERSION=$(npm --no-git-tag-version version $BUMP_TYPE --json | jq -r '."sploosh-ai-hockey-analytics"')
+          # Calculate new version using npm semver capabilities
+          NEW_VERSION=$(npm --no-git-tag-version version $BUMP_TYPE)
+          NEW_VERSION=${NEW_VERSION:1} # Remove the 'v' prefix
           
           # Reset any changes npm version made
           git checkout package.json package-lock.json
