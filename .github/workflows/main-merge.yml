@@ -53,44 +53,45 @@ jobs:
           BRANCH_NAME="version-bump-${{ github.sha }}"
           git checkout -b $BRANCH_NAME
           
+          # Store original versions
+          OLD_VERSION=$(node -p "require('./package.json').version")
+          
           # Bump versions
           BUMP_TYPE=${{ steps.bump-type.outputs.type }}
           npm version $BUMP_TYPE --no-git-tag-version
           
           NEW_VERSION=$(node -p "require('./package.json').version")
-          echo "new_version=$NEW_VERSION" >> $GITHUB_OUTPUT
+          echo "new_version=${NEW_VERSION}" >> $GITHUB_OUTPUT
+          echo "old_version=${OLD_VERSION}" >> $GITHUB_OUTPUT
           
+          # Update app version
           cd apps/sploosh-ai-hockey-analytics
           npm version $NEW_VERSION --no-git-tag-version
           cd ../..
           
-          # Verify changes exist
-          if [[ -n $(git status -s) ]]; then
-            echo "has_changes=true" >> $GITHUB_OUTPUT
-            
-            # Commit changes
-            git add .
-            git commit -m "chore: bump version to $NEW_VERSION"
-            git push origin $BRANCH_NAME
-          else
-            echo "has_changes=false" >> $GITHUB_OUTPUT
-          fi
+          # Stage and commit changes
+          git add package.json package-lock.json
+          git add apps/sploosh-ai-hockey-analytics/package.json
+          git commit -m "chore: bump version from ${OLD_VERSION} to ${NEW_VERSION}"
+          
+          # Push branch before PR creation
+          git push origin $BRANCH_NAME
+          
+          # Set branch name for PR creation
+          echo "branch_name=${BRANCH_NAME}" >> $GITHUB_OUTPUT
       
       - name: Create Pull Request
-        if: steps.create_branch.outputs.has_changes == 'true'
         uses: peter-evans/create-pull-request@v5
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
-          commit-message: "chore: bump version to ${{ steps.create_branch.outputs.new_version }}"
-          title: "chore: version bump to ${{ steps.create_branch.outputs.new_version }}"
+          branch: ${{ steps.create_branch.outputs.branch_name }}
+          base: main
+          delete-branch: true
+          title: "chore: bump version from ${{ steps.create_branch.outputs.old_version }} to ${{ steps.create_branch.outputs.new_version }}"
           body: |
             Automated version bump triggered by merge to main.
             
             Changes:
             - Bump version from ${{ steps.create_branch.outputs.old_version }} to ${{ steps.create_branch.outputs.new_version }}
-            - Sync versions across package.json files
-          branch: version-bump-${{ github.sha }}
-          base: main
-          labels: |
-            version-bump
-            automated 
+            - Update version in root package.json
+            - Update version in app package.json 
