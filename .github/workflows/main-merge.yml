@@ -86,8 +86,8 @@ jobs:
           git add package.json apps/sploosh-ai-hockey-analytics/package.json
           git commit -m "chore: bump version from ${OLD_VERSION} to ${NEW_VERSION}"
           
-          # Push branch
-          git push origin $BRANCH_NAME
+          # Force push branch (with lease for safety)
+          git push --force-with-lease origin $BRANCH_NAME || git push --force origin $BRANCH_NAME
           echo "branch_name=${BRANCH_NAME}" >> $GITHUB_OUTPUT
 
       - name: Create Pull Request
