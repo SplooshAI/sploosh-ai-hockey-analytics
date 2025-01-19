@@ -110,10 +110,10 @@ jobs:
           echo "branch_name=${BRANCH_NAME}" >> $GITHUB_OUTPUT
 
       - name: Create Pull Request
-        if: success()
         uses: peter-evans/create-pull-request@v5
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
+          commit-message: "chore: bump version from ${{ steps.create_branch.outputs.old_version }} to ${{ steps.create_branch.outputs.new_version }}"
           branch: ${{ steps.create_branch.outputs.branch_name }}
           base: main
           delete-branch: true
@@ -123,4 +123,7 @@ jobs:
             
             Changes:
             - Bump version from ${{ steps.create_branch.outputs.old_version }} to ${{ steps.create_branch.outputs.new_version }}
-            - Update version in both package.json files 
+            - Update version in both package.json files
+          add-paths: |
+            package.json
+            apps/sploosh-ai-hockey-analytics/package.json 
