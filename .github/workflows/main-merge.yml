@@ -23,11 +23,7 @@ jobs:
           node-version: '20'
           
       - name: Install Dependencies
-        run: |
-          npm install
-          cd apps/sploosh-ai-hockey-analytics
-          npm install
-          cd ../..
+        run: npm install
           
       - name: Determine Version Bump Type
         id: bump-type
@@ -50,15 +46,11 @@ jobs:
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
           git config --global user.name "github-actions[bot]"
           
-          echo "Current directory:"
-          pwd
-          ls -la
-          
           # Create new branch
           BRANCH_NAME="version-bump-${{ github.sha }}"
           git checkout -b $BRANCH_NAME
           
-          # Store original versions
+          # Store original version
           OLD_VERSION=$(node -p "require('./package.json').version")
           echo "Old version: $OLD_VERSION"
           
@@ -66,35 +58,32 @@ jobs:
           BUMP_TYPE=${{ steps.bump-type.outputs.type }}
           echo "Bump type: $BUMP_TYPE"
           
-          # Use npm version to calculate new version number only
-          NEW_VERSION=$(npm version $BUMP_TYPE --no-git-tag-version)
-          # Reset the change npm version made (only if file exists)
-          git checkout package.json
-          [ -f package-lock.json ] && git checkout package-lock.json
+          # Calculate new version without modifying files
+          NEW_VERSION=$(npm --no-git-tag-version version $BUMP_TYPE --json | jq -r '."sploosh-ai-hockey-analytics"')
           
-          echo "New version: $NEW_VERSION"
+          # Reset any changes npm version made
+          git checkout package.json package-lock.json
           
-          # Manually update package.json files
-          jq ".version = \"${NEW_VERSION#v}\"" package.json > temp.json && mv temp.json package.json
+          # Update root package.json
+          jq ".version = \"$NEW_VERSION\"" package.json > temp.json && mv temp.json package.json
+          
+          # Update app package.json
           cd apps/sploosh-ai-hockey-analytics
-          jq ".version = \"${NEW_VERSION#v}\"" package.json > temp.json && mv temp.json package.json
+          jq ".version = \"$NEW_VERSION\"" package.json > temp.json && mv temp.json package.json
           cd ../..
           
-          echo "Updated package.json versions:"
-          cat package.json | grep version
-          cat apps/sploosh-ai-hockey-analytics/package.json | grep version
-          
-          # Stage only package.json files
+          # Stage and commit changes
           git add package.json apps/sploosh-ai-hockey-analytics/package.json
-          git commit -m "chore: bump version from ${OLD_VERSION} to ${NEW_VERSION#v}"
+          git commit -m "chore: bump version from ${OLD_VERSION} to ${NEW_VERSION}"
           
-          # Force push branch
+          # Push branch
           git push -f origin $BRANCH_NAME
           
-          echo "new_version=${NEW_VERSION#v}" >> $GITHUB_OUTPUT
+          # Set outputs
+          echo "new_version=${NEW_VERSION}" >> $GITHUB_OUTPUT
           echo "old_version=${OLD_VERSION}" >> $GITHUB_OUTPUT
           echo "branch_name=${BRANCH_NAME}" >> $GITHUB_OUTPUT
-      
+
       - name: Create Pull Request
         if: success()
         uses: peter-evans/create-pull-request@v5
@@ -109,5 +98,4 @@ jobs:
             
             Changes:
             - Bump version from ${{ steps.create_branch.outputs.old_version }} to ${{ steps.create_branch.outputs.new_version }}
-            - Update version in root package.json
-            - Update version in app package.json 
+            - Update version in both package.json files 
