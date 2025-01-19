@@ -21,15 +21,15 @@ This application is deployed on Vercel and can be accessed at <https://sploosh-a
 The application will be available at <http://localhost:3000> regardless of which method you choose.
 
 ### Version Control
-
 This project uses semantic versioning. Version numbers are automatically updated based on PR titles:
 - `feat!:` - Major version bump (breaking changes)
 - `feat:` - Minor version bump (new features)
 - `fix:`, `docs:`, etc. - Patch version bump
 
-Example: 
-- A PR titled `feat: add new feature` will bump 0.1.0 → 0.2.0
-- A PR titled `docs: update readme` will bump 0.1.0 → 0.1.1
+Examples: 
+- `feat: add new feature` → 0.1.0 → 0.2.0
+- `docs: update readme` → 0.1.0 → 0.1.1
+- `feat!: redesign API` → 0.1.0 → 1.0.0
 
 ### Option 1: Local Development
 
