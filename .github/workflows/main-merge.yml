@@ -22,10 +22,16 @@ jobs:
         with:
           node-version: '20'
           
+      - name: Install Dependencies
+        run: |
+          npm install
+          cd apps/sploosh-ai-hockey-analytics
+          npm install
+          cd ../..
+          
       - name: Determine Version Bump Type
         id: bump-type
         run: |
-          # Get the commit message
           COMMIT_MSG=$(git log --format=%B -n 1)
           
           if [[ $COMMIT_MSG =~ ^feat!: ]]; then
