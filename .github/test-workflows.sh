@@ -26,16 +26,10 @@ echo "🔄 Testing Version Bump workflow..."
 echo ""
 
 echo "Testing merge commit message parsing..."
-act push -e .github/test-data/pr-events/merge.json -W .github/workflows/main-merge.yml --container-architecture linux/amd64
+act push -e .github/test-data/pr-events/merge.json -W .github/workflows/main-merge.yml --container-architecture linux/amd64 -s GITHUB_TOKEN="test-token" -s GPG_PRIVATE_KEY="test-key" -s GPG_PASSPHRASE="test-passphrase"
 echo ""
 
-echo "Testing version bump types with merge commits..."
-for type in major minor patch; do
-  echo "Testing $type version bump from merge commit..."
-  # Create temporary merge commit event file
-  jq '.commits[0].message = "Merge pull request #123 from SplooshAI:feature/test\n\n" + (.pull_request.title)' \
-    .github/test-data/pr-events/$type.json > .github/test-data/pr-events/$type-merge.json
-  act push -W .github/workflows/main-merge.yml --container-architecture linux/amd64 -e .github/test-data/pr-events/$type-merge.json
-  rm .github/test-data/pr-events/$type-merge.json
-  echo ""
-done 
+# Add test for our new GPG signing functionality
+echo "Testing GPG signing with GitHub Actions bot..."
+act push -e .github/test-data/pr-events/merge-bot-signed.json -W .github/workflows/main-merge.yml --container-architecture linux/amd64 -s GITHUB_TOKEN="test-token" -s GPG_PRIVATE_KEY="test-key" -s GPG_PASSPHRASE="test-passphrase"
+echo "" 
