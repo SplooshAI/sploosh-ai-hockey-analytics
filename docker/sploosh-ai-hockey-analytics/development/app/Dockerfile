@@ -1,8 +1,16 @@
 FROM node:22-alpine
 WORKDIR /app
 
-COPY package.json ./
+# Copy package files first
+COPY package*.json ./
+
+# Clean install
+RUN rm -rf node_modules
+RUN npm cache clean --force
 RUN npm install
+
+# Now copy the rest of the app
+COPY . .
 
 ARG GIT_HASH=unknown
 ARG GIT_DATE=unknown
