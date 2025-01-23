@@ -181,6 +181,12 @@ jobs:
           
           echo "pr_number=$PR_NUMBER" >> $GITHUB_OUTPUT
 
+      - name: Export and Display Public Key
+        if: ${{ !env.ACT }}
+        run: |
+          echo "GPG Public Key for GitHub:"
+          gpg --armor --export 90CD8F6F3E6CEBD6
+
   merge-pr:
     needs: version-bump
     runs-on: ubuntu-latest
