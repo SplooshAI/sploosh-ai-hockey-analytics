@@ -30,26 +30,31 @@ jobs:
       - name: Determine Version Bump Type
         id: bump-type
         run: |
+          # Get the merge commit message
           COMMIT_MSG=$(git log --format=%B -n 1)
-          echo "Commit message: $COMMIT_MSG"
+          echo "Full commit message: $COMMIT_MSG"
+          
+          # Extract the PR title (second line after merge message)
+          PR_TITLE=$(echo "$COMMIT_MSG" | sed -n '3p')
+          echo "PR title: $PR_TITLE"
           
           # Major version bump for breaking changes
-          if [[ $COMMIT_MSG =~ ^feat!: ]]; then
+          if [[ $PR_TITLE =~ ^feat!: ]]; then
             echo "type=major" >> $GITHUB_OUTPUT
             echo "Major version bump triggered by breaking change"
           
           # Minor version bump for new features
-          elif [[ $COMMIT_MSG =~ ^feat: ]]; then
+          elif [[ $PR_TITLE =~ ^feat: ]]; then
             echo "type=minor" >> $GITHUB_OUTPUT
             echo "Minor version bump triggered by new feature"
           
           # Patch version bump for all other types
-          elif [[ $COMMIT_MSG =~ ^(fix|docs|style|refactor|perf|test|build|ci|chore|revert): ]]; then
+          elif [[ $PR_TITLE =~ ^(fix|docs|style|refactor|perf|test|build|ci|chore|revert): ]]; then
             echo "type=patch" >> $GITHUB_OUTPUT
             echo "Patch version bump triggered by maintenance change"
           
           else
-            echo "❌ Invalid commit message format"
+            echo "❌ Invalid PR title format: $PR_TITLE"
             exit 1
           fi
       
