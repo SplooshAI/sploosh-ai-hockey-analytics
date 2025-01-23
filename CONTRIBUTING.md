@@ -25,14 +25,23 @@ All commits must be signed using GPG keys. To set up commit signing:
 
 This project follows [Conventional Commits](https://www.conventionalcommits.org/). PR titles should be formatted as:
 
-- `feat: add new feature` (bumps minor version)
-- `fix: resolve bug` (bumps patch version)
-- `feat!: breaking change` (bumps major version)
-- `docs: update readme` (bumps patch version)
-- `style: format code` (bumps patch version)
-- `refactor: improve code` (bumps patch version)
-- `perf: optimize performance` (bumps patch version)
-- `test: add tests` (bumps patch version)
-- `build: update dependencies` (bumps patch version)
-- `ci: update workflows` (bumps patch version)
-- `chore: maintenance` (bumps patch version)
+Breaking Changes (major version bump):
+- `feat!: breaking feature change`
+- `fix!: breaking bug fix`
+- `refactor!: breaking code change`
+- Any type can include `!` to indicate a breaking change
+
+Regular Changes:
+- `feat: add new feature` (minor version bump)
+- `fix: resolve bug` (patch version bump)
+- `docs: update readme` (patch version bump)
+- `style: format code` (patch version bump)
+- `refactor: improve code` (patch version bump)
+- `perf: optimize performance` (patch version bump)
+- `test: add tests` (patch version bump)
+- `build: update dependencies` (patch version bump)
+- `ci: update workflows` (patch version bump)
+- `chore: maintenance` (patch version bump)
+- `revert: undo previous change` (patch version bump)
+
+Note: The `!` indicates a breaking change and will trigger a major version bump regardless of the type prefix used.

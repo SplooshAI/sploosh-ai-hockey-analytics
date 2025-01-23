@@ -16,9 +16,12 @@ jobs:
           PR_TITLE="${{ github.event.pull_request.title }}"
           echo "Checking PR title: $PR_TITLE"
           
-          # Check if title starts with valid type (including breaking change !)
-          if [[ ! "$PR_TITLE" =~ ^(feat!|feat|fix|docs|style|refactor|perf|test|build|ci|chore|revert): ]]; then
-            echo "❌ PR title must start with one of: feat:, feat!:, fix:, docs:, style:, refactor:, perf:, test:, build:, ci:, chore:, revert:"
+          # Check if title starts with valid type (including breaking change ! for any type)
+          if [[ ! "$PR_TITLE" =~ ^(feat!|fix!|docs!|style!|refactor!|perf!|test!|build!|ci!|chore!|revert!|feat|fix|docs|style|refactor|perf|test|build|ci|chore|revert): ]]; then
+            echo "❌ PR title must start with one of these types, optionally followed by ! for breaking changes:"
+            echo "feat, fix, docs, style, refactor, perf, test, build, ci, chore, revert"
+            echo "Example: feat: new feature"
+            echo "Example: fix!: breaking bug fix"
             echo "See CONTRIBUTING.md for more details on commit message format."
             exit 1
           fi
