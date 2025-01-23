@@ -33,12 +33,24 @@ jobs:
           COMMIT_MSG=$(git log --format=%B -n 1)
           echo "Commit message: $COMMIT_MSG"
           
+          # Major version bump for breaking changes
           if [[ $COMMIT_MSG =~ ^feat!: ]]; then
             echo "type=major" >> $GITHUB_OUTPUT
+            echo "Major version bump triggered by breaking change"
+          
+          # Minor version bump for new features
           elif [[ $COMMIT_MSG =~ ^feat: ]]; then
             echo "type=minor" >> $GITHUB_OUTPUT
-          else
+            echo "Minor version bump triggered by new feature"
+          
+          # Patch version bump for all other types
+          elif [[ $COMMIT_MSG =~ ^(fix|docs|style|refactor|perf|test|build|ci|chore|revert): ]]; then
             echo "type=patch" >> $GITHUB_OUTPUT
+            echo "Patch version bump triggered by maintenance change"
+          
+          else
+            echo "❌ Invalid commit message format"
+            exit 1
           fi
       
       - name: Create Version Bump Branch
