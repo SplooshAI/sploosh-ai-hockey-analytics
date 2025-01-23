@@ -21,7 +21,8 @@
     "test:workflows:semantic:minor": "act pull_request -e .github/test-pr-event-minor.json -W .github/workflows/semantic-pr-check.yml",
     "test:workflows:semantic:patch": "act pull_request -e .github/test-pr-event-patch.json -W .github/workflows/semantic-pr-check.yml",
     "test:workflows:semantic:invalid": "act pull_request -e .github/test-pr-event-invalid.json -W .github/workflows/semantic-pr-check.yml",
-    "test:workflows:version": "act workflow_dispatch -W .github/workflows/version-bump.yml --container-architecture linux/amd64"
+    "test:workflows:version": "act workflow_dispatch -W .github/workflows/version-bump.yml --container-architecture linux/amd64",
+    "test:workflows:merge": "act push -e .github/test-pr-event-merge.json -W .github/workflows/main-merge.yml --container-architecture linux/amd64"
   },
   "repository": {
     "type": "git",

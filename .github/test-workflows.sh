@@ -25,9 +25,17 @@ echo ""
 echo "🔄 Testing Version Bump workflow..."
 echo ""
 
-echo "Testing version bump types..."
+echo "Testing merge commit message parsing..."
+act push -e .github/test-pr-event-merge.json -W .github/workflows/main-merge.yml --container-architecture linux/amd64
+echo ""
+
+echo "Testing version bump types with merge commits..."
 for type in major minor patch; do
-  echo "Testing $type version bump..."
-  act workflow_dispatch -W .github/workflows/version-bump.yml --container-architecture linux/amd64 -e .github/test-pr-event-$type.json
+  echo "Testing $type version bump from merge commit..."
+  # Create temporary merge commit event file
+  jq '.commits[0].message = "Merge pull request #123 from SplooshAI:feature/test\n\n" + (.pull_request.title)' \
+    .github/test-pr-event-$type.json > .github/test-pr-event-$type-merge.json
+  act push -W .github/workflows/main-merge.yml --container-architecture linux/amd64 -e .github/test-pr-event-$type-merge.json
+  rm .github/test-pr-event-$type-merge.json
   echo ""
 done 
