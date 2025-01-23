@@ -19,9 +19,9 @@ jobs:
         with:
           fetch-depth: 0
       
-      # Comment out this step if GPG signing is not needed/required by your repository or organization
+      # Only run in GitHub Actions environment, not during local testing
       - name: Import GPG key
-        if: ${{ !env.ACT }}  # Skip during local testing with act
+        if: ${{ !env.ACT }}
         uses: crazy-max/ghaction-import-gpg@v6
         with:
           gpg_private_key: ${{ secrets.GPG_PRIVATE_KEY }}
