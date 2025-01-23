@@ -92,6 +92,17 @@ act --version  # Should show 0.2.71 or higher
 
 Note: Docker Desktop must be running before using act to test workflows locally.
 
+#### Expected Test Results
+
+1. Semantic PR Check Tests:
+   - All tests should complete successfully except the "invalid" test
+   - The invalid PR format test should fail with a clear error message
+
+2. Version Bump Tests:
+   - These will show git authentication errors locally
+   - Messages like "Permission denied (publickey)" are expected
+   - These workflows can only be fully tested in GitHub Actions environment
+   - Local tests still verify the workflow syntax and basic functionality
 
 #### What Each Script Tests
 
@@ -110,3 +121,4 @@ Note: Docker Desktop must be running before using act to test workflows locally.
    - Tests version bump workflow
    - Verifies proper version incrementing
    - Checks synchronization between package.json files
+   - Note: Git operations will fail locally due to expected missing credentials (these will be available in the GitHub Actions environment)
