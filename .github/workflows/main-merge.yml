@@ -19,6 +19,7 @@ jobs:
         with:
           fetch-depth: 0
       
+      # Comment out this step if GPG signing is not needed/required by your repository or organization
       - name: Import GPG key
         uses: crazy-max/ghaction-import-gpg@v6
         with:
