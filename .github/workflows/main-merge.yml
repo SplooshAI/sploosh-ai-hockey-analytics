@@ -45,6 +45,16 @@ jobs:
           git_user_name: github-actions[bot]
           git_user_email: "41898282+github-actions[bot]@users.noreply.github.com"
           
+      - name: Display GPG Keys and Export Public Key
+        if: ${{ !env.ACT }}
+        run: |
+          echo "Available GPG Keys:"
+          gpg --list-secret-keys --keyid-format LONG
+          
+          echo -e "\nGPG Public Key for GitHub:"
+          KEY_ID=$(gpg --list-secret-keys --keyid-format LONG | grep sec | awk '{print $2}' | cut -d'/' -f2)
+          gpg --armor --export $KEY_ID
+      
       - name: Verify GPG Setup
         if: ${{ !env.ACT }}
         run: |
@@ -180,12 +190,6 @@ jobs:
           fi
           
           echo "pr_number=$PR_NUMBER" >> $GITHUB_OUTPUT
-
-      - name: Export and Display Public Key
-        if: ${{ !env.ACT }}
-        run: |
-          echo "GPG Public Key for GitHub:"
-          gpg --armor --export 90CD8F6F3E6CEBD6
 
   merge-pr:
     needs: version-bump
