@@ -20,8 +20,9 @@ This application is deployed on Vercel and can be accessed at <https://sploosh-a
 
 The application will be available at <http://localhost:3000> regardless of which method you choose.
 
-## Version Control
-This project uses semantic versioning with automated version bumps. When a PR is merged to main:
+## Version Control and Signed Commits
+
+This project uses semantic versioning with automated version bumps and requires signed commits. When a PR is merged to main:
 
 1. The version is automatically bumped based on the PR title:
    - `feat!:` → Major version (breaking changes)
@@ -31,13 +32,18 @@ This project uses semantic versioning with automated version bumps. When a PR is
 2. A new PR is automatically created with:
    - Updated version numbers in all package.json files
    - Automated testing and validation
+   - GPG-signed commits from the GitHub Actions bot
    - Auto-merge once checks pass
 
-Examples:
-- `feat: add shot chart` → 1.2.3 → 1.3.0
-- `fix: correct stats calculation` → 1.2.3 → 1.2.4
-- `feat!: new API version` → 1.2.3 → 2.0.0
-- `docs: update readme` → 1.2.3 → 1.2.4
+## Signed Commits
+
+All commits must be signed. This includes:
+- Manual commits from contributors
+- Automated commits from GitHub Actions
+
+The project uses GPG keys for signing commits:
+- Contributors should [set up GPG signing](https://docs.github.com/en/authentication/managing-commit-signature-verification/about-commit-signature-verification) for their local environment
+- GitHub Actions use an automated signing process with a dedicated GPG key
 
 For more details on contributing, see [CONTRIBUTING.md](./.github/CONTRIBUTING.md).
 
