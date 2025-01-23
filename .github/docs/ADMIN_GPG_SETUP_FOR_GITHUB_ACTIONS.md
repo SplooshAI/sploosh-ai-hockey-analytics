@@ -23,8 +23,8 @@ This guide explains how to set up GPG signing for automated commits made by GitH
    - Use 4096 bits
    - Set expiration to 0 (never expires) or specific duration
    - Enter details for the GitHub Actions bot:
-    - Name: `GitHub Actions Bot`
-    - Email: `github-actions-bot@users.noreply.github.com`
+    - Name: `github-actions[bot]`
+    - Email: `41898282+github-actions[bot]@users.noreply.github.com`
     - Comment: `GPG key for automated commits`
 
    Note: While the actual GitHub Actions bot uses the email `github-actions[bot]@users.noreply.github.com`, 
