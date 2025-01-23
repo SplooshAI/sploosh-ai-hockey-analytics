@@ -21,6 +21,7 @@ jobs:
       
       # Comment out this step if GPG signing is not needed/required by your repository or organization
       - name: Import GPG key
+        if: ${{ !env.ACT }}  # Skip during local testing with act
         uses: crazy-max/ghaction-import-gpg@v6
         with:
           gpg_private_key: ${{ secrets.GPG_PRIVATE_KEY }}
