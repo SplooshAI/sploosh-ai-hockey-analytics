@@ -2,7 +2,9 @@ name: Semantic PR Check
 
 on:
   pull_request:
-    types: [opened, edited, synchronize]
+    types: 
+      - opened    # New PR
+      - edited    # PR title/description edited
 
 permissions:
   pull-requests: read
