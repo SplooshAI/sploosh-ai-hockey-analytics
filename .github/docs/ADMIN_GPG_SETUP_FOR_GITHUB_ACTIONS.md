@@ -46,6 +46,11 @@ This guide explains how to set up GPG signing for automated commits made by GitH
 
 3. Set a secure passphrase when prompted
 
+3a. If you need to revoke an existing key, you can do so with the following command:
+    ```bash
+    gpg --gen-revoke YOUR_KEY_ID
+    ```
+
 ## 3. Add Secrets to GitHub
 
 1. Go to your GitHub repository
@@ -78,3 +83,63 @@ If commits aren't being signed:
 2. Verify the secrets are correctly set in GitHub
 3. Ensure the workflow has the correct permissions
 4. Verify the GPG key hasn't expired
+
+## Managing GPG Keys
+
+### List Existing Keys
+```bash
+# List all keys
+gpg --list-secret-keys --keyid-format=long
+
+# List specific key details
+gpg --list-secret-keys github-actions-bot@users.noreply.github.com
+```
+
+### Delete a GPG Key
+
+1. First, identify the key ID you want to delete:
+   ```bash
+   gpg --list-secret-keys --keyid-format=long
+   ```
+
+2. Delete the private key:
+   ```bash
+   gpg --delete-secret-key YOUR_KEY_ID
+   ```
+   - You will be prompted to confirm the deletion
+   - Enter "yes" to confirm
+
+3. Delete the public key:
+   ```bash
+   gpg --delete-key YOUR_KEY_ID
+   ```
+   - You must delete the private key before deleting the public key
+   - Enter "yes" to confirm
+
+4. Verify the key is deleted:
+   ```bash
+   gpg --list-keys YOUR_KEY_ID
+   # Should return "gpg: key YOUR_KEY_ID not found"
+   ```
+
+### Clean Up GitHub Secrets
+
+After deleting a GPG key, remember to:
+
+1. Remove or update the corresponding GitHub secrets:
+   - Go to repository Settings → Secrets and variables → Actions
+   - Delete or update `GPG_PRIVATE_KEY`
+   - Delete or update `GPG_PASSPHRASE`
+
+2. If you're replacing the key:
+   - Generate a new key following the setup instructions above
+   - Update the GitHub secrets with the new key information
+   - Test the workflow to ensure commits are being signed correctly
+
+### Best Practices
+
+- Keep a secure backup of important GPG keys
+- Document key expiration dates and rotation schedule
+- Remove unused or expired keys promptly
+- Update GitHub secrets immediately after key changes
+- Audit GPG keys periodically (recommended: every 3-6 months)
