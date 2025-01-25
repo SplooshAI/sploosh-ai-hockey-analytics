@@ -12,6 +12,7 @@ export async function GET(request: Request) {
 
     try {
         const data = await fetchNHLEdge(NHL_EDGE_ENDPOINTS.gameCenter(gameId))
+        // console.log('Game Center Response:', JSON.stringify(data, null, 2))
         return NextResponse.json(data)
     } catch (error) {
         console.error('NHL Edge API Error:', error)
