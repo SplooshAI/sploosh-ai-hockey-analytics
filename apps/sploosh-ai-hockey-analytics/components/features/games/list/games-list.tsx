@@ -46,13 +46,15 @@ export function GamesList({ date, onGameSelect, onClose }: GamesListProps) {
                     if (isInitialLoad || isDateChange) {
                         try {
                             const response = await fetch(`/api/nhl/game-center?gameId=${game.id}`)
-                            if (response.ok) {
-                                const gameCenterData = await response.json()
-                                return {
-                                    ...game,
-                                    specialEvent: gameCenterData.specialEvent,
-                                    matchup: gameCenterData.matchup
-                                }
+                            if (!response.ok) {
+                                console.error(`Game center fetch failed for game ${game.id}:`, await response.text())
+                                throw new Error(`HTTP error! status: ${response.status}`)
+                            }
+                            const gameCenterData = await response.json()
+                            return {
+                                ...game,
+                                specialEvent: gameCenterData.specialEvent,
+                                matchup: gameCenterData.matchup
                             }
                         } catch (error) {
                             console.error(`Failed to fetch game center data for game ${game.id}:`, error)

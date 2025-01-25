@@ -114,18 +114,57 @@ export interface NHLEdgeRosterSpot {
     position: string
 }
 
-export interface NHLEdgeTeamLast10Record {
-    record: string
-    streakType: 'W' | 'L' | 'O'
-    streak: number
-}
-
-export interface NHLEdgeLast10Record {
-    awayTeam: NHLEdgeTeamLast10Record
-    homeTeam: NHLEdgeTeamLast10Record
-}
-
 export interface NHLEdgeMatchup {
-    last10Record: NHLEdgeLast10Record
-    // ... other matchup properties if needed ...
+    season: number
+    gameType: number
+    skaterComparison: {
+        contextLabel: string
+        contextSeason: number
+        leaders: Array<{
+            category: string
+            awayLeader: NHLEdgeSkaterLeader
+            homeLeader: NHLEdgeSkaterLeader
+        }>
+    }
+    goalieComparison: {
+        contextLabel: string
+        contextSeason: number
+        homeTeam: NHLEdgeGoalieStats
+        awayTeam: NHLEdgeGoalieStats
+    }
+    skaterSeasonStats: {
+        contextLabel: string
+        contextSeason: number
+        skaters: NHLEdgeSkaterStats[]
+    }
+    goalieSeasonStats: {
+        contextLabel: string
+        contextSeason: number
+        goalies: NHLEdgeGoalieStats[]
+    }
+}
+
+interface NHLEdgeSkaterLeader {
+    playerId: number
+    name: {
+        default: string
+    }
+    firstName: {
+        default: string
+    }
+    lastName: {
+        default: string
+    }
+    sweaterNumber: number
+    positionCode: string
+    headshot: string
+    value: number
+}
+
+export interface NHLEdgeGoalieStats {
+    // Define the structure of NHLEdgeGoalieStats
+}
+
+export interface NHLEdgeSkaterStats {
+    // Define the structure of NHLEdgeSkaterStats
 } 
