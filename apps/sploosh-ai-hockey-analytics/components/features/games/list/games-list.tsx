@@ -51,7 +51,6 @@ export function GamesList({ date, onGameSelect, onClose }: GamesListProps) {
                                 throw new Error(`HTTP error! status: ${response.status}`)
                             }
                             const gameCenterData = await response.json()
-                            // console.log(`Game center data for game ${game.id}:`, gameCenterData)
                             return {
                                 ...game,
                                 specialEvent: gameCenterData.specialEvent,
