@@ -5,9 +5,12 @@ on:
     types: 
       - opened    # New PR
       - edited    # PR title/description edited
+      - synchronize # New commits pushed
 
 permissions:
   pull-requests: read
+  deployments: read
+  statuses: read
 
 jobs:
   check-pr-format:
@@ -29,6 +32,38 @@ jobs:
           fi
           
           echo "✅ PR title format is valid"
+
+      - name: Wait for Vercel Deployment
+        run: |
+          echo "Waiting for Vercel deployment to complete..."
+          
+          # Wait for deployment (timeout after 5 minutes)
+          timeout=300
+          while [ $timeout -gt 0 ]; do
+            # Check deployment status using GitHub API
+            DEPLOYMENT_STATUS=$(curl -s \
+              -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+              -H "Accept: application/vnd.github.v3+json" \
+              "https://api.github.com/repos/${{ github.repository }}/deployments/statuses" | \
+              jq -r '.[0].state')
+            
+            echo "Current deployment status: $DEPLOYMENT_STATUS"
+            
+            if [ "$DEPLOYMENT_STATUS" = "success" ]; then
+              echo "✅ Vercel deployment completed successfully!"
+              exit 0
+            elif [ "$DEPLOYMENT_STATUS" = "failure" ] || [ "$DEPLOYMENT_STATUS" = "error" ]; then
+              echo "❌ Vercel deployment failed!"
+              exit 1
+            fi
+            
+            echo "Deployment still in progress... ($timeout seconds remaining)"
+            sleep 10
+            timeout=$((timeout - 10))
+          done
+          
+          echo "❌ Timeout waiting for deployment!"
+          exit 1
 
       - name: Check Breaking Change Format
         run: |
