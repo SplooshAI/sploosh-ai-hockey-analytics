@@ -41,9 +41,9 @@ All commits must be signed. This includes:
 - Manual commits from contributors
 - Automated commits from GitHub Actions
 
-The project uses GPG keys for signing commits:
+The project uses GitHub's native commit verification:
 - Contributors should [set up GPG signing](https://docs.github.com/en/authentication/managing-commit-signature-verification/about-commit-signature-verification) for their local environment
-- GitHub Actions use an automated signing process with a dedicated GPG key
+- GitHub Actions uses native GitHub commit verification
 
 For more details on contributing, see [CONTRIBUTING.md](./.github/CONTRIBUTING.md).
 
