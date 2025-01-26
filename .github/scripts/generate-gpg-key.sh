@@ -1,9 +1,9 @@
 #!/bin/bash
 
 # Configuration
-BOT_NAME="GitHub Actions Bot (SplooshAI)"
+BOT_NAME="github-actions[bot]"
 BOT_EMAIL="41898282+github-actions[bot]@users.noreply.github.com"
-KEY_COMMENT="Automated commits for SplooshAI"
+KEY_COMMENT="GitHub Actions bot (SplooshAI)"
 
 PASSPHRASE="d3f3nd!t"
 # # Prompt for passphrase
