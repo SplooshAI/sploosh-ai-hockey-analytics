@@ -32,7 +32,6 @@ This project uses semantic versioning with automated version bumps and requires 
 2. A new PR is automatically created with:
    - Updated version numbers in all package.json files
    - Automated testing and validation
-   - GPG-signed commits from the GitHub Actions bot
    - Auto-merge once checks pass
 
 ## Signed Commits
