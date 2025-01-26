@@ -191,14 +191,6 @@ export function GameCard({ game, onSelectGame, onClose }: GameCardProps) {
                 >
                     NHL Game Center
                 </button>
-
-                {game.matchup?.skaterComparison && (
-                    <div className="text-[9px] opacity-75">
-                        <span className="mr-1">
-                            Points Leader: {game.matchup.skaterComparison.leaders.find(l => l.category === 'points')?.homeLeader.name.default}
-                        </span>
-                    </div>
-                )}
             </div>
         </div>
     )
