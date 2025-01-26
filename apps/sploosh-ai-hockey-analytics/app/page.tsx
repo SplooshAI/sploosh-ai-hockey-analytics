@@ -4,7 +4,7 @@ import { useState } from 'react'
 import { MainLayout } from '@/components/layouts/main-layout'
 import { NHLEdgeHockeyRink } from '@/components/features/hockey-rink/nhl-edge-hockey-rink/nhl-edge-hockey-rink'
 import { Check, Copy, Download } from 'lucide-react'
-import type { NHLEdgePlayByPlay } from '@/types/nhl-edge'
+import type { NHLEdgePlayByPlay } from '../lib/api/nhl-edge/types/nhl-edge'
 
 export default function Home() {
   const [playByPlayData, setPlayByPlayData] = useState<NHLEdgePlayByPlay | null>(null)

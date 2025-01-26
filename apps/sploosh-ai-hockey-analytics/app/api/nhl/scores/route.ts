@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server'
 import { fetchNHLEdge, ApiError } from '@/lib/api/nhl-edge/server/client'
 import { NHL_EDGE_ENDPOINTS } from '@/lib/api/nhl-edge/endpoints'
-import type { NHLEdgeScheduleResponse } from '@/types/nhl-edge'
+import type { NHLEdgeScheduleResponse } from '@/lib/api/nhl-edge/types/nhl-edge'
 
 export async function GET(request: Request) {
     const { searchParams } = new URL(request.url)
