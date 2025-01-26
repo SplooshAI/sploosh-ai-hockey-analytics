@@ -20,3 +20,4 @@ version: revert   # Reverting changes
 ## Testing
 - [ ] I have tested these changes locally using `act`
 - [ ] All existing tests pass
+- [ ] My commits are signed with GPG
