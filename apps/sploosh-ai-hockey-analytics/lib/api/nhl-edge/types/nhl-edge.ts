@@ -162,9 +162,9 @@ interface NHLEdgeSkaterLeader {
 }
 
 export interface NHLEdgeGoalieStats {
-    // Define the structure of NHLEdgeGoalieStats
+    [key: string]: unknown
 }
 
 export interface NHLEdgeSkaterStats {
-    // Define the structure of NHLEdgeSkaterStats
+    [key: string]: unknown
 } 
