@@ -21,18 +21,6 @@ jobs:
           fetch-depth: 0
           token: ${{ secrets.GITHUB_TOKEN }}
       
-      - name: Debug Identity
-        run: |
-          echo "Current git config:"
-          git config --list
-          echo "GitHub Context:"
-          echo "Actor: ${{ github.actor }}"
-          echo "Event Name: ${{ github.event_name }}"
-          echo "Event Actor: ${{ github.event.sender.login }}"
-          echo "Server URL: ${{ github.server_url }}"
-          echo "Repository: ${{ github.repository }}"
-          
-      # Only run in GitHub Actions environment, not during local testing
       - name: Import GPG key
         if: ${{ !env.ACT }}
         uses: crazy-max/ghaction-import-gpg@v6
@@ -42,9 +30,23 @@ jobs:
           git_config_global: true
           git_user_signingkey: true
           git_commit_gpgsign: true
-          git_user_name: "GitHub Actions Bot v2025.01.22"
-          git_user_email: "github-actions-bot@users.noreply.github.com"
+          git_user_name: "github-actions[bot]"
+          git_user_email: "41898282+github-actions[bot]@users.noreply.github.com"
           
+      - name: Debug Identity
+        if: ${{ !env.ACT }}
+        run: |
+          echo "After GPG import:"
+          git config --list
+          echo "GPG Keys:"
+          gpg --list-secret-keys --keyid-format LONG
+          echo "Git Identity:"
+          git config --get user.name
+          git config --get user.email
+          echo "GitHub Context:"
+          echo "Actor: ${{ github.actor }}"
+          echo "Event Name: ${{ github.event_name }}"
+      
       - name: Display GPG Keys and Export Public Key
         if: ${{ !env.ACT }}
         run: |

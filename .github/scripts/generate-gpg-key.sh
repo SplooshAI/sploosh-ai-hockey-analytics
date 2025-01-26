@@ -1,24 +1,41 @@
 #!/bin/bash
 
 # Configuration
-BOT_NAME="GitHub Actions Bot"
-BOT_EMAIL="github-actions-bot@users.noreply.github.com"
-KEY_COMMENT="GPG key for automated commits"
+BOT_NAME="GitHub Actions Bot (SplooshAI)"
+BOT_EMAIL="41898282+github-actions[bot]@users.noreply.github.com"
+KEY_COMMENT="Automated commits for SplooshAI"
+
+PASSPHRASE="d3f3nd!t"
+# # Prompt for passphrase
+# echo "Enter passphrase for new GPG key:"
+# read -s PASSPHRASE
+# echo "Confirm passphrase:"
+# read -s PASSPHRASE_CONFIRM
+
+# if [ "$PASSPHRASE" != "$PASSPHRASE_CONFIRM" ]; then
+#     echo "Error: Passphrases do not match"
+#     exit 1
+# fi
+
+# if [ -z "$PASSPHRASE" ]; then
+#     echo "Error: Passphrase cannot be empty"
+#     exit 1
+# fi
 
 # Generate GPG key configuration file
 cat > gpg-key-config <<EOF
 %echo Generating GPG key for GitHub Actions
-Key-Type: ED25519
-Key-Curve: ed25519
+Key-Type: RSA
+Key-Length: 4096
 Key-Usage: sign
-Subkey-Type: ECDH
-Subkey-Curve: cv25519
+Subkey-Type: RSA
+Subkey-Length: 4096
 Subkey-Usage: encrypt
 Name-Real: $BOT_NAME
 Name-Comment: $KEY_COMMENT
 Name-Email: $BOT_EMAIL
 Expire-Date: 0
-%no-protection
+Passphrase: $PASSPHRASE
 %commit
 %echo Done
 EOF
@@ -40,4 +57,5 @@ rm gpg-key-config
 
 echo -e "\nKey generation complete!"
 echo "Key ID: $KEY_ID"
-echo "Email: $BOT_EMAIL" 
+echo "Email: $BOT_EMAIL"
+echo "Remember to store the passphrase securely - you'll need it for the GPG_PASSPHRASE secret in GitHub" 
