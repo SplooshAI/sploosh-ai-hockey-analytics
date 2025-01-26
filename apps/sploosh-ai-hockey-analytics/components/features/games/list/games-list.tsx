@@ -4,7 +4,7 @@ import { useEffect, useState, useCallback, useRef } from 'react'
 import { format } from 'date-fns'
 import { GameCard } from '../card/game-card'
 import { RefreshSettings } from '@/components/shared/refresh/refresh-settings'
-import type { NHLEdgeGame } from '@/types/nhl-edge'
+import type { NHLEdgeGame } from '@/lib/api/nhl-edge/types/nhl-edge'
 import { getScores } from '@/lib/api/nhl-edge'
 import { useDebounce } from '@/hooks/use-debounce'
 import { GamesListSkeleton } from './games-list-skeleton'
@@ -18,75 +18,36 @@ interface GamesListProps {
 
 export function GamesList({ date, onGameSelect, onClose }: GamesListProps) {
     const [games, setGames] = useState<NHLEdgeGame[]>([])
-    const [loading, setLoading] = useState(true)
+    const [isLoading, setIsLoading] = useState(true)
     const [error, setError] = useState<string | null>(null)
     const [lastRefreshTime, setLastRefreshTime] = useState<Date | null>(null)
     const [autoRefreshEnabled, setAutoRefreshEnabled] = useState(false)
     const containerRef = useRef<HTMLDivElement>(null)
-    const gamesRef = useRef<NHLEdgeGame[]>([])
     const debouncedDate = useDebounce(date, 300)
     const isNavigating = format(date, 'yyyy-MM-dd') !== format(debouncedDate, 'yyyy-MM-dd')
     const initialLoadCompletedRef = useRef(false)
     const currentDateRef = useRef(format(date, 'yyyy-MM-dd'))
     const refreshTimeoutRef = useRef<NodeJS.Timeout | null>(null)
 
-    const fetchGames = useCallback(async (isInitialLoad = false, isDateChange = false) => {
-        if (isNavigating) return
-
+    const fetchGames = useCallback(async () => {
         try {
-            setLoading(true)
-            const formattedDate = format(date, 'yyyy-MM-dd')
-
-            // Always get scores, but only get game center data on initial/date change
-            const scheduleData = await getScores(formattedDate)
-
-            const updatedGames = await Promise.all(
-                scheduleData.games.map(async (game) => {
-                    // Only fetch game center on initial load or date change
-                    if (isInitialLoad || isDateChange) {
-                        try {
-                            const response = await fetch(`/api/nhl/game-center?gameId=${game.id}`)
-                            if (!response.ok) {
-                                console.error(`Game center fetch failed for game ${game.id}:`, await response.text())
-                                throw new Error(`HTTP error! status: ${response.status}`)
-                            }
-                            const gameCenterData = await response.json()
-                            return {
-                                ...game,
-                                specialEvent: gameCenterData.specialEvent,
-                                matchup: gameCenterData.matchup
-                            }
-                        } catch (error) {
-                            console.error(`Failed to fetch game center data for game ${game.id}:`, error)
-                        }
-                    }
-
-                    const existingGame = gamesRef.current.find(g => g.id === game.id)
-                    return {
-                        ...game,
-                        specialEvent: existingGame?.specialEvent,
-                        matchup: existingGame?.matchup
-                    }
-                })
-            )
-
-            gamesRef.current = updatedGames
-            setGames(updatedGames)
+            setIsLoading(true)
+            const data = await getScores(format(date, 'yyyy-MM-dd'))
+            setGames(data.games)
             setLastRefreshTime(new Date())
-            setError(null)
         } catch (error) {
-            console.error('Error fetching games:', error)
-            setError('Failed to fetch games')
+            console.error('Failed to fetch games:', error)
+            setError(`Failed to fetch games: ${error}`)
         } finally {
-            setLoading(false)
+            setIsLoading(false)
         }
-    }, [date, isNavigating, autoRefreshEnabled])
+    }, [date])
 
     // Initial load
     useEffect(() => {
         if (!initialLoadCompletedRef.current) {
             initialLoadCompletedRef.current = true
-            fetchGames(true, false)
+            fetchGames()
         }
     }, [fetchGames])
 
@@ -95,7 +56,7 @@ export function GamesList({ date, onGameSelect, onClose }: GamesListProps) {
         const formattedDate = format(date, 'yyyy-MM-dd')
         if (!isNavigating && formattedDate !== currentDateRef.current) {
             currentDateRef.current = formattedDate
-            fetchGames(false, true)
+            fetchGames()
         }
     }, [debouncedDate, fetchGames, isNavigating, date])
 
@@ -109,7 +70,7 @@ export function GamesList({ date, onGameSelect, onClose }: GamesListProps) {
         }
 
         refreshTimeoutRef.current = setTimeout(() => {
-            fetchGames(false, false)
+            fetchGames()
         }, 20000) // 20 seconds
 
         return () => {
@@ -119,7 +80,7 @@ export function GamesList({ date, onGameSelect, onClose }: GamesListProps) {
         }
     }, [autoRefreshEnabled, lastRefreshTime, fetchGames])
 
-    if (loading && !games.length) {
+    if (isLoading && !games.length) {
         return <GamesListSkeleton />
     }
 
