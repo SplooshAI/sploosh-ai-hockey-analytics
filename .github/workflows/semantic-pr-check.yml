@@ -5,14 +5,21 @@ on:
     types: 
       - opened    # New PR
       - edited    # PR title/description edited
+      - synchronize # New commits pushed
 
 permissions:
   pull-requests: read
+  checks: read
+  statuses: read
 
 jobs:
   check-pr-format:
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          
       - name: Check PR Title Format
         run: |
           PR_TITLE="${{ github.event.pull_request.title }}"
@@ -30,7 +37,44 @@ jobs:
           
           echo "✅ PR title format is valid"
 
+      - name: Wait for Vercel Preview
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          echo "Waiting for checks to complete on PR #${{ github.event.pull_request.number }}"
+          
+          # Wait for checks to complete (timeout after 10 minutes)
+          timeout=600
+          while [ $timeout -gt 0 ]; do
+            # Get check status using GitHub CLI
+            STATUSES=$(gh pr view ${{ github.event.pull_request.number }} --json statusCheckRollup --jq '.statusCheckRollup.[].state')
+            echo "Current check statuses:"
+            echo "$STATUSES"
+            
+            # Check if any are still pending
+            if echo "$STATUSES" | grep -q "PENDING"; then
+              echo "Checks still running... ($timeout seconds remaining)"
+              sleep 10
+              timeout=$((timeout - 10))
+              continue
+            fi
+            
+            # Check if any failed
+            if echo "$STATUSES" | grep -q "FAILURE"; then
+              echo "Some checks failed!"
+              exit 1
+            fi
+            
+            # If we get here, all checks have completed successfully
+            echo "All checks passed!"
+            exit 0
+          done
+          
+          echo "Timeout waiting for checks!"
+          exit 1
+
       - name: Check Breaking Change Format
+        if: success()
         run: |
           PR_TITLE="${{ github.event.pull_request.title }}"
           
