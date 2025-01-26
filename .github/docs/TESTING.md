@@ -36,7 +36,6 @@ his is normal because:
 - Basic workflow structure
 
 ⏭️ Skipped in Local Testing:
-- GPG key importing
 - GitHub Actions bot commit signing
 - External action execution
 - GitHub authentication
