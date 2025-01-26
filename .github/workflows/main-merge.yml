@@ -21,42 +21,25 @@ jobs:
           fetch-depth: 0
           token: ${{ secrets.GITHUB_TOKEN }}
       
+      # Configure Git identity first
+      - name: Configure Git for GitHub Actions
+        if: ${{ !env.ACT }}
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git config --global commit.gpgsign true
+      
       - name: Debug Identity
         if: ${{ !env.ACT }}
         run: |
-          echo "After GPG import:"
+          echo "Git Configuration:"
           git config --list
-          echo "GPG Keys:"
-          gpg --list-secret-keys --keyid-format LONG
           echo "Git Identity:"
           git config --get user.name
           git config --get user.email
           echo "GitHub Context:"
           echo "Actor: ${{ github.actor }}"
           echo "Event Name: ${{ github.event_name }}"
-      
-      - name: Display GPG Keys and Export Public Key
-        if: ${{ !env.ACT }}
-        run: |
-          echo "Available GPG Keys:"
-          gpg --list-secret-keys --keyid-format LONG
-          
-          echo -e "\nGPG Public Key for GitHub:"
-          gpg --armor --export 90CD8F6F3E5CEBD6
-      
-      - name: Verify GPG Setup
-        if: ${{ !env.ACT }}
-        run: |
-          echo "After GPG import:"
-          git config --list
-          gpg --list-secret-keys --keyid-format LONG
-      
-      # Remove the GPG key import step and replace with this
-      - name: Configure Git for GitHub Actions
-        run: |
-          git config --global user.name "github-actions[bot]"
-          git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git config --global commit.gpgsign true
       
       - name: Setup Node.js
         uses: actions/setup-node@v4
