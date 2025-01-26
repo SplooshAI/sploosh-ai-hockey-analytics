@@ -9,7 +9,7 @@ on:
 
 permissions:
   pull-requests: read
-  deployments: read
+  checks: read
   statuses: read
 
 jobs:
@@ -33,44 +33,44 @@ jobs:
           
           echo "✅ PR title format is valid"
 
-      - name: Wait for Vercel Deployment
+      - name: Wait for Vercel Preview
         env:
-          PR_NUMBER: ${{ github.event.pull_request.number }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          echo "Waiting for Vercel deployment to complete..."
+          echo "Waiting for checks to complete on PR #${{ github.event.pull_request.number }}"
           
-          # Wait for deployment (timeout after 5 minutes)
-          timeout=300
+          # Wait for checks to complete (timeout after 10 minutes)
+          timeout=600
           while [ $timeout -gt 0 ]; do
-            # Get deployment status from GitHub API
-            DEPLOYMENT_STATUS=$(curl -s \
-              -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
-              -H "Accept: application/vnd.github.v3+json" \
-              "https://api.github.com/repos/${{ github.repository }}/deployments?environment=Preview&per_page=1" | \
-              jq -r 'if length > 0 then .[0].state else "pending" end')
+            # Get check status using GitHub CLI
+            STATUSES=$(gh pr view ${{ github.event.pull_request.number }} --json statusCheckRollup --jq '.statusCheckRollup.[].state')
+            echo "Current check statuses:"
+            echo "$STATUSES"
             
-            echo "Current deployment status: $DEPLOYMENT_STATUS"
-            
-            if [ "$DEPLOYMENT_STATUS" = "success" ]; then
-              echo "✅ Vercel deployment completed successfully!"
-              exit 0
-            elif [ "$DEPLOYMENT_STATUS" = "failure" ] || [ "$DEPLOYMENT_STATUS" = "error" ]; then
-              echo "❌ Vercel deployment failed!"
-              exit 1
-            elif [ "$DEPLOYMENT_STATUS" = "pending" ]; then
-              echo "Deployment still in progress... ($timeout seconds remaining)"
-            else
-              echo "Unknown deployment status: $DEPLOYMENT_STATUS"
+            # Check if any are still pending
+            if echo "$STATUSES" | grep -q "PENDING"; then
+              echo "Checks still running... ($timeout seconds remaining)"
+              sleep 10
+              timeout=$((timeout - 10))
+              continue
             fi
             
-            sleep 10
-            timeout=$((timeout - 10))
+            # Check if any failed
+            if echo "$STATUSES" | grep -q "FAILURE"; then
+              echo "Some checks failed!"
+              exit 1
+            fi
+            
+            # If we get here, all checks have completed successfully
+            echo "All checks passed!"
+            exit 0
           done
           
-          echo "❌ Timeout waiting for deployment!"
+          echo "Timeout waiting for checks!"
           exit 1
 
       - name: Check Breaking Change Format
+        if: success()
         run: |
           PR_TITLE="${{ github.event.pull_request.title }}"
           
