@@ -65,8 +65,19 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          echo "Waiting for checks to complete on PR #${{ github.event.pull_request.number }}"
-          gh pr checks ${{ github.event.pull_request.number }} --watch
+          echo "Waiting for Vercel deployment to complete..."
+          while true; do
+            STATUS=$(gh pr checks ${{ github.event.pull_request.number }} --json name,conclusion,status | jq -r '.[] | select(.name=="Vercel") | .conclusion')
+            if [ "$STATUS" = "success" ]; then
+              echo "✅ Vercel deployment completed successfully"
+              break
+            elif [ "$STATUS" = "failure" ]; then
+              echo "❌ Vercel deployment failed"
+              exit 1
+            fi
+            echo "⏳ Waiting for Vercel deployment... (checking again in 10s)"
+            sleep 10
+          done
 
       - name: Check Breaking Change Format
         if: success()
