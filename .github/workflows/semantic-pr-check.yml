@@ -34,18 +34,20 @@ jobs:
           echo "✅ PR title format is valid"
 
       - name: Wait for Vercel Deployment
+        env:
+          PR_NUMBER: ${{ github.event.pull_request.number }}
         run: |
           echo "Waiting for Vercel deployment to complete..."
           
           # Wait for deployment (timeout after 5 minutes)
           timeout=300
           while [ $timeout -gt 0 ]; do
-            # Check deployment status using GitHub API
+            # Get deployment status from GitHub API
             DEPLOYMENT_STATUS=$(curl -s \
               -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
               -H "Accept: application/vnd.github.v3+json" \
-              "https://api.github.com/repos/${{ github.repository }}/deployments/statuses" | \
-              jq -r '.[0].state')
+              "https://api.github.com/repos/${{ github.repository }}/deployments?environment=Preview&per_page=1" | \
+              jq -r 'if length > 0 then .[0].state else "pending" end')
             
             echo "Current deployment status: $DEPLOYMENT_STATUS"
             
@@ -55,9 +57,12 @@ jobs:
             elif [ "$DEPLOYMENT_STATUS" = "failure" ] || [ "$DEPLOYMENT_STATUS" = "error" ]; then
               echo "❌ Vercel deployment failed!"
               exit 1
+            elif [ "$DEPLOYMENT_STATUS" = "pending" ]; then
+              echo "Deployment still in progress... ($timeout seconds remaining)"
+            else
+              echo "Unknown deployment status: $DEPLOYMENT_STATUS"
             fi
             
-            echo "Deployment still in progress... ($timeout seconds remaining)"
             sleep 10
             timeout=$((timeout - 10))
           done
