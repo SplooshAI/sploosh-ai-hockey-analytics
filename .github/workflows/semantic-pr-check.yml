@@ -62,6 +62,7 @@ jobs:
           fi
 
       - name: Wait for Vercel Preview
+        if: ${{ !env.ACT }}  # Only run in GitHub Actions, not in local act
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
