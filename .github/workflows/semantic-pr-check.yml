@@ -67,7 +67,7 @@ jobs:
         run: |
           echo "Waiting for Vercel deployment to complete..."
           while true; do
-            STATUS=$(gh pr checks ${{ github.event.pull_request.number }} --json name,conclusion,status | jq -r '.[] | select(.name=="Vercel") | .conclusion')
+            STATUS=$(gh pr checks ${{ github.event.pull_request.number }} --json name,state | jq -r '.[] | select(.name=="Vercel") | .state')
             if [ "$STATUS" = "success" ]; then
               echo "✅ Vercel deployment completed successfully"
               break
