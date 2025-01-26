@@ -24,27 +24,12 @@ jobs:
           commit-user-name: "github-actions[bot]"
           commit-user-email: "41898282+github-actions[bot]@users.noreply.github.com"
       
-      # Configure Git identity and GPG key
+      # Configure Git identity first
       - name: Configure Git for GitHub Actions
         if: ${{ !env.ACT }}
-        env:
-          GPG_PRIVATE_KEY: ${{ secrets.GPG_PRIVATE_KEY }}
-          GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
         run: |
-          # Import the GPG key
-          echo "$GPG_PRIVATE_KEY" | gpg --batch --import
-          
-          # Get the key ID
-          KEY_ID=$(gpg --list-secret-keys --keyid-format LONG | grep sec | head -n 1 | awk '{print $2}' | cut -d'/' -f2)
-          
-          # Configure git
           git config --global user.name "github-actions[bot]"
           git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git config --global user.signingkey $KEY_ID
-          git config --global commit.gpgsign true
-          
-          # Trust the key
-          echo -n "$GPG_PASSPHRASE" | gpg --batch --yes --passphrase-fd 0 --pinentry-mode loopback -u $KEY_ID --trust-model always --sign-key $KEY_ID
       
       - name: Debug Identity
         if: ${{ !env.ACT }}
@@ -138,7 +123,7 @@ jobs:
           
           # Stage and commit changes
           git add package.json apps/sploosh-ai-hockey-analytics/package.json
-          git commit -S -m "chore: bump version from ${OLD_VERSION} to ${NEW_VERSION}"
+          git commit -m "chore: bump version from ${OLD_VERSION} to ${NEW_VERSION}"
           
           # Force push branch (with lease for safety)
           git push --force-with-lease origin $BRANCH_NAME || git push --force origin $BRANCH_NAME
