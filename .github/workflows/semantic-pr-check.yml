@@ -62,7 +62,8 @@ jobs:
           fi
 
       - name: Wait for Vercel Preview
-        if: ${{ !env.ACT }}  # Skip this step when running in act
+        env:
+          GH_TOKEN: ${{ github.token }}
         run: |
           echo "Waiting for checks to complete on PR #${{ github.event.pull_request.number }}"
           gh pr checks ${{ github.event.pull_request.number }} --watch
