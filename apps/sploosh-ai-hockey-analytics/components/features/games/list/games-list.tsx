@@ -5,7 +5,7 @@ import { format } from 'date-fns'
 import { GameCard } from '../card/game-card'
 import { RefreshSettings } from '@/components/shared/refresh/refresh-settings'
 import type { NHLEdgeGame } from '@/lib/api/nhl-edge/types/nhl-edge'
-import { getScores } from '@/lib/api/nhl-edge'
+import { getScores, getGameCenter } from '@/lib/api/nhl-edge'
 import { useDebounce } from '@/hooks/use-debounce'
 import { GamesListSkeleton } from './games-list-skeleton'
 import { shouldEnableAutoRefresh } from '@/lib/utils/game-state'
@@ -32,8 +32,22 @@ export function GamesList({ date, onGameSelect, onClose }: GamesListProps) {
     const fetchGames = useCallback(async () => {
         try {
             setIsLoading(true)
-            const data = await getScores(format(date, 'yyyy-MM-dd'))
-            setGames(data.games)
+            const scoresData = await getScores(format(date, 'yyyy-MM-dd'))
+
+            // Fetch game center data for all games
+            const enrichedGames = await Promise.all(
+                scoresData.games.map(async (game) => {
+                    try {
+                        const gameCenterData = await getGameCenter(game.id.toString())
+                        return { ...game, ...gameCenterData }
+                    } catch (error) {
+                        console.error(`Failed to fetch game center data for game ${game.id}:`, error)
+                        return game
+                    }
+                })
+            )
+
+            setGames(enrichedGames)
             setLastRefreshTime(new Date())
         } catch (error) {
             console.error('Failed to fetch games:', error)
