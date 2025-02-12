@@ -1,5 +1,5 @@
 import Image from 'next/image'
-import { NHLEdgeGame } from '@/lib/api/nhl-edge/types/nhl-edge'
+import { NHLEdgeGame, NHLEdgeTeam } from '@/lib/api/nhl-edge/types/nhl-edge'
 import { parseISO } from 'date-fns'
 import { formatInTimeZone } from 'date-fns-tz'
 
@@ -10,22 +10,8 @@ interface GameCardProps {
 }
 
 export function GameCard({ game, onSelectGame, onClose }: GameCardProps) {
-    const getTeamLogoUrl = (teamAbbrev: string) => {
-        // Special cases for international teams
-        const internationalTeams: Record<string, string> = {
-            'CAN': `https://assets.nhle.com/logos/ntl/svg/CAN_20242025-20242025_light.svg`,
-            'SWE': `https://assets.nhle.com/logos/ntl/svg/SWE_20242025-20242025_light.svg`,
-            'USA': `https://assets.nhle.com/logos/ntl/svg/USA_20242025-20242025_light.svg`,
-            'FIN': `https://assets.nhle.com/logos/ntl/svg/FIN_20242025-20242025_light.svg`
-        }
-
-        // Check if it's an international team
-        if (internationalTeams[teamAbbrev]) {
-            return internationalTeams[teamAbbrev]
-        }
-
-        // Default NHL team logo path
-        return `https://assets.nhle.com/logos/nhl/svg/${teamAbbrev}_light.svg`
+    const getTeamLogoUrl = (team: NHLEdgeTeam) => {
+        return team.logo || `https://assets.nhle.com/logos/nhl/svg/${team.abbrev}_light.svg`
     }
 
     const handleGameClick = (e: React.MouseEvent) => {
@@ -144,9 +130,9 @@ export function GameCard({ game, onSelectGame, onClose }: GameCardProps) {
                 <div className="flex flex-col items-center">
                     <div className="flex items-center justify-center gap-1">
                         <div className="relative w-8 h-8">
-                            {console.log('Team Logo URL:', getTeamLogoUrl(game.awayTeam.abbrev))}
+                            {console.log('Team Logo URL:', getTeamLogoUrl(game.awayTeam))}
                             <Image
-                                src={getTeamLogoUrl(game.awayTeam.abbrev)}
+                                src={getTeamLogoUrl(game.awayTeam)}
                                 alt={`${game.awayTeam.abbrev} logo`}
                                 fill
                                 className="object-contain"
@@ -177,9 +163,9 @@ export function GameCard({ game, onSelectGame, onClose }: GameCardProps) {
                             </div>
                         </div>
                         <div className="relative w-8 h-8">
-                            {console.log('Team Logo URL:', getTeamLogoUrl(game.homeTeam.abbrev))}
+                            {console.log('Team Logo URL:', getTeamLogoUrl(game.homeTeam))}
                             <Image
-                                src={getTeamLogoUrl(game.homeTeam.abbrev)}
+                                src={getTeamLogoUrl(game.homeTeam)}
                                 alt={`${game.homeTeam.abbrev} logo`}
                                 fill
                                 className="object-contain"
