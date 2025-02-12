@@ -11,6 +11,20 @@ interface GameCardProps {
 
 export function GameCard({ game, onSelectGame, onClose }: GameCardProps) {
     const getTeamLogoUrl = (teamAbbrev: string) => {
+        // Special cases for international teams
+        const internationalTeams: Record<string, string> = {
+            'CAN': `https://assets.nhle.com/logos/ntl/svg/CAN_20242025-20242025_light.svg`,
+            'SWE': `https://assets.nhle.com/logos/ntl/svg/SWE_20242025-20242025_light.svg`,
+            'USA': `https://assets.nhle.com/logos/ntl/svg/USA_20242025-20242025_light.svg`,
+            'FIN': `https://assets.nhle.com/logos/ntl/svg/FIN_20242025-20242025_light.svg`
+        }
+
+        // Check if it's an international team
+        if (internationalTeams[teamAbbrev]) {
+            return internationalTeams[teamAbbrev]
+        }
+
+        // Default NHL team logo path
         return `https://assets.nhle.com/logos/nhl/svg/${teamAbbrev}_light.svg`
     }
 
@@ -130,6 +144,7 @@ export function GameCard({ game, onSelectGame, onClose }: GameCardProps) {
                 <div className="flex flex-col items-center">
                     <div className="flex items-center justify-center gap-1">
                         <div className="relative w-8 h-8">
+                            {console.log('Team Logo URL:', getTeamLogoUrl(game.awayTeam.abbrev))}
                             <Image
                                 src={getTeamLogoUrl(game.awayTeam.abbrev)}
                                 alt={`${game.awayTeam.abbrev} logo`}
@@ -162,6 +177,7 @@ export function GameCard({ game, onSelectGame, onClose }: GameCardProps) {
                             </div>
                         </div>
                         <div className="relative w-8 h-8">
+                            {console.log('Team Logo URL:', getTeamLogoUrl(game.homeTeam.abbrev))}
                             <Image
                                 src={getTeamLogoUrl(game.homeTeam.abbrev)}
                                 alt={`${game.homeTeam.abbrev} logo`}
