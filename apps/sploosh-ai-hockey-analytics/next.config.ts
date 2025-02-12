@@ -19,6 +19,16 @@ const nextConfig: NextConfig = {
       {
         protocol: 'https',
         hostname: 'assets.nhle.com',
+        pathname: '/logos/ntl/svg/**',
+      },
+      {
+        protocol: 'https',
+        hostname: 'assets.nhle.com',
+        pathname: '/logos/default/**',
+      },
+      {
+        protocol: 'https',
+        hostname: 'assets.nhle.com',
         pathname: '/special_event_season/**',
       }
     ],

@@ -1,5 +1,5 @@
 import Image from 'next/image'
-import { NHLEdgeGame } from '@/lib/api/nhl-edge/types/nhl-edge'
+import { NHLEdgeGame, NHLEdgeTeam } from '@/lib/api/nhl-edge/types/nhl-edge'
 import { parseISO } from 'date-fns'
 import { formatInTimeZone } from 'date-fns-tz'
 
@@ -10,8 +10,8 @@ interface GameCardProps {
 }
 
 export function GameCard({ game, onSelectGame, onClose }: GameCardProps) {
-    const getTeamLogoUrl = (teamAbbrev: string) => {
-        return `https://assets.nhle.com/logos/nhl/svg/${teamAbbrev}_light.svg`
+    const getTeamLogoUrl = (team: NHLEdgeTeam) => {
+        return team.logo || `https://assets.nhle.com/logos/nhl/svg/${team.abbrev}_light.svg`
     }
 
     const handleGameClick = (e: React.MouseEvent) => {
@@ -131,7 +131,7 @@ export function GameCard({ game, onSelectGame, onClose }: GameCardProps) {
                     <div className="flex items-center justify-center gap-1">
                         <div className="relative w-8 h-8">
                             <Image
-                                src={getTeamLogoUrl(game.awayTeam.abbrev)}
+                                src={getTeamLogoUrl(game.awayTeam)}
                                 alt={`${game.awayTeam.abbrev} logo`}
                                 fill
                                 className="object-contain"
@@ -163,7 +163,7 @@ export function GameCard({ game, onSelectGame, onClose }: GameCardProps) {
                         </div>
                         <div className="relative w-8 h-8">
                             <Image
-                                src={getTeamLogoUrl(game.homeTeam.abbrev)}
+                                src={getTeamLogoUrl(game.homeTeam)}
                                 alt={`${game.homeTeam.abbrev} logo`}
                                 fill
                                 className="object-contain"
