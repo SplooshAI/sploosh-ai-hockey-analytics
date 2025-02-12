@@ -130,7 +130,6 @@ export function GameCard({ game, onSelectGame, onClose }: GameCardProps) {
                 <div className="flex flex-col items-center">
                     <div className="flex items-center justify-center gap-1">
                         <div className="relative w-8 h-8">
-                            {console.log('Team Logo URL:', getTeamLogoUrl(game.awayTeam))}
                             <Image
                                 src={getTeamLogoUrl(game.awayTeam)}
                                 alt={`${game.awayTeam.abbrev} logo`}
@@ -163,7 +162,6 @@ export function GameCard({ game, onSelectGame, onClose }: GameCardProps) {
                             </div>
                         </div>
                         <div className="relative w-8 h-8">
-                            {console.log('Team Logo URL:', getTeamLogoUrl(game.homeTeam))}
                             <Image
                                 src={getTeamLogoUrl(game.homeTeam)}
                                 alt={`${game.homeTeam.abbrev} logo`}
