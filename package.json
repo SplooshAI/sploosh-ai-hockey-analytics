@@ -13,7 +13,7 @@
     "docker:down": "npm run docker:nhl:dev:down",
     "docker:nhl:dev:up": "docker compose -f docker/sploosh-ai-hockey-analytics/development/docker-compose.yml -p sploosh-ai-hockey-analytics-dev up",
     "docker:nhl:dev:up:detach": "docker compose -f docker/sploosh-ai-hockey-analytics/development/docker-compose.yml -p sploosh-ai-hockey-analytics-dev up -d",
-    "docker:nhl:dev:build": "GIT_HASH=$(git rev-parse HEAD) GIT_DATE=$(git log -1 --format=%aI) docker compose -f docker/sploosh-ai-hockey-analytics/development/docker-compose.yml -p sploosh-ai-hockey-analytics-dev up --build",
+    "docker:nhl:dev:build": "GIT_HASH=$(git rev-parse HEAD) GIT_DATE=$(git log -1 --format=%aI) docker compose -f docker/sploosh-ai-hockey-analytics/development/docker-compose.yml -p sploosh-ai-hockey-analytics-dev build --no-cache && docker compose -f docker/sploosh-ai-hockey-analytics/development/docker-compose.yml -p sploosh-ai-hockey-analytics-dev up",
     "docker:nhl:dev:down": "docker compose -f docker/sploosh-ai-hockey-analytics/development/docker-compose.yml -p sploosh-ai-hockey-analytics-dev down -v",
     "test:workflows": "chmod +x .github/test-workflows.sh && .github/test-workflows.sh",
     "test:workflows:semantic": "act pull_request -e .github/test-data/pr-events/minor.json -W .github/workflows/semantic-pr-check.yml",
