@@ -7,6 +7,7 @@
     "build": "npm run build --prefix apps/sploosh-ai-hockey-analytics",
     "start": "npm run start --prefix apps/sploosh-ai-hockey-analytics",
     "lint": "npm run lint --prefix apps/sploosh-ai-hockey-analytics",
+    "test": "npm run test:workflows",
     "docker:up": "npm run docker:nhl:dev:up",
     "docker:up:detach": "npm run docker:nhl:dev:up:detach",
     "docker:build": "npm run docker:nhl:dev:build",
