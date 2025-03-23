@@ -208,7 +208,7 @@ export function GamesList({ date, onGameSelect, onClose }: GamesListProps) {
 
             fetchData()
         }
-    }, [debouncedDate, isNavigating, date, error])
+    }, [debouncedDate, isNavigating, date, error, autoRefreshEnabled])
 
     // Auto-refresh timer
     useEffect(() => {
@@ -233,6 +233,8 @@ export function GamesList({ date, onGameSelect, onClose }: GamesListProps) {
     if (isLoading && !games.length) {
         return <GamesListSkeleton />
     }
+
+    // We'll use retryCount in the error message logic
 
     return (
         <div ref={containerRef} className="space-y-4">
