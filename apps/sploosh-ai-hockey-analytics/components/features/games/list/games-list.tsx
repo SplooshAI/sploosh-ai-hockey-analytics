@@ -234,7 +234,12 @@ export function GamesList({ date, onGameSelect, onClose }: GamesListProps) {
         return <GamesListSkeleton />
     }
 
-    // We'll use retryCount in the error message logic
+    // Log retry count for debugging purposes
+    useEffect(() => {
+        if (retryCount > 0) {
+            console.log(`Retry attempt ${retryCount} of ${MAX_RETRY_ATTEMPTS}`)
+        }
+    }, [retryCount])
 
     return (
         <div ref={containerRef} className="space-y-4">
