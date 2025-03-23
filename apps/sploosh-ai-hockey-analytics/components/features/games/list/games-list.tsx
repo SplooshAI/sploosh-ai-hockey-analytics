@@ -230,16 +230,16 @@ export function GamesList({ date, onGameSelect, onClose }: GamesListProps) {
         }
     }, [autoRefreshEnabled, lastRefreshTime, fetchGames])
 
-    if (isLoading && !games.length) {
-        return <GamesListSkeleton />
-    }
-
     // Log retry count for debugging purposes
     useEffect(() => {
         if (retryCount > 0) {
             console.log(`Retry attempt ${retryCount} of ${MAX_RETRY_ATTEMPTS}`)
         }
     }, [retryCount])
+
+    if (isLoading && !games.length) {
+        return <GamesListSkeleton />
+    }
 
     return (
         <div ref={containerRef} className="space-y-4">
