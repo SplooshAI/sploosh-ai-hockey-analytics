@@ -22,16 +22,22 @@ export function GamesList({ date, onGameSelect, onClose }: GamesListProps) {
     const [error, setError] = useState<string | null>(null)
     const [lastRefreshTime, setLastRefreshTime] = useState<Date | null>(null)
     const [autoRefreshEnabled, setAutoRefreshEnabled] = useState(false)
+    const [retryCount, setRetryCount] = useState(0)
     const containerRef = useRef<HTMLDivElement>(null)
     const debouncedDate = useDebounce(date, 300)
     const isNavigating = format(date, 'yyyy-MM-dd') !== format(debouncedDate, 'yyyy-MM-dd')
     const initialLoadCompletedRef = useRef(false)
     const currentDateRef = useRef(format(date, 'yyyy-MM-dd'))
     const refreshTimeoutRef = useRef<NodeJS.Timeout | null>(null)
+    const MAX_RETRY_ATTEMPTS = 3
+    const RETRY_DELAY = 20000 // 20 seconds - matching the regular refresh interval
 
-    const fetchGames = useCallback(async () => {
+    const fetchGames = useCallback(async (attemptNumber = 0) => {
         try {
             setIsLoading(true)
+            // Clear previous errors when attempting a new fetch
+            if (error) setError(null)
+
             const currentFormattedDate = format(date, 'yyyy-MM-dd')
             const scoresData = await getScores(currentFormattedDate)
 
@@ -80,13 +86,48 @@ export function GamesList({ date, onGameSelect, onClose }: GamesListProps) {
             // Update the current date ref after successful fetch
             currentDateRef.current = currentFormattedDate
             setLastRefreshTime(new Date())
+            // Reset retry count on successful fetch
+            setRetryCount(0)
+
+            // Check if auto-refresh should be enabled based on game state
+            // This ensures auto-refresh is re-enabled when connectivity is restored
+            // and there are active games
+            const shouldEnable = shouldEnableAutoRefresh(scoresData.games)
+            if (shouldEnable && !autoRefreshEnabled) {
+                setAutoRefreshEnabled(true)
+            }
         } catch (error) {
             console.error('Failed to fetch games:', error)
-            setError(`Failed to fetch games: ${error}`)
+
+            // Handle network errors specifically
+            const isNetworkError = error instanceof TypeError && error.message === 'Failed to fetch'
+
+            if (isNetworkError && attemptNumber < MAX_RETRY_ATTEMPTS) {
+                // Increment retry count for UI display
+                setRetryCount(attemptNumber + 1)
+
+                // Set a temporary error message indicating retry attempt
+                setError(`Network error. Retrying... (${attemptNumber + 1}/${MAX_RETRY_ATTEMPTS})`)
+
+                // Schedule retry after delay
+                setTimeout(() => {
+                    fetchGames(attemptNumber + 1)
+                }, RETRY_DELAY)
+
+                // Don't set isLoading to false yet since we're retrying
+                return
+            } else {
+                // Either not a network error or max retries reached
+                setError(`Failed to fetch games: ${error}`)
+                // Reset auto-refresh if we've hit max retries for network errors
+                if (isNetworkError && attemptNumber >= MAX_RETRY_ATTEMPTS) {
+                    setAutoRefreshEnabled(false)
+                }
+            }
         } finally {
             setIsLoading(false)
         }
-    }, [date, games])
+    }, [date, games, error, autoRefreshEnabled])
 
     // Initial load
     useEffect(() => {
@@ -101,7 +142,10 @@ export function GamesList({ date, onGameSelect, onClose }: GamesListProps) {
         const formattedDate = format(date, 'yyyy-MM-dd')
         if (!isNavigating && formattedDate !== currentDateRef.current) {
             setIsLoading(true)
-            const fetchData = async () => {
+            // Clear any existing errors when changing dates
+            if (error) setError(null)
+
+            const fetchData = async (attemptNumber = 0) => {
                 try {
                     const scoresData = await getScores(formattedDate)
 
@@ -121,9 +165,42 @@ export function GamesList({ date, onGameSelect, onClose }: GamesListProps) {
                     setGames(enrichedGames)
                     setLastRefreshTime(new Date())
                     currentDateRef.current = formattedDate
+                    // Reset retry count on successful fetch
+                    setRetryCount(0)
+
+                    // Check if auto-refresh should be enabled based on game state
+                    const shouldEnable = shouldEnableAutoRefresh(enrichedGames)
+                    if (shouldEnable && !autoRefreshEnabled) {
+                        setAutoRefreshEnabled(true)
+                    }
                 } catch (error) {
                     console.error('Failed to fetch games:', error)
-                    setError(`Failed to fetch games: ${error}`)
+
+                    // Handle network errors specifically
+                    const isNetworkError = error instanceof TypeError && error.message === 'Failed to fetch'
+
+                    if (isNetworkError && attemptNumber < MAX_RETRY_ATTEMPTS) {
+                        // Increment retry count for UI display
+                        setRetryCount(attemptNumber + 1)
+
+                        // Set a temporary error message indicating retry attempt
+                        setError(`Network error. Retrying... (${attemptNumber + 1}/${MAX_RETRY_ATTEMPTS})`)
+
+                        // Schedule retry after delay
+                        setTimeout(() => {
+                            fetchData(attemptNumber + 1)
+                        }, RETRY_DELAY)
+
+                        // Don't set isLoading to false yet since we're retrying
+                        return
+                    } else {
+                        // Either not a network error or max retries reached
+                        setError(`Failed to fetch games: ${error}`)
+                        // Reset auto-refresh if we've hit max retries for network errors
+                        if (isNetworkError && attemptNumber >= MAX_RETRY_ATTEMPTS) {
+                            setAutoRefreshEnabled(false)
+                        }
+                    }
                 } finally {
                     setIsLoading(false)
                 }
@@ -131,7 +208,7 @@ export function GamesList({ date, onGameSelect, onClose }: GamesListProps) {
 
             fetchData()
         }
-    }, [debouncedDate, isNavigating, date])
+    }, [debouncedDate, isNavigating, date, error])
 
     // Auto-refresh timer
     useEffect(() => {
@@ -166,8 +243,23 @@ export function GamesList({ date, onGameSelect, onClose }: GamesListProps) {
                 defaultEnabled={shouldEnableAutoRefresh(games)}
             />
             {error && (
-                <div className="text-sm text-destructive">
-                    {error}
+                <div className="text-sm text-destructive space-y-2">
+                    <div>{error}</div>
+                    {error.includes('Failed to fetch') && !error.includes('Retrying') && (
+                        <button
+                            onClick={() => {
+                                // When manually retrying, check if auto-refresh should be re-enabled
+                                const shouldEnable = shouldEnableAutoRefresh(games)
+                                if (shouldEnable && !autoRefreshEnabled) {
+                                    setAutoRefreshEnabled(true)
+                                }
+                                fetchGames()
+                            }}
+                            className="mt-2 px-3 py-1 text-xs rounded border border-gray-300 hover:bg-gray-100"
+                        >
+                            Retry Now
+                        </button>
+                    )}
                 </div>
             )}
             <div className="space-y-2">
