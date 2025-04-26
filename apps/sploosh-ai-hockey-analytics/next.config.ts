@@ -9,6 +9,14 @@ const nextConfig: NextConfig = {
   experimental: {
     disableOptimizedLoading: true,
   },
+  // Enable Turbopack for both development and builds (stable configuration)
+  turbopack: {
+    rules: {
+      "*.svg": ["@svgr/webpack"],
+    },
+  },
+  // Enable standalone output mode for production Docker deployment
+  output: 'standalone',
   images: {
     remotePatterns: [
       {
