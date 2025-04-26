@@ -1,0 +1,19 @@
+services:
+  sploosh-ai-hockey-analytics-app:
+    build:
+      # This is the path to your application source
+      context: ../../../apps/sploosh-ai-hockey-analytics
+      # This is the path to the Dockerfile relative to your application source
+      dockerfile: ../../docker/sploosh-ai-hockey-analytics/production/app/Dockerfile
+      args:
+        GIT_HASH: ${GIT_HASH:-unknown}
+        GIT_DATE: ${GIT_DATE:-unknown}
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=production
+    restart: unless-stopped
+    labels:
+      ai.sploosh.application: "Next.js"
+      ai.sploosh.project: "sploosh-ai-hockey-analytics"
+      ai.sploosh.environment: "production"
