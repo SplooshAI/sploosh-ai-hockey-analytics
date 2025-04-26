@@ -9,6 +9,8 @@ const nextConfig: NextConfig = {
   experimental: {
     disableOptimizedLoading: true,
   },
+  // Enable standalone output mode for production Docker deployment
+  output: 'standalone',
   images: {
     remotePatterns: [
       {
