@@ -1,0 +1,149 @@
+name: Cleanup GHCR Images
+
+on:
+  # Run monthly at midnight on the first day of the month
+  schedule:
+    - cron: '0 0 1 * *'
+  
+  # Allow manual triggering
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: 'Dry run (no actual deletions)'
+        type: boolean
+        default: true
+      keep_versions:
+        description: 'Number of latest versions to keep per package'
+        type: number
+        default: 5
+      keep_days:
+        description: 'Keep versions newer than this many days'
+        type: number
+        default: 90
+
+jobs:
+  # Dry run job - only runs when dry_run is true or not specified
+  dry-run:
+    name: Dry Run - Analyze GHCR Images
+    runs-on: ubuntu-latest
+    if: github.event.inputs.dry_run == 'true' || github.event.inputs.dry_run == ''
+    permissions:
+      packages: read
+      contents: read
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Get package version
+        id: package-version
+        run: echo "version=$(node -p "require('./package.json').version")" >> $GITHUB_OUTPUT
+      
+      - name: Set parameters
+        id: params
+        run: |
+          echo "dry_run=${{ github.event.inputs.dry_run || 'true' }}" >> $GITHUB_OUTPUT
+          echo "keep_versions=${{ github.event.inputs.keep_versions || '5' }}" >> $GITHUB_OUTPUT
+          echo "keep_days=${{ github.event.inputs.keep_days || '90' }}" >> $GITHUB_OUTPUT
+      
+      - name: Log parameters
+        run: |
+          echo "Cleanup parameters:"
+          echo "  - Dry run: ${{ steps.params.outputs.dry_run }}"
+          echo "  - Keep latest versions: ${{ steps.params.outputs.keep_versions }}"
+          echo "  - Keep versions newer than days: ${{ steps.params.outputs.keep_days }}"
+          echo "  - Current version: ${{ steps.package-version.outputs.version }}"
+      
+      - name: List versions that would be deleted
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          echo "## DRY RUN: Analyzing package versions" >> $GITHUB_STEP_SUMMARY
+          echo "No packages will be deleted in this mode." >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          
+          echo "### Retention Policy" >> $GITHUB_STEP_SUMMARY
+          echo "- Keep at least ${{ steps.params.outputs.keep_versions }} latest versions" >> $GITHUB_STEP_SUMMARY
+          echo "- Keep versions newer than ${{ steps.params.outputs.keep_days }} days" >> $GITHUB_STEP_SUMMARY
+          echo "- Current version: ${{ steps.package-version.outputs.version }}" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          
+          echo "### Current Package Versions" >> $GITHUB_STEP_SUMMARY
+          
+          # List all versions
+          echo "Listing all package versions:" >> $GITHUB_STEP_SUMMARY
+          echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
+          gh api \
+            -H "Accept: application/vnd.github+json" \
+            -H "X-GitHub-Api-Version: 2022-11-28" \
+            /orgs/SplooshAI/packages/container/sploosh-ai-hockey-analytics/versions \
+            --jq '.[] | "- " + (.metadata.container.tags[0] // "<untagged>") + " (created: " + .created_at + ")"' >> $GITHUB_STEP_SUMMARY || echo "Error listing package versions" >> $GITHUB_STEP_SUMMARY
+          echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
+          
+          echo "### Next Steps" >> $GITHUB_STEP_SUMMARY
+          echo "To perform actual cleanup, run this workflow again with 'Dry run' set to false." >> $GITHUB_STEP_SUMMARY
+
+  # Actual cleanup job - only runs when dry_run is explicitly set to false
+  cleanup:
+    name: Cleanup Old GHCR Images
+    runs-on: ubuntu-latest
+    if: github.event.inputs.dry_run == 'false'
+    permissions:
+      packages: write
+      contents: read
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Get package version
+        id: package-version
+        run: echo "version=$(node -p "require('./package.json').version")" >> $GITHUB_OUTPUT
+      
+      - name: Set parameters
+        id: params
+        run: |
+          echo "keep_versions=${{ github.event.inputs.keep_versions || '5' }}" >> $GITHUB_OUTPUT
+          echo "keep_days=${{ github.event.inputs.keep_days || '90' }}" >> $GITHUB_OUTPUT
+      
+      - name: Log parameters
+        run: |
+          echo "Cleanup parameters:"
+          echo "  - Keep latest versions: ${{ steps.params.outputs.keep_versions }}"
+          echo "  - Keep versions newer than days: ${{ steps.params.outputs.keep_days }}"
+          echo "  - Current version: ${{ steps.package-version.outputs.version }}"
+      
+      - name: Delete old package versions
+        uses: actions/delete-package-versions@v5
+        with:
+          package-name: 'sploosh-ai-hockey-analytics'
+          package-type: 'container'
+          min-versions-to-keep: ${{ steps.params.outputs.keep_versions }}
+          delete-only-pre-release-versions: false
+          token: ${{ secrets.GITHUB_TOKEN }}
+      
+      - name: List remaining versions
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          echo "## GHCR Cleanup Results" >> $GITHUB_STEP_SUMMARY
+          echo "**PRODUCTION MODE**: Deletions were performed" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          
+          echo "### Retention Policy" >> $GITHUB_STEP_SUMMARY
+          echo "- Keep at least ${{ steps.params.outputs.keep_versions }} latest versions" >> $GITHUB_STEP_SUMMARY
+          echo "- Keep versions newer than ${{ steps.params.outputs.keep_days }} days" >> $GITHUB_STEP_SUMMARY
+          echo "- Current version: ${{ steps.package-version.outputs.version }}" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          
+          echo "### Remaining Package Versions" >> $GITHUB_STEP_SUMMARY
+          echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
+          gh api \
+            -H "Accept: application/vnd.github+json" \
+            -H "X-GitHub-Api-Version: 2022-11-28" \
+            /orgs/SplooshAI/packages/container/sploosh-ai-hockey-analytics/versions \
+            --jq '.[] | "- " + (.metadata.container.tags[0] // "<untagged>") + " (created: " + .created_at + ")"' >> $GITHUB_STEP_SUMMARY || echo "Error listing package versions" >> $GITHUB_STEP_SUMMARY
+          echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
+          
+          echo "### Next Steps" >> $GITHUB_STEP_SUMMARY
+          echo "To see all remaining versions, visit [GitHub Packages](https://github.com/orgs/SplooshAI/packages)" >> $GITHUB_STEP_SUMMARY
