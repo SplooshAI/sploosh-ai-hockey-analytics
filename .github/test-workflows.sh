@@ -1,5 +1,22 @@
 #!/bin/bash
 
+# Function to clean up any orphaned act containers
+cleanup_act_containers() {
+  echo "\n🧹 Cleaning up any orphaned act containers..."
+  orphaned_containers=$(docker ps --filter "name=act-" -q)
+  if [ -n "$orphaned_containers" ]; then
+    echo "Found orphaned containers: $orphaned_containers"
+    docker stop $orphaned_containers
+    docker rm $orphaned_containers
+    echo "Containers removed successfully"
+  else
+    echo "No orphaned containers found"
+  fi
+}
+
+# Ensure cleanup happens on script exit
+trap cleanup_act_containers EXIT
+
 echo "🧪 Testing GitHub Actions workflows..."
 echo ""
 
