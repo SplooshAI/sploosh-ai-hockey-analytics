@@ -2,7 +2,7 @@
 
 # Function to clean up any orphaned act containers
 cleanup_act_containers() {
-  echo "\n🧹 Cleaning up any orphaned act containers..."
+  echo "🧹 Cleaning up any orphaned act containers..."
   orphaned_containers=$(docker ps --filter "name=act-" -q)
   if [ -n "$orphaned_containers" ]; then
     echo "Found orphaned containers: $orphaned_containers"
