@@ -50,7 +50,10 @@ export function GameCard({ game, onSelectGame, onClose }: GameCardProps) {
             case 'LIVE':
                 if (game.clock?.inIntermission) {
                     if (game.periodDescriptor?.periodType === 'OT') {
-                        return `OT INT - ${game.clock?.timeRemaining}`
+                        // Calculate OT period number (4th period is 1OT, 5th is 2OT, etc.)
+                        const otPeriodNum = game.periodDescriptor.number - 3;
+                        const otDisplay = otPeriodNum > 1 ? `${otPeriodNum}OT` : 'OT';
+                        return `${otDisplay} INT - ${game.clock?.timeRemaining}`
                     } else if (game.periodDescriptor?.periodType === 'SO') {
                         return `SO INT - ${game.clock?.timeRemaining}`
                     } else {
@@ -62,7 +65,10 @@ export function GameCard({ game, onSelectGame, onClose }: GameCardProps) {
                 }
                 if (game.periodDescriptor) {
                     if (game.periodDescriptor.periodType === 'OT') {
-                        return `OT - ${game.clock?.timeRemaining}`
+                        // Calculate OT period number (4th period is 1OT, 5th is 2OT, etc.)
+                        const otPeriodNum = game.periodDescriptor.number - 3;
+                        const otDisplay = otPeriodNum > 1 ? `${otPeriodNum}OT` : 'OT';
+                        return `${otDisplay} - ${game.clock?.timeRemaining}`
                     } else if (game.periodDescriptor.periodType === 'SO') {
                         return `SO - ${game.clock?.timeRemaining}`
                     } else {
@@ -80,7 +86,10 @@ export function GameCard({ game, onSelectGame, onClose }: GameCardProps) {
             case 'FINAL':
             case 'OFF':
                 if (game.periodDescriptor?.periodType === 'OT') {
-                    return 'Final (OT)'
+                    // Calculate OT period number (4th period is 1OT, 5th is 2OT, etc.)
+                    const otPeriodNum = game.periodDescriptor.number - 3;
+                    const otDisplay = otPeriodNum > 1 ? `${otPeriodNum}OT` : 'OT';
+                    return `Final (${otDisplay})`
                 } else if (game.periodDescriptor?.periodType === 'SO') {
                     return 'Final (SO)'
                 }
