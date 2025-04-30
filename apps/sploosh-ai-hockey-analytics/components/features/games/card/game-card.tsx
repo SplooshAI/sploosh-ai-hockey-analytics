@@ -14,6 +14,13 @@ export function GameCard({ game, onSelectGame, onClose }: GameCardProps) {
         return team.logo || `https://assets.nhle.com/logos/nhl/svg/${team.abbrev}_light.svg`
     }
 
+    // Helper function to get the OT period display (OT, 2OT, 3OT, etc.)
+    const getOTPeriodDisplay = (periodNumber: number) => {
+        // Calculate OT period number (4th period is 1OT, 5th is 2OT, etc.)
+        const otPeriodNum = periodNumber - 3;
+        return otPeriodNum > 1 ? `${otPeriodNum}OT` : 'OT';
+    }
+
     const handleGameClick = (e: React.MouseEvent) => {
         if (onSelectGame) {
             onSelectGame(game.id)
@@ -50,9 +57,7 @@ export function GameCard({ game, onSelectGame, onClose }: GameCardProps) {
             case 'LIVE':
                 if (game.clock?.inIntermission) {
                     if (game.periodDescriptor?.periodType === 'OT') {
-                        // Calculate OT period number (4th period is 1OT, 5th is 2OT, etc.)
-                        const otPeriodNum = game.periodDescriptor.number - 3;
-                        const otDisplay = otPeriodNum > 1 ? `${otPeriodNum}OT` : 'OT';
+                        const otDisplay = getOTPeriodDisplay(game.periodDescriptor.number);
                         return `${otDisplay} INT - ${game.clock?.timeRemaining}`
                     } else if (game.periodDescriptor?.periodType === 'SO') {
                         return `SO INT - ${game.clock?.timeRemaining}`
@@ -65,9 +70,7 @@ export function GameCard({ game, onSelectGame, onClose }: GameCardProps) {
                 }
                 if (game.periodDescriptor) {
                     if (game.periodDescriptor.periodType === 'OT') {
-                        // Calculate OT period number (4th period is 1OT, 5th is 2OT, etc.)
-                        const otPeriodNum = game.periodDescriptor.number - 3;
-                        const otDisplay = otPeriodNum > 1 ? `${otPeriodNum}OT` : 'OT';
+                        const otDisplay = getOTPeriodDisplay(game.periodDescriptor.number);
                         return `${otDisplay} - ${game.clock?.timeRemaining}`
                     } else if (game.periodDescriptor.periodType === 'SO') {
                         return `SO - ${game.clock?.timeRemaining}`
@@ -86,9 +89,7 @@ export function GameCard({ game, onSelectGame, onClose }: GameCardProps) {
             case 'FINAL':
             case 'OFF':
                 if (game.periodDescriptor?.periodType === 'OT') {
-                    // Calculate OT period number (4th period is 1OT, 5th is 2OT, etc.)
-                    const otPeriodNum = game.periodDescriptor.number - 3;
-                    const otDisplay = otPeriodNum > 1 ? `${otPeriodNum}OT` : 'OT';
+                    const otDisplay = getOTPeriodDisplay(game.periodDescriptor.number);
                     return `Final (${otDisplay})`
                 } else if (game.periodDescriptor?.periodType === 'SO') {
                     return 'Final (SO)'
