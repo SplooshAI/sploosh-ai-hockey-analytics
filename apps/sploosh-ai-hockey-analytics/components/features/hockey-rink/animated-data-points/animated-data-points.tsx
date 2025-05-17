@@ -13,8 +13,7 @@ interface AnimatedDataPointsProps {
   speed?: number
   showTrail?: boolean
   trailLength?: number
-  showConnectingLines?: boolean
-  lineStyle?: 'straight' | 'curved'
+  // We've removed the connecting lines style options since we now use a different approach
   lineColor?: string
   lineWidth?: number
 }
@@ -45,8 +44,7 @@ export const AnimatedDataPoints: React.FC<AnimatedDataPointsProps> = ({
   speed = 1,
   showTrail = false,
   trailLength = 5,
-  showConnectingLines = true,
-  lineStyle = 'curved',
+  // We now use a different approach for connecting lines
   lineColor = 'rgba(255, 255, 255, 0.7)',
   lineWidth = 3
 }) => {
@@ -115,7 +113,7 @@ export const AnimatedDataPoints: React.FC<AnimatedDataPointsProps> = ({
     if (!animate || !isPlaying || dataPoints.length === 0) return
     
     let lastUpdateTime = Date.now()
-    let animationSpeed = 1000 / speed // ms between points
+    const animationSpeed = 1000 / speed // ms between points
     
     const animationLoop = setInterval(() => {
       const now = Date.now()

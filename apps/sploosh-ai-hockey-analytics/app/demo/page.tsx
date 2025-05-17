@@ -127,7 +127,8 @@ export default function AnimationDemo() {
   const [showTrail, setShowTrail] = useState(true)
   const [trailLength, setTrailLength] = useState(5)
   const [loading, setLoading] = useState(true)
-  const [playByPlayData, setPlayByPlayData] = useState<NHLEdgePlayByPlay | null>(null)
+  // We're using the plays state directly instead of playByPlayData
+  const [, setPlayByPlayData] = useState<NHLEdgePlayByPlay | null>(null)
   const [error, setError] = useState<string | null>(null)
 
   // Load sample data initially
@@ -203,7 +204,7 @@ export default function AnimationDemo() {
                   className="w-full h-full"
                   lineColor="#FF3333" /* Brighter red for high visibility against texture */
                   lineWidth={6}
-                  lineStyle="straight" /* Use straight lines for clarity */
+                  /* We now use a simpler approach with individual line segments */
                 />
               </div>
             )}
