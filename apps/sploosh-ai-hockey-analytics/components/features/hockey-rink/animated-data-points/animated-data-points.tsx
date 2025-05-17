@@ -402,7 +402,7 @@ export const AnimatedDataPoints: React.FC<AnimatedDataPointsProps> = ({
             Reset
           </button>
           <div className="px-3 py-1 bg-background/80 backdrop-blur-sm text-foreground rounded-md text-sm font-medium shadow-lg">
-            {currentIndex} / {dataPoints.length}
+            {currentIndex + 1} / {dataPoints.length}
           </div>
         </div>
       )}
