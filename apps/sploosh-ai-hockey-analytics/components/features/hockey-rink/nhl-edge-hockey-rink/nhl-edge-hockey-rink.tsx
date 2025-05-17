@@ -38,11 +38,13 @@ export const NHLEdgeHockeyRink = ({
         fill="#FFFFFF"
         d="M2064,1020H336C151.2,1020,0,868.8,0,684V336C0,151.2,151.2,0,336,0h1728c184.8,0,336,151.2,336,336v348 C2400,868.8,2248.8,1020,2064,1020z"
       />
-      <path
-        d="M2064,1020H336C151.2,1020,0,868.8,0,684V336C0,151.2,151.2,0,336,0h1728c184.8,0,336,151.2,336,336v348 C2400,868.8,2248.8,1020,2064,1020z"
-        fill="url(#ice)"
-        className="sc-kfneYu iQZBWB"
-      />
+      {iceTexturePattern !== "none" && (
+        <path
+          d="M2064,1020H336C151.2,1020,0,868.8,0,684V336C0,151.2,151.2,0,336,0h1728c184.8,0,336,151.2,336,336v348 C2400,868.8,2248.8,1020,2064,1020z"
+          fill="url(#ice)"
+          className="sc-kfneYu iQZBWB"
+        />
+      )}
       <clipPath id="rinkBorderClip">
         <path
           d="M2064,1020H336C151.2,1020,0,868.8,0,684V336C0,151.2,151.2,0,336,0h1728c184.8,0,336,151.2,336,336v348 C2400,868.8,2248.8,1020,2064,1020z"
@@ -51,20 +53,22 @@ export const NHLEdgeHockeyRink = ({
       </clipPath>
     </g>
     <defs>
-      <pattern
-        id="ice"
-        patternContentUnits="userSpaceOnUse"
-        width={1}
-        height={1}
-      >
-        <image
-          href={iceTexturePattern}
-          x={-100}
-          y={-100}
-          height={1220}
-          width={2600}
-        />
-      </pattern>
+      {iceTexturePattern !== "none" && (
+        <pattern
+          id="ice"
+          patternContentUnits="userSpaceOnUse"
+          width={1}
+          height={1}
+        >
+          <image
+            href={iceTexturePattern}
+            x={-100}
+            y={-100}
+            height={1220}
+            width={2600}
+          />
+        </pattern>
+      )}
     </defs>
     <image
       href={centerIceLogo}
