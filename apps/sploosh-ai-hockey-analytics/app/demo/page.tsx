@@ -127,6 +127,7 @@ export default function AnimationDemo() {
   const [speed, setSpeed] = useState(1)
   const [showTrail, setShowTrail] = useState(true)
   const [trailLength, setTrailLength] = useState(5)
+  const [loopEnabled, setLoopEnabled] = useState(true) // Default to loop enabled
   const [loading, setLoading] = useState(true)
   // We're using the plays state directly instead of playByPlayData
   const [, setPlayByPlayData] = useState<NHLEdgePlayByPlay | null>(null)
@@ -202,10 +203,10 @@ export default function AnimationDemo() {
                   speed={speed}
                   showTrail={showTrail}
                   trailLength={trailLength}
+                  loopEnabled={loopEnabled}
                   className="w-full h-full"
                   lineColor="#FF3333" /* Brighter red for high visibility against texture */
                   lineWidth={6}
-                  /* We now use a simpler approach with individual line segments */
                 />
               </div>
             )}
@@ -216,6 +217,8 @@ export default function AnimationDemo() {
         <AnimationControls 
           speed={speed}
           setSpeed={setSpeed}
+          loopEnabled={loopEnabled}
+          setLoopEnabled={setLoopEnabled}
         />
       </div>
     </MainLayout>

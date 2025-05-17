@@ -16,6 +16,7 @@ interface AnimatedDataPointsProps {
   // We've removed the connecting lines style options since we now use a different approach
   lineColor?: string
   lineWidth?: number
+  loopEnabled?: boolean
 }
 
 interface DataPoint {
@@ -46,7 +47,8 @@ export const AnimatedDataPoints: React.FC<AnimatedDataPointsProps> = ({
   trailLength = 5,
   // We now use a different approach for connecting lines
   lineColor = 'rgba(255, 255, 255, 0.7)',
-  lineWidth = 3
+  lineWidth = 3,
+  loopEnabled = true
 }) => {
   const [dataPoints, setDataPoints] = useState<DataPoint[]>([])
   const [currentIndex, setCurrentIndex] = useState(0)
@@ -130,7 +132,10 @@ export const AnimatedDataPoints: React.FC<AnimatedDataPointsProps> = ({
             setResetKey(prev => prev + 1) 
             // Reset to the beginning
             setCurrentIndex(0)
-            setIsPlaying(false)
+            // Only stop playing if looping is disabled
+            if (!loopEnabled) {
+              setIsPlaying(false)
+            }
           }, 1000) // Wait a second before resetting
         } else {
           // Move to next point

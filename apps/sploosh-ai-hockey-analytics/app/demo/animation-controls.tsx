@@ -5,11 +5,15 @@ import React from 'react'
 interface AnimationControlsProps {
   speed: number
   setSpeed: (speed: number) => void
+  loopEnabled: boolean
+  setLoopEnabled: (enabled: boolean) => void
 }
 
 export const AnimationControls: React.FC<AnimationControlsProps> = ({
   speed,
-  setSpeed
+  setSpeed,
+  loopEnabled,
+  setLoopEnabled
 }) => {
   return (
     <div className="bg-card rounded-lg p-6 shadow-md">
@@ -35,7 +39,19 @@ export const AnimationControls: React.FC<AnimationControlsProps> = ({
           />
         </div>
         
-
+        {/* Loop toggle */}
+        <div className="flex items-center justify-between mt-4">
+          <label htmlFor="loop-toggle" className="text-sm font-medium">
+            Loop Animation
+          </label>
+          <input
+            id="loop-toggle"
+            type="checkbox"
+            checked={loopEnabled}
+            onChange={(e) => setLoopEnabled(e.target.checked)}
+            className="h-4 w-4"
+          />
+        </div>
       </div>
       
       <div className="mt-6">
