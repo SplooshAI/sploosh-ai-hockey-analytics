@@ -42,27 +42,30 @@ export const AnimationControls: React.FC<AnimationControlsProps> = ({
         <h3 className="text-lg font-medium mb-2">Event Legend</h3>
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
           <div className="flex items-center">
-            <div className="w-4 h-4 rounded-full bg-[#CC3333] mr-2"></div>
+            <div className="w-6 h-6 flex items-center justify-center bg-[#33CC33] rounded-full mr-2 text-sm">🥅</div>
             <span>Goal</span>
           </div>
           <div className="flex items-center">
-            <div className="w-4 h-4 rounded-full bg-[#3366CC] mr-2"></div>
+            <div className="w-6 h-6 flex items-center justify-center bg-[#3366CC] rounded-full mr-2 text-sm">🏒</div>
             <span>Shot</span>
+            <span className="ml-1 text-xs text-gray-500">(stays visible)</span>
           </div>
           <div className="flex items-center">
-            <div className="w-4 h-4 rounded-full bg-[#33CC33] mr-2"></div>
+            <div className="w-6 h-6 flex items-center justify-center bg-[#6699FF] rounded-full mr-2 text-sm">🛡️</div>
             <span>Block</span>
+            <span className="ml-1 text-xs text-gray-500">(stays visible)</span>
           </div>
           <div className="flex items-center">
-            <div className="w-4 h-4 rounded-full bg-[#FF9900] mr-2"></div>
+            <div className="w-6 h-6 flex items-center justify-center bg-[#FF9900] rounded-full mr-2 text-sm">💥</div>
             <span>Hit</span>
           </div>
           <div className="flex items-center">
-            <div className="w-4 h-4 rounded-full bg-[#9966CC] mr-2"></div>
+            <div className="w-6 h-6 flex items-center justify-center bg-[#9966CC] rounded-full mr-2 text-sm">❌</div>
             <span>Miss</span>
+            <span className="ml-1 text-xs text-gray-500">(stays visible)</span>
           </div>
           <div className="flex items-center">
-            <div className="w-4 h-4 rounded-full bg-[#FFCC00] mr-2"></div>
+            <div className="w-6 h-6 flex items-center justify-center bg-[#FFCC00] rounded-full mr-2 text-sm">🔄</div>
             <span>Faceoff</span>
           </div>
         </div>

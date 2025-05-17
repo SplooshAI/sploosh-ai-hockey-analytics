@@ -13,7 +13,6 @@ interface AnimatedDataPointsProps {
   speed?: number
   showTrail?: boolean
   trailLength?: number
-  // We've removed the connecting lines style options since we now use a different approach
   lineColor?: string
   lineWidth?: number
 }
@@ -27,6 +26,8 @@ interface DataPoint {
   timeInPeriod: string
   color: string
   size: number
+  emoji: string
+  persistent: boolean
 }
 
 /**
@@ -44,7 +45,6 @@ export const AnimatedDataPoints: React.FC<AnimatedDataPointsProps> = ({
   speed = 1,
   showTrail = false,
   trailLength = 5,
-  // We now use a different approach for connecting lines
   lineColor = 'rgba(255, 255, 255, 0.7)',
   lineWidth = 3
 }) => {
@@ -53,17 +53,17 @@ export const AnimatedDataPoints: React.FC<AnimatedDataPointsProps> = ({
   const [isPlaying, setIsPlaying] = useState(false)
   const [resetKey, setResetKey] = useState(0) // Add a reset key to force re-render of trails
 
-  // Map play types to colors
+  // Map play types to colors (avoiding red)
   const getColorForPlayType = (typeCode: string): string => {
     switch (typeCode) {
       case 'SHOT':
         return '#3366CC' // Blue
       case 'GOAL':
-        return '#CC3333' // Red
+        return '#33CC33' // Green
       case 'HIT':
         return '#FF9900' // Orange
       case 'BLOCK':
-        return '#33CC33' // Green
+        return '#6699FF' // Light Blue
       case 'MISS':
         return '#9966CC' // Purple
       case 'FACE':
@@ -80,11 +80,40 @@ export const AnimatedDataPoints: React.FC<AnimatedDataPointsProps> = ({
         return 20
       case 'SHOT':
         return 15
+      case 'BLOCK':
+        return 15
+      case 'MISS':
+        return 15
       case 'HIT':
         return 12
       default:
         return 10
     }
+  }
+  
+  // Map play types to emojis
+  const getEmojiForPlayType = (typeCode: string): string => {
+    switch (typeCode) {
+      case 'SHOT':
+        return '🏒' // Hockey stick
+      case 'GOAL':
+        return '🥅' // Goal net
+      case 'HIT':
+        return '💥' // Collision
+      case 'BLOCK':
+        return '🛡️' // Shield
+      case 'MISS':
+        return '❌' // X mark
+      case 'FACE':
+        return '🔄' // Circular arrows
+      default:
+        return '⚪' // White circle
+    }
+  }
+  
+  // Determine if a play type should persist on screen
+  const shouldPersist = (typeCode: string): boolean => {
+    return ['SHOT', 'BLOCK', 'MISS'].includes(typeCode)
   }
 
   // Convert plays to data points
@@ -101,7 +130,9 @@ export const AnimatedDataPoints: React.FC<AnimatedDataPointsProps> = ({
         period: play.period,
         timeInPeriod: play.timeInPeriod,
         color: getColorForPlayType(play.typeCode),
-        size: getSizeForPlayType(play.typeCode)
+        size: getSizeForPlayType(play.typeCode),
+        emoji: getEmojiForPlayType(play.typeCode),
+        persistent: shouldPersist(play.typeCode)
       }))
 
     setDataPoints(points)
@@ -142,8 +173,6 @@ export const AnimatedDataPoints: React.FC<AnimatedDataPointsProps> = ({
     return () => clearInterval(animationLoop)
   }, [animate, dataPoints, isPlaying, speed, currentIndex, dataPoints.length])
 
-  // This function is now handled directly in the animation loop
-
   // Force initial render of all points when not animating
   useEffect(() => {
     if (!animate && dataPoints.length > 0) {
@@ -169,25 +198,37 @@ export const AnimatedDataPoints: React.FC<AnimatedDataPointsProps> = ({
     return dataPoints[currentIndex]
   }, [dataPoints, currentIndex])
   
-  // Get the previous point (if any) for drawing the current segment
+  // Get the previous point for drawing the connecting line
   const previousPoint = React.useMemo(() => {
     if (currentIndex <= 0 || !showTrail) return null
     return dataPoints[currentIndex - 1]
   }, [dataPoints, currentIndex, showTrail])
   
+  // Get visible trail points
+  const visibleTrailPoints = showTrail
+    ? dataPoints.slice(0, currentIndex + 1).slice(-trailLength)
+    : []
+    
+  // Get persistent points that should always be visible
+  const persistentPoints = React.useMemo(() => {
+    return dataPoints
+      .slice(0, currentIndex + 1)
+      .filter(point => point.persistent)
+  }, [dataPoints, currentIndex])
+
   // Calculate the trail segments to show (only the most recent ones)
   const trailSegments = React.useMemo(() => {
     if (!showTrail || currentIndex <= 0) return []
     
     const segments = []
-    // Only show the most recent segments (exactly trailLength or fewer)
+    // Only show the most recent segments
     const startIdx = Math.max(0, currentIndex - trailLength)
     
     // Only include the most recent segments
     for (let i = startIdx; i < currentIndex; i++) {
       segments.push({
-        start: dataPoints[i],
-        end: dataPoints[i + 1],
+        from: dataPoints[i],
+        to: dataPoints[i + 1],
         index: i
       })
     }
@@ -198,92 +239,117 @@ export const AnimatedDataPoints: React.FC<AnimatedDataPointsProps> = ({
 
   // Convert rink coordinates to SVG coordinates
   const transformCoordinates = (x: number, y: number) => {
-    // NHL coordinates are typically in a -100 to 100 range for x and -42.5 to 42.5 for y
-    // We need to map these to our SVG viewBox coordinates
-    
-    // Center the x coordinate (0 at center ice)
-    const svgX = (x + 100) * (width / 200)
-    
-    // Flip and center the y coordinate (positive y is up in NHL coords, down in SVG)
-    const svgY = height - ((y + 42.5) * (height / 85))
+    // NHL rink is 200 feet x 85 feet
+    // SVG viewBox is width x height
+    // Convert from NHL coordinates to SVG coordinates
+    const svgX = (x + 100) / 200 * width
+    const svgY = (y + 42.5) / 85 * height
     
     return { x: svgX, y: svgY }
   }
   
-  // We're no longer using this function as we're drawing individual line segments
-  
   // Calculate rotation angle for direction indicators
   const calculateRotation = (point: DataPoint, index: number, points: DataPoint[]) => {
-    if (index === 0) return 0
+    if (index <= 0 || index >= points.length) return 0
     
-    const prevPoint = points[index - 1]
-    const { x: x1, y: y1 } = transformCoordinates(prevPoint.x, prevPoint.y)
-    const { x: x2, y: y2 } = transformCoordinates(point.x, point.y)
+    const prev = points[index - 1]
+    const dx = point.x - prev.x
+    const dy = point.y - prev.y
     
-    // Calculate angle in degrees
-    const angle = Math.atan2(y2 - y1, x2 - x1) * (180 / Math.PI)
-    return angle + 90 // Add 90 degrees to point in the direction of travel
+    return Math.atan2(dy, dx) * (180 / Math.PI)
   }
 
   return (
     <div className={`relative ${className}`}>
       <svg
-        xmlns="http://www.w3.org/2000/svg"
+        width={width}
+        height={height}
         viewBox={`0 0 ${width} ${height}`}
         className="absolute top-0 left-0 w-full h-full pointer-events-none"
-        style={{ zIndex: 20 }}
       >
-        {/* Previous trail segments - only show the most recent ones */}
-        {trailSegments.length > 0 && (
-          <g className="trail-segments" key={`trail-segments-${resetKey}`}>
-            {trailSegments.map((segment) => {
-              const { x: x1, y: y1 } = transformCoordinates(segment.start.x, segment.start.y);
-              const { x: x2, y: y2 } = transformCoordinates(segment.end.x, segment.end.y);
-              
-              // Calculate opacity based on how recent the segment is
-              const recencyFactor = (segment.index - (currentIndex - trailLength)) / trailLength;
-              const opacity = 0.3 + (0.7 * recencyFactor);
-              
-              return (
-                <line
-                  key={`segment-${resetKey}-${segment.index}`}
-                  x1={x1}
-                  y1={y1}
-                  x2={x2}
-                  y2={y2}
-                  stroke={lineColor}
-                  strokeWidth={lineWidth}
-                  strokeLinecap="round"
-                  strokeOpacity={opacity}
-                />
-              );
-            })}
-          </g>
-        )}
+        {/* Persistent points that should always be visible */}
+        {persistentPoints.map((point) => {
+          const { x, y } = transformCoordinates(point.x, point.y);
+          return (
+            <g key={`persistent-${point.id}`}>
+              <circle
+                cx={x}
+                cy={y}
+                r={point.size}
+                fill={point.color}
+                fillOpacity={0.6}
+                stroke="white"
+                strokeWidth={1.5}
+              />
+              <text
+                x={x}
+                y={y}
+                textAnchor="middle"
+                dominantBaseline="central"
+                fontSize={point.size * 0.8}
+              >
+                {point.emoji}
+              </text>
+            </g>
+          );
+        })}
         
-        {/* Previous trail points - smaller, faded versions */}
-        {trailSegments.length > 0 && (
-          <g className="trail-points" key={`trail-points-${resetKey}`}>
-            {trailSegments.map((segment) => {
-              const { x, y } = transformCoordinates(segment.start.x, segment.start.y);
+        {/* Trail segments */}
+        {trailSegments.map((segment, idx) => (
+          <motion.line
+            key={`trail-${segment.from.id}-${segment.to.id}-${resetKey}`}
+            x1={transformCoordinates(segment.from.x, segment.from.y).x}
+            y1={transformCoordinates(segment.from.x, segment.from.y).y}
+            x2={transformCoordinates(segment.to.x, segment.to.y).x}
+            y2={transformCoordinates(segment.to.x, segment.to.y).y}
+            stroke={lineColor}
+            strokeWidth={lineWidth}
+            strokeLinecap="round"
+            initial={{ pathLength: 0, opacity: 0 }}
+            animate={{ pathLength: 1, opacity: 0.7 }}
+            transition={{ 
+              pathLength: { duration: 0.3, ease: "easeOut" },
+              opacity: { duration: 0.2 }
+            }}
+          />
+        ))}
+        
+        {/* Trail point markers */}
+        {visibleTrailPoints.length > 0 && (
+          <g>
+            {visibleTrailPoints.map((point, idx) => {
+              if (idx === visibleTrailPoints.length - 1) return null // Skip the current point
               
-              // Calculate opacity based on how recent the point is
-              const recencyFactor = (segment.index - (currentIndex - trailLength)) / trailLength;
-              const opacity = 0.2 + (0.3 * recencyFactor);
-              const size = segment.start.size * (0.5 + (0.3 * recencyFactor));
+              const { x, y } = transformCoordinates(point.x, point.y)
+              const size = point.size * 0.7 // Make trail points smaller
+              const opacity = 0.5 + (idx / visibleTrailPoints.length) * 0.5 // Fade out older points
+              
+              // Only show non-persistent points in the trail
+              if (point.persistent) return null;
               
               return (
-                <circle
-                  key={`trail-point-${resetKey}-${segment.index}`}
-                  cx={x}
-                  cy={y}
-                  r={size}
-                  fill={segment.start.color}
-                  opacity={opacity}
-                  stroke="white"
-                  strokeWidth={1}
-                  strokeOpacity={opacity}
-                />
+                <g key={`trail-point-${point.id}`}>
+                  <circle
+                    cx={x}
+                    cy={y}
+                    r={size}
+                    fill={point.color}
+                    opacity={opacity}
+                    stroke="white"
+                    strokeWidth={1}
+                    strokeOpacity={opacity}
+                  />
+                  <text
+                    x={x}
+                    y={y}
+                    textAnchor="middle"
+                    dominantBaseline="central"
+                    fontSize={size * 0.8}
+                    opacity={opacity}
+                  >
+                    {point.emoji}
+                  </text>
+                </g>
               );
             })}
           </g>
@@ -310,6 +376,9 @@ export const AnimatedDataPoints: React.FC<AnimatedDataPointsProps> = ({
         {/* Current active point */}
         {currentPoint && (() => {
           const { x, y } = transformCoordinates(currentPoint.x, currentPoint.y);
+          
+          // Skip rendering if this is a persistent point (already rendered)
+          if (currentPoint.persistent) return null;
           
           return (
             <g key={`active-point-${currentIndex}`}>
@@ -356,31 +425,45 @@ export const AnimatedDataPoints: React.FC<AnimatedDataPointsProps> = ({
                 }}
               />
               
-              {/* Main data point */}
-              <motion.circle
-                cx={x}
-                cy={y}
-                r={currentPoint.size}
-                fill={currentPoint.color}
-                stroke="white"
-                strokeWidth={2}
-                initial={{ scale: 0, opacity: 0 }}
-                animate={{ 
-                  scale: animate ? [1, 1.3, 1] : 1,
-                  opacity: 1
-                }}
-                transition={{ 
-                  scale: {
-                    duration: 0.7,
-                    repeat: animate ? Infinity : 0,
-                    repeatType: "loop"
-                  },
-                  opacity: {
-                    duration: 0.3,
-                    ease: "easeInOut"
-                  }
-                }}
-              />
+              {/* Main data point with emoji */}
+              <motion.g>
+                <motion.circle
+                  cx={x}
+                  cy={y}
+                  r={currentPoint.size}
+                  fill={currentPoint.color}
+                  stroke="white"
+                  strokeWidth={2}
+                  initial={{ scale: 0, opacity: 0 }}
+                  animate={{ 
+                    scale: animate ? [1, 1.3, 1] : 1,
+                    opacity: 1
+                  }}
+                  transition={{ 
+                    scale: {
+                      duration: 0.7,
+                      repeat: animate ? Infinity : 0,
+                      repeatType: "loop"
+                    },
+                    opacity: {
+                      duration: 0.3,
+                      ease: "easeInOut"
+                    }
+                  }}
+                />
+                <motion.text
+                  x={x}
+                  y={y}
+                  textAnchor="middle"
+                  dominantBaseline="central"
+                  fontSize={currentPoint.size * 0.8}
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ duration: 0.3 }}
+                >
+                  {currentPoint.emoji}
+                </motion.text>
+              </motion.g>
             </g>
           );
         })()}
