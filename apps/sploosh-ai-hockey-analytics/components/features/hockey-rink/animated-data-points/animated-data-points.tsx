@@ -54,6 +54,7 @@ export const AnimatedDataPoints: React.FC<AnimatedDataPointsProps> = ({
   const [isPlaying, setIsPlaying] = useState(false)
   const [resetKey, setResetKey] = useState(0) // Add a reset key to force re-render of trails
   const [hoveredPoint, setHoveredPoint] = useState<DataPoint | null>(null)
+  const [hoveredId, setHoveredId] = useState<number | null>(null)
 
   // Map play types to colors (avoiding red)
   const getColorForPlayType = (typeCode: string): string => {
@@ -262,6 +263,15 @@ export const AnimatedDataPoints: React.FC<AnimatedDataPointsProps> = ({
     return Math.atan2(dy, dx) * (180 / Math.PI)
   }
 
+  // Get emoji size based on point size and animation state
+  const getEmojiSize = (size: number, isActive: boolean = false): number => {
+    // Base size is proportional to the point size
+    const baseSize = size * 1.2;
+    
+    // If this is the active point, make it larger
+    return isActive ? baseSize * 1.5 : baseSize;
+  }
+  
   // Format event details for display
   const formatEventDetails = (point: DataPoint) => {
     const typeMap: Record<string, string> = {
@@ -296,6 +306,7 @@ export const AnimatedDataPoints: React.FC<AnimatedDataPointsProps> = ({
           return (
             <g 
               key={`persistent-${point.id}`}
+              className="emoji-container"
               style={{ cursor: 'pointer' }}
             >
               {/* Invisible larger hit area for better hover - placed first so it's below other elements */}
@@ -304,8 +315,14 @@ export const AnimatedDataPoints: React.FC<AnimatedDataPointsProps> = ({
                 cy={y}
                 r={point.size * 2}
                 fill="rgba(255,255,255,0.01)"
-                onMouseEnter={() => setHoveredPoint(point)}
-                onMouseLeave={() => setHoveredPoint(null)}
+                onMouseEnter={() => {
+                  setHoveredPoint(point);
+                  setHoveredId(point.id);
+                }}
+                onMouseLeave={() => {
+                  setHoveredPoint(null);
+                  setHoveredId(null);
+                }}
                 style={{ pointerEvents: 'all' }}
               />
               <circle
@@ -318,16 +335,20 @@ export const AnimatedDataPoints: React.FC<AnimatedDataPointsProps> = ({
                 strokeWidth={1.5}
                 pointerEvents="none"
               />
-              <text
+              <motion.text
                 x={x}
                 y={y}
                 textAnchor="middle"
                 dominantBaseline="central"
-                fontSize={point.size * 0.8}
+                fontSize={hoveredId === point.id ? getEmojiSize(point.size, true) : getEmojiSize(point.size)}
+                animate={{ 
+                  fontSize: hoveredId === point.id ? getEmojiSize(point.size, true) : getEmojiSize(point.size)
+                }}
+                transition={{ duration: 0.3 }}
                 pointerEvents="none"
               >
                 {point.emoji}
-              </text>
+              </motion.text>
             </g>
           );
         })}
@@ -509,11 +530,21 @@ export const AnimatedDataPoints: React.FC<AnimatedDataPointsProps> = ({
                   y={y}
                   textAnchor="middle"
                   dominantBaseline="central"
-                  fontSize={currentPoint.size * 0.8}
+                  fontSize={getEmojiSize(currentPoint.size, true)}
+                  initial={{ fontSize: getEmojiSize(currentPoint.size) }}
+                  animate={{ 
+                    fontSize: animate ? [
+                      getEmojiSize(currentPoint.size),
+                      getEmojiSize(currentPoint.size, true),
+                      getEmojiSize(currentPoint.size)
+                    ] : getEmojiSize(currentPoint.size)
+                  }}
+                  transition={{ 
+                    duration: 0.8,
+                    times: [0, 0.5, 1],
+                    ease: "easeInOut"
+                  }}
                   pointerEvents="none"
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  transition={{ duration: 0.3 }}
                 >
                   {currentPoint.emoji}
                 </motion.text>
