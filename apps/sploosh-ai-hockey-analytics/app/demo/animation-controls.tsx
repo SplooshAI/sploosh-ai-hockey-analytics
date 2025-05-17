@@ -44,6 +44,7 @@ export const AnimationControls: React.FC<AnimationControlsProps> = ({
           <div className="flex items-center">
             <div className="w-6 h-6 flex items-center justify-center bg-[#33CC33] rounded-full mr-2 text-sm">🥅</div>
             <span>Goal</span>
+            <span className="ml-1 text-xs text-gray-500">(stays visible)</span>
           </div>
           <div className="flex items-center">
             <div className="w-6 h-6 flex items-center justify-center bg-[#3366CC] rounded-full mr-2 text-sm">🏒</div>

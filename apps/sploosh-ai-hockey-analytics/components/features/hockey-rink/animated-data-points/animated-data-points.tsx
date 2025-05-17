@@ -28,6 +28,7 @@ interface DataPoint {
   size: number
   emoji: string
   persistent: boolean
+  details?: any
 }
 
 /**
@@ -52,6 +53,7 @@ export const AnimatedDataPoints: React.FC<AnimatedDataPointsProps> = ({
   const [currentIndex, setCurrentIndex] = useState(0)
   const [isPlaying, setIsPlaying] = useState(false)
   const [resetKey, setResetKey] = useState(0) // Add a reset key to force re-render of trails
+  const [hoveredPoint, setHoveredPoint] = useState<DataPoint | null>(null)
 
   // Map play types to colors (avoiding red)
   const getColorForPlayType = (typeCode: string): string => {
@@ -113,7 +115,7 @@ export const AnimatedDataPoints: React.FC<AnimatedDataPointsProps> = ({
   
   // Determine if a play type should persist on screen
   const shouldPersist = (typeCode: string): boolean => {
-    return ['SHOT', 'BLOCK', 'MISS'].includes(typeCode)
+    return ['SHOT', 'BLOCK', 'MISS', 'GOAL'].includes(typeCode)
   }
 
   // Convert plays to data points
@@ -132,7 +134,8 @@ export const AnimatedDataPoints: React.FC<AnimatedDataPointsProps> = ({
         color: getColorForPlayType(play.typeCode),
         size: getSizeForPlayType(play.typeCode),
         emoji: getEmojiForPlayType(play.typeCode),
-        persistent: shouldPersist(play.typeCode)
+        persistent: shouldPersist(play.typeCode),
+        details: play.details
       }))
 
     setDataPoints(points)
@@ -259,19 +262,52 @@ export const AnimatedDataPoints: React.FC<AnimatedDataPointsProps> = ({
     return Math.atan2(dy, dx) * (180 / Math.PI)
   }
 
+  // Format event details for display
+  const formatEventDetails = (point: DataPoint) => {
+    const typeMap: Record<string, string> = {
+      'SHOT': 'Shot on Goal',
+      'GOAL': 'Goal',
+      'HIT': 'Hit',
+      'BLOCK': 'Blocked Shot',
+      'MISS': 'Missed Shot',
+      'FACE': 'Faceoff'
+    }
+    
+    return {
+      type: typeMap[point.type] || point.type,
+      period: `Period ${point.period}`,
+      time: `Time: ${point.timeInPeriod}`,
+      coordinates: `Position: (${point.x.toFixed(1)}, ${point.y.toFixed(1)})`,
+      details: point.details ? JSON.stringify(point.details) : ''
+    }
+  }
+  
   return (
     <div className={`relative ${className}`}>
       <svg
         width={width}
         height={height}
         viewBox={`0 0 ${width} ${height}`}
-        className="absolute top-0 left-0 w-full h-full pointer-events-none"
+        className="absolute top-0 left-0 w-full h-full"
       >
         {/* Persistent points that should always be visible */}
         {persistentPoints.map((point) => {
           const { x, y } = transformCoordinates(point.x, point.y);
           return (
-            <g key={`persistent-${point.id}`}>
+            <g 
+              key={`persistent-${point.id}`}
+              style={{ cursor: 'pointer' }}
+            >
+              {/* Invisible larger hit area for better hover - placed first so it's below other elements */}
+              <circle
+                cx={x}
+                cy={y}
+                r={point.size * 2}
+                fill="rgba(255,255,255,0.01)"
+                onMouseEnter={() => setHoveredPoint(point)}
+                onMouseLeave={() => setHoveredPoint(null)}
+                style={{ pointerEvents: 'all' }}
+              />
               <circle
                 cx={x}
                 cy={y}
@@ -280,6 +316,7 @@ export const AnimatedDataPoints: React.FC<AnimatedDataPointsProps> = ({
                 fillOpacity={0.6}
                 stroke="white"
                 strokeWidth={1.5}
+                pointerEvents="none"
               />
               <text
                 x={x}
@@ -287,6 +324,7 @@ export const AnimatedDataPoints: React.FC<AnimatedDataPointsProps> = ({
                 textAnchor="middle"
                 dominantBaseline="central"
                 fontSize={point.size * 0.8}
+                pointerEvents="none"
               >
                 {point.emoji}
               </text>
@@ -381,7 +419,20 @@ export const AnimatedDataPoints: React.FC<AnimatedDataPointsProps> = ({
           if (currentPoint.persistent) return null;
           
           return (
-            <g key={`active-point-${currentIndex}`}>
+            <g 
+              key={`active-point-${currentIndex}`}
+              style={{ cursor: 'pointer' }}
+            >
+              {/* Invisible larger hit area for better hover */}
+              <circle
+                cx={x}
+                cy={y}
+                r={currentPoint.size * 2}
+                fill="rgba(255,255,255,0.01)"
+                onMouseEnter={() => setHoveredPoint(currentPoint)}
+                onMouseLeave={() => setHoveredPoint(null)}
+                style={{ pointerEvents: 'all' }}
+              />
               {/* Direction indicator */}
               {previousPoint && (
                 <motion.polygon
@@ -407,6 +458,7 @@ export const AnimatedDataPoints: React.FC<AnimatedDataPointsProps> = ({
                 r={currentPoint.size * 1.5}
                 fill={currentPoint.color}
                 opacity={0.2}
+                pointerEvents="none"
                 initial={{ scale: 0, opacity: 0 }}
                 animate={{ 
                   scale: animate ? [1, 1.4, 1] : 1,
@@ -434,6 +486,7 @@ export const AnimatedDataPoints: React.FC<AnimatedDataPointsProps> = ({
                   fill={currentPoint.color}
                   stroke="white"
                   strokeWidth={2}
+                  pointerEvents="none"
                   initial={{ scale: 0, opacity: 0 }}
                   animate={{ 
                     scale: animate ? [1, 1.3, 1] : 1,
@@ -457,6 +510,7 @@ export const AnimatedDataPoints: React.FC<AnimatedDataPointsProps> = ({
                   textAnchor="middle"
                   dominantBaseline="central"
                   fontSize={currentPoint.size * 0.8}
+                  pointerEvents="none"
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   transition={{ duration: 0.3 }}
@@ -468,6 +522,63 @@ export const AnimatedDataPoints: React.FC<AnimatedDataPointsProps> = ({
           );
         })()}
       </svg>
+      
+      {/* Hover tooltip */}
+      {hoveredPoint && (() => {
+        const { x, y } = transformCoordinates(hoveredPoint.x, hoveredPoint.y);
+        const details = formatEventDetails(hoveredPoint);
+        
+        // Calculate percentage position for better positioning
+        const svgRect = document.querySelector('svg')?.getBoundingClientRect();
+        const viewportWidth = svgRect?.width || width;
+        const viewportHeight = svgRect?.height || height;
+        
+        // Convert SVG coordinates to percentage of viewport
+        const xPercent = (x / width) * 100;
+        const yPercent = (y / height) * 100;
+        
+        // Position tooltip based on which quadrant the point is in
+        let tooltipPosition: React.CSSProperties = {};
+        
+        if (xPercent < 50) {
+          // Left side of ice
+          tooltipPosition.left = `calc(${xPercent}% + 30px)`;
+        } else {
+          // Right side of ice
+          tooltipPosition.right = `calc(${100 - xPercent}% + 30px)`;
+        }
+        
+        if (yPercent < 50) {
+          // Top half of ice
+          tooltipPosition.top = `calc(${yPercent}% + 30px)`;
+        } else {
+          // Bottom half of ice
+          tooltipPosition.bottom = `calc(${100 - yPercent}% + 30px)`;
+        }
+        
+        return (
+          <div 
+            className="absolute bg-black/80 backdrop-blur-sm text-white p-4 rounded-lg shadow-lg z-20 min-w-[200px] max-w-[300px]"
+            style={tooltipPosition}
+          >
+            <div className="flex items-center mb-2">
+              <span className="text-3xl mr-2">{hoveredPoint.emoji}</span>
+              <span className="text-lg font-bold">{details.type}</span>
+            </div>
+            <div className="space-y-1 text-sm">
+              <p>{details.period}</p>
+              <p>{details.time}</p>
+              <p>{details.coordinates}</p>
+              {details.details && (
+                <div className="mt-2 pt-2 border-t border-gray-600">
+                  <p className="font-semibold">Additional Details:</p>
+                  <p className="text-xs overflow-hidden text-ellipsis">{details.details}</p>
+                </div>
+              )}
+            </div>
+          </div>
+        );
+      })()}
       
       {plays.length > 0 && (
         <div className="absolute bottom-4 right-4 flex flex-wrap gap-2 z-10">
