@@ -57,9 +57,10 @@ export const RinkControlPanel: React.FC<RinkControlPanelProps> = ({
           </div>
         </div>
         
-        <div className="flex items-center gap-4">
+        {/* Responsive control layout - stack on small screens, horizontal on larger screens */}
+        <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
           {/* Play/Pause and Reset buttons */}
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 w-full sm:w-auto">
             <button
               onClick={() => setIsPlaying(!isPlaying)}
               className="px-3 py-1 bg-primary text-primary-foreground rounded-md text-sm font-medium shadow-lg"
@@ -75,9 +76,9 @@ export const RinkControlPanel: React.FC<RinkControlPanelProps> = ({
             </button>
           </div>
           
-          {/* Animation speed control */}
-          <div className="flex-1 flex items-center gap-2">
-            <label htmlFor="speed-slider" className="text-sm font-medium whitespace-nowrap">
+          {/* Animation speed control - full width on mobile */}
+          <div className="w-full sm:flex-1 flex items-center gap-2 mt-2 sm:mt-0">
+            <label htmlFor="speed-slider" className="text-sm font-medium whitespace-nowrap min-w-[70px]">
               Speed: {speed}x
             </label>
             <input
@@ -88,7 +89,8 @@ export const RinkControlPanel: React.FC<RinkControlPanelProps> = ({
               step={0.5}
               value={speed}
               onChange={(e) => setSpeed(parseFloat(e.target.value))}
-              className="flex-1"
+              className="w-full"
+              style={{ margin: '0 8px' }} /* Add some margin for better thumb visibility */
             />
           </div>
         </div>
@@ -130,10 +132,10 @@ export const RinkControlPanel: React.FC<RinkControlPanelProps> = ({
         {/* Right side controls */}
         <div className="w-full md:w-64 bg-card rounded-lg p-4 shadow-md flex flex-col">
           {/* Trail controls */}
-          <div className="space-y-2 mb-6">
+          <div className="space-y-3 mb-6">
             <h3 className="text-lg font-medium">Trail Settings</h3>
-            <div className="flex justify-between items-center">
-              <label htmlFor="trail-slider" className="text-sm font-medium">
+            <div className="flex flex-wrap justify-between items-center gap-2">
+              <label htmlFor="trail-slider" className="text-sm font-medium min-w-[120px]">
                 Trail Length: {trailLength}
               </label>
               <button 
@@ -143,17 +145,20 @@ export const RinkControlPanel: React.FC<RinkControlPanelProps> = ({
                 {showTrail ? 'Trail On' : 'Trail Off'}
               </button>
             </div>
-            <input
-              id="trail-slider"
-              type="range"
-              min={0}
-              max={10}
-              step={1}
-              value={trailLength}
-              onChange={(e) => setTrailLength(parseInt(e.target.value))}
-              className="w-full"
-              disabled={!showTrail}
-            />
+            <div className="px-1"> {/* Add padding to prevent thumb from touching edge */}
+              <input
+                id="trail-slider"
+                type="range"
+                min={0}
+                max={10}
+                step={1}
+                value={trailLength}
+                onChange={(e) => setTrailLength(parseInt(e.target.value))}
+                className="w-full"
+                style={{ margin: '0 8px' }} /* Add some margin for better thumb visibility */
+                disabled={!showTrail}
+              />
+            </div>
           </div>
           
           {/* Event Legend */}
