@@ -15,6 +15,14 @@ interface AnimatedDataPointsProps {
   trailLength?: number
   lineColor?: string
   lineWidth?: number
+  // External control props
+  isPlaying?: boolean
+  onPlayPauseToggle?: (isPlaying: boolean) => void
+  onReset?: () => void
+  hideControls?: boolean // Whether to hide the built-in controls
+  currentIndexDisplay?: React.ReactNode // Custom display for current index
+  currentIndex?: number | null // External control of current index
+  onIndexChange?: (index: number | null) => void // Callback when index changes
 }
 
 interface DataPoint {
@@ -48,11 +56,76 @@ export const AnimatedDataPoints: React.FC<AnimatedDataPointsProps> = ({
   showTrail = true, // Default to showing trail
   trailLength = 2, // Default to 2 trail segments
   lineColor = 'rgba(255, 255, 255, 0.7)',
-  lineWidth = 3
+  lineWidth = 3,
+  // External control props with defaults for backward compatibility
+  isPlaying: externalIsPlaying,
+  onPlayPauseToggle,
+  onReset,
+  hideControls = false,
+  currentIndexDisplay,
+  currentIndex: externalCurrentIndex,
+  onIndexChange
 }) => {
   const [dataPoints, setDataPoints] = useState<DataPoint[]>([])
-  const [currentIndex, setCurrentIndex] = useState<number | null>(null)
-  const [isPlaying, setIsPlaying] = useState(false)
+  // Use internal state if no external control is provided for current index
+  const [internalCurrentIndex, setInternalCurrentIndex] = useState<number | null>(null)
+  // Use internal state if no external control is provided for playing state
+  const [internalIsPlaying, setInternalIsPlaying] = useState(false)
+  
+  // Use external state if provided, otherwise use internal state for current index
+  const currentIndex = externalCurrentIndex !== undefined ? externalCurrentIndex : internalCurrentIndex
+  
+  // Custom setter for currentIndex that handles both internal and external state
+  const setCurrentIndex = (indexOrUpdater: number | null | ((prev: number | null) => number | null)) => {
+    if (typeof indexOrUpdater === 'function') {
+      // Handle updater function
+      const updater = indexOrUpdater;
+      const newIndex = updater(currentIndex);
+      if (onIndexChange) {
+        onIndexChange(newIndex);
+      } else {
+        setInternalCurrentIndex(newIndex);
+      }
+    } else {
+      // Handle direct value
+      if (onIndexChange) {
+        onIndexChange(indexOrUpdater);
+      } else {
+        setInternalCurrentIndex(indexOrUpdater);
+      }
+    }
+  }
+  
+  // Use external state if provided, otherwise use internal state
+  const isPlaying = externalIsPlaying !== undefined ? externalIsPlaying : internalIsPlaying
+  
+  // Handle play/pause toggle with proper external/internal state management
+  const handlePlayPauseToggle = () => {
+    const newIsPlaying = !isPlaying
+    if (onPlayPauseToggle) {
+      onPlayPauseToggle(newIsPlaying)
+    } else {
+      setInternalIsPlaying(newIsPlaying)
+    }
+  }
+  
+  // Reset function to clear animation state
+  const handleReset = () => {
+    setResetKey(prev => (prev ?? 0) + 1) // Increment reset key to force re-render
+    setCurrentIndex(null)
+    
+    // Handle internal/external state for play/pause
+    if (onPlayPauseToggle) {
+      onPlayPauseToggle(false)
+    } else {
+      setInternalIsPlaying(false)
+    }
+    
+    // Call external reset handler if provided
+    if (onReset) {
+      onReset()
+    }
+  }
   const [resetKey, setResetKey] = useState(0) // Add a reset key to force re-render of trails
   // State for hover effects - used in the component for tooltips
   const [hoveredId, setHoveredId] = useState<number | null>(null) // eslint-disable-line @typescript-eslint/no-unused-vars
@@ -147,7 +220,7 @@ export const AnimatedDataPoints: React.FC<AnimatedDataPointsProps> = ({
       }))
 
     setDataPoints(points)
-    setCurrentIndex(0)
+    // Don't initialize currentIndex here to prevent showing the first point before animation starts
   }, [plays])
 
   // Animation loop using requestAnimationFrame for smooth animation
@@ -182,12 +255,13 @@ export const AnimatedDataPoints: React.FC<AnimatedDataPointsProps> = ({
           }, 1000) // Wait a second before resetting
         } else {
           // Move to next point
-          setCurrentIndex(prev => (prev ?? 0) + 1)
+          setCurrentIndex((prev: number | null) => (prev !== null ? prev + 1 : 1))
         }
       }
     }, 16) // ~60fps for smooth animation
 
     return () => clearInterval(animationLoop)
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [animate, dataPoints, isPlaying, speed, currentIndex, dataPoints.length])
 
   // Force initial render of all points when not animating
@@ -195,23 +269,21 @@ export const AnimatedDataPoints: React.FC<AnimatedDataPointsProps> = ({
     if (!animate && dataPoints.length > 0 && isPlaying) {
       setCurrentIndex(dataPoints.length - 1)
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [animate, dataPoints.length, isPlaying])
 
   useEffect(() => {
     if (animate) {
       handleReset()
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [animate])
 
-  const handleReset = () => {
-    setResetKey(prev => (prev ?? 0) + 1) // Increment reset key to force re-render
-    setCurrentIndex(null)
-    setIsPlaying(false)
-  }
-
-  // Get the current point only
+  // Get the current point only - ensure it's null when animation hasn't started
   const currentPoint = React.useMemo(() => {
-    if (dataPoints.length === 0 || currentIndex === null || currentIndex >= dataPoints.length) return null
+    // Always return null if animation hasn't started (currentIndex is null)
+    if (currentIndex === null) return null
+    if (dataPoints.length === 0 || currentIndex >= dataPoints.length) return null
     return dataPoints[currentIndex]
   }, [dataPoints, currentIndex])
   
@@ -228,7 +300,8 @@ export const AnimatedDataPoints: React.FC<AnimatedDataPointsProps> = ({
     
   // Get persistent points that should always be visible
   const persistentPoints = React.useMemo(() => {
-    if (currentIndex === null) return []
+    // Don't show any points if animation hasn't started yet
+    if (currentIndex === null || !isPlaying) return []
     
     // Get permanently persistent points (shots, blocks, misses, goals)
     const permanentPoints = dataPoints
@@ -367,109 +440,114 @@ export const AnimatedDataPoints: React.FC<AnimatedDataPointsProps> = ({
     }
   }
   
+  // Determine if animation has started
+  const animationStarted = currentIndex !== null;
+  
   return (
     <div className={`relative ${className}`}>
-      {/* Container for the emojis that will be positioned absolutely */}
-      <div className="absolute top-0 left-0 w-full h-full">
-        {/* Persistent points emojis */}
-        {persistentPoints.map((point) => {
-          const { x, y } = transformCoordinates(point.x, point.y);
-          const isHovered = hoveredEmoji === point.id;
+      {/* Only render data points if animation has started */}
+      {animationStarted && (
+        <div className="absolute top-0 left-0 w-full h-full">
+          {/* Persistent points emojis */}
+          {persistentPoints.map((point) => {
+            const { x, y } = transformCoordinates(point.x, point.y);
+            const isHovered = hoveredEmoji === point.id;
+            
+            // Calculate percentage position
+            const xPercent = (x / width) * 100;
+            const yPercent = (y / height) * 100;
+            
+            // Calculate scale based on hover state - will be used for future animations
+            // eslint-disable-next-line @typescript-eslint/no-unused-vars
+            const scale = isHovered ? 1.5 : 1;
+            
+            return (
+              <motion.div 
+                key={`emoji-${point.id}`}
+                title=""
+                style={{ 
+                  position: 'absolute',
+                  left: `${xPercent}%`, 
+                  top: `${yPercent}%`,
+                  backgroundColor: point.color,
+                  width: `${point.size * 2.5}px`,
+                  height: `${point.size * 2.5}px`,
+                  borderRadius: '50%',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  boxShadow: '0 0 10px rgba(0, 0, 0, 0.3)',
+                  cursor: 'pointer',
+                  zIndex: 100
+                }}
+                initial={{ scale: 1, x: '-50%', y: '-50%' }}
+                whileHover={{ scale: 1.5, x: '-50%', y: '-50%' }}
+                animate={{ scale: hoveredEmoji === point.id ? 1.5 : 1, x: '-50%', y: '-50%' }}
+                transition={{ duration: 0.3 }}
+                onMouseEnter={() => handleEmojiHover(point, true)}
+                onMouseLeave={() => handleEmojiHover(point, false)}
+              >
+                <span style={{ fontSize: '24px', lineHeight: 1 }}>{point.emoji}</span>
+              </motion.div>
+            );
+          })}
           
-          // Calculate percentage position
-          const xPercent = (x / width) * 100;
-          const yPercent = (y / height) * 100;
-          
-          // Calculate scale based on hover state - will be used for future animations
-          // eslint-disable-next-line @typescript-eslint/no-unused-vars
-          const scale = isHovered ? 1.5 : 1;
-          
-          return (
-            <motion.div 
-              key={`emoji-${point.id}`}
-              title=""
-              style={{ 
-                position: 'absolute',
-                left: `${xPercent}%`, 
-                top: `${yPercent}%`,
-                backgroundColor: point.color,
-                width: `${point.size * 2.5}px`,
-                height: `${point.size * 2.5}px`,
-                borderRadius: '50%',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                boxShadow: '0 0 10px rgba(0, 0, 0, 0.3)',
-                cursor: 'pointer',
-                zIndex: 100
-              }}
-              initial={{ scale: 1, x: '-50%', y: '-50%' }}
-              whileHover={{ scale: 1.5, x: '-50%', y: '-50%' }}
-              animate={{ scale: hoveredEmoji === point.id ? 1.5 : 1, x: '-50%', y: '-50%' }}
-              transition={{ duration: 0.3 }}
-              onMouseEnter={() => handleEmojiHover(point, true)}
-              onMouseLeave={() => handleEmojiHover(point, false)}
-            >
-              <span style={{ fontSize: '24px', lineHeight: 1 }}>{point.emoji}</span>
-            </motion.div>
-          );
-        })}
-        
-        {/* Active point emoji with animation */}
-        {currentPoint && !currentPoint.persistent && (() => {
-          const { x, y } = transformCoordinates(currentPoint.x, currentPoint.y);
-          
-          // Calculate percentage position
-          const xPercent = (x / width) * 100;
-          const yPercent = (y / height) * 100;
-          
-          // Calculate scale based on active state - will be used for future animations
-          const isActive = activeEmoji === currentPoint.id;
-          // eslint-disable-next-line @typescript-eslint/no-unused-vars
-          const scale = isActive ? 1.8 : 1;
-          
-          return (
-            <motion.div 
-              key={`active-emoji-${currentIndex}`}
-              title=""
-              style={{ 
-                position: 'absolute',
-                left: `${xPercent}%`, 
-                top: `${yPercent}%`,
-                backgroundColor: currentPoint.color,
-                width: `${currentPoint.size * 2.5}px`,
-                height: `${currentPoint.size * 2.5}px`,
-                borderRadius: '50%',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                boxShadow: '0 0 10px rgba(0, 0, 0, 0.3)',
-                cursor: 'pointer',
-                zIndex: 100
-              }}
-              initial={{ scale: 1, x: '-50%', y: '-50%' }}
-              whileHover={{ scale: 1.5, x: '-50%', y: '-50%' }}
-              animate={{
-                scale: animate ? [1, 1.8, 1] : 1,
-                x: '-50%',
-                y: '-50%'
-              }}
-              transition={{
-                scale: {
-                  duration: 0.8,
-                  times: [0, 0.5, 1],
-                  ease: 'easeInOut',
-                  repeat: 0
-                }
-              }}
-              onMouseEnter={() => handleEmojiHover(currentPoint, true)}
-              onMouseLeave={() => handleEmojiHover(currentPoint, false)}
-            >
-              <span style={{ fontSize: '24px', lineHeight: 1 }}>{currentPoint.emoji}</span>
-            </motion.div>
-          );
-        })()}
-      </div>
+          {/* Active point emoji with animation - only show when animation has started */}
+          {currentPoint && !currentPoint.persistent && currentIndex !== null && (() => {
+            const { x, y } = transformCoordinates(currentPoint.x, currentPoint.y);
+            
+            // Calculate percentage position
+            const xPercent = (x / width) * 100;
+            const yPercent = (y / height) * 100;
+            
+            // Calculate scale based on active state - will be used for future animations
+            const isActive = activeEmoji === currentPoint.id;
+            // eslint-disable-next-line @typescript-eslint/no-unused-vars
+            const scale = isActive ? 1.8 : 1;
+            
+            return (
+              <motion.div 
+                key={`active-emoji-${currentIndex}`}
+                title=""
+                style={{ 
+                  position: 'absolute',
+                  left: `${xPercent}%`, 
+                  top: `${yPercent}%`,
+                  backgroundColor: currentPoint.color,
+                  width: `${currentPoint.size * 2.5}px`,
+                  height: `${currentPoint.size * 2.5}px`,
+                  borderRadius: '50%',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  boxShadow: '0 0 10px rgba(0, 0, 0, 0.3)',
+                  cursor: 'pointer',
+                  zIndex: 100
+                }}
+                initial={{ scale: 1, x: '-50%', y: '-50%' }}
+                whileHover={{ scale: 1.5, x: '-50%', y: '-50%' }}
+                animate={{
+                  scale: animate ? [1, 1.8, 1] : 1,
+                  x: '-50%',
+                  y: '-50%'
+                }}
+                transition={{
+                  scale: {
+                    duration: 0.8,
+                    times: [0, 0.5, 1],
+                    ease: 'easeInOut',
+                    repeat: 0
+                  }
+                }}
+                onMouseEnter={() => handleEmojiHover(currentPoint, true)}
+                onMouseLeave={() => handleEmojiHover(currentPoint, false)}
+              >
+                <span style={{ fontSize: '24px', lineHeight: 1 }}>{currentPoint.emoji}</span>
+              </motion.div>
+            );
+          })()}
+        </div>
+      )}
       
       {/* Tooltip that follows the hovered point */}
       <AnimatePresence>
@@ -652,8 +730,8 @@ export const AnimatedDataPoints: React.FC<AnimatedDataPointsProps> = ({
           </motion.g>
         )}
         
-        {/* Current active point */}
-        {currentPoint && (() => {
+        {/* Current active point - only show when animation has started */}
+        {currentPoint && currentIndex !== null && (() => {
           const { x, y } = transformCoordinates(currentPoint.x, currentPoint.y);
           
           // Skip rendering if this is a persistent point (already rendered)
@@ -770,12 +848,13 @@ export const AnimatedDataPoints: React.FC<AnimatedDataPointsProps> = ({
       
       {/* We're now using the AnimatePresence tooltip above */}
       
-      {plays.length > 0 && (
+      {/* Only show built-in controls if not hidden and there are plays */}
+      {plays.length > 0 && !hideControls && (
         <div className="absolute bottom-4 right-4 flex items-center gap-3 z-10">
           {/* Animation controls */}
           <div className="flex items-center gap-2">
             <button
-              onClick={() => setIsPlaying(!isPlaying)}
+              onClick={handlePlayPauseToggle}
               className="px-3 py-1 bg-primary text-primary-foreground rounded-md text-sm font-medium shadow-lg"
             >
               {isPlaying ? 'Pause' : 'Play'}
@@ -787,9 +866,11 @@ export const AnimatedDataPoints: React.FC<AnimatedDataPointsProps> = ({
             >
               Reset
             </button>
-            <div className="px-3 py-1 bg-background/80 backdrop-blur-sm text-foreground rounded-md text-sm font-medium shadow-lg">
-              {currentIndex !== null ? `${currentIndex + 1} / ${dataPoints.length}` : `0 / ${dataPoints.length}`}
-            </div>
+            {currentIndexDisplay || (
+              <div className="px-3 py-1 bg-background/80 backdrop-blur-sm text-foreground rounded-md text-sm font-medium shadow-lg">
+                {currentIndex !== null ? `${currentIndex + 1} / ${dataPoints.length}` : `0 / ${dataPoints.length}`}
+              </div>
+            )}
           </div>
         </div>
       )}
