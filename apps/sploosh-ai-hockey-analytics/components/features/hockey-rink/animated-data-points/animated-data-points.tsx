@@ -45,8 +45,8 @@ export const AnimatedDataPoints: React.FC<AnimatedDataPointsProps> = ({
   className = '',
   animate = true,
   speed = 1,
-  showTrail = false,
-  trailLength = 5,
+  showTrail = true, // Default to showing trail
+  trailLength = 3, // Default to a smaller number of trail segments
   lineColor = 'rgba(255, 255, 255, 0.7)',
   lineWidth = 3
 }) => {
@@ -250,7 +250,7 @@ export const AnimatedDataPoints: React.FC<AnimatedDataPointsProps> = ({
     if (!showTrail || currentIndex <= 0) return []
     
     const segments = []
-    // Only show the most recent segments
+    // Only show the most recent segments based on user's selected trail length
     const startIdx = Math.max(0, currentIndex - trailLength)
     
     // Only include the most recent segments
@@ -760,22 +760,25 @@ export const AnimatedDataPoints: React.FC<AnimatedDataPointsProps> = ({
       {/* We're now using the AnimatePresence tooltip above */}
       
       {plays.length > 0 && (
-        <div className="absolute bottom-4 right-4 flex flex-wrap gap-2 z-10">
-          <button
-            onClick={() => setIsPlaying(!isPlaying)}
-            className="px-3 py-1 bg-primary text-primary-foreground rounded-md text-sm font-medium shadow-lg"
-          >
-            {isPlaying ? 'Pause' : 'Play'}
-          </button>
-          <button
-            onClick={() => setCurrentIndex(0)}
-            className="px-3 py-1 bg-secondary text-secondary-foreground rounded-md text-sm font-medium shadow-lg"
-            disabled={currentIndex === 0}
-          >
-            Reset
-          </button>
-          <div className="px-3 py-1 bg-background/80 backdrop-blur-sm text-foreground rounded-md text-sm font-medium shadow-lg">
-            {currentIndex + 1} / {dataPoints.length}
+        <div className="absolute bottom-4 right-4 flex items-center gap-3 z-10">
+          {/* Animation controls */}
+          <div className="flex items-center gap-2">
+            <button
+              onClick={() => setIsPlaying(!isPlaying)}
+              className="px-3 py-1 bg-primary text-primary-foreground rounded-md text-sm font-medium shadow-lg"
+            >
+              {isPlaying ? 'Pause' : 'Play'}
+            </button>
+            <button
+              onClick={() => setCurrentIndex(0)}
+              className="px-3 py-1 bg-secondary text-secondary-foreground rounded-md text-sm font-medium shadow-lg"
+              disabled={currentIndex === 0}
+            >
+              Reset
+            </button>
+            <div className="px-3 py-1 bg-background/80 backdrop-blur-sm text-foreground rounded-md text-sm font-medium shadow-lg">
+              {currentIndex + 1} / {dataPoints.length}
+            </div>
           </div>
         </div>
       )}
