@@ -460,47 +460,74 @@ export const AnimatedDataPoints: React.FC<AnimatedDataPointsProps> = ({
         })()}
       </div>
       
-      {/* Fixed position tooltip that doesn't move with the point */}
+      {/* Tooltip that follows the hovered point */}
       <AnimatePresence>
         {tooltipInfo && (
           <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.2 }}
-            style={{
-              position: 'absolute',
-              top: '20px',
-              right: '20px',
-              backgroundColor: 'rgba(0, 0, 0, 0.85)',
-              backdropFilter: 'blur(4px)',
-              color: 'white',
-              padding: '16px',
-              borderRadius: '8px',
-              boxShadow: '0 4px 12px rgba(0, 0, 0, 0.5)',
-              zIndex: 1000,
-              width: '250px',
-              pointerEvents: 'none',
-              border: '1px solid rgba(255, 255, 255, 0.1)'
-            }}
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.9 }}
+            transition={{ duration: 0.15 }}
+            style={(() => {
+              // Get the transformed coordinates of the point
+              const { x, y } = transformCoordinates(tooltipInfo.x, tooltipInfo.y);
+              
+              // Convert to percentage for responsive positioning
+              const xPercent = (x / width) * 100;
+              const yPercent = (y / height) * 100;
+              
+              // Calculate tooltip position based on quadrant
+              let tooltipStyle: React.CSSProperties = {
+                position: 'absolute',
+                backgroundColor: 'rgba(0, 0, 0, 0.85)',
+                backdropFilter: 'blur(4px)',
+                color: 'white',
+                padding: '12px',
+                borderRadius: '6px',
+                boxShadow: '0 4px 8px rgba(0, 0, 0, 0.5)',
+                zIndex: 1000,
+                width: '200px',
+                pointerEvents: 'none',
+                border: '1px solid rgba(255, 255, 255, 0.1)'
+              };
+              
+              // Position tooltip based on which quadrant the point is in
+              if (xPercent < 50) {
+                // Left side of ice - position tooltip to the right of the point
+                tooltipStyle.left = `calc(${xPercent}% + 20px)`;
+              } else {
+                // Right side of ice - position tooltip to the left of the point
+                tooltipStyle.right = `calc(${100 - xPercent}% + 20px)`;
+              }
+              
+              if (yPercent < 50) {
+                // Top half of ice - position tooltip below the point
+                tooltipStyle.top = `calc(${yPercent}% + 20px)`;
+              } else {
+                // Bottom half of ice - position tooltip above the point
+                tooltipStyle.bottom = `calc(${100 - yPercent}% + 20px)`;
+              }
+              
+              return tooltipStyle;
+            })()}
           >
             {(() => {
               const details = formatEventDetails(tooltipInfo);
               
               return (
                 <>
-                  <div style={{ display: 'flex', alignItems: 'center', marginBottom: '12px' }}>
-                    <span style={{ fontSize: '30px', marginRight: '12px' }}>{tooltipInfo.emoji}</span>
-                    <span style={{ fontSize: '18px', fontWeight: 'bold' }}>{details.type}</span>
+                  <div style={{ display: 'flex', alignItems: 'center', marginBottom: '8px' }}>
+                    <span style={{ fontSize: '24px', marginRight: '8px' }}>{tooltipInfo.emoji}</span>
+                    <span style={{ fontSize: '16px', fontWeight: 'bold' }}>{details.type}</span>
                   </div>
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: '6px', fontSize: '14px' }}>
-                    <p>{details.period}</p>
-                    <p>{details.time}</p>
-                    <p>{details.coordinates}</p>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '4px', fontSize: '13px' }}>
+                    <p style={{ margin: 0 }}>{details.period}</p>
+                    <p style={{ margin: 0 }}>{details.time}</p>
+                    <p style={{ margin: 0 }}>{details.coordinates}</p>
                     {details.details && (
-                      <div style={{ marginTop: '10px', paddingTop: '10px', borderTop: '1px solid rgba(255, 255, 255, 0.2)' }}>
-                        <p style={{ fontWeight: 'bold', marginBottom: '4px' }}>Additional Details:</p>
-                        <p style={{ fontSize: '12px', overflow: 'hidden', textOverflow: 'ellipsis' }}>{details.details}</p>
+                      <div style={{ marginTop: '6px', paddingTop: '6px', borderTop: '1px solid rgba(255, 255, 255, 0.2)' }}>
+                        <p style={{ fontWeight: 'bold', margin: '0 0 2px 0', fontSize: '12px' }}>Additional Details:</p>
+                        <p style={{ fontSize: '11px', margin: 0, overflow: 'hidden', textOverflow: 'ellipsis' }}>{details.details}</p>
                       </div>
                     )}
                   </div>
