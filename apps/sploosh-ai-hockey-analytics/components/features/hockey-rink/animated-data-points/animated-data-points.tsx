@@ -182,7 +182,7 @@ export const AnimatedDataPoints: React.FC<AnimatedDataPointsProps> = ({
           }, 1000) // Wait a second before resetting
         } else {
           // Move to next point
-          setCurrentIndex(prev => prev + 1)
+          setCurrentIndex(prev => (prev ?? 0) + 1)
         }
       }
     }, 16) // ~60fps for smooth animation
