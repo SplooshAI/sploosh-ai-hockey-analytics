@@ -211,10 +211,14 @@ export default function AnimationDemo() {
           </div>
         </div>
         
-        {/* Simplified Animation Controls */}
+        {/* Animation Controls with trail settings */}
         <AnimationControls 
           speed={speed}
           setSpeed={setSpeed}
+          showTrail={showTrail}
+          setShowTrail={setShowTrail}
+          trailLength={trailLength}
+          setTrailLength={setTrailLength}
         />
       </div>
     </MainLayout>
