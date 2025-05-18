@@ -2,9 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { MainLayout } from '@/components/layouts/main-layout'
-import { NHLEdgeHockeyRink } from '@/components/features/hockey-rink/nhl-edge-hockey-rink/nhl-edge-hockey-rink'
-import { AnimatedDataPoints } from '@/components/features/hockey-rink/animated-data-points/animated-data-points'
-import { AnimationControls } from './animation-controls'
+import { RinkControlPanel } from '@/components/features/hockey-rink/rink-control-panel/rink-control-panel'
 import type { NHLEdgePlay, NHLEdgePlayByPlay } from '@/lib/api/nhl-edge/types/nhl-edge'
 
 // Sample data for demonstration
@@ -183,44 +181,21 @@ export default function AnimationDemo() {
           </div>
         )}
         
-        <div className="bg-card rounded-lg p-6 shadow-md mb-8">
-          <div className="relative" style={{ zIndex: 0 }}>
-            {/* Hockey Rink Component */}
-            <NHLEdgeHockeyRink
-              className="w-full h-auto"
-              centerIceLogo='/sploosh.ai/sploosh-ai-character-transparent.png'
-              centerIceLogoHeight={358}
-              centerIceLogoWidth={400}
-              /* Use default ice texture */
-            />
-            
-            {/* Animated Data Points Overlay */}
-            {!loading && (
-              <div className="absolute inset-0" style={{ zIndex: 10 }}>
-                <AnimatedDataPoints
-                  plays={plays}
-                  animate={animate}
-                  speed={speed}
-                  showTrail={showTrail}
-                  trailLength={trailLength}
-                  className="w-full h-full"
-                  lineColor="#FF3333" /* Brighter red for high visibility against texture */
-                  lineWidth={6}
-                />
-              </div>
-            )}
-          </div>
-        </div>
-        
-        {/* Animation Controls with trail settings */}
-        <AnimationControls 
-          speed={speed}
-          setSpeed={setSpeed}
-          showTrail={showTrail}
-          setShowTrail={setShowTrail}
-          trailLength={trailLength}
-          setTrailLength={setTrailLength}
-        />
+        {/* Use the new RinkControlPanel component */}
+        {!loading && (
+          <RinkControlPanel
+            plays={plays}
+            speed={speed}
+            setSpeed={setSpeed}
+            showTrail={showTrail}
+            setShowTrail={setShowTrail}
+            trailLength={trailLength}
+            setTrailLength={setTrailLength}
+            centerIceLogo='/sploosh.ai/sploosh-ai-character-transparent.png'
+            centerIceLogoHeight={358}
+            centerIceLogoWidth={400}
+          />
+        )}
       </div>
     </MainLayout>
   )
