@@ -5,9 +5,9 @@ These global rules define standardized Git workflow practices to be applied acro
 <branch_creation>
 
 - Always create feature branches from the main branch
-- Use descriptive branch names with the following format: `type/description-in-kebab-case`
-  - Valid types: feat, fix, docs, style, refactor, perf, test, build, ci, chore, revert
-  - Examples: `feat/add-player-statistics`, `fix/animation-slider-bug`
+- Use descriptive branch names with the following format: `YYYY.MM.DD/description-in-kebab-case`
+  - Date format: Current date in YYYY.MM.DD format (e.g., 2025.05.17)
+  - Examples: `2025.05.17/add-player-statistics`, `2025.05.17/fix-animation-slider-bug`
 - Push new branches to the remote repository immediately after creation
 - Set up upstream tracking when pushing a new branch
 
@@ -31,9 +31,25 @@ These global rules define standardized Git workflow practices to be applied acro
      - Item 2
      
      ### Type of Change
-     \`\`\`
+     
+     ```bash
      version: [feat|fix|docs|style|refactor|perf|test|build|ci|chore|revert]
-     \`\`\`"
+     ```
+
+- **PR Template Requirements**:
+  - All PRs must use the provided template with the following sections:
+    - Description
+    - Related Issues
+    - Testing
+    - Screenshots (if applicable)
+    - Item 1
+    - Item 2
+
+    **Type of Change**
+
+    ```bash
+    version: [feat|fix|docs|style|refactor|perf|test|build|ci|chore|revert]
+    ```
 
 - **PR Description Guidelines**:
   - Use proper markdown formatting with clear section headers
