@@ -51,7 +51,7 @@ export const AnimatedDataPoints: React.FC<AnimatedDataPointsProps> = ({
   lineWidth = 3
 }) => {
   const [dataPoints, setDataPoints] = useState<DataPoint[]>([])
-  const [currentIndex, setCurrentIndex] = useState(0)
+  const [currentIndex, setCurrentIndex] = useState<number | null>(null)
   const [isPlaying, setIsPlaying] = useState(false)
   const [resetKey, setResetKey] = useState(0) // Add a reset key to force re-render of trails
   // State for hover effects - used in the component for tooltips
@@ -154,6 +154,12 @@ export const AnimatedDataPoints: React.FC<AnimatedDataPointsProps> = ({
   useEffect(() => {
     if (!animate || !isPlaying || dataPoints.length === 0) return
     
+    // Initialize currentIndex to 0 when play is clicked
+    if (currentIndex === null) {
+      setCurrentIndex(0)
+      return
+    }
+    
     let lastUpdateTime = Date.now()
     const animationSpeed = 1000 / speed // ms between points
     
@@ -165,11 +171,11 @@ export const AnimatedDataPoints: React.FC<AnimatedDataPointsProps> = ({
         lastUpdateTime = now
         
         // Move to next point or reset if at the end
-        if (currentIndex >= dataPoints.length - 1) {
+        if (currentIndex !== null && currentIndex >= dataPoints.length - 1) {
           // Animation complete, reset
           setTimeout(() => {
             // Clear all trails by incrementing the reset key
-            setResetKey(prev => prev + 1) 
+            setResetKey(prev => (prev ?? 0) + 1) 
             // Reset to the beginning
             setCurrentIndex(0)
             // Continue playing (automatic looping)
@@ -186,10 +192,10 @@ export const AnimatedDataPoints: React.FC<AnimatedDataPointsProps> = ({
 
   // Force initial render of all points when not animating
   useEffect(() => {
-    if (!animate && dataPoints.length > 0) {
+    if (!animate && dataPoints.length > 0 && isPlaying) {
       setCurrentIndex(dataPoints.length - 1)
     }
-  }, [animate, dataPoints.length])
+  }, [animate, dataPoints.length, isPlaying])
 
   useEffect(() => {
     if (animate) {
@@ -198,30 +204,32 @@ export const AnimatedDataPoints: React.FC<AnimatedDataPointsProps> = ({
   }, [animate])
 
   const handleReset = () => {
-    setResetKey(prev => prev + 1) // Increment reset key to force re-render
-    setCurrentIndex(0)
+    setResetKey(prev => (prev ?? 0) + 1) // Increment reset key to force re-render
+    setCurrentIndex(null)
     setIsPlaying(false)
   }
 
   // Get the current point only
   const currentPoint = React.useMemo(() => {
-    if (dataPoints.length === 0 || currentIndex >= dataPoints.length) return null
+    if (dataPoints.length === 0 || currentIndex === null || currentIndex >= dataPoints.length) return null
     return dataPoints[currentIndex]
   }, [dataPoints, currentIndex])
   
   // Get the previous point for drawing the connecting line
   const previousPoint = React.useMemo(() => {
-    if (currentIndex <= 0 || !showTrail) return null
+    if (currentIndex === null || currentIndex <= 0 || !showTrail) return null
     return dataPoints[currentIndex - 1]
   }, [dataPoints, currentIndex, showTrail])
   
   // Get visible trail points
-  const visibleTrailPoints = showTrail
+  const visibleTrailPoints = showTrail && currentIndex !== null
     ? dataPoints.slice(0, currentIndex + 1).slice(-trailLength)
     : []
     
   // Get persistent points that should always be visible
   const persistentPoints = React.useMemo(() => {
+    if (currentIndex === null) return []
+    
     // Get permanently persistent points (shots, blocks, misses, goals)
     const permanentPoints = dataPoints
       .slice(0, currentIndex + 1)
@@ -247,7 +255,7 @@ export const AnimatedDataPoints: React.FC<AnimatedDataPointsProps> = ({
 
   // Calculate the trail segments to show (only the most recent ones)
   const trailSegments = React.useMemo(() => {
-    if (!showTrail || currentIndex <= 0) return []
+    if (!showTrail || currentIndex === null || currentIndex <= 0) return []
     
     const segments = []
     // Only show the most recent segments based on user's selected trail length
@@ -780,7 +788,7 @@ export const AnimatedDataPoints: React.FC<AnimatedDataPointsProps> = ({
               Reset
             </button>
             <div className="px-3 py-1 bg-background/80 backdrop-blur-sm text-foreground rounded-md text-sm font-medium shadow-lg">
-              {currentIndex + 1} / {dataPoints.length}
+              {currentIndex !== null ? `${currentIndex + 1} / ${dataPoints.length}` : `0 / ${dataPoints.length}`}
             </div>
           </div>
         </div>
