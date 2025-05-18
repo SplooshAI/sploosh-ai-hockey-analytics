@@ -127,7 +127,7 @@ export default function AnimationDemo() {
   const [animate, setAnimate] = useState(true) // eslint-disable-line @typescript-eslint/no-unused-vars
   const [speed, setSpeed] = useState(1)
   const [showTrail, setShowTrail] = useState(true)
-  const [trailLength, setTrailLength] = useState(5)
+  const [trailLength, setTrailLength] = useState(2)
   const [loading, setLoading] = useState(true)
   // We're using the plays state directly instead of playByPlayData
   const [, setPlayByPlayData] = useState<NHLEdgePlayByPlay | null>(null)
