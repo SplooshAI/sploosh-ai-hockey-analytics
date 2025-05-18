@@ -1,0 +1,43 @@
+{
+  "name": "sploosh-ai-hockey-analytics",
+  "version": "1.0.0",
+  "description": "Windsurf configuration for Sploosh AI Hockey Analytics",
+  "rules": {
+    "commit-message": {
+      "enabled": true,
+      "pattern": "^(feat|fix|docs|style|refactor|perf|test|build|ci|chore|revert)(\\(\\w+\\))?(!)?: .+$",
+      "message": "Commit messages must follow the conventional commits format. Example: feat: add new feature"
+    },
+    "branch-name": {
+      "enabled": true,
+      "pattern": "^(feat|fix|docs|style|refactor|perf|test|build|ci|chore|revert)/[a-z0-9-]+$",
+      "message": "Branch names must follow the pattern: type/description-in-kebab-case"
+    },
+    "file-size": {
+      "enabled": true,
+      "max-size-kb": 500,
+      "exclude": [
+        "**/*.png",
+        "**/*.jpg",
+        "**/*.jpeg",
+        "**/*.gif",
+        "**/*.svg",
+        "**/*.ico",
+        "**/*.woff",
+        "**/*.woff2",
+        "**/*.eot",
+        "**/*.ttf",
+        "**/*.otf"
+      ]
+    },
+    "line-length": {
+      "enabled": true,
+      "max-length": 100,
+      "exclude": [
+        "**/*.json",
+        "**/*.md",
+        "**/*.lock"
+      ]
+    }
+  }
+}

@@ -1,0 +1,44 @@
+{
+  "hooks": {
+    "pre-commit": [
+      {
+        "name": "lint",
+        "command": "npm run lint",
+        "description": "Run linting before commit"
+      },
+      {
+        "name": "type-check",
+        "command": "npm run type-check",
+        "description": "Run TypeScript type checking before commit"
+      }
+    ],
+    "pre-push": [
+      {
+        "name": "test",
+        "command": "npm test",
+        "description": "Run tests before push"
+      }
+    ],
+    "post-merge": [
+      {
+        "name": "install-deps",
+        "command": "npm install",
+        "description": "Install dependencies after merge if package.json changed",
+        "condition": "git diff-tree -r --name-only --no-commit-id ORIG_HEAD HEAD | grep -q 'package.json'"
+      }
+    ],
+    "post-checkout": [
+      {
+        "name": "clean",
+        "command": "npm run clean",
+        "description": "Clean build artifacts after checkout",
+        "condition": "git diff --name-only $1 $2 | grep -q 'package.json'"
+      }
+    ]
+  },
+  "settings": {
+    "allow-bypass": true,
+    "bypass-message": "Bypassing Windsurf hooks is discouraged. Please ensure your code meets quality standards.",
+    "notify-team": true
+  }
+}

@@ -1,0 +1,100 @@
+{
+  "code-quality": {
+    "typescript": {
+      "enabled": true,
+      "rules": {
+        "no-any": {
+          "enabled": true,
+          "severity": "warning",
+          "message": "Avoid using 'any' type. Use more specific types instead."
+        },
+        "explicit-return-type": {
+          "enabled": true,
+          "severity": "warning",
+          "message": "Functions should have explicit return types."
+        },
+        "no-unused-vars": {
+          "enabled": true,
+          "severity": "error",
+          "message": "Unused variables should be removed."
+        },
+        "no-console": {
+          "enabled": true,
+          "severity": "warning",
+          "message": "Avoid using console.log in production code. Use a logger instead."
+        }
+      }
+    },
+    "react": {
+      "enabled": true,
+      "rules": {
+        "hooks-order": {
+          "enabled": true,
+          "severity": "warning",
+          "message": "React hooks should be called in the same order on every render."
+        },
+        "no-direct-mutation": {
+          "enabled": true,
+          "severity": "error",
+          "message": "Don't mutate state directly. Use setState or a state management library."
+        },
+        "jsx-key": {
+          "enabled": true,
+          "severity": "error",
+          "message": "Elements in iterators require a unique key prop."
+        },
+        "prefer-functional": {
+          "enabled": true,
+          "severity": "warning",
+          "message": "Prefer functional components over class components."
+        }
+      }
+    }
+  },
+  "accessibility": {
+    "enabled": true,
+    "rules": {
+      "image-alt": {
+        "enabled": true,
+        "severity": "error",
+        "message": "Images must have alt text."
+      },
+      "aria-props": {
+        "enabled": true,
+        "severity": "error",
+        "message": "ARIA properties must be valid."
+      },
+      "interactive-supports-focus": {
+        "enabled": true,
+        "severity": "warning",
+        "message": "Interactive elements should be focusable."
+      },
+      "role-has-required-aria-props": {
+        "enabled": true,
+        "severity": "error",
+        "message": "Elements with ARIA roles must have all required attributes for that role."
+      }
+    }
+  },
+  "performance": {
+    "enabled": true,
+    "rules": {
+      "no-large-bundles": {
+        "enabled": true,
+        "severity": "warning",
+        "max-size-kb": 250,
+        "message": "Bundle size should be kept under 250KB."
+      },
+      "optimize-images": {
+        "enabled": true,
+        "severity": "warning",
+        "message": "Images should be optimized for web."
+      },
+      "lazy-loading": {
+        "enabled": true,
+        "severity": "warning",
+        "message": "Consider lazy loading for large components or images."
+      }
+    }
+  }
+}
