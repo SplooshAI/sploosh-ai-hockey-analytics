@@ -1,7 +1,7 @@
 'use client'
 
 import React, { useEffect, useState } from 'react'
-import { motion } from 'framer-motion'
+import { motion, AnimatePresence } from 'framer-motion'
 import type { NHLEdgePlay } from '@/lib/api/nhl-edge/types/nhl-edge'
 
 interface AnimatedDataPointsProps {
@@ -28,6 +28,7 @@ interface DataPoint {
   size: number
   emoji: string
   persistent: boolean
+  temporaryPersistent?: boolean // For points like hits that should persist until the next point
   details?: any
 }
 
@@ -53,7 +54,7 @@ export const AnimatedDataPoints: React.FC<AnimatedDataPointsProps> = ({
   const [currentIndex, setCurrentIndex] = useState(0)
   const [isPlaying, setIsPlaying] = useState(false)
   const [resetKey, setResetKey] = useState(0) // Add a reset key to force re-render of trails
-  const [hoveredPoint, setHoveredPoint] = useState<DataPoint | null>(null)
+  // State for hover effects
   const [hoveredId, setHoveredId] = useState<number | null>(null)
 
   // Map play types to colors (avoiding red)
@@ -114,9 +115,14 @@ export const AnimatedDataPoints: React.FC<AnimatedDataPointsProps> = ({
     }
   }
   
-  // Determine if a play type should persist on screen
+  // Determine if a play type should persist on screen permanently
   const shouldPersist = (typeCode: string): boolean => {
     return ['SHOT', 'BLOCK', 'MISS', 'GOAL'].includes(typeCode)
+  }
+  
+  // Determine if a play type should persist temporarily (until next point)
+  const shouldTemporarilyPersist = (typeCode: string): boolean => {
+    return ['HIT'].includes(typeCode)
   }
 
   // Convert plays to data points
@@ -124,7 +130,7 @@ export const AnimatedDataPoints: React.FC<AnimatedDataPointsProps> = ({
     if (plays.length === 0) return
 
     const points = plays
-      .filter(play => play.coordinates && play.coordinates.x !== undefined && play.coordinates.y !== undefined)
+      .filter(play => play.coordinates)
       .map(play => ({
         id: play.eventId,
         x: play.coordinates!.x,
@@ -136,6 +142,7 @@ export const AnimatedDataPoints: React.FC<AnimatedDataPointsProps> = ({
         size: getSizeForPlayType(play.typeCode),
         emoji: getEmojiForPlayType(play.typeCode),
         persistent: shouldPersist(play.typeCode),
+        temporaryPersistent: shouldTemporarilyPersist(play.typeCode),
         details: play.details
       }))
 
@@ -215,9 +222,27 @@ export const AnimatedDataPoints: React.FC<AnimatedDataPointsProps> = ({
     
   // Get persistent points that should always be visible
   const persistentPoints = React.useMemo(() => {
-    return dataPoints
+    // Get permanently persistent points (shots, blocks, misses, goals)
+    const permanentPoints = dataPoints
       .slice(0, currentIndex + 1)
       .filter(point => point.persistent)
+    
+    // Get temporarily persistent points (hits) - they should persist until the next point appears
+    const tempPoints = [];
+    if (currentIndex > 0) {
+      // Look for temporarily persistent points (like hits)
+      for (let i = 0; i < currentIndex; i++) {
+        const point = dataPoints[i];
+        
+        // If this is a temporarily persistent point and we're currently showing the next point,
+        // include it in the display
+        if (point.temporaryPersistent && i + 1 === currentIndex) {
+          tempPoints.push(point);
+        }
+      }
+    }
+    
+    return [...permanentPoints, ...tempPoints];
   }, [dataPoints, currentIndex])
 
   // Calculate the trail segments to show (only the most recent ones)
@@ -263,13 +288,54 @@ export const AnimatedDataPoints: React.FC<AnimatedDataPointsProps> = ({
     return Math.atan2(dy, dx) * (180 / Math.PI)
   }
 
-  // Get emoji size based on point size and animation state
-  const getEmojiSize = (size: number, isActive: boolean = false): number => {
+  // State for emoji scaling and tooltips
+  const [hoveredEmoji, setHoveredEmoji] = useState<number | null>(null);
+  const [activeEmoji, setActiveEmoji] = useState<number | null>(null);
+  const [tooltipInfo, setTooltipInfo] = useState<DataPoint | null>(null);
+  
+  // Effect to animate the active emoji when it changes
+  useEffect(() => {
+    if (currentPoint && animate) {
+      // Set the active emoji to pulse
+      setActiveEmoji(currentPoint.id);
+      
+      // Clear the active emoji after animation duration
+      const timer = setTimeout(() => {
+        setActiveEmoji(null);
+      }, 800);
+      
+      return () => clearTimeout(timer);
+    }
+  }, [currentIndex, animate, currentPoint]);
+  
+  // Function to handle emoji hover with debounce to prevent flickering
+  const handleEmojiHover = (point: DataPoint, isHovered: boolean) => {
+    if (isHovered) {
+      // Immediately show highlight
+      setHoveredEmoji(point.id);
+      // Update tooltip info
+      setTooltipInfo(point);
+    } else {
+      // Clear highlight immediately
+      if (hoveredEmoji === point.id) {
+        setHoveredEmoji(null);
+      }
+      
+      // Small delay before hiding tooltip
+      setTimeout(() => {
+        if (tooltipInfo?.id === point.id) {
+          setTooltipInfo(null);
+        }
+      }, 200);
+    }
+  };
+  
+  // We use tooltipInfo directly for the tooltip display
+  
+  // Get emoji size based on point size
+  const getEmojiSize = (size: number): number => {
     // Base size is proportional to the point size
-    const baseSize = size * 1.2;
-    
-    // If this is the active point, make it larger
-    return isActive ? baseSize * 1.5 : baseSize;
+    return size * 1.5;
   }
   
   // Format event details for display
@@ -294,6 +360,157 @@ export const AnimatedDataPoints: React.FC<AnimatedDataPointsProps> = ({
   
   return (
     <div className={`relative ${className}`}>
+      {/* Container for the emojis that will be positioned absolutely */}
+      <div className="absolute top-0 left-0 w-full h-full">
+        {/* Persistent points emojis */}
+        {persistentPoints.map((point) => {
+          const { x, y } = transformCoordinates(point.x, point.y);
+          const isHovered = hoveredEmoji === point.id;
+          
+          // Calculate percentage position
+          const xPercent = (x / width) * 100;
+          const yPercent = (y / height) * 100;
+          
+          // Calculate scale based on hover state
+          const scale = isHovered ? 1.5 : 1;
+          
+          return (
+            <motion.div 
+              key={`emoji-${point.id}`}
+              title=""
+              style={{ 
+                position: 'absolute',
+                left: `${xPercent}%`, 
+                top: `${yPercent}%`,
+                backgroundColor: point.color,
+                width: `${point.size * 2.5}px`,
+                height: `${point.size * 2.5}px`,
+                borderRadius: '50%',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                boxShadow: '0 0 10px rgba(0, 0, 0, 0.3)',
+                cursor: 'pointer',
+                zIndex: 100
+              }}
+              initial={{ scale: 1, x: '-50%', y: '-50%' }}
+              whileHover={{ scale: 1.5, x: '-50%', y: '-50%' }}
+              animate={{ scale: hoveredEmoji === point.id ? 1.5 : 1, x: '-50%', y: '-50%' }}
+              transition={{ duration: 0.3 }}
+              onMouseEnter={() => handleEmojiHover(point, true)}
+              onMouseLeave={() => handleEmojiHover(point, false)}
+            >
+              <span style={{ fontSize: '24px', lineHeight: 1 }}>{point.emoji}</span>
+            </motion.div>
+          );
+        })}
+        
+        {/* Active point emoji with animation */}
+        {currentPoint && !currentPoint.persistent && (() => {
+          const { x, y } = transformCoordinates(currentPoint.x, currentPoint.y);
+          
+          // Calculate percentage position
+          const xPercent = (x / width) * 100;
+          const yPercent = (y / height) * 100;
+          
+          // Calculate scale based on active state
+          const isActive = activeEmoji === currentPoint.id;
+          const scale = isActive ? 1.8 : 1;
+          
+          return (
+            <motion.div 
+              key={`active-emoji-${currentIndex}`}
+              title=""
+              style={{ 
+                position: 'absolute',
+                left: `${xPercent}%`, 
+                top: `${yPercent}%`,
+                backgroundColor: currentPoint.color,
+                width: `${currentPoint.size * 2.5}px`,
+                height: `${currentPoint.size * 2.5}px`,
+                borderRadius: '50%',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                boxShadow: '0 0 10px rgba(0, 0, 0, 0.3)',
+                cursor: 'pointer',
+                zIndex: 100
+              }}
+              initial={{ scale: 1, x: '-50%', y: '-50%' }}
+              whileHover={{ scale: 1.5, x: '-50%', y: '-50%' }}
+              animate={{
+                scale: animate ? [1, 1.8, 1] : 1,
+                x: '-50%',
+                y: '-50%'
+              }}
+              transition={{
+                scale: {
+                  duration: 0.8,
+                  times: [0, 0.5, 1],
+                  ease: 'easeInOut',
+                  repeat: 0
+                }
+              }}
+              onMouseEnter={() => handleEmojiHover(currentPoint, true)}
+              onMouseLeave={() => handleEmojiHover(currentPoint, false)}
+            >
+              <span style={{ fontSize: '24px', lineHeight: 1 }}>{currentPoint.emoji}</span>
+            </motion.div>
+          );
+        })()}
+      </div>
+      
+      {/* Fixed position tooltip that doesn't move with the point */}
+      <AnimatePresence>
+        {tooltipInfo && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.2 }}
+            style={{
+              position: 'absolute',
+              top: '20px',
+              right: '20px',
+              backgroundColor: 'rgba(0, 0, 0, 0.85)',
+              backdropFilter: 'blur(4px)',
+              color: 'white',
+              padding: '16px',
+              borderRadius: '8px',
+              boxShadow: '0 4px 12px rgba(0, 0, 0, 0.5)',
+              zIndex: 1000,
+              width: '250px',
+              pointerEvents: 'none',
+              border: '1px solid rgba(255, 255, 255, 0.1)'
+            }}
+          >
+            {(() => {
+              const details = formatEventDetails(tooltipInfo);
+              
+              return (
+                <>
+                  <div style={{ display: 'flex', alignItems: 'center', marginBottom: '12px' }}>
+                    <span style={{ fontSize: '30px', marginRight: '12px' }}>{tooltipInfo.emoji}</span>
+                    <span style={{ fontSize: '18px', fontWeight: 'bold' }}>{details.type}</span>
+                  </div>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '6px', fontSize: '14px' }}>
+                    <p>{details.period}</p>
+                    <p>{details.time}</p>
+                    <p>{details.coordinates}</p>
+                    {details.details && (
+                      <div style={{ marginTop: '10px', paddingTop: '10px', borderTop: '1px solid rgba(255, 255, 255, 0.2)' }}>
+                        <p style={{ fontWeight: 'bold', marginBottom: '4px' }}>Additional Details:</p>
+                        <p style={{ fontSize: '12px', overflow: 'hidden', textOverflow: 'ellipsis' }}>{details.details}</p>
+                      </div>
+                    )}
+                  </div>
+                </>
+              );
+            })()}
+          </motion.div>
+        )}
+      </AnimatePresence>
+      
       <svg
         width={width}
         height={height}
@@ -304,52 +521,17 @@ export const AnimatedDataPoints: React.FC<AnimatedDataPointsProps> = ({
         {persistentPoints.map((point) => {
           const { x, y } = transformCoordinates(point.x, point.y);
           return (
-            <g 
+            <circle
               key={`persistent-${point.id}`}
-              className="emoji-container"
-              style={{ cursor: 'pointer' }}
-            >
-              {/* Invisible larger hit area for better hover - placed first so it's below other elements */}
-              <circle
-                cx={x}
-                cy={y}
-                r={point.size * 2}
-                fill="rgba(255,255,255,0.01)"
-                onMouseEnter={() => {
-                  setHoveredPoint(point);
-                  setHoveredId(point.id);
-                }}
-                onMouseLeave={() => {
-                  setHoveredPoint(null);
-                  setHoveredId(null);
-                }}
-                style={{ pointerEvents: 'all' }}
-              />
-              <circle
-                cx={x}
-                cy={y}
-                r={point.size}
-                fill={point.color}
-                fillOpacity={0.6}
-                stroke="white"
-                strokeWidth={1.5}
-                pointerEvents="none"
-              />
-              <motion.text
-                x={x}
-                y={y}
-                textAnchor="middle"
-                dominantBaseline="central"
-                fontSize={hoveredId === point.id ? getEmojiSize(point.size, true) : getEmojiSize(point.size)}
-                animate={{ 
-                  fontSize: hoveredId === point.id ? getEmojiSize(point.size, true) : getEmojiSize(point.size)
-                }}
-                transition={{ duration: 0.3 }}
-                pointerEvents="none"
-              >
-                {point.emoji}
-              </motion.text>
-            </g>
+              cx={x}
+              cy={y}
+              r={point.size}
+              fill={point.color}
+              fillOpacity={0.6}
+              stroke="white"
+              strokeWidth={1.5}
+              pointerEvents="none"
+            />
           );
         })}
         
@@ -450,8 +632,8 @@ export const AnimatedDataPoints: React.FC<AnimatedDataPointsProps> = ({
                 cy={y}
                 r={currentPoint.size * 2}
                 fill="rgba(255,255,255,0.01)"
-                onMouseEnter={() => setHoveredPoint(currentPoint)}
-                onMouseLeave={() => setHoveredPoint(null)}
+                onMouseEnter={() => handleEmojiHover(currentPoint, true)}
+                onMouseLeave={() => handleEmojiHover(currentPoint, false)}
                 style={{ pointerEvents: 'all' }}
               />
               {/* Direction indicator */}
@@ -498,118 +680,57 @@ export const AnimatedDataPoints: React.FC<AnimatedDataPointsProps> = ({
                 }}
               />
               
-              {/* Main data point with emoji */}
-              <motion.g>
-                <motion.circle
-                  cx={x}
-                  cy={y}
-                  r={currentPoint.size}
-                  fill={currentPoint.color}
-                  stroke="white"
-                  strokeWidth={2}
-                  pointerEvents="none"
-                  initial={{ scale: 0, opacity: 0 }}
-                  animate={{ 
-                    scale: animate ? [1, 1.3, 1] : 1,
-                    opacity: 1
-                  }}
-                  transition={{ 
-                    scale: {
-                      duration: 0.7,
-                      repeat: animate ? Infinity : 0,
-                      repeatType: "loop"
-                    },
-                    opacity: {
-                      duration: 0.3,
-                      ease: "easeInOut"
-                    }
-                  }}
-                />
-                <motion.text
-                  x={x}
-                  y={y}
-                  textAnchor="middle"
-                  dominantBaseline="central"
-                  fontSize={getEmojiSize(currentPoint.size, true)}
-                  initial={{ fontSize: getEmojiSize(currentPoint.size) }}
-                  animate={{ 
-                    fontSize: animate ? [
-                      getEmojiSize(currentPoint.size),
-                      getEmojiSize(currentPoint.size, true),
-                      getEmojiSize(currentPoint.size)
-                    ] : getEmojiSize(currentPoint.size)
-                  }}
-                  transition={{ 
-                    duration: 0.8,
+              <motion.g
+                initial={{ opacity: 0, scale: 0.5 }}
+                animate={{ 
+                  scale: animate ? [1, 1.4, 1] : 1,
+                  opacity: 1
+                }}
+                transition={{ 
+                  scale: { 
+                    duration: 0.5, 
                     times: [0, 0.5, 1],
                     ease: "easeInOut"
-                  }}
-                  pointerEvents="none"
-                >
-                  {currentPoint.emoji}
-                </motion.text>
-              </motion.g>
+                  },
+                  opacity: {
+                    duration: 0.3,
+                    ease: "easeInOut"
+                  }
+                }}
+              />
+              
+              {/* Main data point circle */}
+              <motion.circle
+                cx={x}
+                cy={y}
+                r={currentPoint.size}
+                fill={currentPoint.color}
+                stroke="white"
+                strokeWidth={2}
+                pointerEvents="none"
+                initial={{ scale: 0, opacity: 0 }}
+                animate={{ 
+                  scale: animate ? [1, 1.3, 1] : 1,
+                  opacity: 1
+                }}
+                transition={{ 
+                  scale: { 
+                    duration: 0.5, 
+                    times: [0, 0.5, 1],
+                    ease: "easeInOut"
+                  },
+                  opacity: {
+                    duration: 0.3,
+                    ease: "easeInOut"
+                  }
+                }}
+              />
             </g>
           );
         })()}
       </svg>
       
-      {/* Hover tooltip */}
-      {hoveredPoint && (() => {
-        const { x, y } = transformCoordinates(hoveredPoint.x, hoveredPoint.y);
-        const details = formatEventDetails(hoveredPoint);
-        
-        // Calculate percentage position for better positioning
-        const svgRect = document.querySelector('svg')?.getBoundingClientRect();
-        const viewportWidth = svgRect?.width || width;
-        const viewportHeight = svgRect?.height || height;
-        
-        // Convert SVG coordinates to percentage of viewport
-        const xPercent = (x / width) * 100;
-        const yPercent = (y / height) * 100;
-        
-        // Position tooltip based on which quadrant the point is in
-        let tooltipPosition: React.CSSProperties = {};
-        
-        if (xPercent < 50) {
-          // Left side of ice
-          tooltipPosition.left = `calc(${xPercent}% + 30px)`;
-        } else {
-          // Right side of ice
-          tooltipPosition.right = `calc(${100 - xPercent}% + 30px)`;
-        }
-        
-        if (yPercent < 50) {
-          // Top half of ice
-          tooltipPosition.top = `calc(${yPercent}% + 30px)`;
-        } else {
-          // Bottom half of ice
-          tooltipPosition.bottom = `calc(${100 - yPercent}% + 30px)`;
-        }
-        
-        return (
-          <div 
-            className="absolute bg-black/80 backdrop-blur-sm text-white p-4 rounded-lg shadow-lg z-20 min-w-[200px] max-w-[300px]"
-            style={tooltipPosition}
-          >
-            <div className="flex items-center mb-2">
-              <span className="text-3xl mr-2">{hoveredPoint.emoji}</span>
-              <span className="text-lg font-bold">{details.type}</span>
-            </div>
-            <div className="space-y-1 text-sm">
-              <p>{details.period}</p>
-              <p>{details.time}</p>
-              <p>{details.coordinates}</p>
-              {details.details && (
-                <div className="mt-2 pt-2 border-t border-gray-600">
-                  <p className="font-semibold">Additional Details:</p>
-                  <p className="text-xs overflow-hidden text-ellipsis">{details.details}</p>
-                </div>
-              )}
-            </div>
-          </div>
-        );
-      })()}
+      {/* We're now using the AnimatePresence tooltip above */}
       
       {plays.length > 0 && (
         <div className="absolute bottom-4 right-4 flex flex-wrap gap-2 z-10">
