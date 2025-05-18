@@ -63,8 +63,8 @@ export function DemoLayout({ children, onGameSelect, title }: DemoLayoutProps) {
       {/* Main content - full width with minimal padding */}
       <main className="flex-1 overflow-auto relative bg-background" id="demo-content">
         {title && (
-          <div className="py-4 px-6 bg-background/80 backdrop-blur-sm border-b">
-            <h1 className="text-2xl font-semibold">{title}</h1>
+          <div className="py-4 px-6 pl-16 lg:pl-6 bg-background/80 backdrop-blur-sm border-b flex items-center">
+            <h1 className="text-2xl font-semibold truncate">{title}</h1>
           </div>
         )}
         <div className="p-4 lg:p-6">
