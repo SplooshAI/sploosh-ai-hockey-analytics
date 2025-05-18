@@ -12,7 +12,8 @@
 
 ## Hockey Data Visualization
 
-<data_visualization>
+### Visualization Guidelines
+
 - Use consistent color schemes for all hockey visualizations:
   - Home team: #0066cc (blue)
   - Away team: #cc0000 (red)
@@ -21,26 +22,25 @@
 - Ensure all visualizations are responsive and work on mobile devices
 - Provide appropriate tooltips for interactive elements
 - Use colorblind-friendly palettes for important data distinctions
-</data_visualization>
 
 ## Performance Standards
 
-<performance>
+### Performance Guidelines
+
 - All animations should maintain 60fps on modern devices
 - Page load time should be under 2 seconds for initial render
 - Lazy load large data sets and visualizations
 - Implement proper caching for API responses
 - Use pagination for large data sets
 - Optimize images and assets for web delivery
-</performance>
 
 ## Accessibility Requirements
 
-<accessibility>
+### Accessibility Guidelines
+
 - All interactive elements must be keyboard accessible
 - Maintain WCAG 2.1 AA compliance for all features
 - Provide appropriate alt text for all images and visualizations
 - Ensure sufficient color contrast (minimum 4.5:1 for normal text)
 - Support screen readers with proper ARIA attributes
 - Test all features with keyboard-only navigation
-</accessibility>

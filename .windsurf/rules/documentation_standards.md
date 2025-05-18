@@ -3,6 +3,7 @@
 ## README Maintenance
 
 ### Package.json Scripts
+
 - When adding or modifying scripts in `package.json`:
   1. Update the README's "Available Scripts" section to reflect the changes
   2. Document the purpose of each script
@@ -10,11 +11,13 @@
   4. Include any important notes or warnings for potentially destructive commands
 
 ### Prerequisites
+
 - List all required software and tools in the Prerequisites section
 - Include version requirements where applicable
 - Provide installation links for all dependencies
 
 ### Quick Start Guide
+
 - Keep the quick start guide up-to-date with the current setup process
 - Include all necessary steps to get started
 - Use code blocks with proper syntax highlighting
@@ -23,6 +26,7 @@
 ## Component Documentation
 
 <component_documentation>
+
 - Each React component should include:
   - JSDoc comments describing the component's purpose
   - Props interface with descriptions for each prop
@@ -30,6 +34,7 @@
   - Any important notes about dependencies or side effects
 
 Example:
+
 ```tsx
 /**
  * RinkControlPanel - Provides controls for hockey rink animation
@@ -53,11 +58,13 @@ interface RinkControlPanelProps {
   // ... other props
 }
 ```
+
 </component_documentation>
 
 ## API Documentation
 
 <api_documentation>
+
 - Document all API endpoints in a consistent format
 - Include:
   - Endpoint URL and HTTP method
@@ -66,9 +73,11 @@ interface RinkControlPanelProps {
   - Error codes and their meanings
   - Authentication requirements
   - Rate limiting information if applicable
+
 </api_documentation>
 
 ## Style Guidelines
+
 - Use consistent heading levels
 - Include blank lines around headings and lists
 - Use backticks for file names, directory names, and commands

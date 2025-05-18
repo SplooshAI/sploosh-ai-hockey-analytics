@@ -2,7 +2,8 @@
 
 These rules provide a template for project-specific configurations that can be customized for each repository.
 
-<project_structure>
+## Project Structure
+
 - Follow the Next.js app directory structure for the project
 - Place components in the appropriate directories:
   - `/components/features` for feature-specific components
@@ -12,9 +13,9 @@ These rules provide a template for project-specific configurations that can be c
 - Use `/lib` for utility functions and API clients
 - Store types in `/types` or alongside the components that use them
 - Place API routes in `/app/api` directory
-</project_structure>
 
-<code_style>
+## Code Style
+
 - Follow TypeScript best practices and use strict type checking
 - Use functional React components with hooks
 - Implement proper error handling for all async operations
@@ -24,44 +25,43 @@ These rules provide a template for project-specific configurations that can be c
   - camelCase for variables, functions, and instances
   - kebab-case for file names (except for React components)
   - UPPER_CASE for constants
-</code_style>
 
-<react_components>
+## React Components
+
 - Keep components focused on a single responsibility
 - Extract reusable logic into custom hooks
 - Use proper prop typing with TypeScript interfaces
 - Implement error boundaries for critical components
 - Optimize rendering performance with memoization where appropriate
 - Follow accessibility best practices in all components
-</react_components>
 
-<testing>
+## Testing
+
 - Write tests for new features and bug fixes
 - Use Jest for unit tests and React Testing Library for component tests
 - Ensure all tests pass before submitting a pull request
 - Maintain test coverage at or above 80%
 - Write meaningful test descriptions that explain the expected behavior
-</testing>
 
-<documentation>
+## Documentation
+
 - Update documentation when making changes to code
 - Document APIs, functions, and complex logic with JSDoc comments
 - Keep README files up-to-date with current project information
 - Include examples for complex components or utilities
 - Document any non-obvious behavior or edge cases
-</documentation>
 
-<deployment>
+## Deployment
+
 - Follow the project's deployment process via GitHub Actions
 - Test changes in development/staging environments before production
 - Document any deployment-specific considerations
 - Update environment variables documentation when adding new ones
-</deployment>
 
-<data_handling>
+## Data Handling
+
 - Implement proper data validation for all user inputs
 - Use appropriate caching strategies for API responses
 - Handle loading, error, and empty states for all data fetching
 - Implement proper pagination for large data sets
 - Follow data privacy best practices and handle sensitive information securely
-</data_handling>
