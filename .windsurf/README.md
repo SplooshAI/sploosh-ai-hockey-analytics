@@ -17,12 +17,14 @@ This directory contains configuration files for Windsurf, a code quality and sta
 ### Code Quality Rules
 
 #### TypeScript
+
 - No use of `any` type
 - Functions should have explicit return types
 - No unused variables
 - No console.log in production code
 
 #### React
+
 - Hooks must be called in the same order
 - No direct state mutations
 - Elements in iterators require keys
