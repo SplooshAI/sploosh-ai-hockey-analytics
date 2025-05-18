@@ -165,7 +165,7 @@ export default function AnimationDemo() {
   }
 
   return (
-    <DemoLayout onGameSelect={handleGameSelect} title="Animated Data Points Demo">
+    <DemoLayout onGameSelect={handleGameSelect} title="Hockey Animation Demo">
       {error && (
         <div className="p-4 mb-4 bg-destructive/10 border border-destructive text-destructive rounded-md">
           {error}

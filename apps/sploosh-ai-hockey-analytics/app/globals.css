@@ -2,6 +2,54 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Custom styles for range inputs to improve appearance on iOS devices */
+input[type="range"] {
+  -webkit-appearance: none; /* Override default iOS styles */
+  appearance: none;
+  height: 8px;
+  background: #e2e8f0; /* Light gray background */
+  border-radius: 5px;
+  outline: none;
+  padding: 0;
+  margin: 10px 0;
+}
+
+/* Style the thumb */
+input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #3b82f6; /* Blue thumb */
+  cursor: pointer;
+  border: none;
+  box-shadow: 0 0 2px rgba(0, 0, 0, 0.2);
+}
+
+input[type="range"]::-moz-range-thumb {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #3b82f6;
+  cursor: pointer;
+  border: none;
+  box-shadow: 0 0 2px rgba(0, 0, 0, 0.2);
+}
+
+/* Improve touch target size for mobile */
+@media (max-width: 640px) {
+  input[type="range"]::-webkit-slider-thumb {
+    width: 24px;
+    height: 24px;
+  }
+  
+  input[type="range"]::-moz-range-thumb {
+    width: 24px;
+    height: 24px;
+  }
+}
+
 body {
   font-family: Arial, Helvetica, sans-serif;
 }
