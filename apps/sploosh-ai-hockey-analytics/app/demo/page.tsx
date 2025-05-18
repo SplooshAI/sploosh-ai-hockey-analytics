@@ -123,7 +123,8 @@ const SAMPLE_PLAYS: NHLEdgePlay[] = [
 
 export default function AnimationDemo() {
   const [plays, setPlays] = useState<NHLEdgePlay[]>([])
-  const [animate, setAnimate] = useState(true)
+  // We need both animate state and setter for the animation controls
+  const [animate, setAnimate] = useState(true) // eslint-disable-line @typescript-eslint/no-unused-vars
   const [speed, setSpeed] = useState(1)
   const [showTrail, setShowTrail] = useState(true)
   const [trailLength, setTrailLength] = useState(5)

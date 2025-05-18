@@ -29,7 +29,7 @@ interface DataPoint {
   emoji: string
   persistent: boolean
   temporaryPersistent?: boolean // For points like hits that should persist until the next point
-  details?: any
+  details?: Record<string, unknown>
 }
 
 /**
@@ -54,8 +54,8 @@ export const AnimatedDataPoints: React.FC<AnimatedDataPointsProps> = ({
   const [currentIndex, setCurrentIndex] = useState(0)
   const [isPlaying, setIsPlaying] = useState(false)
   const [resetKey, setResetKey] = useState(0) // Add a reset key to force re-render of trails
-  // State for hover effects
-  const [hoveredId, setHoveredId] = useState<number | null>(null)
+  // State for hover effects - used in the component for tooltips
+  const [hoveredId, setHoveredId] = useState<number | null>(null) // eslint-disable-line @typescript-eslint/no-unused-vars
 
   // Map play types to colors (avoiding red)
   const getColorForPlayType = (typeCode: string): string => {
@@ -332,7 +332,8 @@ export const AnimatedDataPoints: React.FC<AnimatedDataPointsProps> = ({
   
   // We use tooltipInfo directly for the tooltip display
   
-  // Get emoji size based on point size
+  // Get emoji size based on point size - kept for future use
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const getEmojiSize = (size: number): number => {
     // Base size is proportional to the point size
     return size * 1.5;
@@ -371,7 +372,8 @@ export const AnimatedDataPoints: React.FC<AnimatedDataPointsProps> = ({
           const xPercent = (x / width) * 100;
           const yPercent = (y / height) * 100;
           
-          // Calculate scale based on hover state
+          // Calculate scale based on hover state - will be used for future animations
+          // eslint-disable-next-line @typescript-eslint/no-unused-vars
           const scale = isHovered ? 1.5 : 1;
           
           return (
@@ -413,8 +415,9 @@ export const AnimatedDataPoints: React.FC<AnimatedDataPointsProps> = ({
           const xPercent = (x / width) * 100;
           const yPercent = (y / height) * 100;
           
-          // Calculate scale based on active state
+          // Calculate scale based on active state - will be used for future animations
           const isActive = activeEmoji === currentPoint.id;
+          // eslint-disable-next-line @typescript-eslint/no-unused-vars
           const scale = isActive ? 1.8 : 1;
           
           return (
@@ -477,7 +480,7 @@ export const AnimatedDataPoints: React.FC<AnimatedDataPointsProps> = ({
               const yPercent = (y / height) * 100;
               
               // Calculate tooltip position based on quadrant
-              let tooltipStyle: React.CSSProperties = {
+              const tooltipStyle: React.CSSProperties = {
                 position: 'absolute',
                 backgroundColor: 'rgba(0, 0, 0, 0.85)',
                 backdropFilter: 'blur(4px)',
@@ -563,7 +566,7 @@ export const AnimatedDataPoints: React.FC<AnimatedDataPointsProps> = ({
         })}
         
         {/* Trail segments */}
-        {trailSegments.map((segment, idx) => (
+        {trailSegments.map((segment) => (
           <motion.line
             key={`trail-${segment.from.id}-${segment.to.id}-${resetKey}`}
             x1={transformCoordinates(segment.from.x, segment.from.y).x}
