@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { MainLayout } from '@/components/layouts/main-layout'
+import { DemoLayout } from '@/components/layouts/demo-layout'
 import { RinkControlPanel } from '@/components/features/hockey-rink/rink-control-panel/rink-control-panel'
 import type { NHLEdgePlay, NHLEdgePlayByPlay } from '@/lib/api/nhl-edge/types/nhl-edge'
 
@@ -165,38 +165,34 @@ export default function AnimationDemo() {
   }
 
   return (
-    <MainLayout onGameSelect={handleGameSelect}>
-      <div className="container mx-auto px-4 py-8">
-        <h1 className="text-3xl font-bold mb-6">Animated Data Points Demo</h1>
-        
-        {error && (
-          <div className="p-4 mb-6 bg-destructive/10 border border-destructive text-destructive rounded-md">
-            {error}
-          </div>
-        )}
-        
-        {loading && (
-          <div className="p-4 mb-6 bg-muted text-muted-foreground rounded-md">
-            Loading play data...
-          </div>
-        )}
-        
-        {/* Use the new RinkControlPanel component */}
-        {!loading && (
-          <RinkControlPanel
-            plays={plays}
-            speed={speed}
-            setSpeed={setSpeed}
-            showTrail={showTrail}
-            setShowTrail={setShowTrail}
-            trailLength={trailLength}
-            setTrailLength={setTrailLength}
-            centerIceLogo='/sploosh.ai/sploosh-ai-character-transparent.png'
-            centerIceLogoHeight={358}
-            centerIceLogoWidth={400}
-          />
-        )}
-      </div>
-    </MainLayout>
+    <DemoLayout onGameSelect={handleGameSelect} title="Animated Data Points Demo">
+      {error && (
+        <div className="p-4 mb-4 bg-destructive/10 border border-destructive text-destructive rounded-md">
+          {error}
+        </div>
+      )}
+      
+      {loading && (
+        <div className="p-4 mb-4 bg-muted text-muted-foreground rounded-md">
+          Loading play data...
+        </div>
+      )}
+      
+      {/* Use the new RinkControlPanel component */}
+      {!loading && (
+        <RinkControlPanel
+          plays={plays}
+          speed={speed}
+          setSpeed={setSpeed}
+          showTrail={showTrail}
+          setShowTrail={setShowTrail}
+          trailLength={trailLength}
+          setTrailLength={setTrailLength}
+          centerIceLogo='/sploosh.ai/sploosh-ai-character-transparent.png'
+          centerIceLogoHeight={358}
+          centerIceLogoWidth={400}
+        />
+      )}
+    </DemoLayout>
   )
 }
