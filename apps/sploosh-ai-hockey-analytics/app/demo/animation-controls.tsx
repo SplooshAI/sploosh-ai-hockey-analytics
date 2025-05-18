@@ -5,11 +5,19 @@ import React from 'react'
 interface AnimationControlsProps {
   speed: number
   setSpeed: (speed: number) => void
+  showTrail: boolean
+  setShowTrail: (show: boolean) => void
+  trailLength: number
+  setTrailLength: (length: number) => void
 }
 
 export const AnimationControls: React.FC<AnimationControlsProps> = ({
   speed,
-  setSpeed
+  setSpeed,
+  showTrail,
+  setShowTrail,
+  trailLength,
+  setTrailLength
 }) => {
   return (
     <div className="bg-card rounded-lg p-6 shadow-md">
@@ -32,6 +40,32 @@ export const AnimationControls: React.FC<AnimationControlsProps> = ({
             value={speed}
             onChange={(e) => setSpeed(parseFloat(e.target.value))}
             className="w-full"
+          />
+        </div>
+        
+        {/* Trail controls */}
+        <div className="space-y-2">
+          <div className="flex justify-between items-center">
+            <label htmlFor="trail-slider" className="text-sm font-medium">
+              Trail Length: {trailLength}
+            </label>
+            <button 
+              onClick={() => setShowTrail(!showTrail)}
+              className={`text-xs px-2 py-1 rounded ${showTrail ? 'bg-primary text-primary-foreground' : 'bg-secondary text-secondary-foreground'}`}
+            >
+              {showTrail ? 'Trail On' : 'Trail Off'}
+            </button>
+          </div>
+          <input
+            id="trail-slider"
+            type="range"
+            min={0}
+            max={10}
+            step={1}
+            value={trailLength}
+            onChange={(e) => setTrailLength(parseInt(e.target.value))}
+            className="w-full"
+            disabled={!showTrail}
           />
         </div>
         
