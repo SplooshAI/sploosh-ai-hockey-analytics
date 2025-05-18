@@ -15,6 +15,14 @@ interface AnimatedDataPointsProps {
   trailLength?: number
   lineColor?: string
   lineWidth?: number
+  // External control props
+  isPlaying?: boolean
+  onPlayPauseToggle?: (isPlaying: boolean) => void
+  onReset?: () => void
+  hideControls?: boolean // Whether to hide the built-in controls
+  currentIndexDisplay?: React.ReactNode // Custom display for current index
+  currentIndex?: number | null // External control of current index
+  onIndexChange?: (index: number | null) => void // Callback when index changes
 }
 
 interface DataPoint {
@@ -48,11 +56,58 @@ export const AnimatedDataPoints: React.FC<AnimatedDataPointsProps> = ({
   showTrail = true, // Default to showing trail
   trailLength = 2, // Default to 2 trail segments
   lineColor = 'rgba(255, 255, 255, 0.7)',
-  lineWidth = 3
+  lineWidth = 3,
+  // External control props with defaults for backward compatibility
+  isPlaying: externalIsPlaying,
+  onPlayPauseToggle,
+  onReset,
+  hideControls = false,
+  currentIndexDisplay,
+  currentIndex: externalCurrentIndex,
+  onIndexChange
 }) => {
   const [dataPoints, setDataPoints] = useState<DataPoint[]>([])
-  const [currentIndex, setCurrentIndex] = useState<number | null>(null)
-  const [isPlaying, setIsPlaying] = useState(false)
+  // Use internal state if no external control is provided for current index
+  const [internalCurrentIndex, setInternalCurrentIndex] = useState<number | null>(null)
+  // Use internal state if no external control is provided for playing state
+  const [internalIsPlaying, setInternalIsPlaying] = useState(false)
+  
+  // Use external state if provided, otherwise use internal state for current index
+  const currentIndex = externalCurrentIndex !== undefined ? externalCurrentIndex : internalCurrentIndex
+  
+  // Custom setter for currentIndex that handles both internal and external state
+  const setCurrentIndex = (indexOrUpdater: number | null | ((prev: number | null) => number | null)) => {
+    if (typeof indexOrUpdater === 'function') {
+      // Handle updater function
+      const updater = indexOrUpdater;
+      const newIndex = updater(currentIndex);
+      if (onIndexChange) {
+        onIndexChange(newIndex);
+      } else {
+        setInternalCurrentIndex(newIndex);
+      }
+    } else {
+      // Handle direct value
+      if (onIndexChange) {
+        onIndexChange(indexOrUpdater);
+      } else {
+        setInternalCurrentIndex(indexOrUpdater);
+      }
+    }
+  }
+  
+  // Use external state if provided, otherwise use internal state
+  const isPlaying = externalIsPlaying !== undefined ? externalIsPlaying : internalIsPlaying
+  
+  // Handle play/pause toggle with proper external/internal state management
+  const handlePlayPauseToggle = () => {
+    const newIsPlaying = !isPlaying
+    if (onPlayPauseToggle) {
+      onPlayPauseToggle(newIsPlaying)
+    } else {
+      setInternalIsPlaying(newIsPlaying)
+    }
+  }
   const [resetKey, setResetKey] = useState(0) // Add a reset key to force re-render of trails
   // State for hover effects - used in the component for tooltips
   const [hoveredId, setHoveredId] = useState<number | null>(null) // eslint-disable-line @typescript-eslint/no-unused-vars
@@ -182,7 +237,7 @@ export const AnimatedDataPoints: React.FC<AnimatedDataPointsProps> = ({
           }, 1000) // Wait a second before resetting
         } else {
           // Move to next point
-          setCurrentIndex(prev => (prev ?? 0) + 1)
+          setCurrentIndex((prev: number | null) => (prev !== null ? prev + 1 : 1))
         }
       }
     }, 16) // ~60fps for smooth animation
@@ -206,7 +261,18 @@ export const AnimatedDataPoints: React.FC<AnimatedDataPointsProps> = ({
   const handleReset = () => {
     setResetKey(prev => (prev ?? 0) + 1) // Increment reset key to force re-render
     setCurrentIndex(null)
-    setIsPlaying(false)
+    
+    // Handle internal/external state for play/pause
+    if (onPlayPauseToggle) {
+      onPlayPauseToggle(false)
+    } else {
+      setInternalIsPlaying(false)
+    }
+    
+    // Call external reset handler if provided
+    if (onReset) {
+      onReset()
+    }
   }
 
   // Get the current point only
@@ -770,12 +836,13 @@ export const AnimatedDataPoints: React.FC<AnimatedDataPointsProps> = ({
       
       {/* We're now using the AnimatePresence tooltip above */}
       
-      {plays.length > 0 && (
+      {/* Only show built-in controls if not hidden and there are plays */}
+      {plays.length > 0 && !hideControls && (
         <div className="absolute bottom-4 right-4 flex items-center gap-3 z-10">
           {/* Animation controls */}
           <div className="flex items-center gap-2">
             <button
-              onClick={() => setIsPlaying(!isPlaying)}
+              onClick={handlePlayPauseToggle}
               className="px-3 py-1 bg-primary text-primary-foreground rounded-md text-sm font-medium shadow-lg"
             >
               {isPlaying ? 'Pause' : 'Play'}
@@ -787,9 +854,11 @@ export const AnimatedDataPoints: React.FC<AnimatedDataPointsProps> = ({
             >
               Reset
             </button>
-            <div className="px-3 py-1 bg-background/80 backdrop-blur-sm text-foreground rounded-md text-sm font-medium shadow-lg">
-              {currentIndex !== null ? `${currentIndex + 1} / ${dataPoints.length}` : `0 / ${dataPoints.length}`}
-            </div>
+            {currentIndexDisplay || (
+              <div className="px-3 py-1 bg-background/80 backdrop-blur-sm text-foreground rounded-md text-sm font-medium shadow-lg">
+                {currentIndex !== null ? `${currentIndex + 1} / ${dataPoints.length}` : `0 / ${dataPoints.length}`}
+              </div>
+            )}
           </div>
         </div>
       )}
