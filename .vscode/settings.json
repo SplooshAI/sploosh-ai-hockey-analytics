@@ -13,5 +13,6 @@
     "xlink",
     "Zlpp",
     "Zmalski"
-  ]
+  ],
+  "json.schemaDownload.enable": false
 }

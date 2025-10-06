@@ -37,10 +37,12 @@ This project uses semantic versioning with automated version bumps and requires 
 ## Signed Commits
 
 All commits must be signed. This includes:
+
 - Manual commits from contributors
 - Automated commits from GitHub Actions
 
 The project uses GitHub's native commit verification:
+
 - Contributors should [set up GPG signing](https://docs.github.com/en/authentication/managing-commit-signature-verification/about-commit-signature-verification) for their local environment
 - GitHub Actions uses native GitHub commit verification
 
@@ -75,6 +77,7 @@ npm run docker:up:detach
 # Stop the container
 npm run docker:down
 ```
+
 ### Testing GitHub Actions Locally
 
 We recommend using [act](https://github.com/nektos/act) to test GitHub Actions workflows locally before pushing changes if you are developing on a Mac.
@@ -82,12 +85,13 @@ We recommend using [act](https://github.com/nektos/act) to test GitHub Actions w
 The application does not have to be running in Docker to test the workflows, but Docker Desktop must be running for the act tests to run and spin up the necessary containers.
 
 #### Prerequisites for macOS
+
 - Homebrew
 - Docker Desktop (must be running)
 
 #### Installation
 
-```
+```bash
 # Install act using Homebrew
 brew install act
 

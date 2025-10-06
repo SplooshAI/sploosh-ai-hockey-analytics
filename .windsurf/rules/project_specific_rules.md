@@ -1,3 +1,7 @@
+---
+trigger: always_on
+---
+
 # Project Rules for Sploosh AI Hockey Analytics
 
 ## Semantic Versioning

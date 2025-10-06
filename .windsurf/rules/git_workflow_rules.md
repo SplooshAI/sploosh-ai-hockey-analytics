@@ -1,3 +1,7 @@
+---
+trigger: always_on
+---
+
 # Git Workflow Rules
 
 These global rules define standardized Git workflow practices to be applied across all projects.

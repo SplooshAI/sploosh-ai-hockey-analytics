@@ -1,3 +1,7 @@
+---
+trigger: always_on
+---
+
 # Project Template Rules
 
 These rules provide a template for project-specific configurations that can be customized for each repository.

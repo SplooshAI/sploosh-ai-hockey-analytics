@@ -27,7 +27,7 @@
     "docker:nhl:prod:up:detach": "docker compose -f docker/sploosh-ai-hockey-analytics/production/docker-compose.yml -p sploosh-ai-hockey-analytics-prod up -d",
     "docker:nhl:prod:build": "GIT_HASH=$(git rev-parse HEAD) GIT_DATE=$(git log -1 --format=%aI) docker compose -f docker/sploosh-ai-hockey-analytics/production/docker-compose.yml -p sploosh-ai-hockey-analytics-prod build --no-cache && docker compose -f docker/sploosh-ai-hockey-analytics/production/docker-compose.yml -p sploosh-ai-hockey-analytics-prod up",
     "docker:nhl:prod:down": "docker compose -f docker/sploosh-ai-hockey-analytics/production/docker-compose.yml -p sploosh-ai-hockey-analytics-prod down -v",
-    "test:workflows": "chmod +x .github/test-workflows.sh && .github/test-workflows.sh",
+    "test:workflows": "chmod +x .github/test-workflows.sh && time .github/test-workflows.sh",
     "test:workflows:semantic": "act pull_request -e .github/test-data/pr-events/minor.json -W .github/workflows/semantic-pr-check.yml",
     "test:workflows:semantic:major": "act pull_request -e .github/test-data/pr-events/major.json -W .github/workflows/semantic-pr-check.yml",
     "test:workflows:semantic:minor": "act pull_request -e .github/test-data/pr-events/minor.json -W .github/workflows/semantic-pr-check.yml",
