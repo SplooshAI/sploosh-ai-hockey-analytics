@@ -24,6 +24,8 @@ export async function fetchNHLEdge<T>(endpoint: string, init?: RequestInit): Pro
             'Accept': 'application/json',
             ...init?.headers,
         },
+        cache: 'no-store', // Disable caching for live game data
+        next: { revalidate: 0 }, // Ensure Next.js doesn't cache
     })
 
     if (!response.ok) {
