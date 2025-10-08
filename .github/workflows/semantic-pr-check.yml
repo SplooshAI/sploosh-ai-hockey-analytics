@@ -8,9 +8,10 @@ on:
       - synchronize # New commits pushed
 
 permissions:
-  pull-requests: read
-  checks: read
-  statuses: read
+  contents: read
+  pull-requests: write
+  checks: write
+  statuses: write
 
 jobs:
   check-pr-format:
@@ -19,6 +20,7 @@ jobs:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
           
       - name: Check PR Title Format
         id: check-title
@@ -62,10 +64,15 @@ jobs:
           fi
 
       - name: Wait for Vercel Preview
-        if: ${{ !env.ACT }}  # Only run in GitHub Actions, not in local act
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
+          # Skip this step when running in act (local testing)
+          if [ -n "$ACT" ]; then
+            echo "Skipping Vercel check in local act environment"
+            exit 0
+          fi
+          
           echo "Waiting for Vercel deployment to complete..."
           while true; do
             # Debug output to see actual states
