@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect, useRef } from 'react'
+import { useRouter, useSearchParams } from 'next/navigation'
 import { MainLayout } from '@/components/layouts/main-layout'
 import { NHLEdgeHockeyRink } from '@/components/features/hockey-rink/nhl-edge-hockey-rink/nhl-edge-hockey-rink'
 import { GameHeader } from '@/components/features/game-header'
@@ -9,18 +10,21 @@ import { Check, Copy, Download } from 'lucide-react'
 import type { NHLEdgePlayByPlay } from '../lib/api/nhl-edge/types/nhl-edge'
 
 export default function Home() {
+  const router = useRouter()
+  const searchParams = useSearchParams()
   const [playByPlayData, setPlayByPlayData] = useState<NHLEdgePlayByPlay | null>(null)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [copied, setCopied] = useState(false)
   const [selectedGameId, setSelectedGameId] = useState<number | null>(null)
-  const refreshIntervalRef = useRef<NodeJS.Timeout | null>(null)
+  const [lastRefreshTime, setLastRefreshTime] = useState<Date | null>(null)
 
   const fetchPlayByPlayData = async (gameId: number) => {
     try {
       const response = await fetch(`/api/nhl/play-by-play?gameId=${gameId}`)
       const data = await response.json()
       setPlayByPlayData(data)
+      setLastRefreshTime(new Date())
       setError(null)
     } catch (err) {
       setError('Failed to fetch play-by-play data')
@@ -33,34 +37,37 @@ export default function Home() {
     setError(null)
     setSelectedGameId(gameId)
 
+    // Update URL with gameId query parameter
+    router.push(`?gameId=${gameId}`, { scroll: false })
+
     await fetchPlayByPlayData(gameId)
     setLoading(false)
   }
 
-  // Auto-refresh play-by-play data every 20 seconds when a game is selected
+  // Load game from URL on mount or when URL changes
   useEffect(() => {
-    let isMounted = true;
-    if (selectedGameId && playByPlayData) {
-      // Only auto-refresh for live games
-      const isLiveGame = playByPlayData.gameState === 'LIVE' || playByPlayData.gameState === 'CRIT'
-      
-      if (isLiveGame) {
-        refreshIntervalRef.current = setInterval(() => {
-          if (isMounted) {
-            fetchPlayByPlayData(selectedGameId);
-          }
-        }, 20000) // 20 seconds to match sidebar refresh
+    const gameIdParam = searchParams.get('gameId')
+    if (gameIdParam) {
+      const gameId = parseInt(gameIdParam, 10)
+      if (!isNaN(gameId) && gameId !== selectedGameId && !loading) {
+        setLoading(true)
+        setError(null)
+        setSelectedGameId(gameId)
+        fetchPlayByPlayData(gameId).finally(() => setLoading(false))
       }
     }
+  }, [searchParams, selectedGameId, loading])
 
-    return () => {
-      isMounted = false;
-      if (refreshIntervalRef.current) {
-        clearInterval(refreshIntervalRef.current);
-        refreshIntervalRef.current = null;
+  // Handle sidebar refresh - refresh selected game data
+  const handleSidebarRefresh = () => {
+    if (selectedGameId && playByPlayData) {
+      // Only refresh non-final games
+      const isFinalGame = playByPlayData.gameState === 'FINAL' || playByPlayData.gameState === 'OFF'
+      if (!isFinalGame) {
+        fetchPlayByPlayData(selectedGameId)
       }
     }
-  }, [selectedGameId, playByPlayData?.gameState])
+  }
 
   const handleCopyJson = () => {
     if (playByPlayData) {
@@ -88,7 +95,7 @@ export default function Home() {
   }
 
   return (
-    <MainLayout onGameSelect={handleGameSelect}>
+    <MainLayout onGameSelect={handleGameSelect} onSidebarRefresh={handleSidebarRefresh}>
       {/* Show playful rink only when no game is selected */}
       {!playByPlayData && !loading && !error && (
         <div className="text-center text-muted-foreground">
@@ -120,7 +127,7 @@ export default function Home() {
         <div className="space-y-6">
           {/* Game Header */}
           <div className="bg-card rounded-lg p-6 shadow-sm">
-            <GameHeader gameData={playByPlayData as any} />
+            <GameHeader gameData={playByPlayData as any} lastRefreshTime={lastRefreshTime} />
           </div>
 
           {/* Shot Chart Visualization */}
