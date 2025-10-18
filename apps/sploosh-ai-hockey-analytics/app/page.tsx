@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect, Suspense } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { MainLayout } from '@/components/layouts/main-layout'
 import { NHLEdgeHockeyRink } from '@/components/features/hockey-rink/nhl-edge-hockey-rink/nhl-edge-hockey-rink'
@@ -9,7 +9,7 @@ import { ShotChart } from '@/components/features/shot-chart/shot-chart'
 import { Check, Copy, Download } from 'lucide-react'
 import type { NHLEdgePlayByPlay } from '../lib/api/nhl-edge/types/nhl-edge'
 
-export default function Home() {
+function HomeContent() {
   const router = useRouter()
   const searchParams = useSearchParams()
   const [playByPlayData, setPlayByPlayData] = useState<NHLEdgePlayByPlay | null>(null)
@@ -127,6 +127,7 @@ export default function Home() {
         <div className="space-y-6">
           {/* Game Header */}
           <div className="bg-card rounded-lg p-6 shadow-sm">
+            {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
             <GameHeader gameData={playByPlayData as any} lastRefreshTime={lastRefreshTime} />
           </div>
 
@@ -174,5 +175,13 @@ export default function Home() {
         </div>
       )}
     </MainLayout>
+  )
+}
+
+export default function Home() {
+  return (
+    <Suspense fallback={<div className="flex items-center justify-center h-screen">Loading...</div>}>
+      <HomeContent />
+    </Suspense>
   )
 }
