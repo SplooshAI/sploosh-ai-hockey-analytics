@@ -71,16 +71,32 @@ export const ShotChart: React.FC<ShotChartProps> = ({
   // Parse all shots from game data
   const allShots = useMemo(() => parseShotsFromEdge(gameData), [gameData])
   
-  // Filter state
+  // Load preferences from localStorage
+  const loadPreferences = () => {
+    if (typeof window === 'undefined') return null
+    try {
+      const saved = localStorage.getItem('shotChartPreferences')
+      return saved ? JSON.parse(saved) : null
+    } catch (error) {
+      console.error('Failed to load shot chart preferences:', error)
+      return null
+    }
+  }
+
+  const savedPrefs = loadPreferences()
+  
+  // Filter state with localStorage defaults
   const [selectedTeam, setSelectedTeam] = useState<number | undefined>(undefined)
   const [selectedPeriod, setSelectedPeriod] = useState<number | undefined>(undefined)
-  const [selectedResults, setSelectedResults] = useState<Array<'goal' | 'shot-on-goal' | 'missed-shot' | 'blocked-shot'>>([
-    'goal',
-    'shot-on-goal',
-    'missed-shot',
-    'blocked-shot',
-  ])
-  const [markerScale, setMarkerScale] = useState(1.5) // Default to 1.5x larger
+  const [selectedResults, setSelectedResults] = useState<Array<'goal' | 'shot-on-goal' | 'missed-shot' | 'blocked-shot'>>(
+    savedPrefs?.selectedResults || [
+      'goal',
+      'shot-on-goal',
+      'missed-shot',
+      'blocked-shot',
+    ]
+  )
+  const [markerScale, setMarkerScale] = useState(savedPrefs?.markerScale || 1.5)
 
   // Tooltip state
   const [hoveredShot, setHoveredShot] = useState<{
@@ -147,6 +163,21 @@ export const ShotChart: React.FC<ShotChartProps> = ({
     setIsTooltipHovered(false)
     setHoveredShot(null)
   }
+
+  // Save preferences to localStorage whenever they change
+  React.useEffect(() => {
+    if (typeof window === 'undefined') return
+    
+    try {
+      const preferences = {
+        selectedResults,
+        markerScale,
+      }
+      localStorage.setItem('shotChartPreferences', JSON.stringify(preferences))
+    } catch (error) {
+      console.error('Failed to save shot chart preferences:', error)
+    }
+  }, [selectedResults, markerScale])
 
   // Cleanup timeout on unmount
   React.useEffect(() => {
