@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { MainLayout } from '@/components/layouts/main-layout'
 import { NHLEdgeHockeyRink } from '@/components/features/hockey-rink/nhl-edge-hockey-rink/nhl-edge-hockey-rink'
 import { ShotChart } from '@/components/features/shot-chart/shot-chart'
@@ -12,22 +12,50 @@ export default function Home() {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [copied, setCopied] = useState(false)
+  const [selectedGameId, setSelectedGameId] = useState<number | null>(null)
+  const refreshIntervalRef = useRef<NodeJS.Timeout | null>(null)
 
-  const handleGameSelect = async (gameId: number) => {
-    setLoading(true)
-    setError(null)
-
+  const fetchPlayByPlayData = async (gameId: number) => {
     try {
       const response = await fetch(`/api/nhl/play-by-play?gameId=${gameId}`)
       const data = await response.json()
       setPlayByPlayData(data)
+      setError(null)
     } catch (err) {
       setError('Failed to fetch play-by-play data')
       console.error('Error fetching play-by-play data:', err)
-    } finally {
-      setLoading(false)
     }
   }
+
+  const handleGameSelect = async (gameId: number) => {
+    setLoading(true)
+    setError(null)
+    setSelectedGameId(gameId)
+
+    await fetchPlayByPlayData(gameId)
+    setLoading(false)
+  }
+
+  // Auto-refresh play-by-play data every 20 seconds when a game is selected
+  useEffect(() => {
+    if (selectedGameId && playByPlayData) {
+      // Only auto-refresh for live games
+      const isLiveGame = playByPlayData.gameState === 'LIVE' || playByPlayData.gameState === 'CRIT'
+      
+      if (isLiveGame) {
+        refreshIntervalRef.current = setInterval(() => {
+          fetchPlayByPlayData(selectedGameId)
+        }, 20000) // 20 seconds to match sidebar refresh
+      }
+    }
+
+    return () => {
+      if (refreshIntervalRef.current) {
+        clearInterval(refreshIntervalRef.current)
+        refreshIntervalRef.current = null
+      }
+    }
+  }, [selectedGameId, playByPlayData?.gameState])
 
   const handleCopyJson = () => {
     if (playByPlayData) {
