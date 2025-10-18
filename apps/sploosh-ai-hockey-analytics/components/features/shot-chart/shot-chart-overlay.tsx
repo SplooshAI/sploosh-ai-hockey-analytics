@@ -44,11 +44,21 @@ const GoalMarker: React.FC<{
   color: string
   shot: ShotEvent
   tooltip?: string
-  onMouseEnter?: (e: React.MouseEvent) => void
+  onMouseEnter?: (e: React.MouseEvent | React.TouchEvent) => void
   onMouseLeave?: () => void
   scale?: number
 }> = ({ cx, cy, color, shot, tooltip, onMouseEnter, onMouseLeave, scale = 1 }) => {
   const [isHovered, setIsHovered] = React.useState(false)
+
+  const handleInteraction = (e: React.MouseEvent | React.TouchEvent) => {
+    setIsHovered(true)
+    onMouseEnter?.(e)
+  }
+
+  const handleInteractionEnd = () => {
+    setIsHovered(false)
+    onMouseLeave?.()
+  }
   
   // Create a 5-pointed star - scaled size (goals are largest)
   const points = []
@@ -96,12 +106,22 @@ const ShotMarker: React.FC<{
   color: string
   shot: ShotEvent
   tooltip?: string
-  onMouseEnter?: (e: React.MouseEvent) => void
+  onMouseEnter?: (e: React.MouseEvent | React.TouchEvent) => void
   onMouseLeave?: () => void
   scale?: number
 }> = ({ cx, cy, color, shot, tooltip, onMouseEnter, onMouseLeave, scale = 1 }) => {
   const [isHovered, setIsHovered] = React.useState(false)
   const baseRadius = 12 * scale
+
+  const handleInteraction = (e: React.MouseEvent | React.TouchEvent) => {
+    setIsHovered(true)
+    onMouseEnter?.(e)
+  }
+
+  const handleInteractionEnd = () => {
+    setIsHovered(false)
+    onMouseLeave?.()
+  }
   
   return (
     <circle
@@ -113,14 +133,10 @@ const ShotMarker: React.FC<{
       strokeWidth={isHovered ? 3 : 2}
       className="cursor-pointer transition-all duration-200"
       style={{ filter: isHovered ? `drop-shadow(0 0 6px ${color})` : 'none' }}
-      onMouseEnter={(e) => {
-        setIsHovered(true)
-        onMouseEnter?.(e)
-      }}
-      onMouseLeave={() => {
-        setIsHovered(false)
-        onMouseLeave?.()
-      }}
+      onMouseEnter={handleInteraction}
+      onMouseLeave={handleInteractionEnd}
+      onTouchStart={handleInteraction}
+      onTouchEnd={handleInteractionEnd}
     >
       {tooltip && <title>{tooltip}</title>}
     </circle>
@@ -136,26 +152,32 @@ const MissedShotMarker: React.FC<{
   color: string
   shot: ShotEvent
   tooltip?: string
-  onMouseEnter?: (e: React.MouseEvent) => void
+  onMouseEnter?: (e: React.MouseEvent | React.TouchEvent) => void
   onMouseLeave?: () => void
   scale?: number
 }> = ({ cx, cy, color, shot, tooltip, onMouseEnter, onMouseLeave, scale = 1 }) => {
   const [isHovered, setIsHovered] = React.useState(false)
   const baseSize = 11 * scale
   const size = isHovered ? baseSize * 1.27 : baseSize
+
+  const handleInteraction = (e: React.MouseEvent | React.TouchEvent) => {
+    setIsHovered(true)
+    onMouseEnter?.(e)
+  }
+
+  const handleInteractionEnd = () => {
+    setIsHovered(false)
+    onMouseLeave?.()
+  }
   
   return (
     <g 
       className="cursor-pointer transition-all duration-200"
       style={{ filter: isHovered ? `drop-shadow(0 0 4px ${color})` : 'none' }}
-      onMouseEnter={(e) => {
-        setIsHovered(true)
-        onMouseEnter?.(e)
-      }}
-      onMouseLeave={() => {
-        setIsHovered(false)
-        onMouseLeave?.()
-      }}
+      onMouseEnter={handleInteraction}
+      onMouseLeave={handleInteractionEnd}
+      onTouchStart={handleInteraction}
+      onTouchEnd={handleInteractionEnd}
     >
       <line
         x1={cx - size}
@@ -240,7 +262,12 @@ export const ShotChartOverlay: React.FC<ShotChartOverlayProps> = ({
           color,
           shot,
           tooltip,
-          onMouseEnter: (e: React.MouseEvent) => handleMouseEnter(shot, e.clientX, e.clientY),
+          onMouseEnter: (e: React.MouseEvent | React.TouchEvent) => {
+            // Get client coordinates from either mouse or touch event
+            const clientX = 'clientX' in e ? e.clientX : e.touches[0]?.clientX || 0
+            const clientY = 'clientY' in e ? e.clientY : e.touches[0]?.clientY || 0
+            handleMouseEnter(shot, clientX, clientY)
+          },
           onMouseLeave: handleMouseLeave,
           scale: markerScale,
         }
