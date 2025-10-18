@@ -87,7 +87,6 @@ export default function Home() {
         <div className="space-y-6">
           {/* Shot Chart Visualization */}
           <div className="bg-card rounded-lg p-6 shadow-sm">
-            <h2 className="text-2xl font-bold mb-4">Shot Chart</h2>
             <ShotChart 
               gameData={playByPlayData}
               showTeamNames={true}
