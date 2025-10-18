@@ -1,30 +1,71 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect, Suspense } from 'react'
+import { useRouter, useSearchParams } from 'next/navigation'
 import { MainLayout } from '@/components/layouts/main-layout'
 import { NHLEdgeHockeyRink } from '@/components/features/hockey-rink/nhl-edge-hockey-rink/nhl-edge-hockey-rink'
+import { GameHeader } from '@/components/features/game-header'
+import { ShotChart } from '@/components/features/shot-chart/shot-chart'
 import { Check, Copy, Download } from 'lucide-react'
 import type { NHLEdgePlayByPlay } from '../lib/api/nhl-edge/types/nhl-edge'
 
-export default function Home() {
+function HomeContent() {
+  const router = useRouter()
+  const searchParams = useSearchParams()
   const [playByPlayData, setPlayByPlayData] = useState<NHLEdgePlayByPlay | null>(null)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [copied, setCopied] = useState(false)
+  const [selectedGameId, setSelectedGameId] = useState<number | null>(null)
+  const [lastRefreshTime, setLastRefreshTime] = useState<Date | null>(null)
 
-  const handleGameSelect = async (gameId: number) => {
-    setLoading(true)
-    setError(null)
-
+  const fetchPlayByPlayData = async (gameId: number) => {
     try {
       const response = await fetch(`/api/nhl/play-by-play?gameId=${gameId}`)
       const data = await response.json()
       setPlayByPlayData(data)
+      setLastRefreshTime(new Date())
+      setError(null)
     } catch (err) {
       setError('Failed to fetch play-by-play data')
       console.error('Error fetching play-by-play data:', err)
-    } finally {
-      setLoading(false)
+    }
+  }
+
+  const handleGameSelect = async (gameId: number) => {
+    setLoading(true)
+    setError(null)
+    setSelectedGameId(gameId)
+
+    // Update URL with gameId query parameter
+    router.push(`?gameId=${gameId}`, { scroll: false })
+
+    await fetchPlayByPlayData(gameId)
+    setLoading(false)
+  }
+
+  // Load game from URL on mount or when URL changes
+  useEffect(() => {
+    const gameIdParam = searchParams.get('gameId')
+    if (gameIdParam) {
+      const gameId = parseInt(gameIdParam, 10)
+      if (!isNaN(gameId) && gameId !== selectedGameId && !loading) {
+        setLoading(true)
+        setError(null)
+        setSelectedGameId(gameId)
+        fetchPlayByPlayData(gameId).finally(() => setLoading(false))
+      }
+    }
+  }, [searchParams, selectedGameId, loading])
+
+  // Handle sidebar refresh - refresh selected game data
+  const handleSidebarRefresh = () => {
+    if (selectedGameId && playByPlayData) {
+      // Only refresh non-final games
+      const isFinalGame = playByPlayData.gameState === 'FINAL' || playByPlayData.gameState === 'OFF'
+      if (!isFinalGame) {
+        fetchPlayByPlayData(selectedGameId)
+      }
     }
   }
 
@@ -54,18 +95,21 @@ export default function Home() {
   }
 
   return (
-    <MainLayout onGameSelect={handleGameSelect}>
-      <div className="text-center text-muted-foreground">
-        <div className="flex justify-center items-center w-full h-full">
-          <NHLEdgeHockeyRink
-            className="w-full h-auto"
-            centerIceLogo='/sploosh.ai/sploosh-ai-character-transparent.png'
-            centerIceLogoHeight={358}
-            centerIceLogoWidth={400}
-            displayZamboni={true}
-          />
+    <MainLayout onGameSelect={handleGameSelect} onSidebarRefresh={handleSidebarRefresh}>
+      {/* Show playful rink only when no game is selected */}
+      {!playByPlayData && !loading && !error && (
+        <div className="text-center text-muted-foreground">
+          <div className="flex justify-center items-center w-full h-full">
+            <NHLEdgeHockeyRink
+              className="w-full h-auto"
+              centerIceLogo='/sploosh.ai/sploosh-ai-character-transparent.png'
+              centerIceLogoHeight={358}
+              centerIceLogoWidth={400}
+              displayZamboni={true}
+            />
+          </div>
         </div>
-      </div>
+      )}
 
       {loading && (
         <div className="text-center text-muted-foreground">
@@ -80,32 +124,64 @@ export default function Home() {
       )}
 
       {playByPlayData && (
-        <div className="overflow-auto relative">
-          <div className="absolute top-2 right-2 flex gap-2">
-            <button
-              onClick={handleDownloadJson}
-              className="p-2 rounded-md hover:bg-background/10 transition-colors"
-              title="Download JSON"
-            >
-              <Download className="h-4 w-4" />
-            </button>
-            <button
-              onClick={handleCopyJson}
-              className="p-2 rounded-md hover:bg-background/10 transition-colors"
-              title="Copy JSON"
-            >
-              {copied ? (
-                <Check className="h-4 w-4 text-green-500" />
-              ) : (
-                <Copy className="h-4 w-4" />
-              )}
-            </button>
+        <div className="space-y-6">
+          {/* Game Header */}
+          <div className="bg-card rounded-lg p-6 shadow-sm">
+            {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
+            <GameHeader gameData={playByPlayData as any} lastRefreshTime={lastRefreshTime} />
           </div>
-          <pre className="text-xs p-4 bg-muted rounded-lg">
-            {JSON.stringify(playByPlayData, null, 2)}
-          </pre>
+
+          {/* Shot Chart Visualization */}
+          <div className="bg-card rounded-lg p-6 shadow-sm">
+            <ShotChart 
+              gameData={playByPlayData}
+              showTeamNames={true}
+              showCenterLogo={true}
+              centerIceLogo='/sploosh.ai/sploosh-ai-character-transparent.png'
+            />
+          </div>
+
+          {/* Raw JSON Data (Collapsible) */}
+          <details className="bg-card rounded-lg p-6 shadow-sm">
+            <summary className="cursor-pointer font-semibold text-lg mb-4">
+              Raw Game Data (JSON)
+            </summary>
+            <div className="overflow-auto relative">
+              <div className="absolute top-2 right-2 flex gap-2">
+                <button
+                  onClick={handleDownloadJson}
+                  className="p-2 rounded-md hover:bg-background/10 transition-colors"
+                  title="Download JSON"
+                >
+                  <Download className="h-4 w-4" />
+                </button>
+                <button
+                  onClick={handleCopyJson}
+                  className="p-2 rounded-md hover:bg-background/10 transition-colors"
+                  title="Copy JSON"
+                >
+                  {copied ? (
+                    <Check className="h-4 w-4 text-green-500" />
+                  ) : (
+                    <Copy className="h-4 w-4" />
+                  )}
+                </button>
+              </div>
+              <pre className="text-xs p-4 bg-muted rounded-lg">
+                {JSON.stringify(playByPlayData, null, 2)}
+              </pre>
+            </div>
+          </details>
         </div>
       )}
     </MainLayout>
+  )
+}
+
+export default function Home() {
+  return (
+    <Suspense fallback={<div className="flex items-center justify-center h-screen">Loading...</div>}>
+      <HomeContent />
+    </Suspense>
   )
 }

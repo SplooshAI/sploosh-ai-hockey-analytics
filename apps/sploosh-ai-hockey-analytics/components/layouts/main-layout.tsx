@@ -8,9 +8,10 @@ import { SITE } from "@/lib/constants"
 interface MainLayoutProps {
     children: ReactNode
     onGameSelect?: (gameId: number) => void
+    onSidebarRefresh?: () => void
 }
 
-export function MainLayout({ children, onGameSelect }: MainLayoutProps) {
+export function MainLayout({ children, onGameSelect, onSidebarRefresh }: MainLayoutProps) {
     const [isSidebarOpen, setIsSidebarOpen] = useState(false)
     const [hasMounted, setHasMounted] = useState(false)
 
@@ -57,14 +58,11 @@ export function MainLayout({ children, onGameSelect }: MainLayoutProps) {
                 ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}
                 z-40 w-64
             `}>
-                <Sidebar onClose={() => setIsSidebarOpen(false)} onGameSelect={onGameSelect} />
+                <Sidebar onClose={() => setIsSidebarOpen(false)} onGameSelect={onGameSelect} onRefresh={onSidebarRefresh} />
             </div>
 
             {/* Main content */}
             <main className="flex-1 overflow-auto relative" id="main-content">
-                <div className="h-16 flex items-center justify-center px-4 lg:px-6 bg-background/80 backdrop-blur-sm">
-                    <h1 className="text-xl font-semibold">{SITE.name}</h1>
-                </div>
                 <div className="p-4 lg:p-6">
                     {children}
                 </div>

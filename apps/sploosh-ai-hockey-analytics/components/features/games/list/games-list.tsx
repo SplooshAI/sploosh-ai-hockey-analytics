@@ -14,9 +14,10 @@ interface GamesListProps {
     date: Date
     onGameSelect?: (gameId: number) => void
     onClose?: () => void
+    onRefresh?: () => void
 }
 
-export function GamesList({ date, onGameSelect, onClose }: GamesListProps) {
+export function GamesList({ date, onGameSelect, onClose, onRefresh }: GamesListProps) {
     const [games, setGames] = useState<NHLEdgeGame[]>([])
     const [isLoading, setIsLoading] = useState(true)
     const [error, setError] = useState<string | null>(null)
@@ -86,6 +87,8 @@ export function GamesList({ date, onGameSelect, onClose }: GamesListProps) {
             // Update the current date ref after successful fetch
             currentDateRef.current = currentFormattedDate
             setLastRefreshTime(new Date())
+            // Notify parent of refresh
+            onRefresh?.()
             // Reset retry count on successful fetch
             setRetryCount(0)
 
