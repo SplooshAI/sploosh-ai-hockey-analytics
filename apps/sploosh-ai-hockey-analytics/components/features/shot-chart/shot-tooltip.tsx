@@ -42,16 +42,63 @@ export const ShotTooltip: React.FC<ShotTooltipProps> = ({
     ? 'bg-blue-500'
     : 'bg-gray-500'
 
+  // Calculate smart positioning for mobile
+  const [tooltipStyle, setTooltipStyle] = React.useState<React.CSSProperties>({})
+  const tooltipRef = React.useRef<HTMLDivElement>(null)
+
+  React.useEffect(() => {
+    if (!tooltipRef.current) return
+
+    const tooltip = tooltipRef.current
+    const tooltipRect = tooltip.getBoundingClientRect()
+    const viewportWidth = window.innerWidth
+    const viewportHeight = window.innerHeight
+    const isMobile = viewportWidth < 768
+
+    let finalX = x
+    let finalY = y
+    let transform = 'translate(-50%, -120%)'
+
+    if (isMobile) {
+      // On mobile, center tooltip at bottom of screen
+      finalX = viewportWidth / 2
+      finalY = viewportHeight - 20
+      transform = 'translate(-50%, -100%)'
+    } else {
+      // Desktop: smart positioning to keep in viewport
+      const tooltipWidth = tooltipRect.width
+      const tooltipHeight = tooltipRect.height
+
+      // Check if tooltip would go off right edge
+      if (x + tooltipWidth / 2 > viewportWidth - 20) {
+        finalX = viewportWidth - tooltipWidth / 2 - 20
+      }
+      // Check if tooltip would go off left edge
+      if (x - tooltipWidth / 2 < 20) {
+        finalX = tooltipWidth / 2 + 20
+      }
+
+      // Check if tooltip would go off top edge
+      if (y - tooltipHeight - 20 < 20) {
+        // Position below the marker instead
+        transform = 'translate(-50%, 20%)'
+      }
+    }
+
+    setTooltipStyle({
+      left: `${finalX}px`,
+      top: `${finalY}px`,
+      transform,
+    })
+  }, [x, y, visible])
+
   return (
     <div
-      className="fixed z-50 transition-opacity duration-200"
-      style={{
-        left: `${x}px`,
-        top: `${y}px`,
-        transform: 'translate(-50%, -120%)',
-      }}
+      ref={tooltipRef}
+      className="fixed z-50 transition-all duration-200"
+      style={tooltipStyle}
     >
-      <div className="bg-background/95 backdrop-blur-sm border-2 border-border rounded-lg shadow-2xl p-3 min-w-[280px] max-w-[320px]">
+      <div className="bg-background/95 backdrop-blur-sm border-2 border-border rounded-lg shadow-2xl p-3 min-w-[280px] max-w-[calc(100vw-40px)] md:max-w-[320px]">
         {/* Header with Result Type */}
         <div className={`${resultColor} text-white px-3 py-1.5 rounded-md mb-2 font-bold text-sm flex items-center gap-2`}>
           <span className="text-lg">{resultText.split(' ')[0]}</span>
