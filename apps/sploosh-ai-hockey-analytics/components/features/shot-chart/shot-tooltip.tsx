@@ -26,7 +26,9 @@ export const ShotTooltip: React.FC<ShotTooltipProps> = ({
   x,
   y,
 }) => {
-  if (!visible) return null
+  // Calculate smart positioning for mobile - hooks must be called before any returns
+  const [tooltipStyle, setTooltipStyle] = React.useState<React.CSSProperties>({})
+  const tooltipRef = React.useRef<HTMLDivElement>(null)
 
   const resultText = shot.result === 'goal' 
     ? '⭐ GOAL' 
@@ -41,10 +43,6 @@ export const ShotTooltip: React.FC<ShotTooltipProps> = ({
     : shot.result === 'shot-on-goal'
     ? 'bg-blue-500'
     : 'bg-gray-500'
-
-  // Calculate smart positioning for mobile
-  const [tooltipStyle, setTooltipStyle] = React.useState<React.CSSProperties>({})
-  const tooltipRef = React.useRef<HTMLDivElement>(null)
 
   React.useEffect(() => {
     if (!tooltipRef.current) return
@@ -107,6 +105,8 @@ export const ShotTooltip: React.FC<ShotTooltipProps> = ({
       window.removeEventListener('orientationchange', calculatePosition)
     }
   }, [x, y, visible])
+
+  if (!visible) return null
 
   return (
     <div
