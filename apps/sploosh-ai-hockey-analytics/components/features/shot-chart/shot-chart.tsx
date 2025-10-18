@@ -168,7 +168,7 @@ export const ShotChart: React.FC<ShotChartProps> = ({
   const handleClearFilters = () => {
     setSelectedTeam(undefined)
     setSelectedPeriod(undefined)
-    setSelectedResults(['goal', 'shot-on-goal', 'missed-shot', 'blocked-shot'])
+    setSelectedResults([]) // Clear all shot type selections
     setMarkerScale(1.5)
     
     // Clear from localStorage
