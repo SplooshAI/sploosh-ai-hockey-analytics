@@ -156,6 +156,7 @@ export function filterShotsByResult(
   shots: ShotEvent[], 
   results?: Array<'goal' | 'shot-on-goal' | 'missed-shot' | 'blocked-shot'>
 ): ShotEvent[] {
-  if (!results || results.length === 0) return shots
+  if (!results) return shots
+  if (results.length === 0) return [] // No filters selected = no shots shown
   return shots.filter(shot => results.includes(shot.result))
 }
