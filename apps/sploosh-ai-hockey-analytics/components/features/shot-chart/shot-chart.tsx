@@ -80,6 +80,7 @@ export const ShotChart: React.FC<ShotChartProps> = ({
     'missed-shot',
     'blocked-shot',
   ])
+  const [markerScale, setMarkerScale] = useState(1.5) // Default to 1.5x larger
 
   // Tooltip state
   const [hoveredShot, setHoveredShot] = useState<{
@@ -312,7 +313,8 @@ export const ShotChart: React.FC<ShotChartProps> = ({
       </div>
 
       {/* Filters */}
-      <div className="flex flex-wrap gap-3 sm:gap-4 items-center justify-center bg-muted/50 p-3 sm:p-4 rounded-lg text-sm sm:text-base">
+      <div className="flex flex-wrap gap-3 sm:gap-4 items-center justify-between bg-muted/50 p-3 sm:p-4 rounded-lg text-sm sm:text-base">
+        <div className="flex flex-wrap gap-3 sm:gap-4 items-center justify-center flex-1">
         {/* Team Filter */}
         <div className="flex gap-2 items-center">
           <label className="text-sm font-medium">Team:</label>
@@ -393,6 +395,26 @@ export const ShotChart: React.FC<ShotChartProps> = ({
             </label>
           </div>
         </div>
+        </div>
+
+        {/* Marker Size Slider */}
+        <div className="flex items-center gap-3 min-w-[200px]">
+          <label className="text-sm font-medium whitespace-nowrap">Marker Size:</label>
+          <div className="flex items-center gap-2 flex-1">
+            <input
+              type="range"
+              min="0.5"
+              max="3"
+              step="0.1"
+              value={markerScale}
+              onChange={(e) => setMarkerScale(Number(e.target.value))}
+              className="flex-1 h-2 bg-muted rounded-lg appearance-none cursor-pointer accent-primary"
+            />
+            <span className="text-xs text-muted-foreground w-8 text-right">
+              {markerScale.toFixed(1)}x
+            </span>
+          </div>
+        </div>
       </div>
 
       {/* Shot Chart Visualization */}
@@ -417,6 +439,7 @@ export const ShotChart: React.FC<ShotChartProps> = ({
               gameData={gameData}
               showTooltips={true}
               onShotHover={handleShotHover}
+              markerScale={markerScale}
             />
           </svg>
         </div>

@@ -31,6 +31,8 @@ interface ShotChartOverlayProps {
   className?: string
   /** Callback when shot is hovered */
   onShotHover?: (shot: ShotEvent | null, clientX?: number, clientY?: number) => void
+  /** Scale factor for marker sizes */
+  markerScale?: number
 }
 
 /**
@@ -44,13 +46,16 @@ const GoalMarker: React.FC<{
   tooltip?: string
   onMouseEnter?: (e: React.MouseEvent) => void
   onMouseLeave?: () => void
-}> = ({ cx, cy, color, shot, tooltip, onMouseEnter, onMouseLeave }) => {
+  scale?: number
+}> = ({ cx, cy, color, shot, tooltip, onMouseEnter, onMouseLeave, scale = 1 }) => {
   const [isHovered, setIsHovered] = React.useState(false)
   
-  // Create a 5-pointed star - larger base size
+  // Create a 5-pointed star - scaled size (goals are largest)
   const points = []
-  const outerRadius = isHovered ? 20 : 16
-  const innerRadius = isHovered ? 9 : 7
+  const baseOuter = 20 * scale // Goals get 1.25x multiplier
+  const baseInner = 9 * scale
+  const outerRadius = isHovered ? baseOuter * 1.25 : baseOuter
+  const innerRadius = isHovered ? baseInner * 1.25 : baseInner
   
   for (let i = 0; i < 10; i++) {
     const radius = i % 2 === 0 ? outerRadius : innerRadius
@@ -93,14 +98,16 @@ const ShotMarker: React.FC<{
   tooltip?: string
   onMouseEnter?: (e: React.MouseEvent) => void
   onMouseLeave?: () => void
-}> = ({ cx, cy, color, shot, tooltip, onMouseEnter, onMouseLeave }) => {
+  scale?: number
+}> = ({ cx, cy, color, shot, tooltip, onMouseEnter, onMouseLeave, scale = 1 }) => {
   const [isHovered, setIsHovered] = React.useState(false)
+  const baseRadius = 12 * scale
   
   return (
     <circle
       cx={cx}
       cy={cy}
-      r={isHovered ? 12 : 10}
+      r={isHovered ? baseRadius * 1.2 : baseRadius}
       fill={color}
       stroke="#FFFFFF"
       strokeWidth={isHovered ? 3 : 2}
@@ -131,9 +138,11 @@ const MissedShotMarker: React.FC<{
   tooltip?: string
   onMouseEnter?: (e: React.MouseEvent) => void
   onMouseLeave?: () => void
-}> = ({ cx, cy, color, shot, tooltip, onMouseEnter, onMouseLeave }) => {
+  scale?: number
+}> = ({ cx, cy, color, shot, tooltip, onMouseEnter, onMouseLeave, scale = 1 }) => {
   const [isHovered, setIsHovered] = React.useState(false)
-  const size = isHovered ? 14 : 11
+  const baseSize = 11 * scale
+  const size = isHovered ? baseSize * 1.27 : baseSize
   
   return (
     <g 
@@ -178,6 +187,7 @@ export const ShotChartOverlay: React.FC<ShotChartOverlayProps> = ({
   showTooltips = true,
   className = '',
   onShotHover,
+  markerScale = 1,
 }) => {
   const handleMouseEnter = (shot: ShotEvent, clientX: number, clientY: number) => {
     if (!showTooltips || !onShotHover) return
@@ -232,6 +242,7 @@ export const ShotChartOverlay: React.FC<ShotChartOverlayProps> = ({
           tooltip,
           onMouseEnter: (e: React.MouseEvent) => handleMouseEnter(shot, e.clientX, e.clientY),
           onMouseLeave: handleMouseLeave,
+          scale: markerScale,
         }
 
         if (shot.result === 'goal') {
