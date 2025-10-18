@@ -3,6 +3,7 @@
 import { useState, useEffect, useRef } from 'react'
 import { MainLayout } from '@/components/layouts/main-layout'
 import { NHLEdgeHockeyRink } from '@/components/features/hockey-rink/nhl-edge-hockey-rink/nhl-edge-hockey-rink'
+import { GameHeader } from '@/components/features/game-header'
 import { ShotChart } from '@/components/features/shot-chart/shot-chart'
 import { Check, Copy, Download } from 'lucide-react'
 import type { NHLEdgePlayByPlay } from '../lib/api/nhl-edge/types/nhl-edge'
@@ -38,21 +39,25 @@ export default function Home() {
 
   // Auto-refresh play-by-play data every 20 seconds when a game is selected
   useEffect(() => {
+    let isMounted = true;
     if (selectedGameId && playByPlayData) {
       // Only auto-refresh for live games
       const isLiveGame = playByPlayData.gameState === 'LIVE' || playByPlayData.gameState === 'CRIT'
       
       if (isLiveGame) {
         refreshIntervalRef.current = setInterval(() => {
-          fetchPlayByPlayData(selectedGameId)
+          if (isMounted) {
+            fetchPlayByPlayData(selectedGameId);
+          }
         }, 20000) // 20 seconds to match sidebar refresh
       }
     }
 
     return () => {
+      isMounted = false;
       if (refreshIntervalRef.current) {
-        clearInterval(refreshIntervalRef.current)
-        refreshIntervalRef.current = null
+        clearInterval(refreshIntervalRef.current);
+        refreshIntervalRef.current = null;
       }
     }
   }, [selectedGameId, playByPlayData?.gameState])
@@ -113,6 +118,11 @@ export default function Home() {
 
       {playByPlayData && (
         <div className="space-y-6">
+          {/* Game Header */}
+          <div className="bg-card rounded-lg p-6 shadow-sm">
+            <GameHeader gameData={playByPlayData as any} />
+          </div>
+
           {/* Shot Chart Visualization */}
           <div className="bg-card rounded-lg p-6 shadow-sm">
             <ShotChart 
