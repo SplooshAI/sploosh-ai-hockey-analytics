@@ -89,14 +89,14 @@ export const ShotChart: React.FC<ShotChartProps> = ({
   const [selectedTeam, setSelectedTeam] = useState<number | undefined>(undefined)
   const [selectedPeriod, setSelectedPeriod] = useState<number | undefined>(undefined)
   const [selectedResults, setSelectedResults] = useState<Array<'goal' | 'shot-on-goal' | 'missed-shot' | 'blocked-shot'>>(
-    savedPrefs?.selectedResults || [
+    savedPrefs?.selectedResults ?? [
       'goal',
       'shot-on-goal',
       'missed-shot',
       'blocked-shot',
     ]
   )
-  const [markerScale, setMarkerScale] = useState(savedPrefs?.markerScale || 1.5)
+  const [markerScale, setMarkerScale] = useState(savedPrefs?.markerScale ?? 1.5)
 
   // Tooltip state
   const [hoveredShot, setHoveredShot] = useState<{
@@ -162,6 +162,23 @@ export const ShotChart: React.FC<ShotChartProps> = ({
   const handleTooltipMouseLeave = () => {
     setIsTooltipHovered(false)
     setHoveredShot(null)
+  }
+
+  // Reset filters to defaults
+  const handleResetFilters = () => {
+    setSelectedTeam(undefined)
+    setSelectedPeriod(undefined)
+    setSelectedResults(['goal', 'shot-on-goal', 'missed-shot', 'blocked-shot'])
+    setMarkerScale(1.5)
+    
+    // Clear from localStorage
+    if (typeof window !== 'undefined') {
+      try {
+        localStorage.removeItem('shotChartPreferences')
+      } catch (error) {
+        console.error('Failed to clear shot chart preferences:', error)
+      }
+    }
   }
 
   // Save preferences to localStorage whenever they change
@@ -446,6 +463,15 @@ export const ShotChart: React.FC<ShotChartProps> = ({
             </span>
           </div>
         </div>
+
+        {/* Reset Button */}
+        <button
+          onClick={handleResetFilters}
+          className="px-3 py-1.5 text-sm font-medium rounded-md border border-border hover:bg-muted transition-colors whitespace-nowrap"
+          title="Reset all filters to defaults"
+        >
+          Reset Filters
+        </button>
       </div>
 
       {/* Shot Chart Visualization */}
