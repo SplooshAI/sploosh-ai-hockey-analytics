@@ -1,6 +1,6 @@
 import Image from 'next/image'
 import { parseISO } from 'date-fns'
-import { formatInTimeZone } from 'date-fns-tz'
+import { format, formatInTimeZone } from 'date-fns-tz'
 
 // Extended game data type that includes fields from both play-by-play and game center APIs
 interface GameHeaderData {
@@ -49,6 +49,7 @@ interface GameHeaderData {
 interface GameHeaderProps {
   gameData: GameHeaderData
   className?: string
+  lastRefreshTime?: Date | null
 }
 
 /**
@@ -56,9 +57,10 @@ interface GameHeaderProps {
  * Displays team logos, scores, records, SOG, game state, and venue
  * Matches the sidebar game card styling
  */
-export const GameHeader: React.FC<GameHeaderProps> = ({ gameData, className = '' }) => {
+export const GameHeader: React.FC<GameHeaderProps> = ({ gameData, className = '', lastRefreshTime }) => {
   const awayTeamName = gameData.awayTeam?.abbrev || 'Away'
   const homeTeamName = gameData.homeTeam?.abbrev || 'Home'
+  const timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone
 
   // Helper function to get the OT period display (OT, 2OT, 3OT, etc.)
   const getOTPeriodDisplay = (periodNumber: number) => {
@@ -245,6 +247,11 @@ export const GameHeader: React.FC<GameHeaderProps> = ({ gameData, className = ''
         <div className="text-xs text-muted-foreground">
           {gameData.venue?.default || 'Unknown Venue'}
         </div>
+        {lastRefreshTime && (
+          <div className="text-xs text-muted-foreground mt-1">
+            Last updated @ {format(lastRefreshTime, 'h:mm:ss a zzz', { timeZone })}
+          </div>
+        )}
       </div>
     </div>
   )
