@@ -29,6 +29,7 @@ import { ShotTooltip } from './shot-tooltip'
 
 interface ShotChartProps {
   /** Complete NHL EDGE game data */
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   gameData: any
   /** Optional className for the container */
   className?: string
