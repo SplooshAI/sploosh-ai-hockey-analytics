@@ -10,9 +10,10 @@ import { startOfDay } from 'date-fns'
 interface SidebarProps {
     onClose?: () => void
     onGameSelect?: (gameId: number) => void
+    onRefresh?: () => void
 }
 
-export default function Sidebar({ onClose, onGameSelect }: SidebarProps) {
+export default function Sidebar({ onClose, onGameSelect, onRefresh }: SidebarProps) {
     const [selectedDate, setSelectedDate] = useState<Date>(() => {
         const now = new Date()
         return startOfDay(new Date(now.getFullYear(), now.getMonth(), now.getDate()))
@@ -46,6 +47,7 @@ export default function Sidebar({ onClose, onGameSelect }: SidebarProps) {
                         date={selectedDate}
                         onGameSelect={onGameSelect}
                         onClose={onClose}
+                        onRefresh={onRefresh}
                     />
                     <div className="pt-4 mt-4 border-t border-border/50">
                         <Version />
