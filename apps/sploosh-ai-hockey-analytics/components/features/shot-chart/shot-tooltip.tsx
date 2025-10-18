@@ -49,47 +49,63 @@ export const ShotTooltip: React.FC<ShotTooltipProps> = ({
   React.useEffect(() => {
     if (!tooltipRef.current) return
 
-    const tooltip = tooltipRef.current
-    const tooltipRect = tooltip.getBoundingClientRect()
-    const viewportWidth = window.innerWidth
-    const viewportHeight = window.innerHeight
-    const isMobile = viewportWidth < 768
+    const calculatePosition = () => {
+      if (!tooltipRef.current) return
 
-    let finalX = x
-    let finalY = y
-    let transform = 'translate(-50%, -120%)'
+      const tooltip = tooltipRef.current
+      const tooltipRect = tooltip.getBoundingClientRect()
+      const viewportWidth = window.innerWidth
+      const viewportHeight = window.innerHeight
+      const isMobile = viewportWidth < 768
 
-    if (isMobile) {
-      // On mobile, center tooltip at bottom of screen
-      finalX = viewportWidth / 2
-      finalY = viewportHeight - 20
-      transform = 'translate(-50%, -100%)'
-    } else {
-      // Desktop: smart positioning to keep in viewport
-      const tooltipWidth = tooltipRect.width
-      const tooltipHeight = tooltipRect.height
+      let finalX = x
+      let finalY = y
+      let transform = 'translate(-50%, -120%)'
 
-      // Check if tooltip would go off right edge
-      if (x + tooltipWidth / 2 > viewportWidth - 20) {
-        finalX = viewportWidth - tooltipWidth / 2 - 20
+      if (isMobile) {
+        // On mobile, center tooltip at bottom of screen
+        finalX = viewportWidth / 2
+        finalY = viewportHeight - 20
+        transform = 'translate(-50%, -100%)'
+      } else {
+        // Desktop: smart positioning to keep in viewport
+        const tooltipWidth = tooltipRect.width
+        const tooltipHeight = tooltipRect.height
+
+        // Check if tooltip would go off right edge
+        if (x + tooltipWidth / 2 > viewportWidth - 20) {
+          finalX = viewportWidth - tooltipWidth / 2 - 20
+        }
+        // Check if tooltip would go off left edge
+        if (x - tooltipWidth / 2 < 20) {
+          finalX = tooltipWidth / 2 + 20
+        }
+
+        // Check if tooltip would go off top edge
+        if (y - tooltipHeight - 20 < 20) {
+          // Position below the marker instead
+          transform = 'translate(-50%, 20%)'
+        }
       }
-      // Check if tooltip would go off left edge
-      if (x - tooltipWidth / 2 < 20) {
-        finalX = tooltipWidth / 2 + 20
-      }
 
-      // Check if tooltip would go off top edge
-      if (y - tooltipHeight - 20 < 20) {
-        // Position below the marker instead
-        transform = 'translate(-50%, 20%)'
-      }
+      setTooltipStyle({
+        left: `${finalX}px`,
+        top: `${finalY}px`,
+        transform,
+      })
     }
 
-    setTooltipStyle({
-      left: `${finalX}px`,
-      top: `${finalY}px`,
-      transform,
-    })
+    // Calculate initial position
+    calculatePosition()
+
+    // Recalculate on window resize/orientation change
+    window.addEventListener('resize', calculatePosition)
+    window.addEventListener('orientationchange', calculatePosition)
+
+    return () => {
+      window.removeEventListener('resize', calculatePosition)
+      window.removeEventListener('orientationchange', calculatePosition)
+    }
   }, [x, y, visible])
 
   return (
