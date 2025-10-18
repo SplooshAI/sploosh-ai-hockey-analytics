@@ -164,8 +164,8 @@ export const ShotChart: React.FC<ShotChartProps> = ({
     setHoveredShot(null)
   }
 
-  // Reset filters to defaults
-  const handleResetFilters = () => {
+  // Clear filters to defaults
+  const handleClearFilters = () => {
     setSelectedTeam(undefined)
     setSelectedPeriod(undefined)
     setSelectedResults(['goal', 'shot-on-goal', 'missed-shot', 'blocked-shot'])
@@ -464,13 +464,13 @@ export const ShotChart: React.FC<ShotChartProps> = ({
           </div>
         </div>
 
-        {/* Reset Button */}
+        {/* Clear Filters Button */}
         <button
-          onClick={handleResetFilters}
+          onClick={handleClearFilters}
           className="px-3 py-1.5 text-sm font-medium rounded-md border border-border hover:bg-muted transition-colors whitespace-nowrap"
-          title="Reset all filters to defaults"
+          title="Clear all filters and reset to defaults"
         >
-          Reset Filters
+          Clear Filters
         </button>
       </div>
 
