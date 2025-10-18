@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import { MainLayout } from '@/components/layouts/main-layout'
 import { NHLEdgeHockeyRink } from '@/components/features/hockey-rink/nhl-edge-hockey-rink/nhl-edge-hockey-rink'
+import { ShotChart } from '@/components/features/shot-chart/shot-chart'
 import { Check, Copy, Download } from 'lucide-react'
 import type { NHLEdgePlayByPlay } from '../lib/api/nhl-edge/types/nhl-edge'
 
@@ -55,17 +56,20 @@ export default function Home() {
 
   return (
     <MainLayout onGameSelect={handleGameSelect}>
-      <div className="text-center text-muted-foreground">
-        <div className="flex justify-center items-center w-full h-full">
-          <NHLEdgeHockeyRink
-            className="w-full h-auto"
-            centerIceLogo='/sploosh.ai/sploosh-ai-character-transparent.png'
-            centerIceLogoHeight={358}
-            centerIceLogoWidth={400}
-            displayZamboni={true}
-          />
+      {/* Show playful rink only when no game is selected */}
+      {!playByPlayData && !loading && !error && (
+        <div className="text-center text-muted-foreground">
+          <div className="flex justify-center items-center w-full h-full">
+            <NHLEdgeHockeyRink
+              className="w-full h-auto"
+              centerIceLogo='/sploosh.ai/sploosh-ai-character-transparent.png'
+              centerIceLogoHeight={358}
+              centerIceLogoWidth={400}
+              displayZamboni={true}
+            />
+          </div>
         </div>
-      </div>
+      )}
 
       {loading && (
         <div className="text-center text-muted-foreground">
@@ -80,30 +84,49 @@ export default function Home() {
       )}
 
       {playByPlayData && (
-        <div className="overflow-auto relative">
-          <div className="absolute top-2 right-2 flex gap-2">
-            <button
-              onClick={handleDownloadJson}
-              className="p-2 rounded-md hover:bg-background/10 transition-colors"
-              title="Download JSON"
-            >
-              <Download className="h-4 w-4" />
-            </button>
-            <button
-              onClick={handleCopyJson}
-              className="p-2 rounded-md hover:bg-background/10 transition-colors"
-              title="Copy JSON"
-            >
-              {copied ? (
-                <Check className="h-4 w-4 text-green-500" />
-              ) : (
-                <Copy className="h-4 w-4" />
-              )}
-            </button>
+        <div className="space-y-6">
+          {/* Shot Chart Visualization */}
+          <div className="bg-card rounded-lg p-6 shadow-sm">
+            <h2 className="text-2xl font-bold mb-4">Shot Chart</h2>
+            <ShotChart 
+              gameData={playByPlayData}
+              showTeamNames={true}
+              showCenterLogo={true}
+              centerIceLogo='/sploosh.ai/sploosh-ai-character-transparent.png'
+            />
           </div>
-          <pre className="text-xs p-4 bg-muted rounded-lg">
-            {JSON.stringify(playByPlayData, null, 2)}
-          </pre>
+
+          {/* Raw JSON Data (Collapsible) */}
+          <details className="bg-card rounded-lg p-6 shadow-sm">
+            <summary className="cursor-pointer font-semibold text-lg mb-4">
+              Raw Game Data (JSON)
+            </summary>
+            <div className="overflow-auto relative">
+              <div className="absolute top-2 right-2 flex gap-2">
+                <button
+                  onClick={handleDownloadJson}
+                  className="p-2 rounded-md hover:bg-background/10 transition-colors"
+                  title="Download JSON"
+                >
+                  <Download className="h-4 w-4" />
+                </button>
+                <button
+                  onClick={handleCopyJson}
+                  className="p-2 rounded-md hover:bg-background/10 transition-colors"
+                  title="Copy JSON"
+                >
+                  {copied ? (
+                    <Check className="h-4 w-4 text-green-500" />
+                  ) : (
+                    <Copy className="h-4 w-4" />
+                  )}
+                </button>
+              </div>
+              <pre className="text-xs p-4 bg-muted rounded-lg">
+                {JSON.stringify(playByPlayData, null, 2)}
+              </pre>
+            </div>
+          </details>
         </div>
       )}
     </MainLayout>
