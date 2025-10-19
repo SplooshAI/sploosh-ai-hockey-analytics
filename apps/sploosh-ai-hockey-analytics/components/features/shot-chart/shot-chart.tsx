@@ -23,6 +23,7 @@ import {
   filterShotsByResult,
   getTeamColor,
   getPlayerName,
+  transformCoordinates,
   type ShotEvent,
 } from '@/lib/utils/shot-chart-utils'
 import { ShotTooltip } from './shot-tooltip'
@@ -119,7 +120,13 @@ export const ShotChart: React.FC<ShotChartProps> = ({
     }
 
     if (!shot) {
-      // Delay hiding to allow moving to tooltip
+      // On mobile, don't auto-hide - let user tap elsewhere to dismiss
+      const isMobile = typeof window !== 'undefined' && window.innerWidth < 768
+      if (isMobile) {
+        // Don't hide automatically on mobile
+        return
+      }
+      // Desktop: delay hiding to allow moving to tooltip
       hideTimeoutRef.current = setTimeout(() => {
         if (!isTooltipHovered) {
           setHoveredShot(null)
@@ -239,15 +246,15 @@ export const ShotChart: React.FC<ShotChartProps> = ({
   return (
     <div className={`flex flex-col gap-4 ${className}`}>
       {/* Filters */}
-      <div className="flex flex-wrap gap-3 sm:gap-4 items-center justify-between bg-muted/50 p-3 sm:p-4 rounded-lg text-sm sm:text-base">
-        <div className="flex flex-wrap gap-3 sm:gap-4 items-center justify-center flex-1">
+      <div className="flex flex-col md:flex-row md:flex-wrap gap-3 sm:gap-4 md:items-center md:justify-between bg-muted/50 p-3 sm:p-4 rounded-lg text-sm sm:text-base">
+        <div className="flex flex-col md:flex-row md:flex-wrap gap-3 sm:gap-4 md:items-center md:justify-center flex-1">
         {/* Team Filter */}
-        <div className="flex gap-2 items-center">
+        <div className="flex gap-2 items-center w-full md:w-auto">
           <label className="text-sm font-medium">Team:</label>
           <select
             value={selectedTeam || ''}
             onChange={(e) => setSelectedTeam(e.target.value ? Number(e.target.value) : undefined)}
-            className="px-3 py-1 rounded-md border bg-background text-sm"
+            className="flex-1 md:flex-initial px-3 py-2 rounded-md border bg-background text-sm min-h-[44px] cursor-pointer"
           >
             <option value="">Both Teams</option>
             <option value={gameData.awayTeam?.id}>{awayTeamName}</option>
@@ -256,12 +263,12 @@ export const ShotChart: React.FC<ShotChartProps> = ({
         </div>
 
         {/* Period Filter */}
-        <div className="flex gap-2 items-center">
+        <div className="flex gap-2 items-center w-full md:w-auto">
           <label className="text-sm font-medium">Period:</label>
           <select
             value={selectedPeriod || ''}
             onChange={(e) => setSelectedPeriod(e.target.value ? Number(e.target.value) : undefined)}
-            className="px-3 py-1 rounded-md border bg-background text-sm"
+            className="flex-1 md:flex-initial px-3 py-2 rounded-md border bg-background text-sm min-h-[44px] cursor-pointer"
           >
             <option value="">All Periods</option>
             {periods.map(p => (
@@ -271,10 +278,10 @@ export const ShotChart: React.FC<ShotChartProps> = ({
         </div>
 
         {/* Shot Type Filter */}
-        <div className="flex gap-2 items-center">
+        <div className="flex flex-col md:flex-row gap-2 md:items-center w-full md:w-auto">
           <label className="text-sm font-medium">Show:</label>
-          <div className="flex gap-2">
-            <label className="flex items-center gap-1 text-sm cursor-pointer">
+          <div className="flex flex-wrap gap-2">
+            <label className="flex items-center gap-2 text-sm cursor-pointer py-2 px-1">
               <input
                 type="checkbox"
                 checked={selectedResults.includes('goal')}
@@ -285,11 +292,11 @@ export const ShotChart: React.FC<ShotChartProps> = ({
                     setSelectedResults(selectedResults.filter(r => r !== 'goal'))
                   }
                 }}
-                className="rounded"
+                className="rounded w-5 h-5 cursor-pointer"
               />
               Goals
             </label>
-            <label className="flex items-center gap-1 text-sm cursor-pointer">
+            <label className="flex items-center gap-2 text-sm cursor-pointer py-2 px-1">
               <input
                 type="checkbox"
                 checked={selectedResults.includes('shot-on-goal')}
@@ -300,11 +307,11 @@ export const ShotChart: React.FC<ShotChartProps> = ({
                     setSelectedResults(selectedResults.filter(r => r !== 'shot-on-goal'))
                   }
                 }}
-                className="rounded"
+                className="rounded w-5 h-5 cursor-pointer"
               />
               Shots
             </label>
-            <label className="flex items-center gap-1 text-sm cursor-pointer">
+            <label className="flex items-center gap-2 text-sm cursor-pointer py-2 px-1">
               <input
                 type="checkbox"
                 checked={selectedResults.includes('missed-shot') || selectedResults.includes('blocked-shot')}
@@ -315,7 +322,7 @@ export const ShotChart: React.FC<ShotChartProps> = ({
                     setSelectedResults(selectedResults.filter(r => r !== 'missed-shot' && r !== 'blocked-shot'))
                   }
                 }}
-                className="rounded"
+                className="rounded w-5 h-5 cursor-pointer"
               />
               Missed/Blocked
             </label>
@@ -324,7 +331,7 @@ export const ShotChart: React.FC<ShotChartProps> = ({
         </div>
 
         {/* Marker Size Slider */}
-        <div className="flex items-center gap-3 min-w-[200px]">
+        <div className="flex items-center gap-3 w-full md:min-w-[200px] md:w-auto py-2">
           <label className="text-sm font-medium whitespace-nowrap">Marker Size:</label>
           <div className="flex items-center gap-2 flex-1">
             <input
@@ -334,7 +341,7 @@ export const ShotChart: React.FC<ShotChartProps> = ({
               step="0.1"
               value={markerScale}
               onChange={(e) => setMarkerScale(Number(e.target.value))}
-              className="flex-1 h-2 bg-muted rounded-lg appearance-none cursor-pointer accent-primary"
+              className="flex-1 h-2 bg-muted rounded-lg appearance-none cursor-pointer accent-primary touch-manipulation"
             />
             <span className="text-xs text-muted-foreground w-8 text-right">
               {markerScale.toFixed(1)}x
@@ -345,7 +352,7 @@ export const ShotChart: React.FC<ShotChartProps> = ({
         {/* Clear Filters Button */}
         <button
           onClick={handleClearFilters}
-          className="px-3 py-1.5 text-sm font-medium rounded-md border border-border hover:bg-muted transition-colors whitespace-nowrap"
+          className="w-full md:w-auto px-4 py-2.5 text-sm font-medium rounded-md border border-border hover:bg-muted transition-colors whitespace-nowrap min-h-[44px] touch-manipulation"
           title="Clear all filters and reset to defaults"
         >
           Clear Filters
@@ -367,7 +374,50 @@ export const ShotChart: React.FC<ShotChartProps> = ({
             xmlns="http://www.w3.org/2000/svg"
             viewBox="-75 -75 2550 1170"
             className="w-full h-auto absolute top-0 left-0 pointer-events-auto"
+            onClick={(e) => {
+              // Smart tap detection: find nearest marker if tap is close enough
+              const svg = e.currentTarget as SVGSVGElement
+              const rect = svg.getBoundingClientRect()
+              const viewBox = svg.viewBox.baseVal
+              
+              // Convert screen coordinates to SVG coordinates
+              const scaleX = viewBox.width / rect.width
+              const scaleY = viewBox.height / rect.height
+              const svgX = (e.clientX - rect.left) * scaleX + viewBox.x
+              const svgY = (e.clientY - rect.top) * scaleY + viewBox.y
+              
+              // Find nearest marker within 100 SVG units (≈75px on mobile)
+              let nearestShot: ShotEvent | null = null
+              let minDistance = 100 // Maximum search radius
+              
+              filteredShots.forEach(shot => {
+                const { cx, cy } = transformCoordinates(shot.xCoord, shot.yCoord)
+                const distance = Math.sqrt(Math.pow(svgX - cx, 2) + Math.pow(svgY - cy, 2))
+                
+                if (distance < minDistance) {
+                  minDistance = distance
+                  nearestShot = shot
+                }
+              })
+              
+              if (nearestShot) {
+                // Found a nearby marker - show its tooltip
+                handleShotHover(nearestShot, e.clientX, e.clientY)
+              } else {
+                // No nearby markers - dismiss tooltip
+                setHoveredShot(null)
+              }
+            }}
           >
+            {/* Background rect to capture clicks on empty space */}
+            <rect
+              x="-75"
+              y="-75"
+              width="2550"
+              height="1170"
+              fill="transparent"
+              style={{ pointerEvents: 'all' }}
+            />
             <ShotChartOverlay
               shots={filteredShots}
               rosterSpots={gameData.rosterSpots}
@@ -375,6 +425,7 @@ export const ShotChart: React.FC<ShotChartProps> = ({
               showTooltips={true}
               onShotHover={handleShotHover}
               markerScale={markerScale}
+              selectedShot={hoveredShot?.shot || null}
             />
           </svg>
         </div>
