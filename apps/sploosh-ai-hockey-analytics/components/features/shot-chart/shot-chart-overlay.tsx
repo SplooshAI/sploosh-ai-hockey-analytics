@@ -33,6 +33,8 @@ interface ShotChartOverlayProps {
   onShotHover?: (shot: ShotEvent | null, clientX?: number, clientY?: number) => void
   /** Scale factor for marker sizes */
   markerScale?: number
+  /** Currently selected shot to highlight */
+  selectedShot?: ShotEvent | null
 }
 
 /**
@@ -76,24 +78,45 @@ const GoalMarker: React.FC<{
   }
 
   return (
-    <polygon
-      points={points.join(' ')}
-      fill={color}
-      stroke="#FFD700"
-      strokeWidth={isHovered ? 3 : 2}
-      className="cursor-pointer transition-all duration-200"
-      style={{ filter: isHovered ? 'drop-shadow(0 0 8px rgba(255, 215, 0, 0.8))' : 'none' }}
-      onMouseEnter={(e) => {
-        setIsHovered(true)
-        onMouseEnter?.(e)
-      }}
-      onMouseLeave={() => {
-        setIsHovered(false)
-        onMouseLeave?.()
-      }}
-    >
-      {tooltip && <title>{tooltip}</title>}
-    </polygon>
+    <g>
+      {/* Invisible larger touch target for mobile - 60 SVG units (≈44px on screen) */}
+      <circle
+        cx={cx}
+        cy={cy}
+        r={60}
+        fill={isHovered ? 'rgba(255, 255, 255, 0.1)' : 'transparent'}
+        className="cursor-pointer transition-all"
+        onMouseEnter={(e) => {
+          setIsHovered(true)
+          onMouseEnter?.(e)
+        }}
+        onMouseLeave={() => {
+          setIsHovered(false)
+          onMouseLeave?.()
+        }}
+        onTouchStart={(e) => {
+          e.preventDefault()
+          setIsHovered(true)
+          onMouseEnter?.(e)
+        }}
+        onTouchEnd={(e) => {
+          e.preventDefault()
+          setIsHovered(false)
+          onMouseLeave?.()
+        }}
+      >
+        {tooltip && <title>{tooltip}</title>}
+      </circle>
+      {/* Visual star marker */}
+      <polygon
+        points={points.join(' ')}
+        fill={color}
+        stroke="#FFD700"
+        strokeWidth={isHovered ? 3 : 2}
+        className="pointer-events-none transition-all duration-200"
+        style={{ filter: isHovered ? 'drop-shadow(0 0 8px rgba(255, 215, 0, 0.8))' : 'none' }}
+      />
+    </g>
   )
 }
 
@@ -124,22 +147,39 @@ const ShotMarker: React.FC<{
   }
   
   return (
-    <circle
-      cx={cx}
-      cy={cy}
-      r={isHovered ? baseRadius * 1.2 : baseRadius}
-      fill={color}
-      stroke="#FFFFFF"
-      strokeWidth={isHovered ? 3 : 2}
-      className="cursor-pointer transition-all duration-200"
-      style={{ filter: isHovered ? `drop-shadow(0 0 6px ${color})` : 'none' }}
-      onMouseEnter={handleInteraction}
-      onMouseLeave={handleInteractionEnd}
-      onTouchStart={handleInteraction}
-      onTouchEnd={handleInteractionEnd}
-    >
-      {tooltip && <title>{tooltip}</title>}
-    </circle>
+    <g>
+      {/* Invisible larger touch target for mobile - 60 SVG units (≈44px on screen) */}
+      <circle
+        cx={cx}
+        cy={cy}
+        r={60}
+        fill={isHovered ? 'rgba(255, 255, 255, 0.1)' : 'transparent'}
+        className="cursor-pointer transition-all"
+        onMouseEnter={handleInteraction}
+        onMouseLeave={handleInteractionEnd}
+        onTouchStart={(e) => {
+          e.preventDefault()
+          handleInteraction(e)
+        }}
+        onTouchEnd={(e) => {
+          e.preventDefault()
+          handleInteractionEnd()
+        }}
+      >
+        {tooltip && <title>{tooltip}</title>}
+      </circle>
+      {/* Visual shot marker */}
+      <circle
+        cx={cx}
+        cy={cy}
+        r={isHovered ? baseRadius * 1.2 : baseRadius}
+        fill={color}
+        stroke="#FFFFFF"
+        strokeWidth={isHovered ? 3 : 2}
+        className="pointer-events-none transition-all duration-200"
+        style={{ filter: isHovered ? `drop-shadow(0 0 6px ${color})` : 'none' }}
+      />
+    </g>
   )
 }
 
@@ -171,33 +211,51 @@ const MissedShotMarker: React.FC<{
   }
   
   return (
-    <g 
-      className="cursor-pointer transition-all duration-200"
-      style={{ filter: isHovered ? `drop-shadow(0 0 4px ${color})` : 'none' }}
-      onMouseEnter={handleInteraction}
-      onMouseLeave={handleInteractionEnd}
-      onTouchStart={handleInteraction}
-      onTouchEnd={handleInteractionEnd}
-    >
-      <line
-        x1={cx - size}
-        y1={cy - size}
-        x2={cx + size}
-        y2={cy + size}
-        stroke={color}
-        strokeWidth={isHovered ? 4 : 3}
-        strokeLinecap="round"
-      />
-      <line
-        x1={cx - size}
-        y1={cy + size}
-        x2={cx + size}
-        y2={cy - size}
-        stroke={color}
-        strokeWidth={isHovered ? 4 : 3}
-        strokeLinecap="round"
-      />
-      {tooltip && <title>{tooltip}</title>}
+    <g>
+      {/* Invisible larger touch target for mobile - 60 SVG units (≈44px on screen) */}
+      <circle
+        cx={cx}
+        cy={cy}
+        r={60}
+        fill={isHovered ? 'rgba(255, 255, 255, 0.1)' : 'transparent'}
+        className="cursor-pointer transition-all"
+        onMouseEnter={handleInteraction}
+        onMouseLeave={handleInteractionEnd}
+        onTouchStart={(e) => {
+          e.preventDefault()
+          handleInteraction(e)
+        }}
+        onTouchEnd={(e) => {
+          e.preventDefault()
+          handleInteractionEnd()
+        }}
+      >
+        {tooltip && <title>{tooltip}</title>}
+      </circle>
+      {/* Visual X marker */}
+      <g 
+        className="pointer-events-none transition-all duration-200"
+        style={{ filter: isHovered ? `drop-shadow(0 0 4px ${color})` : 'none' }}
+      >
+        <line
+          x1={cx - size}
+          y1={cy - size}
+          x2={cx + size}
+          y2={cy + size}
+          stroke={color}
+          strokeWidth={isHovered ? 4 : 3}
+          strokeLinecap="round"
+        />
+        <line
+          x1={cx - size}
+          y1={cy + size}
+          x2={cx + size}
+          y2={cy - size}
+          stroke={color}
+          strokeWidth={isHovered ? 4 : 3}
+          strokeLinecap="round"
+        />
+      </g>
     </g>
   )
 }
@@ -210,6 +268,7 @@ export const ShotChartOverlay: React.FC<ShotChartOverlayProps> = ({
   className = '',
   onShotHover,
   markerScale = 1,
+  selectedShot = null,
 }) => {
   const handleMouseEnter = (shot: ShotEvent, clientX: number, clientY: number) => {
     if (!showTooltips || !onShotHover) return
@@ -226,6 +285,7 @@ export const ShotChartOverlay: React.FC<ShotChartOverlayProps> = ({
       {shots.map((shot, idx) => {
         const { cx, cy } = transformCoordinates(shot.xCoord, shot.yCoord)
         const color = getTeamColor(shot.teamId)
+        const isSelected = selectedShot?.eventId === shot.eventId
         
         // Build detailed tooltip text
         let tooltip = ''
@@ -272,29 +332,74 @@ export const ShotChartOverlay: React.FC<ShotChartOverlayProps> = ({
           scale: markerScale,
         }
 
-        if (shot.result === 'goal') {
+        const marker = shot.result === 'goal' ? (
+          <GoalMarker
+            key={`shot-${shot.eventId}-${idx}`}
+            {...markerProps}
+          />
+        ) : shot.result === 'shot-on-goal' ? (
+          <ShotMarker
+            key={`shot-${shot.eventId}-${idx}`}
+            {...markerProps}
+          />
+        ) : (
+          <MissedShotMarker
+            key={`shot-${shot.eventId}-${idx}`}
+            {...markerProps}
+          />
+        )
+
+        // Wrap selected marker with highly visible ring indicator
+        if (isSelected) {
           return (
-            <GoalMarker
-              key={`shot-${shot.eventId}-${idx}`}
-              {...markerProps}
-            />
-          )
-        } else if (shot.result === 'shot-on-goal') {
-          return (
-            <ShotMarker
-              key={`shot-${shot.eventId}-${idx}`}
-              {...markerProps}
-            />
-          )
-        } else {
-          // missed-shot or blocked-shot
-          return (
-            <MissedShotMarker
-              key={`shot-${shot.eventId}-${idx}`}
-              {...markerProps}
-            />
+            <g key={`shot-${shot.eventId}-${idx}`}>
+              {/* Large semi-transparent background circle */}
+              <circle
+                cx={cx}
+                cy={cy}
+                r={80}
+                fill="rgba(255, 215, 0, 0.15)"
+                stroke="none"
+              />
+              {/* Bright outer ring */}
+              <circle
+                cx={cx}
+                cy={cy}
+                r={75}
+                fill="none"
+                stroke="#FFD700"
+                strokeWidth={5}
+                opacity={1}
+              >
+                <animate
+                  attributeName="r"
+                  values="75;85;75"
+                  dur="1.5s"
+                  repeatCount="indefinite"
+                />
+                <animate
+                  attributeName="opacity"
+                  values="1;0.4;1"
+                  dur="1.5s"
+                  repeatCount="indefinite"
+                />
+              </circle>
+              {/* Solid inner ring */}
+              <circle
+                cx={cx}
+                cy={cy}
+                r={70}
+                fill="none"
+                stroke="#FFD700"
+                strokeWidth={4}
+                opacity={0.9}
+              />
+              {marker}
+            </g>
           )
         }
+
+        return marker
       })}
     </g>
   )
