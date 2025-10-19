@@ -376,38 +376,36 @@ export const ShotChart: React.FC<ShotChartProps> = ({
             className="w-full h-auto absolute top-0 left-0 pointer-events-auto"
             onClick={(e) => {
               // Smart tap detection: find nearest marker if tap is close enough
-              if (e.target === e.currentTarget || (e.target as SVGElement).tagName === 'rect') {
-                const svg = e.currentTarget as SVGSVGElement
-                const rect = svg.getBoundingClientRect()
-                const viewBox = svg.viewBox.baseVal
+              const svg = e.currentTarget as SVGSVGElement
+              const rect = svg.getBoundingClientRect()
+              const viewBox = svg.viewBox.baseVal
+              
+              // Convert screen coordinates to SVG coordinates
+              const scaleX = viewBox.width / rect.width
+              const scaleY = viewBox.height / rect.height
+              const svgX = (e.clientX - rect.left) * scaleX + viewBox.x
+              const svgY = (e.clientY - rect.top) * scaleY + viewBox.y
+              
+              // Find nearest marker within 100 SVG units (≈75px on mobile)
+              let nearestShot: ShotEvent | null = null
+              let minDistance = 100 // Maximum search radius
+              
+              filteredShots.forEach(shot => {
+                const { cx, cy } = transformCoordinates(shot.xCoord, shot.yCoord)
+                const distance = Math.sqrt(Math.pow(svgX - cx, 2) + Math.pow(svgY - cy, 2))
                 
-                // Convert screen coordinates to SVG coordinates
-                const scaleX = viewBox.width / rect.width
-                const scaleY = viewBox.height / rect.height
-                const svgX = (e.clientX - rect.left) * scaleX + viewBox.x
-                const svgY = (e.clientY - rect.top) * scaleY + viewBox.y
-                
-                // Find nearest marker within 100 SVG units (≈75px on mobile)
-                let nearestShot: ShotEvent | null = null
-                let minDistance = 100 // Maximum search radius
-                
-                filteredShots.forEach(shot => {
-                  const { cx, cy } = transformCoordinates(shot.xCoord, shot.yCoord)
-                  const distance = Math.sqrt(Math.pow(svgX - cx, 2) + Math.pow(svgY - cy, 2))
-                  
-                  if (distance < minDistance) {
-                    minDistance = distance
-                    nearestShot = shot
-                  }
-                })
-                
-                if (nearestShot) {
-                  // Found a nearby marker - show its tooltip
-                  handleShotHover(nearestShot, e.clientX, e.clientY)
-                } else {
-                  // No nearby markers - dismiss tooltip
-                  setHoveredShot(null)
+                if (distance < minDistance) {
+                  minDistance = distance
+                  nearestShot = shot
                 }
+              })
+              
+              if (nearestShot) {
+                // Found a nearby marker - show its tooltip
+                handleShotHover(nearestShot, e.clientX, e.clientY)
+              } else {
+                // No nearby markers - dismiss tooltip
+                setHoveredShot(null)
               }
             }}
           >
