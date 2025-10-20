@@ -128,7 +128,13 @@ function HomeContent() {
           {/* Game Header */}
           <div className="bg-card rounded-lg p-6 shadow-sm">
             {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
-            <GameHeader gameData={playByPlayData as any} lastRefreshTime={lastRefreshTime} />
+            <GameHeader 
+              gameData={{
+                ...playByPlayData,
+                gameCenterLink: `/gamecenter/${playByPlayData.id}/recap`
+              } as any} 
+              lastRefreshTime={lastRefreshTime} 
+            />
           </div>
 
           {/* Shot Chart Visualization */}

@@ -1,6 +1,7 @@
 import Image from 'next/image'
 import { parseISO } from 'date-fns'
 import { format, formatInTimeZone } from 'date-fns-tz'
+import { ExternalLink } from 'lucide-react'
 
 // Extended game data type that includes fields from both play-by-play and game center APIs
 interface GameHeaderData {
@@ -44,6 +45,7 @@ interface GameHeaderData {
   gameOutcome?: {
     lastPeriodType?: string
   }
+  gameCenterLink?: string
 }
 
 interface GameHeaderProps {
@@ -153,6 +155,13 @@ export const GameHeader: React.FC<GameHeaderProps> = ({ gameData, className = ''
     })
   }
 
+  const handleGameCenterClick = () => {
+    if (gameData.gameCenterLink) {
+      const baseUrl = 'https://www.nhl.com'
+      window.open(`${baseUrl}${gameData.gameCenterLink}`, '_blank', 'noopener,noreferrer')
+    }
+  }
+
   return (
     <div className={`flex flex-col gap-3 ${className}`}>
       {/* Special Event Banner */}
@@ -253,6 +262,19 @@ export const GameHeader: React.FC<GameHeaderProps> = ({ gameData, className = ''
           </div>
         )}
       </div>
+
+      {/* NHL Game Center Link */}
+      {gameData.gameCenterLink && (
+        <div className="flex justify-center pt-1">
+          <button
+            onClick={handleGameCenterClick}
+            className="inline-flex items-center gap-1 text-xs text-blue-600 hover:text-blue-700 transition-colors"
+          >
+            <span>NHL® Game Center</span>
+            <ExternalLink className="h-3 w-3" />
+          </button>
+        </div>
+      )}
     </div>
   )
 }
