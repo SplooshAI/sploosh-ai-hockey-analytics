@@ -247,8 +247,9 @@ export const ShotChart: React.FC<ShotChartProps> = ({
   // Calculate statistics from all shot types (not filtered by result)
   const stats = useMemo(() => calculateStats(shotsForStats), [shotsForStats])
   
-  // Check if any filters are active (excluding marker scale which doesn't affect stats)
-  const hasActiveFilters = selectedTeam !== undefined || selectedPeriod !== undefined || selectedResults.length < 4
+  // Check if any filters are active that affect stats (team or period filters)
+  // Result type filter is excluded since stats now show all shot types regardless
+  const hasActiveFilters = selectedTeam !== undefined || selectedPeriod !== undefined
   
   const awayStats = useMemo(() => {
     const calculated = calculateStats(filterShotsByTeam(shotsForStats, gameData.awayTeam?.id))
