@@ -6,6 +6,8 @@ import { MainLayout } from '@/components/layouts/main-layout'
 import { NHLEdgeHockeyRink } from '@/components/features/hockey-rink/nhl-edge-hockey-rink/nhl-edge-hockey-rink'
 import { GameHeader } from '@/components/features/game-header'
 import { ShotChart } from '@/components/features/shot-chart/shot-chart'
+import { GameTimeline } from '@/components/features/game-timeline/game-timeline'
+import { hasLocationData } from '@/lib/utils/shot-chart-utils'
 import { Check, Copy, Download } from 'lucide-react'
 import type { NHLEdgePlayByPlay } from '../lib/api/nhl-edge/types/nhl-edge'
 
@@ -150,14 +152,57 @@ function HomeContent() {
             />
           </div>
 
-          {/* Shot Chart Visualization */}
-          <div className="bg-card rounded-lg p-6 shadow-sm">
-            <ShotChart 
-              gameData={playByPlayData}
-              showCenterLogo={true}
-              centerIceLogo='/sploosh.ai/sploosh-ai-character-transparent.png'
-            />
-          </div>
+          {/* Visualization - Shot Chart or Timeline based on data availability */}
+          {hasLocationData(playByPlayData) ? (
+            <>
+              {/* Shot Chart */}
+              <div className="bg-card rounded-lg p-6 shadow-sm">
+                <ShotChart 
+                  gameData={playByPlayData}
+                  showCenterLogo={true}
+                  centerIceLogo='/sploosh.ai/sploosh-ai-character-transparent.png'
+                />
+              </div>
+
+              {/* Timeline */}
+              <div className="bg-card rounded-lg p-6 shadow-sm">
+                <GameTimeline gameData={playByPlayData} />
+              </div>
+            </>
+          ) : (
+            <div className="bg-card rounded-lg p-6 shadow-sm">
+              {/* Future/Scheduled Games - Show Placeholder */}
+              {(playByPlayData.gameState === 'FUT' || playByPlayData.gameState === 'PRE') ? (
+                <div className="flex flex-col items-center justify-center py-16 space-y-6">
+                  <div className="flex justify-center items-center w-full">
+                    <NHLEdgeHockeyRink
+                      className="w-full max-w-2xl h-auto opacity-20"
+                      centerIceLogo='/sploosh.ai/sploosh-ai-character-transparent.png'
+                      centerIceLogoHeight={358}
+                      centerIceLogoWidth={400}
+                    />
+                  </div>
+                  <div className="text-center space-y-2">
+                    <h3 className="text-xl font-semibold text-muted-foreground">Upcoming Game</h3>
+                    <p className="text-sm text-muted-foreground">
+                      Check back after the game starts to see live stats and visualizations
+                    </p>
+                  </div>
+                </div>
+              ) : (
+                /* Historical Games - Show Timeline */
+                <div className="space-y-4">
+                  <div className="bg-blue-500/10 border border-blue-500/20 rounded-lg p-4">
+                    <p className="text-sm text-blue-600 dark:text-blue-400">
+                      <strong>Historical Game:</strong> This game was played before shot location tracking was implemented (pre-2007). 
+                      Showing timeline view with goals and penalties instead.
+                    </p>
+                  </div>
+                  <GameTimeline gameData={playByPlayData} />
+                </div>
+              )}
+            </div>
+          )}
 
           {/* Raw JSON Data (Collapsible) */}
           <details className="bg-card rounded-lg p-6 shadow-sm">
