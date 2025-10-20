@@ -162,7 +162,10 @@ export const GameHeader: React.FC<GameHeaderProps> = ({ gameData, className = ''
     // Use parseISO and format in UTC to avoid timezone conversion issues
     // gameDate is in YYYY-MM-DD format and should be displayed as-is
     const date = parseISO(gameData.gameDate)
-    return formatInTimeZone(date, 'UTC', 'EEE, MMM d, yyyy')
+    const day = formatInTimeZone(date, 'UTC', 'd')
+    const ordinalSuffix = getOrdinalNum(parseInt(day))
+    const formattedDate = formatInTimeZone(date, 'UTC', 'EEEE, MMMM')
+    return `${formattedDate} ${ordinalSuffix}, ${formatInTimeZone(date, 'UTC', 'yyyy')}`
   }
 
   const handleGameCenterClick = () => {
@@ -175,11 +178,11 @@ export const GameHeader: React.FC<GameHeaderProps> = ({ gameData, className = ''
   return (
     <div className={`flex flex-col gap-3 ${className}`}>
       {/* Special Event Banner */}
-      {gameData.specialEvent && (
+      {gameData.specialEvent?.lightLogoUrl?.default && (
         <div className="relative w-full h-16 bg-white rounded-md overflow-hidden">
           <Image
             src={gameData.specialEvent.lightLogoUrl.default}
-            alt={gameData.specialEvent.name.default}
+            alt={gameData.specialEvent.name?.default || 'Special Event'}
             fill
             className="object-contain"
           />

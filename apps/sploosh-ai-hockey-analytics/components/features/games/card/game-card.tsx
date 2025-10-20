@@ -118,11 +118,11 @@ export function GameCard({ game, onSelectGame, onClose }: GameCardProps) {
             }}
         >
             {/* Special Event Logo (if present) - Full width at top */}
-            {game.specialEvent && (
+            {game.specialEvent?.lightLogoUrl?.default && (
                 <div className="relative w-full h-16 bg-white">
                     <Image
                         src={game.specialEvent.lightLogoUrl.default}
-                        alt={game.specialEvent.name.default}
+                        alt={game.specialEvent.name?.default || 'Special Event'}
                         fill
                         className="object-contain"
                     />
