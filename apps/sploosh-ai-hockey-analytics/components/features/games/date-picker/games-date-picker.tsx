@@ -95,7 +95,7 @@ export function GamesDatePicker({ date, onDateChange, isLoading = false }: Games
                             <CalendarIcon className="h-4 w-4" />
                         </Button>
                     </PopoverTrigger>
-                    <PopoverContent className="w-auto p-0" align="center">
+                    <PopoverContent className="w-fit p-0" align="center">
                         <Calendar
                             mode="single"
                             selected={date}
@@ -122,7 +122,7 @@ export function GamesDatePicker({ date, onDateChange, isLoading = false }: Games
                                 onClick={handleFirstGameClick}
                                 className="w-full text-xs"
                             >
-                                🏒 First NHL Games (Dec 19, 1917)
+                                🏒 Start of the NHL
                             </Button>
                         </div>
                     </PopoverContent>
