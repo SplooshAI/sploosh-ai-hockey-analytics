@@ -18,6 +18,7 @@ export default function Sidebar({ onClose, onGameSelect, onRefresh }: SidebarPro
         const now = new Date()
         return startOfDay(new Date(now.getFullYear(), now.getMonth(), now.getDate()))
     })
+    const [isLoadingGames, setIsLoadingGames] = useState(false)
 
     return (
         <div className="w-64 h-[100dvh] flex flex-col bg-secondary">
@@ -37,6 +38,7 @@ export default function Sidebar({ onClose, onGameSelect, onRefresh }: SidebarPro
                     <GamesDatePicker
                         date={selectedDate}
                         onDateChange={setSelectedDate}
+                        isLoading={isLoadingGames}
                     />
                 </div>
             </div>
@@ -48,6 +50,7 @@ export default function Sidebar({ onClose, onGameSelect, onRefresh }: SidebarPro
                         onGameSelect={onGameSelect}
                         onClose={onClose}
                         onRefresh={onRefresh}
+                        onLoadingChange={setIsLoadingGames}
                     />
                     <div className="pt-4 mt-4 border-t border-border/50">
                         <Version />

@@ -15,9 +15,10 @@ interface GamesListProps {
     onGameSelect?: (gameId: number) => void
     onClose?: () => void
     onRefresh?: () => void
+    onLoadingChange?: (isLoading: boolean) => void
 }
 
-export function GamesList({ date, onGameSelect, onClose, onRefresh }: GamesListProps) {
+export function GamesList({ date, onGameSelect, onClose, onRefresh, onLoadingChange }: GamesListProps) {
     const [games, setGames] = useState<NHLEdgeGame[]>([])
     const [isLoading, setIsLoading] = useState(true)
     const [error, setError] = useState<string | null>(null)
@@ -36,6 +37,7 @@ export function GamesList({ date, onGameSelect, onClose, onRefresh }: GamesListP
     const fetchGames = useCallback(async (attemptNumber = 0) => {
         try {
             setIsLoading(true)
+            onLoadingChange?.(true)
             // Clear previous errors when attempting a new fetch
             if (error) setError(null)
 
@@ -129,8 +131,9 @@ export function GamesList({ date, onGameSelect, onClose, onRefresh }: GamesListP
             }
         } finally {
             setIsLoading(false)
+            onLoadingChange?.(false)
         }
-    }, [date, games, error, autoRefreshEnabled])
+    }, [date, games, error, autoRefreshEnabled, onLoadingChange])
 
     // Initial load
     useEffect(() => {
@@ -145,6 +148,7 @@ export function GamesList({ date, onGameSelect, onClose, onRefresh }: GamesListP
         const formattedDate = format(date, 'yyyy-MM-dd')
         if (!isNavigating && formattedDate !== currentDateRef.current) {
             setIsLoading(true)
+            onLoadingChange?.(true)
             // Clear any existing errors when changing dates
             if (error) setError(null)
 
@@ -206,12 +210,13 @@ export function GamesList({ date, onGameSelect, onClose, onRefresh }: GamesListP
                     }
                 } finally {
                     setIsLoading(false)
+                    onLoadingChange?.(false)
                 }
             }
 
             fetchData()
         }
-    }, [debouncedDate, isNavigating, date, error, autoRefreshEnabled])
+    }, [debouncedDate, isNavigating, date, error, autoRefreshEnabled, onLoadingChange])
 
     // Auto-refresh timer
     useEffect(() => {
@@ -240,7 +245,10 @@ export function GamesList({ date, onGameSelect, onClose, onRefresh }: GamesListP
         }
     }, [retryCount])
 
-    if (isLoading && !games.length) {
+    // Show skeleton when loading and either no games or navigating to a different date
+    const isChangingDate = isNavigating || (isLoading && format(date, 'yyyy-MM-dd') !== currentDateRef.current)
+    
+    if (isLoading && (!games.length || isChangingDate)) {
         return <GamesListSkeleton />
     }
 
