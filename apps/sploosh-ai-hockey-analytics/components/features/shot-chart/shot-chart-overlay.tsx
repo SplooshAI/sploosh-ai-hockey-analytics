@@ -48,7 +48,7 @@ const GoalMarker: React.FC<{
   shot: ShotEvent
   tooltip?: string
   onMouseEnter?: (e: React.MouseEvent | React.TouchEvent) => void
-  onMouseLeave?: () => void
+  onMouseLeave?: (shot: ShotEvent) => void
   scale?: number
   teamLogo?: string
 }> = ({ cx, cy, color, shot, tooltip, onMouseEnter, onMouseLeave, scale = 1, teamLogo }) => {
@@ -61,7 +61,7 @@ const GoalMarker: React.FC<{
 
   const handleInteractionEnd = () => {
     setIsHovered(false)
-    onMouseLeave?.()
+    onMouseLeave?.(shot)
   }
   
   // Create a 5-pointed star - scaled size (goals are largest)
@@ -88,13 +88,14 @@ const GoalMarker: React.FC<{
         r={60}
         fill={isHovered ? 'rgba(255, 255, 255, 0.1)' : 'transparent'}
         className="cursor-pointer transition-all"
+        style={{ pointerEvents: 'all' }}
         onMouseEnter={(e) => {
           setIsHovered(true)
           onMouseEnter?.(e)
         }}
         onMouseLeave={() => {
           setIsHovered(false)
-          onMouseLeave?.()
+          onMouseLeave?.(shot)
         }}
         onTouchStart={(e) => {
           e.preventDefault()
@@ -104,7 +105,7 @@ const GoalMarker: React.FC<{
         onTouchEnd={(e) => {
           e.preventDefault()
           setIsHovered(false)
-          onMouseLeave?.()
+          onMouseLeave?.(shot)
         }}
       >
         {tooltip && <title>{tooltip}</title>}
@@ -142,7 +143,7 @@ const ShotMarker: React.FC<{
   shot: ShotEvent
   tooltip?: string
   onMouseEnter?: (e: React.MouseEvent | React.TouchEvent) => void
-  onMouseLeave?: () => void
+  onMouseLeave?: (shot: ShotEvent) => void
   scale?: number
 }> = ({ cx, cy, color, shot, tooltip, onMouseEnter, onMouseLeave, scale = 1 }) => {
   const [isHovered, setIsHovered] = React.useState(false)
@@ -155,7 +156,7 @@ const ShotMarker: React.FC<{
 
   const handleInteractionEnd = () => {
     setIsHovered(false)
-    onMouseLeave?.()
+    onMouseLeave?.(shot)
   }
   
   return (
@@ -167,6 +168,7 @@ const ShotMarker: React.FC<{
         r={60}
         fill={isHovered ? 'rgba(255, 255, 255, 0.1)' : 'transparent'}
         className="cursor-pointer transition-all"
+        style={{ pointerEvents: 'all' }}
         onMouseEnter={handleInteraction}
         onMouseLeave={handleInteractionEnd}
         onTouchStart={(e) => {
@@ -205,7 +207,7 @@ const MissedShotMarker: React.FC<{
   shot: ShotEvent
   tooltip?: string
   onMouseEnter?: (e: React.MouseEvent | React.TouchEvent) => void
-  onMouseLeave?: () => void
+  onMouseLeave?: (shot: ShotEvent) => void
   scale?: number
 }> = ({ cx, cy, color, shot, tooltip, onMouseEnter, onMouseLeave, scale = 1 }) => {
   const [isHovered, setIsHovered] = React.useState(false)
@@ -219,7 +221,7 @@ const MissedShotMarker: React.FC<{
 
   const handleInteractionEnd = () => {
     setIsHovered(false)
-    onMouseLeave?.()
+    onMouseLeave?.(shot)
   }
   
   return (
@@ -231,6 +233,7 @@ const MissedShotMarker: React.FC<{
         r={60}
         fill={isHovered ? 'rgba(255, 255, 255, 0.1)' : 'transparent'}
         className="cursor-pointer transition-all"
+        style={{ pointerEvents: 'all' }}
         onMouseEnter={handleInteraction}
         onMouseLeave={handleInteractionEnd}
         onTouchStart={(e) => {
@@ -287,9 +290,13 @@ export const ShotChartOverlay: React.FC<ShotChartOverlayProps> = ({
     onShotHover(shot, clientX, clientY)
   }
 
-  const handleMouseLeave = () => {
+  const handleMouseLeave = (shot: ShotEvent) => {
     if (!onShotHover) return
-    onShotHover(null)
+    // Only trigger leave if this is the currently selected shot
+    // This prevents other markers from closing the tooltip when mouse passes over them
+    if (selectedShot?.eventId === shot.eventId) {
+      onShotHover(null)
+    }
   }
 
   // Get team IDs for color calculation
@@ -356,7 +363,7 @@ export const ShotChartOverlay: React.FC<ShotChartOverlayProps> = ({
             const clientY = 'clientY' in e ? e.clientY : e.touches[0]?.clientY || 0
             handleMouseEnter(shot, clientX, clientY)
           },
-          onMouseLeave: handleMouseLeave,
+          onMouseLeave: (s: ShotEvent) => handleMouseLeave(s),
           scale: markerScale,
         }
 
