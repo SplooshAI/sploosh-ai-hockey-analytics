@@ -107,6 +107,9 @@ export const ShotChart: React.FC<ShotChartProps> = ({
     y: number
     playerName: string
     teamLogo?: string
+    teamName?: string
+    teamAbbrev?: string
+    teamColor?: string
     playerHeadshot?: string
   } | null>(null)
   const [isTooltipHovered, setIsTooltipHovered] = useState(false)
@@ -139,11 +142,18 @@ export const ShotChart: React.FC<ShotChartProps> = ({
       ? getPlayerName(shot.playerId, gameData.rosterSpots || [])
       : 'Unknown'
     
-    // Get team logo
+    // Get team information
     const team = shot.teamId === gameData.awayTeam?.id 
       ? gameData.awayTeam 
       : gameData.homeTeam
     const teamLogo = team?.logo || team?.darkLogo
+    const teamName = team?.name?.default || team?.commonName?.default
+    const teamAbbrev = team?.abbrev
+    const teamColor = getTeamColorWithContrast(
+      gameData.homeTeam?.id,
+      gameData.awayTeam?.id,
+      shot.teamId
+    )
     
     // Get player headshot
     const player = (gameData.rosterSpots || []).find((spot: any) => spot.playerId === shot.playerId)
@@ -155,6 +165,9 @@ export const ShotChart: React.FC<ShotChartProps> = ({
       y: clientY || 0,
       playerName,
       teamLogo,
+      teamName,
+      teamAbbrev,
+      teamColor,
       playerHeadshot,
     })
   }
@@ -574,6 +587,9 @@ export const ShotChart: React.FC<ShotChartProps> = ({
               shot={hoveredShot.shot}
               playerName={hoveredShot.playerName}
               teamLogo={hoveredShot.teamLogo}
+              teamName={hoveredShot.teamName}
+              teamAbbrev={hoveredShot.teamAbbrev}
+              teamColor={hoveredShot.teamColor}
               playerHeadshot={hoveredShot.playerHeadshot}
               visible={true}
               x={hoveredShot.x}
