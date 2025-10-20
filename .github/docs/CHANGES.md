@@ -57,6 +57,7 @@ Updated `NHLEdgePlayByPlay` interface to use full `NHLEdgeTeam` type instead of 
 ## Future Enhancements
 
 The formatting library is designed to be extended with additional formatting functions as needed:
+
 - Player name formatting
 - Score formatting
 - Time formatting
