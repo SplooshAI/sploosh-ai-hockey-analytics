@@ -23,6 +23,9 @@ interface ShotTooltipProps {
   visible: boolean
   x: number
   y: number
+  onMouseEnter?: () => void
+  onMouseLeave?: () => void
+  onDismiss?: () => void
 }
 
 export const ShotTooltip: React.FC<ShotTooltipProps> = ({
@@ -40,6 +43,9 @@ export const ShotTooltip: React.FC<ShotTooltipProps> = ({
   visible,
   x,
   y,
+  onMouseEnter,
+  onMouseLeave,
+  onDismiss,
 }) => {
   // Calculate smart positioning for mobile - hooks must be called before any returns
   const [tooltipStyle, setTooltipStyle] = React.useState<React.CSSProperties>({})
@@ -79,7 +85,7 @@ export const ShotTooltip: React.FC<ShotTooltipProps> = ({
 
       let finalX = x
       let finalY = y
-      let transform = 'translate(-50%, -120%)'
+      let transform = 'translate(-50%, calc(-100% - 10px))' // Position directly above marker with small gap
 
       if (isMobile) {
         // On mobile, center tooltip at bottom of screen
@@ -90,6 +96,7 @@ export const ShotTooltip: React.FC<ShotTooltipProps> = ({
         // Desktop: smart positioning to keep in viewport
         const tooltipWidth = tooltipRect.width
         const tooltipHeight = tooltipRect.height
+        const gap = 10 // Small gap between marker and tooltip
 
         // Check if tooltip would go off right edge
         if (x + tooltipWidth / 2 > viewportWidth - 20) {
@@ -101,9 +108,9 @@ export const ShotTooltip: React.FC<ShotTooltipProps> = ({
         }
 
         // Check if tooltip would go off top edge
-        if (y - tooltipHeight - 20 < 20) {
+        if (y - tooltipHeight - gap < 20) {
           // Position below the marker instead
-          transform = 'translate(-50%, 20%)'
+          transform = `translate(-50%, ${gap}px)`
         }
       }
 
@@ -132,8 +139,10 @@ export const ShotTooltip: React.FC<ShotTooltipProps> = ({
   return (
     <div
       ref={tooltipRef}
-      className="fixed z-50 transition-all duration-200"
+      className="fixed z-50 transition-all duration-200 pointer-events-auto"
       style={tooltipStyle}
+      onMouseEnter={onMouseEnter}
+      onMouseLeave={onMouseLeave}
     >
       <div className="bg-background/95 backdrop-blur-sm border-2 border-border rounded-lg shadow-2xl p-3 min-w-[280px] max-w-[calc(100vw-40px)] md:max-w-[320px]">
         {/* Header with Result Type and Team */}
@@ -142,12 +151,34 @@ export const ShotTooltip: React.FC<ShotTooltipProps> = ({
           style={headerStyle}
         >
           <div className="flex items-center justify-between gap-2">
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2 flex-1">
               <span className="text-lg">{resultText.split(' ')[0]}</span>
               <span>{resultText.split(' ').slice(1).join(' ')}</span>
             </div>
             {teamAbbrev && (
               <span className="text-xs font-semibold opacity-90">{teamAbbrev}</span>
+            )}
+            {onDismiss && (
+              <button
+                onClick={onDismiss}
+                className="ml-2 hover:bg-white/20 rounded p-1 transition-colors touch-manipulation"
+                aria-label="Close tooltip"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="16"
+                  height="16"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                >
+                  <line x1="18" y1="6" x2="6" y2="18" />
+                  <line x1="6" y1="6" x2="18" y2="18" />
+                </svg>
+              </button>
             )}
           </div>
         </div>
@@ -343,18 +374,6 @@ export const ShotTooltip: React.FC<ShotTooltipProps> = ({
           </details>
         </div>
       </div>
-
-      {/* Tooltip Arrow */}
-      <div 
-        className="absolute left-1/2 bottom-0 transform -translate-x-1/2 translate-y-full"
-        style={{
-          width: 0,
-          height: 0,
-          borderLeft: '8px solid transparent',
-          borderRight: '8px solid transparent',
-          borderTop: '8px solid hsl(var(--border))',
-        }}
-      />
     </div>
   )
 }
