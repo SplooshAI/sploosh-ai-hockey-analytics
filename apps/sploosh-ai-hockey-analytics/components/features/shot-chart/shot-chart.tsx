@@ -26,6 +26,7 @@ import {
   transformCoordinates,
   type ShotEvent,
 } from '@/lib/utils/shot-chart-utils'
+import { formatTeamFullName, formatPeriodLabel } from '@/lib/utils/formatters'
 import { ShotTooltip } from './shot-tooltip'
 
 interface ShotChartProps {
@@ -234,8 +235,8 @@ export const ShotChart: React.FC<ShotChartProps> = ({
   )
 
   // Get team names
-  const awayTeamName = gameData.awayTeam?.abbrev || 'Away'
-  const homeTeamName = gameData.homeTeam?.abbrev || 'Home'
+  const awayTeamName = gameData.awayTeam ? formatTeamFullName(gameData.awayTeam) : 'Away'
+  const homeTeamName = gameData.homeTeam ? formatTeamFullName(gameData.homeTeam) : 'Home'
 
   // Get unique periods
   const periods = useMemo(() => {
@@ -271,8 +272,10 @@ export const ShotChart: React.FC<ShotChartProps> = ({
             className="flex-1 md:flex-initial px-3 py-2 rounded-md border bg-background text-sm min-h-[44px] cursor-pointer"
           >
             <option value="">All Periods</option>
-            {periods.map(p => (
-              <option key={p} value={p}>Period {p}</option>
+            {periods.map(period => (
+              <option key={period} value={period}>
+                {formatPeriodLabel(period)}
+              </option>
             ))}
           </select>
         </div>

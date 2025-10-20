@@ -78,8 +78,8 @@ export interface NHLEdgePlayByPlay {
     gameState: string
     gameType: number
     season: number
-    awayTeam: { abbrev: string }
-    homeTeam: { abbrev: string }
+    awayTeam: NHLEdgeTeam
+    homeTeam: NHLEdgeTeam
 }
 
 export interface NHLEdgePlay {
