@@ -224,23 +224,33 @@ export const ShotChart: React.FC<ShotChartProps> = ({
 
   // Calculate statistics
   const stats = useMemo(() => calculateStats(filteredShots), [filteredShots])
+  
+  // Check if any filters are active (excluding marker scale which doesn't affect stats)
+  const hasActiveFilters = selectedTeam !== undefined || selectedPeriod !== undefined || selectedResults.length < 4
+  
   const awayStats = useMemo(() => {
     const calculated = calculateStats(filterShotsByTeam(filteredShots, gameData.awayTeam?.id))
-    // Use official SOG from API if available, otherwise use calculated value
+    // Use official SOG from API only when no filters are applied, otherwise use calculated value
+    // This ensures SOG updates correctly when filtering by period, team, or shot type
     return {
       ...calculated,
-      shotsOnGoal: gameData.awayTeam?.sog ?? calculated.shotsOnGoal
+      shotsOnGoal: !hasActiveFilters && gameData.awayTeam?.sog !== undefined 
+        ? gameData.awayTeam.sog 
+        : calculated.shotsOnGoal
     }
-  }, [filteredShots, gameData.awayTeam?.id, gameData.awayTeam?.sog])
+  }, [filteredShots, gameData.awayTeam?.id, gameData.awayTeam?.sog, hasActiveFilters])
   
   const homeStats = useMemo(() => {
     const calculated = calculateStats(filterShotsByTeam(filteredShots, gameData.homeTeam?.id))
-    // Use official SOG from API if available, otherwise use calculated value
+    // Use official SOG from API only when no filters are applied, otherwise use calculated value
+    // This ensures SOG updates correctly when filtering by period, team, or shot type
     return {
       ...calculated,
-      shotsOnGoal: gameData.homeTeam?.sog ?? calculated.shotsOnGoal
+      shotsOnGoal: !hasActiveFilters && gameData.homeTeam?.sog !== undefined 
+        ? gameData.homeTeam.sog 
+        : calculated.shotsOnGoal
     }
-  }, [filteredShots, gameData.homeTeam?.id, gameData.homeTeam?.sog])
+  }, [filteredShots, gameData.homeTeam?.id, gameData.homeTeam?.sog, hasActiveFilters])
 
   // Get team names
   const awayTeamName = gameData.awayTeam ? formatTeamFullName(gameData.awayTeam) : 'Away'
