@@ -9,11 +9,20 @@ These global rules define standardized Git workflow practices to be applied acro
 <branch_creation>
 
 - Always create feature branches from the main branch
+- **CRITICAL: Before creating a branch, you MUST run `date +%Y.%m.%d` to get the current date**
+- **NEVER hardcode or guess the date - always execute the date command first**
 - Use descriptive branch names with the following format: `YYYY.MM.DD/description-in-kebab-case`
-  - Date format: Current date in YYYY.MM.DD format (e.g., 2025.05.17)
-  - Examples: `2025.05.17/add-player-statistics`, `2025.05.17/fix-animation-slider-bug`
+  - Date format: Current date in YYYY.MM.DD format (e.g., 2025.10.19)
+  - Examples: `2025.10.19/add-player-statistics`, `2025.10.19/fix-animation-slider-bug`
+  - The date prefix MUST be obtained by running: `date +%Y.%m.%d`
 - Push new branches to the remote repository immediately after creation
 - Set up upstream tracking when pushing a new branch
+
+**Branch Creation Process:**
+1. Run `date +%Y.%m.%d` to get today's date
+2. Use the output to create the branch name: `YYYY.MM.DD/description`
+3. Create the branch: `git checkout -b YYYY.MM.DD/description`
+4. Push and set upstream: `git push -u origin YYYY.MM.DD/description`
 
 </branch_creation>
 
