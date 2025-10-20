@@ -103,8 +103,8 @@ export function parseShotsFromEdge(gameJSON: any): ShotEvent[] {
         zone: details.zoneCode || '',
         eventId: ev.eventId,
         situationCode: ev.situationCode,
-        distance: calculateShotDistance(xCoord, yCoord),
-        angle: calculateShotAngle(xCoord, yCoord),
+        distance: xCoord !== undefined && yCoord !== undefined ? calculateShotDistance(xCoord, yCoord) : undefined,
+        angle: xCoord !== undefined && yCoord !== undefined ? calculateShotAngle(xCoord, yCoord) : undefined,
         assists: details.assist1PlayerId ? [
           { playerId: details.assist1PlayerId, assistType: 'primary' },
           ...(details.assist2PlayerId ? [{ playerId: details.assist2PlayerId, assistType: 'secondary' }] : [])
