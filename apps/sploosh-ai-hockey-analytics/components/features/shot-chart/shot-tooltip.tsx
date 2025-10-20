@@ -6,7 +6,7 @@
 
 import * as React from 'react'
 import { type ShotEvent } from '@/lib/utils/shot-chart-utils'
-import { formatPeriodLabel } from '@/lib/utils/formatters'
+import { formatPeriodLabel, formatGameTime } from '@/lib/utils/formatters'
 
 interface ShotTooltipProps {
   shot: ShotEvent
@@ -177,7 +177,7 @@ export const ShotTooltip: React.FC<ShotTooltipProps> = ({
         <div className="space-y-1 text-xs">
           <div className="flex justify-between">
             <span className="text-muted-foreground">Period:</span>
-            <span className="font-medium">{formatPeriodLabel(shot.period)} - {shot.time}</span>
+            <span className="font-medium">{formatPeriodLabel(shot.period)} - {formatGameTime(shot.period, shot.time, shot.timeRemaining)}</span>
           </div>
           <div className="flex justify-between">
             <span className="text-muted-foreground">Shot Type:</span>

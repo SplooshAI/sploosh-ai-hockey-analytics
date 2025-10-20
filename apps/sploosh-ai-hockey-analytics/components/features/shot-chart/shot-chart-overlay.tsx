@@ -16,7 +16,7 @@
 
 import * as React from 'react'
 import { transformCoordinates, getTeamColor, getTeamColorWithContrast, getStandardizedShotColor, getPlayerName, type ShotEvent } from '@/lib/utils/shot-chart-utils'
-import { formatPeriodLabel } from '@/lib/utils/formatters'
+import { formatPeriodLabel, formatGameTime } from '@/lib/utils/formatters'
 import { ShotTooltip } from './shot-tooltip'
 
 interface ShotChartOverlayProps {
@@ -331,7 +331,7 @@ export const ShotChartOverlay: React.FC<ShotChartOverlayProps> = ({
           tooltip = [
             resultText,
             `Player: ${playerName}`,
-            `${formatPeriodLabel(shot.period)} - ${shot.time}`,
+            `${formatPeriodLabel(shot.period)} - ${formatGameTime(shot.period, shot.time, shot.timeRemaining)}`,
             `Shot Type: ${shot.shotType || 'Unknown'}`,
             `Zone: ${shot.zone || 'N/A'}`,
             `NHL Coords: (${shot.xCoord}, ${shot.yCoord})`,

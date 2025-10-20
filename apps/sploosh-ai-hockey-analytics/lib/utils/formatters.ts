@@ -115,3 +115,26 @@ function getOrdinalSuffix(num: number): string {
   
   return 'th'
 }
+
+/**
+ * Format game time for display - shows time remaining for regulation/OT, time elapsed for shootout
+ * 
+ * @param period - The period number
+ * @param timeInPeriod - Time elapsed in period (MM:SS format)
+ * @param timeRemaining - Time remaining in period (MM:SS format)
+ * @returns Formatted time string
+ * 
+ * @example
+ * formatGameTime(1, '05:30', '14:30') // "14:30"
+ * formatGameTime(4, '02:15', '02:45') // "2:45"
+ * formatGameTime(5, '00:00', '00:00') // "0:00"
+ */
+export function formatGameTime(period: number, timeInPeriod?: string, timeRemaining?: string): string {
+  // For shootout (period 5), show time elapsed (which is always 0:00 for shootout)
+  if (period === 5) {
+    return timeInPeriod || '0:00'
+  }
+  
+  // For regulation and overtime, show time remaining
+  return timeRemaining || timeInPeriod || '0:00'
+}

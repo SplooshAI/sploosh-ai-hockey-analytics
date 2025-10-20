@@ -10,6 +10,7 @@ export interface ShotEvent {
   playerId?: number
   result: 'goal' | 'shot-on-goal' | 'missed-shot' | 'blocked-shot'
   time: string
+  timeRemaining?: string
   shotType?: string
   zone?: string
   eventId: number
@@ -43,6 +44,7 @@ export function parseShotsFromEdge(gameJSON: any): ShotEvent[] {
         playerId: details.shootingPlayerId || details.scoringPlayerId,
         result: ev.typeDescKey === 'goal' ? 'goal' : ev.typeDescKey,
         time: ev.timeInPeriod,
+        timeRemaining: ev.timeRemaining,
         shotType: details.shotType,
         zone: details.zoneCode || '',
         eventId: ev.eventId,
