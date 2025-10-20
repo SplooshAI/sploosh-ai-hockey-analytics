@@ -115,3 +115,81 @@ function getOrdinalSuffix(num: number): string {
   
   return 'th'
 }
+
+/**
+ * Format game time for display - returns elapsed and remaining time separately
+ * 
+ * @param period - The period number
+ * @param timeInPeriod - Time elapsed in period (MM:SS format)
+ * @param timeRemaining - Time remaining in period (MM:SS format)
+ * @returns Object with elapsed and remaining time, or single string for backward compatibility
+ * 
+ * @example
+ * formatGameTime(1, '05:30', '14:30') // { elapsed: "5:30", remaining: "14:30 remaining" }
+ * formatGameTime(4, '02:15', '02:45') // { elapsed: "2:15", remaining: "2:45 remaining" }
+ * formatGameTime(5, '00:00', '00:00') // { elapsed: "0:00", remaining: null }
+ */
+export function formatGameTime(period: number, timeInPeriod?: string, timeRemaining?: string): { elapsed: string; remaining: string | null } {
+  const elapsed = timeInPeriod || '0:00'
+  
+  // For shootout (period 5), only show time elapsed (no time remaining)
+  if (period === 5) {
+    return { elapsed, remaining: null }
+  }
+  
+  // For regulation and overtime, return both elapsed and remaining
+  if (timeRemaining) {
+    return { elapsed, remaining: `${timeRemaining} remaining` }
+  }
+  
+  return { elapsed, remaining: null }
+}
+
+/**
+ * Format situation code into readable text
+ * 
+ * @param situationCode - Situation code from NHL API (e.g., "1551", "1541")
+ * @returns Object with formatted text and badge type
+ * 
+ * @example
+ * formatSituationCode("1551") // { text: "5v5", type: "even", description: "Even Strength" }
+ * formatSituationCode("1541") // { text: "5v4", type: "pp", description: "Power Play" }
+ * formatSituationCode("1451") // { text: "4v5", type: "pk", description: "Penalty Kill" }
+ */
+export function formatSituationCode(situationCode?: string): { text: string; type: 'even' | 'pp' | 'pk' | 'other'; description: string } | null {
+  if (!situationCode || situationCode.length !== 4) return null
+  
+  // NHL situation code format: ABCD where:
+  // A = away team goalie status (1 = in net, 0 = empty net)
+  // B = away team skaters (0-6)
+  // C = home team skaters (0-6)
+  // D = home team goalie status (1 = in net, 0 = empty net)
+  // 
+  // Examples:
+  // "1551" = 5v5 (both goalies in)
+  // "1541" = 5v4 power play for away team
+  // "1451" = 4v5 penalty kill for away team
+  // "1331" = 3v3 overtime
+  
+  const awaySkaters = parseInt(situationCode[1])
+  const homeSkaters = parseInt(situationCode[2])
+  
+  // Validate the numbers are reasonable (0-6 skaters)
+  if (isNaN(awaySkaters) || isNaN(homeSkaters) || 
+      awaySkaters < 0 || awaySkaters > 6 || 
+      homeSkaters < 0 || homeSkaters > 6) {
+    console.warn('Invalid situation code:', situationCode)
+    return null
+  }
+  
+  const text = `${awaySkaters}v${homeSkaters}`
+  
+  // Determine situation type
+  if (awaySkaters === homeSkaters) {
+    return { text, type: 'even', description: 'Even Strength' }
+  } else if (awaySkaters > homeSkaters) {
+    return { text, type: 'pp', description: 'Power Play' }
+  } else {
+    return { text, type: 'pk', description: 'Penalty Kill' }
+  }
+}

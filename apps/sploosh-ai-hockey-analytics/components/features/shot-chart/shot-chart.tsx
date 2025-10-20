@@ -16,6 +16,7 @@ import * as React from 'react'
 import { useMemo, useState } from 'react'
 import { NHLEdgeHockeyRink } from '@/components/features/hockey-rink/nhl-edge-hockey-rink/nhl-edge-hockey-rink'
 import { ShotChartOverlay } from './shot-chart-overlay'
+import { VideoOverlay } from './video-overlay'
 import {
   parseShotsFromEdge,
   filterShotsByTeam,
@@ -107,10 +108,22 @@ export const ShotChart: React.FC<ShotChartProps> = ({
     y: number
     playerName: string
     teamLogo?: string
+    teamName?: string
+    teamAbbrev?: string
+    teamColor?: string
     playerHeadshot?: string
+    assistNames?: string[]
+    goalieInNetName?: string
   } | null>(null)
   const [isTooltipHovered, setIsTooltipHovered] = useState(false)
   const hideTimeoutRef = React.useRef<NodeJS.Timeout | null>(null)
+  
+  // Video overlay state
+  const [videoOverlay, setVideoOverlay] = useState<{
+    url: string
+    playerName: string
+    teamAbbrev?: string
+  } | null>(null)
 
   const handleShotHover = (shot: ShotEvent | null, clientX?: number, clientY?: number) => {
     // Clear any pending hide timeout
@@ -139,15 +152,32 @@ export const ShotChart: React.FC<ShotChartProps> = ({
       ? getPlayerName(shot.playerId, gameData.rosterSpots || [])
       : 'Unknown'
     
-    // Get team logo
+    // Get team information
     const team = shot.teamId === gameData.awayTeam?.id 
       ? gameData.awayTeam 
       : gameData.homeTeam
     const teamLogo = team?.logo || team?.darkLogo
+    const teamName = team?.name?.default || team?.commonName?.default
+    const teamAbbrev = team?.abbrev
+    const teamColor = getTeamColorWithContrast(
+      gameData.homeTeam?.id,
+      gameData.awayTeam?.id,
+      shot.teamId
+    )
     
     // Get player headshot
     const player = (gameData.rosterSpots || []).find((spot: any) => spot.playerId === shot.playerId)
     const playerHeadshot = player?.headshot
+    
+    // Get assist names for goals
+    const assistNames = shot.assists?.map(assist => 
+      getPlayerName(assist.playerId, gameData.rosterSpots || [])
+    ).filter(name => name !== 'Unknown')
+    
+    // Get goalie name
+    const goalieInNetName = shot.goalieInNetId 
+      ? getPlayerName(shot.goalieInNetId, gameData.rosterSpots || [])
+      : undefined
     
     setHoveredShot({
       shot,
@@ -155,7 +185,12 @@ export const ShotChart: React.FC<ShotChartProps> = ({
       y: clientY || 0,
       playerName,
       teamLogo,
+      teamName,
+      teamAbbrev,
+      teamColor,
       playerHeadshot,
+      assistNames,
+      goalieInNetName,
     })
   }
 
@@ -213,7 +248,7 @@ export const ShotChart: React.FC<ShotChartProps> = ({
     }
   }, [])
 
-  // Apply filters
+  // Apply filters for display (includes result type filter)
   const filteredShots = useMemo(() => {
     let shots = allShots
     shots = filterShotsByTeam(shots, selectedTeam)
@@ -222,14 +257,24 @@ export const ShotChart: React.FC<ShotChartProps> = ({
     return shots
   }, [allShots, selectedTeam, selectedPeriod, selectedResults])
 
-  // Calculate statistics
-  const stats = useMemo(() => calculateStats(filteredShots), [filteredShots])
+  // Apply filters for stats (excludes result type filter so stats show all shot types)
+  const shotsForStats = useMemo(() => {
+    let shots = allShots
+    shots = filterShotsByTeam(shots, selectedTeam)
+    shots = filterShotsByPeriod(shots, selectedPeriod)
+    // Don't filter by result type for stats
+    return shots
+  }, [allShots, selectedTeam, selectedPeriod])
+
+  // Calculate statistics from all shot types (not filtered by result)
+  const stats = useMemo(() => calculateStats(shotsForStats), [shotsForStats])
   
-  // Check if any filters are active (excluding marker scale which doesn't affect stats)
-  const hasActiveFilters = selectedTeam !== undefined || selectedPeriod !== undefined || selectedResults.length < 4
+  // Check if any filters are active that affect stats (team or period filters)
+  // Result type filter is excluded since stats now show all shot types regardless
+  const hasActiveFilters = selectedTeam !== undefined || selectedPeriod !== undefined
   
   const awayStats = useMemo(() => {
-    const calculated = calculateStats(filterShotsByTeam(filteredShots, gameData.awayTeam?.id))
+    const calculated = calculateStats(filterShotsByTeam(shotsForStats, gameData.awayTeam?.id))
     // Use official SOG from API only when no filters are applied, otherwise use calculated value
     // This ensures SOG updates correctly when filtering by period, team, or shot type
     return {
@@ -238,10 +283,10 @@ export const ShotChart: React.FC<ShotChartProps> = ({
         ? gameData.awayTeam.sog 
         : calculated.shotsOnGoal
     }
-  }, [filteredShots, gameData.awayTeam?.id, gameData.awayTeam?.sog, hasActiveFilters])
+  }, [shotsForStats, gameData.awayTeam?.id, gameData.awayTeam?.sog, hasActiveFilters])
   
   const homeStats = useMemo(() => {
-    const calculated = calculateStats(filterShotsByTeam(filteredShots, gameData.homeTeam?.id))
+    const calculated = calculateStats(filterShotsByTeam(shotsForStats, gameData.homeTeam?.id))
     // Use official SOG from API only when no filters are applied, otherwise use calculated value
     // This ensures SOG updates correctly when filtering by period, team, or shot type
     return {
@@ -250,7 +295,7 @@ export const ShotChart: React.FC<ShotChartProps> = ({
         ? gameData.homeTeam.sog 
         : calculated.shotsOnGoal
     }
-  }, [filteredShots, gameData.homeTeam?.id, gameData.homeTeam?.sog, hasActiveFilters])
+  }, [shotsForStats, gameData.homeTeam?.id, gameData.homeTeam?.sog, hasActiveFilters])
 
   // Get team names
   const awayTeamName = gameData.awayTeam ? formatTeamFullName(gameData.awayTeam) : 'Away'
@@ -574,12 +619,39 @@ export const ShotChart: React.FC<ShotChartProps> = ({
               shot={hoveredShot.shot}
               playerName={hoveredShot.playerName}
               teamLogo={hoveredShot.teamLogo}
+              teamName={hoveredShot.teamName}
+              teamAbbrev={hoveredShot.teamAbbrev}
+              teamColor={hoveredShot.teamColor}
               playerHeadshot={hoveredShot.playerHeadshot}
+              assistNames={hoveredShot.assistNames}
+              goalieInNetName={hoveredShot.goalieInNetName}
+              gameData={gameData}
+              onWatchReplay={() => {
+                if (hoveredShot.shot.highlightClipId) {
+                  // Construct NHL embed URL from clip ID
+                  const embedUrl = `https://players.brightcove.net/6415718365001/EXtG1xJ7H_default/index.html?videoId=${hoveredShot.shot.highlightClipId}`
+                  setVideoOverlay({
+                    url: embedUrl,
+                    playerName: hoveredShot.playerName,
+                    teamAbbrev: hoveredShot.teamAbbrev,
+                  })
+                }
+              }}
               visible={true}
               x={hoveredShot.x}
               y={hoveredShot.y}
             />
           </div>
+        )}
+        
+        {/* Video Overlay */}
+        {videoOverlay && (
+          <VideoOverlay
+            videoUrl={videoOverlay.url}
+            playerName={videoOverlay.playerName}
+            teamAbbrev={videoOverlay.teamAbbrev}
+            onClose={() => setVideoOverlay(null)}
+          />
         )}
       </div>
 
