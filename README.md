@@ -12,6 +12,22 @@ Work is underway to rewrite the NHL shot chart to accommodate the new endpoints 
 
 **IMPORTANT:** The NHL Edge API is publicly available; however, it is undocumented and subject to change. [@Zmalski](https://github.com/Zmalski) has created an excellent repo at [https://github.com/Zmalski/NHL-API-Reference](https://github.com/Zmalski/NHL-API-Reference) which is a fantastic guide for working with the NHL Edge API in your projects.
 
+## Copyright & Attribution
+
+### Sploosh.AI Hockey Analytics
+
+© 2025 Sploosh.AI. All rights reserved.
+
+This is an advanced hockey analytics and visualization platform developed by Sploosh.AI. The platform provides innovative tools for analyzing NHL game data, player performance, and team statistics.
+
+### NHL Data Attribution
+
+This application uses publicly available NHL and NHL EDGE data for informational and analytical purposes. We are not affiliated with or endorsed by the National Hockey League.
+
+**Trademarks:** NHL, the NHL Shield, NHL EDGE, and the word mark and image of the Stanley Cup are registered trademarks of the National Hockey League. NHL and NHL team marks are the property of the NHL and its teams. © NHL. All Rights Reserved.
+
+All statistics and data displayed in this application are sourced from publicly available NHL and NHL EDGE APIs. Proper attribution is displayed in both the sidebar and footer of the application.
+
 ## Demo
 
 This application is deployed on Vercel and can be accessed at <https://sploosh-ai-hockey-analytics.vercel.app/>
