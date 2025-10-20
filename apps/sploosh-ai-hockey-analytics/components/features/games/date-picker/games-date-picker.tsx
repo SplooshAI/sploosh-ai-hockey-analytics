@@ -41,6 +41,12 @@ export function GamesDatePicker({ date, onDateChange, isLoading = false }: Games
         setIsCalendarOpen(false)
     }
 
+    const handleFirstGameClick = () => {
+        // December 19, 1917 - First NHL game ever played
+        onDateChange(new Date(1917, 11, 19))
+        setIsCalendarOpen(false)
+    }
+
     const handleCalendarSelect = (selectedDate: Date | undefined) => {
         if (selectedDate) {
             onDateChange(startOfDay(selectedDate))
@@ -99,8 +105,9 @@ export function GamesDatePicker({ date, onDateChange, isLoading = false }: Games
                             fromYear={1917}
                             toYear={currentYear + 2}
                             disabled={{ before: firstNHLGame }}
+                            defaultMonth={date}
                         />
-                        <div className="border-t border-border p-3">
+                        <div className="border-t border-border p-3 space-y-2">
                             <Button
                                 variant="outline"
                                 size="sm"
@@ -108,6 +115,14 @@ export function GamesDatePicker({ date, onDateChange, isLoading = false }: Games
                                 className="w-full"
                             >
                                 Today
+                            </Button>
+                            <Button
+                                variant="outline"
+                                size="sm"
+                                onClick={handleFirstGameClick}
+                                className="w-full text-xs"
+                            >
+                                🏒 First NHL Games (Dec 19, 1917)
                             </Button>
                         </div>
                     </PopoverContent>
