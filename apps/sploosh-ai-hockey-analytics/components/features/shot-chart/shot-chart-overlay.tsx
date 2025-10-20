@@ -49,7 +49,8 @@ const GoalMarker: React.FC<{
   onMouseEnter?: (e: React.MouseEvent | React.TouchEvent) => void
   onMouseLeave?: () => void
   scale?: number
-}> = ({ cx, cy, color, shot, tooltip, onMouseEnter, onMouseLeave, scale = 1 }) => {
+  teamLogo?: string
+}> = ({ cx, cy, color, shot, tooltip, onMouseEnter, onMouseLeave, scale = 1, teamLogo }) => {
   const [isHovered, setIsHovered] = React.useState(false)
 
   const handleInteraction = (e: React.MouseEvent | React.TouchEvent) => {
@@ -111,10 +112,20 @@ const GoalMarker: React.FC<{
       <polygon
         points={points.join(' ')}
         fill={color}
-        stroke="#FFD700"
-        strokeWidth={isHovered ? 3 : 2}
+        stroke="#FFFFFF"
+        strokeWidth={isHovered ? 4 : 3}
         className="pointer-events-none transition-all duration-200"
-        style={{ filter: isHovered ? 'drop-shadow(0 0 8px rgba(255, 215, 0, 0.8))' : 'none' }}
+        style={{ filter: isHovered ? `drop-shadow(0 0 8px ${color})` : 'none' }}
+      />
+      {/* Team color accent ring */}
+      <polygon
+        points={points.join(' ')}
+        fill="none"
+        stroke={color}
+        strokeWidth={isHovered ? 2 : 1.5}
+        strokeDasharray="none"
+        className="pointer-events-none transition-all duration-200"
+        style={{ transform: 'scale(1.15)', transformOrigin: `${cx}px ${cy}px` }}
       />
     </g>
   )
@@ -294,6 +305,12 @@ export const ShotChartOverlay: React.FC<ShotChartOverlayProps> = ({
           : getTeamColor(shot.teamId)
         const isSelected = selectedShot?.eventId === shot.eventId
         
+        // Get team logo for goals
+        const team = shot.teamId === gameData?.awayTeam?.id 
+          ? gameData?.awayTeam 
+          : gameData?.homeTeam
+        const teamLogo = team?.logo || team?.darkLogo
+        
         // Build detailed tooltip text
         let tooltip = ''
         if (showTooltips) {
@@ -343,6 +360,7 @@ export const ShotChartOverlay: React.FC<ShotChartOverlayProps> = ({
           <GoalMarker
             key={`shot-${shot.eventId}-${idx}`}
             {...markerProps}
+            teamLogo={teamLogo}
           />
         ) : shot.result === 'shot-on-goal' ? (
           <ShotMarker
