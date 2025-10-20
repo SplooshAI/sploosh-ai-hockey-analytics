@@ -1,6 +1,8 @@
+'use client'
 import Image from 'next/image'
 import { parseISO } from 'date-fns'
 import { format, formatInTimeZone } from 'date-fns-tz'
+import { ExternalLink, Tv } from 'lucide-react'
 
 // Extended game data type that includes fields from both play-by-play and game center APIs
 interface GameHeaderData {
@@ -43,6 +45,19 @@ interface GameHeaderData {
   }
   gameOutcome?: {
     lastPeriodType?: string
+  }
+  gameCenterLink?: string
+  tvBroadcasts?: Array<{
+    id: number
+    market: string
+    countryCode: string
+    network: string
+    sequenceNumber: number
+    logo?: string
+  }>
+  gameVideo?: {
+    threeMinRecap?: string
+    condensedGame?: string
   }
 }
 
@@ -153,6 +168,13 @@ export const GameHeader: React.FC<GameHeaderProps> = ({ gameData, className = ''
     })
   }
 
+  const handleGameCenterClick = () => {
+    if (gameData.gameCenterLink) {
+      const baseUrl = 'https://www.nhl.com'
+      window.open(`${baseUrl}${gameData.gameCenterLink}`, '_blank', 'noopener,noreferrer')
+    }
+  }
+
   return (
     <div className={`flex flex-col gap-3 ${className}`}>
       {/* Special Event Banner */}
@@ -253,6 +275,37 @@ export const GameHeader: React.FC<GameHeaderProps> = ({ gameData, className = ''
           </div>
         )}
       </div>
+
+      {/* Broadcast Information */}
+      {gameData.tvBroadcasts && gameData.tvBroadcasts.length > 0 && (
+        <div className="flex items-center justify-center gap-2 pt-2 border-t border-border/30 text-xs">
+          <div className="flex items-center gap-1.5 font-medium text-muted-foreground">
+            <Tv className="h-3.5 w-3.5" />
+            <span>Watch On</span>
+          </div>
+          <div className="flex flex-wrap gap-1.5">
+            {gameData.tvBroadcasts.map((broadcast, index) => (
+              <span key={broadcast.id} className="text-foreground">
+                {broadcast.network}
+                {index < gameData.tvBroadcasts!.length - 1 && <span className="text-muted-foreground mx-1">•</span>}
+              </span>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* NHL Game Center Link */}
+      {gameData.gameCenterLink && (
+        <div className="flex justify-center pt-1">
+          <button
+            onClick={handleGameCenterClick}
+            className="inline-flex items-center gap-1 text-xs text-blue-600 hover:text-blue-700 transition-colors"
+          >
+            <span>NHL® Game Center</span>
+            <ExternalLink className="h-3 w-3" />
+          </button>
+        </div>
+      )}
     </div>
   )
 }

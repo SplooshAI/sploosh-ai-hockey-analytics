@@ -30,12 +30,6 @@ export function GameCard({ game, onSelectGame, onClose }: GameCardProps) {
         }
     }
 
-    const handleGameCenterClick = (e: React.MouseEvent) => {
-        e.stopPropagation()
-        const baseUrl = 'https://www.nhl.com'
-        window.open(`${baseUrl}${game.gameCenterLink}`, '_blank')
-    }
-
     const getOrdinalNum = (n: number) => {
         // Special case: 11, 12, 13 always end with "th"
         if (n % 100 >= 11 && n % 100 <= 13) {
@@ -193,14 +187,6 @@ export function GameCard({ game, onSelectGame, onClose }: GameCardProps) {
                 <div className={`text-sm text-center ${getGameStateClass()}`}>
                     {getGameStatus()}
                 </div>
-
-                {/* NHL Game Center Button */}
-                <button
-                    onClick={handleGameCenterClick}
-                    className="text-xs px-3 py-1.5 rounded-md bg-primary/10 hover:bg-primary/20 text-primary transition-colors"
-                >
-                    NHL Game Center
-                </button>
             </div>
         </div>
     )

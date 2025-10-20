@@ -13,22 +13,33 @@ function HomeContent() {
   const router = useRouter()
   const searchParams = useSearchParams()
   const [playByPlayData, setPlayByPlayData] = useState<NHLEdgePlayByPlay | null>(null)
+  const [gameCenterData, setGameCenterData] = useState<any | null>(null)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [copied, setCopied] = useState(false)
   const [selectedGameId, setSelectedGameId] = useState<number | null>(null)
   const [lastRefreshTime, setLastRefreshTime] = useState<Date | null>(null)
 
-  const fetchPlayByPlayData = async (gameId: number) => {
+  const fetchGameData = async (gameId: number) => {
     try {
-      const response = await fetch(`/api/nhl/play-by-play?gameId=${gameId}`)
-      const data = await response.json()
-      setPlayByPlayData(data)
+      // Fetch both play-by-play and game center data in parallel
+      const [playByPlayResponse, gameCenterResponse] = await Promise.all([
+        fetch(`/api/nhl/play-by-play?gameId=${gameId}`),
+        fetch(`/api/nhl/game-center?gameId=${gameId}`)
+      ])
+      
+      const [playByPlayData, gameCenterData] = await Promise.all([
+        playByPlayResponse.json(),
+        gameCenterResponse.json()
+      ])
+      
+      setPlayByPlayData(playByPlayData)
+      setGameCenterData(gameCenterData)
       setLastRefreshTime(new Date())
       setError(null)
     } catch (err) {
-      setError('Failed to fetch play-by-play data')
-      console.error('Error fetching play-by-play data:', err)
+      setError('Failed to fetch game data')
+      console.error('Error fetching game data:', err)
     }
   }
 
@@ -40,7 +51,7 @@ function HomeContent() {
     // Update URL with gameId query parameter
     router.push(`?gameId=${gameId}`, { scroll: false })
 
-    await fetchPlayByPlayData(gameId)
+    await fetchGameData(gameId)
     setLoading(false)
   }
 
@@ -53,7 +64,7 @@ function HomeContent() {
         setLoading(true)
         setError(null)
         setSelectedGameId(gameId)
-        fetchPlayByPlayData(gameId).finally(() => setLoading(false))
+        fetchGameData(gameId).finally(() => setLoading(false))
       }
     }
   }, [searchParams, selectedGameId, loading])
@@ -64,7 +75,7 @@ function HomeContent() {
       // Only refresh non-final games
       const isFinalGame = playByPlayData.gameState === 'FINAL' || playByPlayData.gameState === 'OFF'
       if (!isFinalGame) {
-        fetchPlayByPlayData(selectedGameId)
+        fetchGameData(selectedGameId)
       }
     }
   }
@@ -128,7 +139,15 @@ function HomeContent() {
           {/* Game Header */}
           <div className="bg-card rounded-lg p-6 shadow-sm">
             {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
-            <GameHeader gameData={playByPlayData as any} lastRefreshTime={lastRefreshTime} />
+            <GameHeader 
+              gameData={{
+                ...playByPlayData,
+                gameCenterLink: `/gamecenter/${playByPlayData.id}/recap`,
+                tvBroadcasts: gameCenterData?.tvBroadcasts || [],
+                gameVideo: gameCenterData?.gameVideo
+              } as any} 
+              lastRefreshTime={lastRefreshTime} 
+            />
           </div>
 
           {/* Shot Chart Visualization */}
