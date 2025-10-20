@@ -175,10 +175,23 @@ export const ShotTooltip: React.FC<ShotTooltipProps> = ({
 
         {/* Shot Details */}
         <div className="space-y-1 text-xs">
-          <div className="flex justify-between">
-            <span className="text-muted-foreground">Period:</span>
-            <span className="font-medium">{formatPeriodLabel(shot.period)} - {formatGameTime(shot.period, shot.time, shot.timeRemaining)}</span>
-          </div>
+          {(() => {
+            const timeInfo = formatGameTime(shot.period, shot.time, shot.timeRemaining)
+            return (
+              <>
+                <div className="flex justify-between">
+                  <span className="text-muted-foreground">Period:</span>
+                  <span className="font-medium">{formatPeriodLabel(shot.period)} - {timeInfo.elapsed}</span>
+                </div>
+                {timeInfo.remaining && (
+                  <div className="flex justify-between">
+                    <span className="text-muted-foreground"></span>
+                    <span className="font-medium text-muted-foreground">{timeInfo.remaining}</span>
+                  </div>
+                )}
+              </>
+            )
+          })()}
           <div className="flex justify-between">
             <span className="text-muted-foreground">Shot Type:</span>
             <span className="font-medium capitalize">{shot.shotType?.replace('-', ' ') || 'Unknown'}</span>

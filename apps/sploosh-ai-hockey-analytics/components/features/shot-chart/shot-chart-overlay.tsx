@@ -327,11 +327,15 @@ export const ShotChartOverlay: React.FC<ShotChartOverlayProps> = ({
             : '🛡️ Blocked Shot'
           
           const { cx: svgX, cy: svgY } = transformCoordinates(shot.xCoord, shot.yCoord)
+          const timeInfo = formatGameTime(shot.period, shot.time, shot.timeRemaining)
+          const timeDisplay = timeInfo.remaining 
+            ? `${timeInfo.elapsed} (${timeInfo.remaining})`
+            : timeInfo.elapsed
           
           tooltip = [
             resultText,
             `Player: ${playerName}`,
-            `${formatPeriodLabel(shot.period)} - ${formatGameTime(shot.period, shot.time, shot.timeRemaining)}`,
+            `${formatPeriodLabel(shot.period)} - ${timeDisplay}`,
             `Shot Type: ${shot.shotType || 'Unknown'}`,
             `NHL Coords: (${shot.xCoord}, ${shot.yCoord})`,
             `SVG Coords: (${Math.round(svgX)}, ${Math.round(svgY)})`,

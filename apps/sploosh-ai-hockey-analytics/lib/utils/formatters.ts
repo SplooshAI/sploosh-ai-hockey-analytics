@@ -117,30 +117,30 @@ function getOrdinalSuffix(num: number): string {
 }
 
 /**
- * Format game time for display - shows time elapsed with time remaining in parentheses
+ * Format game time for display - returns elapsed and remaining time separately
  * 
  * @param period - The period number
  * @param timeInPeriod - Time elapsed in period (MM:SS format)
  * @param timeRemaining - Time remaining in period (MM:SS format)
- * @returns Formatted time string
+ * @returns Object with elapsed and remaining time, or single string for backward compatibility
  * 
  * @example
- * formatGameTime(1, '05:30', '14:30') // "5:30 (14:30 remaining)"
- * formatGameTime(4, '02:15', '02:45') // "2:15 (2:45 remaining)"
- * formatGameTime(5, '00:00', '00:00') // "0:00"
+ * formatGameTime(1, '05:30', '14:30') // { elapsed: "5:30", remaining: "14:30 remaining" }
+ * formatGameTime(4, '02:15', '02:45') // { elapsed: "2:15", remaining: "2:45 remaining" }
+ * formatGameTime(5, '00:00', '00:00') // { elapsed: "0:00", remaining: null }
  */
-export function formatGameTime(period: number, timeInPeriod?: string, timeRemaining?: string): string {
+export function formatGameTime(period: number, timeInPeriod?: string, timeRemaining?: string): { elapsed: string; remaining: string | null } {
   const elapsed = timeInPeriod || '0:00'
   
   // For shootout (period 5), only show time elapsed (no time remaining)
   if (period === 5) {
-    return elapsed
+    return { elapsed, remaining: null }
   }
   
-  // For regulation and overtime, show time elapsed with time remaining in parentheses
+  // For regulation and overtime, return both elapsed and remaining
   if (timeRemaining) {
-    return `${elapsed} (${timeRemaining} remaining)`
+    return { elapsed, remaining: `${timeRemaining} remaining` }
   }
   
-  return elapsed
+  return { elapsed, remaining: null }
 }
