@@ -14,6 +14,12 @@ export interface ShotEvent {
   shotType?: string
   zone?: string
   eventId: number
+  situationCode?: string
+  distance?: number
+  angle?: number
+  assists?: Array<{ playerId: number; assistType: string }>
+  goalieInNetId?: number
+  highlightClipId?: number
 }
 
 export interface TeamInfo {
@@ -21,6 +27,51 @@ export interface TeamInfo {
   name: string
   abbrev: string
   color: string
+}
+
+/**
+ * Calculate shot distance from coordinates to center of net
+ * NHL rink coordinates: x ranges from -100 to 100, y ranges from -42.5 to 42.5
+ * Net is at x = 89 (offensive zone) or x = -89 (defensive zone)
+ * 
+ * @param x - X coordinate of shot
+ * @param y - Y coordinate of shot
+ * @returns Distance in feet
+ */
+function calculateShotDistance(x: number, y: number): number {
+  // Determine which net the shot is towards (shots are always towards opponent's net)
+  // Positive x values are shots towards the right net (x = 89)
+  // Negative x values would be towards the left net (x = -89)
+  const netX = x > 0 ? 89 : -89
+  const netY = 0 // Center of net
+  
+  // Calculate Euclidean distance
+  const distance = Math.sqrt(Math.pow(x - netX, 2) + Math.pow(y - netY, 2))
+  
+  // Round to 1 decimal place
+  return Math.round(distance * 10) / 10
+}
+
+/**
+ * Calculate shot angle from coordinates to net
+ * Angle is measured from the goal line (0° = directly in front, 90° = from the boards)
+ * 
+ * @param x - X coordinate of shot
+ * @param y - Y coordinate of shot
+ * @returns Angle in degrees (0-90)
+ */
+function calculateShotAngle(x: number, y: number): number {
+  // Determine which net the shot is towards
+  const netX = x > 0 ? 89 : -89
+  const netY = 0
+  
+  // Calculate angle using arctangent
+  // Angle from center of net to shot location
+  const angleRad = Math.atan2(Math.abs(y - netY), Math.abs(netX - x))
+  const angleDeg = angleRad * (180 / Math.PI)
+  
+  // Round to 1 decimal place
+  return Math.round(angleDeg * 10) / 10
 }
 
 /**
@@ -36,9 +87,12 @@ export function parseShotsFromEdge(gameJSON: any): ShotEvent[] {
     .filter((ev: any) => relevantTypes.includes(ev.typeDescKey))
     .map((ev: any) => {
       const details = ev.details || {}
+      const xCoord = details.xCoord
+      const yCoord = details.yCoord
+      
       return {
-        xCoord: details.xCoord,
-        yCoord: details.yCoord,
+        xCoord,
+        yCoord,
         period: ev.periodDescriptor?.number,
         teamId: details.eventOwnerTeamId,
         playerId: details.shootingPlayerId || details.scoringPlayerId,
@@ -48,6 +102,15 @@ export function parseShotsFromEdge(gameJSON: any): ShotEvent[] {
         shotType: details.shotType,
         zone: details.zoneCode || '',
         eventId: ev.eventId,
+        situationCode: ev.situationCode,
+        distance: calculateShotDistance(xCoord, yCoord),
+        angle: calculateShotAngle(xCoord, yCoord),
+        assists: details.assist1PlayerId ? [
+          { playerId: details.assist1PlayerId, assistType: 'primary' },
+          ...(details.assist2PlayerId ? [{ playerId: details.assist2PlayerId, assistType: 'secondary' }] : [])
+        ] : undefined,
+        goalieInNetId: details.goalieInNetId,
+        highlightClipId: details.highlightClip,
       }
     })
     .filter((shot: ShotEvent) => 
