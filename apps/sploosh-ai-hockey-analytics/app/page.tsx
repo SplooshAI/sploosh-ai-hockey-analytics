@@ -135,7 +135,6 @@ function HomeContent() {
           <div className="bg-card rounded-lg p-6 shadow-sm">
             <ShotChart 
               gameData={playByPlayData}
-              showTeamNames={true}
               showCenterLogo={true}
               centerIceLogo='/sploosh.ai/sploosh-ai-character-transparent.png'
             />
