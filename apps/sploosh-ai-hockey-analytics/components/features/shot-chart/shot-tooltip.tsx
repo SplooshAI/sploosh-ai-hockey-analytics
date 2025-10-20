@@ -237,15 +237,15 @@ export const ShotTooltip: React.FC<ShotTooltipProps> = ({
           </div>
           
           {/* Shot Analytics */}
-          {(shot.distance || shot.angle || shot.situationCode) && (
+          {(shot.distance !== undefined || shot.angle !== undefined || shot.situationCode) && (
             <div className="flex gap-2 mt-2">
-              {shot.distance && (
+              {shot.distance !== undefined && (
                 <div className="flex-1 bg-muted/50 rounded px-2 py-1">
                   <div className="text-[10px] text-muted-foreground">Distance</div>
                   <div className="font-bold text-sm">{shot.distance} ft</div>
                 </div>
               )}
-              {shot.angle && (
+              {shot.angle !== undefined && (
                 <div className="flex-1 bg-muted/50 rounded px-2 py-1">
                   <div className="text-[10px] text-muted-foreground">Angle</div>
                   <div className="font-bold text-sm">{shot.angle}°</div>
