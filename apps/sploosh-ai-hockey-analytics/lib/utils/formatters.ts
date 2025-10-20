@@ -59,7 +59,7 @@ export function formatPeriodLabel(period: number): string {
   
   // Multiple overtimes (rare, but possible in playoffs)
   if (period > 5) {
-    const overtimeNumber = period - 3
+    const overtimeNumber = period - 4
     return `${overtimeNumber}OT`
   }
   
@@ -86,7 +86,7 @@ export function formatPeriodDescription(period: number): string {
   if (period === 5) return 'Shootout'
   
   if (period > 5) {
-    const overtimeNumber = period - 3
+    const overtimeNumber = period - 4
     return `${overtimeNumber}${getOrdinalSuffix(overtimeNumber)} Overtime`
   }
   
