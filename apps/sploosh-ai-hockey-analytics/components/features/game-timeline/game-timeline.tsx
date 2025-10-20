@@ -1,10 +1,11 @@
 'use client'
 
 import { useMemo, useState } from 'react'
-import { Clock, AlertTriangle } from 'lucide-react'
+import { Clock, AlertTriangle, Play } from 'lucide-react'
 import { formatPeriodLabel, formatSituationCode } from '@/lib/utils/formatters'
 import Image from 'next/image'
 import { RedLightIcon } from './red-light-icon'
+import { VideoOverlay } from '../shot-chart/video-overlay'
 
 interface GameTimelineProps {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -21,6 +22,7 @@ interface TimelineEvent {
   teamId: number
   playerId?: number
   situationCode?: string
+  highlightClipId?: number
   details: {
     scoringPlayerId?: number
     scoringPlayerTotal?: number
@@ -56,6 +58,7 @@ function parseTimelineEvents(gameData: any): TimelineEvent[] {
         teamId: play.details?.eventOwnerTeamId,
         playerId: play.details?.scoringPlayerId,
         situationCode: play.situationCode,
+        highlightClipId: play.details?.highlightClip,
         details: {
           scoringPlayerId: play.details?.scoringPlayerId,
           scoringPlayerTotal: play.details?.scoringPlayerTotal,
@@ -97,6 +100,13 @@ export function GameTimeline({ gameData, className = '' }: GameTimelineProps) {
   const events = useMemo(() => parseTimelineEvents(gameData), [gameData])
   const [selectedPeriod, setSelectedPeriod] = useState<number | undefined>(undefined)
   const [selectedEventTypes, setSelectedEventTypes] = useState<Array<'goal' | 'penalty'>>(['goal', 'penalty'])
+  
+  // Video overlay state
+  const [videoOverlay, setVideoOverlay] = useState<{
+    url: string
+    playerName: string
+    teamAbbrev?: string
+  } | null>(null)
 
   const periods = useMemo(() => {
     const uniquePeriods = [...new Set(events.map(e => e.period))].sort((a, b) => a - b)
@@ -257,7 +267,7 @@ export function GameTimeline({ gameData, className = '' }: GameTimelineProps) {
                       <div className="flex items-center gap-2 text-sm text-muted-foreground mb-2">
                         <span className="font-medium">{formatPeriodLabel(event.period)}</span>
                         <span>•</span>
-                        <span>{event.timeInPeriod}</span>
+                        <span>{event.timeInPeriod} ({event.timeRemaining} remaining)</span>
                       </div>
 
                       {/* Event Type and Details */}
@@ -329,6 +339,28 @@ export function GameTimeline({ gameData, className = '' }: GameTimelineProps) {
                                   .join(', ')}
                               </div>
                             )}
+                            {/* Watch Replay Button */}
+                            {event.highlightClipId && (
+                              <div className="mt-2">
+                                <button
+                                  onClick={() => {
+                                    const embedUrl = `https://players.brightcove.net/6415718365001/EXtG1xJ7H_default/index.html?videoId=${event.highlightClipId}`
+                                    const playerName = event.details.scoringPlayerId
+                                      ? getPlayerName(event.details.scoringPlayerId, rosterSpots)
+                                      : 'Unknown'
+                                    setVideoOverlay({
+                                      url: embedUrl,
+                                      playerName,
+                                      teamAbbrev,
+                                    })
+                                  }}
+                                  className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-md bg-blue-600 hover:bg-blue-700 text-white transition-colors"
+                                >
+                                  <Play className="h-3 w-3" />
+                                  Watch Replay
+                                </button>
+                              </div>
+                            )}
                           </div>
                         </div>
                       )}
@@ -395,6 +427,16 @@ export function GameTimeline({ gameData, className = '' }: GameTimelineProps) {
           </div>
         </div>
       </div>
+
+      {/* Video Overlay */}
+      {videoOverlay && (
+        <VideoOverlay
+          videoUrl={videoOverlay.url}
+          playerName={videoOverlay.playerName}
+          teamAbbrev={videoOverlay.teamAbbrev}
+          onClose={() => setVideoOverlay(null)}
+        />
+      )}
     </div>
   )
 }
