@@ -64,6 +64,8 @@ export const VideoOverlay: React.FC<VideoOverlayProps> = ({
 
     // Listen for postMessage events from Brightcove player
     const handleMessage = (event: MessageEvent) => {
+      // Verify that the message comes from the expected video source
+      if (event.origin !== new URL(videoUrl).origin) return;
       // Brightcove player sends messages about video state
       // Check if it's an error message
       if (event.data && typeof event.data === 'object') {
@@ -92,8 +94,17 @@ export const VideoOverlay: React.FC<VideoOverlayProps> = ({
     }
   }, [videoUrl])
 
-  // Add a manual "Video Not Working?" button after a delay
+  // State for manual fallback button
   const [showManualFallback, setShowManualFallback] = React.useState(false)
+  
+  // Reset error, loading, and fallback UI when a new video URL is provided
+  React.useEffect(() => {
+    setVideoError(false)
+    setIsLoading(true)
+    setShowManualFallback(false)
+  }, [videoUrl])
+
+  // Add a manual "Video Not Working?" button after a delay
   React.useEffect(() => {
     const timer = setTimeout(() => {
       setShowManualFallback(true)
