@@ -224,14 +224,23 @@ export const ShotChart: React.FC<ShotChartProps> = ({
 
   // Calculate statistics
   const stats = useMemo(() => calculateStats(filteredShots), [filteredShots])
-  const awayStats = useMemo(() => 
-    calculateStats(filterShotsByTeam(filteredShots, gameData.awayTeam?.id)),
-    [filteredShots, gameData.awayTeam?.id]
-  )
-  const homeStats = useMemo(() => 
-    calculateStats(filterShotsByTeam(filteredShots, gameData.homeTeam?.id)),
-    [filteredShots, gameData.homeTeam?.id]
-  )
+  const awayStats = useMemo(() => {
+    const calculated = calculateStats(filterShotsByTeam(filteredShots, gameData.awayTeam?.id))
+    // Use official SOG from API if available, otherwise use calculated value
+    return {
+      ...calculated,
+      shotsOnGoal: gameData.awayTeam?.sog ?? calculated.shotsOnGoal
+    }
+  }, [filteredShots, gameData.awayTeam?.id, gameData.awayTeam?.sog])
+  
+  const homeStats = useMemo(() => {
+    const calculated = calculateStats(filterShotsByTeam(filteredShots, gameData.homeTeam?.id))
+    // Use official SOG from API if available, otherwise use calculated value
+    return {
+      ...calculated,
+      shotsOnGoal: gameData.homeTeam?.sog ?? calculated.shotsOnGoal
+    }
+  }, [filteredShots, gameData.homeTeam?.id, gameData.homeTeam?.sog])
 
   // Get team names
   const awayTeamName = gameData.awayTeam ? formatTeamFullName(gameData.awayTeam) : 'Away'
@@ -565,15 +574,20 @@ export const ShotChart: React.FC<ShotChartProps> = ({
       </div>
 
       {/* Statistics */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {/* Away Team Stats */}
         <div className="bg-muted/50 p-4 rounded-lg">
-          <h3 className="font-semibold text-lg mb-2">{awayTeamName}</h3>
+          <div className="flex items-center gap-3 mb-3">
+            {gameData.awayTeam?.logo && (
+              <img 
+                src={gameData.awayTeam.logo} 
+                alt={`${awayTeamName} logo`}
+                className="w-8 h-8 object-contain"
+              />
+            )}
+            <h3 className="font-semibold text-lg">{awayTeamName}</h3>
+          </div>
           <div className="space-y-1 text-sm">
-            <div className="flex justify-between">
-              <span>Total Shots:</span>
-              <span className="font-medium">{awayStats.totalShots}</span>
-            </div>
             <div className="flex justify-between">
               <span>Goals:</span>
               <span className="font-medium text-green-600">{awayStats.goals}</span>
@@ -582,52 +596,35 @@ export const ShotChart: React.FC<ShotChartProps> = ({
               <span>Shots on Goal:</span>
               <span className="font-medium">{awayStats.shotsOnGoal}</span>
             </div>
+            <div className="border-t border-border my-2"></div>
             <div className="flex justify-between">
-              <span>Missed:</span>
+              <span>Missed Shots:</span>
               <span className="font-medium">{awayStats.missedShots}</span>
             </div>
             <div className="flex justify-between">
-              <span>Blocked:</span>
+              <span>Blocked Shots:</span>
               <span className="font-medium">{awayStats.blockedShots}</span>
             </div>
-          </div>
-        </div>
-
-        {/* Total Stats */}
-        <div className="bg-muted/50 p-4 rounded-lg">
-          <h3 className="font-semibold text-lg mb-2">Total</h3>
-          <div className="space-y-1 text-sm">
             <div className="flex justify-between">
               <span>Total Shots:</span>
-              <span className="font-medium">{stats.totalShots}</span>
-            </div>
-            <div className="flex justify-between">
-              <span>Goals:</span>
-              <span className="font-medium text-green-600">{stats.goals}</span>
-            </div>
-            <div className="flex justify-between">
-              <span>Shots on Goal:</span>
-              <span className="font-medium">{stats.shotsOnGoal}</span>
-            </div>
-            <div className="flex justify-between">
-              <span>Missed:</span>
-              <span className="font-medium">{stats.missedShots}</span>
-            </div>
-            <div className="flex justify-between">
-              <span>Blocked:</span>
-              <span className="font-medium">{stats.blockedShots}</span>
+              <span className="font-medium">{awayStats.totalShots}</span>
             </div>
           </div>
         </div>
 
         {/* Home Team Stats */}
         <div className="bg-muted/50 p-4 rounded-lg">
-          <h3 className="font-semibold text-lg mb-2">{homeTeamName}</h3>
+          <div className="flex items-center gap-3 mb-3">
+            {gameData.homeTeam?.logo && (
+              <img 
+                src={gameData.homeTeam.logo} 
+                alt={`${homeTeamName} logo`}
+                className="w-8 h-8 object-contain"
+              />
+            )}
+            <h3 className="font-semibold text-lg">{homeTeamName}</h3>
+          </div>
           <div className="space-y-1 text-sm">
-            <div className="flex justify-between">
-              <span>Total Shots:</span>
-              <span className="font-medium">{homeStats.totalShots}</span>
-            </div>
             <div className="flex justify-between">
               <span>Goals:</span>
               <span className="font-medium text-green-600">{homeStats.goals}</span>
@@ -636,13 +633,18 @@ export const ShotChart: React.FC<ShotChartProps> = ({
               <span>Shots on Goal:</span>
               <span className="font-medium">{homeStats.shotsOnGoal}</span>
             </div>
+            <div className="border-t border-border my-2"></div>
             <div className="flex justify-between">
-              <span>Missed:</span>
+              <span>Missed Shots:</span>
               <span className="font-medium">{homeStats.missedShots}</span>
             </div>
             <div className="flex justify-between">
-              <span>Blocked:</span>
+              <span>Blocked Shots:</span>
               <span className="font-medium">{homeStats.blockedShots}</span>
+            </div>
+            <div className="flex justify-between">
+              <span>Total Shots:</span>
+              <span className="font-medium">{homeStats.totalShots}</span>
             </div>
           </div>
         </div>
