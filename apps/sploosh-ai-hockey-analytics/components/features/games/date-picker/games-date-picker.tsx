@@ -95,7 +95,7 @@ export function GamesDatePicker({ date, onDateChange, isLoading = false }: Games
                             <CalendarIcon className="h-4 w-4" />
                         </Button>
                     </PopoverTrigger>
-                    <PopoverContent className="w-fit p-0" align="center">
+                    <PopoverContent className="p-0 w-auto max-w-fit" align="center">
                         <Calendar
                             mode="single"
                             selected={date}
@@ -106,13 +106,20 @@ export function GamesDatePicker({ date, onDateChange, isLoading = false }: Games
                             toYear={currentYear + 2}
                             disabled={{ before: firstNHLGame }}
                             defaultMonth={date}
+                            className="w-full px-0 pt-3 pb-2 [--cell-size:2rem]"
+                            classNames={{
+                                week: "mt-0 flex w-full gap-0",
+                                month: "flex w-full flex-col gap-1",
+                                day: "p-0",
+                                table: "w-full"
+                            }}
                         />
-                        <div className="border-t border-border p-3 space-y-2">
+                        <div className="border-t border-border px-2 py-2 space-y-1.5">
                             <Button
                                 variant="outline"
                                 size="sm"
                                 onClick={handleTodayClick}
-                                className="w-full"
+                                className="w-full h-7 text-xs px-2"
                             >
                                 Today
                             </Button>
@@ -120,7 +127,7 @@ export function GamesDatePicker({ date, onDateChange, isLoading = false }: Games
                                 variant="outline"
                                 size="sm"
                                 onClick={handleFirstGameClick}
-                                className="w-full text-xs"
+                                className="w-full h-7 text-xs px-2"
                             >
                                 🏒 Start of the NHL
                             </Button>
