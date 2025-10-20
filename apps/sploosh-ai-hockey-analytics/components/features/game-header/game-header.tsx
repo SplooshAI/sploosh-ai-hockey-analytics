@@ -159,13 +159,10 @@ export const GameHeader: React.FC<GameHeaderProps> = ({ gameData, className = ''
   }
 
   const formatGameDate = () => {
-    const date = new Date(gameData.gameDate)
-    return date.toLocaleDateString('en-US', { 
-      weekday: 'short', 
-      month: 'short', 
-      day: 'numeric',
-      year: 'numeric'
-    })
+    // Use parseISO and format in UTC to avoid timezone conversion issues
+    // gameDate is in YYYY-MM-DD format and should be displayed as-is
+    const date = parseISO(gameData.gameDate)
+    return formatInTimeZone(date, 'UTC', 'EEE, MMM d, yyyy')
   }
 
   const handleGameCenterClick = () => {
