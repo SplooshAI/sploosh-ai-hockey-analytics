@@ -16,6 +16,7 @@ import * as React from 'react'
 import { useMemo, useState } from 'react'
 import { NHLEdgeHockeyRink } from '@/components/features/hockey-rink/nhl-edge-hockey-rink/nhl-edge-hockey-rink'
 import { ShotChartOverlay } from './shot-chart-overlay'
+import { VideoOverlay } from './video-overlay'
 import {
   parseShotsFromEdge,
   filterShotsByTeam,
@@ -111,9 +112,18 @@ export const ShotChart: React.FC<ShotChartProps> = ({
     teamAbbrev?: string
     teamColor?: string
     playerHeadshot?: string
+    assistNames?: string[]
+    goalieInNetName?: string
   } | null>(null)
   const [isTooltipHovered, setIsTooltipHovered] = useState(false)
   const hideTimeoutRef = React.useRef<NodeJS.Timeout | null>(null)
+  
+  // Video overlay state
+  const [videoOverlay, setVideoOverlay] = useState<{
+    url: string
+    playerName: string
+    teamAbbrev?: string
+  } | null>(null)
 
   const handleShotHover = (shot: ShotEvent | null, clientX?: number, clientY?: number) => {
     // Clear any pending hide timeout
@@ -159,6 +169,16 @@ export const ShotChart: React.FC<ShotChartProps> = ({
     const player = (gameData.rosterSpots || []).find((spot: any) => spot.playerId === shot.playerId)
     const playerHeadshot = player?.headshot
     
+    // Get assist names for goals
+    const assistNames = shot.assists?.map(assist => 
+      getPlayerName(assist.playerId, gameData.rosterSpots || [])
+    ).filter(name => name !== 'Unknown')
+    
+    // Get goalie name
+    const goalieInNetName = shot.goalieInNetId 
+      ? getPlayerName(shot.goalieInNetId, gameData.rosterSpots || [])
+      : undefined
+    
     setHoveredShot({
       shot,
       x: clientX || 0,
@@ -169,6 +189,8 @@ export const ShotChart: React.FC<ShotChartProps> = ({
       teamAbbrev,
       teamColor,
       playerHeadshot,
+      assistNames,
+      goalieInNetName,
     })
   }
 
@@ -601,11 +623,35 @@ export const ShotChart: React.FC<ShotChartProps> = ({
               teamAbbrev={hoveredShot.teamAbbrev}
               teamColor={hoveredShot.teamColor}
               playerHeadshot={hoveredShot.playerHeadshot}
+              assistNames={hoveredShot.assistNames}
+              goalieInNetName={hoveredShot.goalieInNetName}
+              gameData={gameData}
+              onWatchReplay={() => {
+                if (hoveredShot.shot.highlightClipId) {
+                  // Construct NHL embed URL from clip ID
+                  const embedUrl = `https://players.brightcove.net/6415718365001/EXtG1xJ7H_default/index.html?videoId=${hoveredShot.shot.highlightClipId}`
+                  setVideoOverlay({
+                    url: embedUrl,
+                    playerName: hoveredShot.playerName,
+                    teamAbbrev: hoveredShot.teamAbbrev,
+                  })
+                }
+              }}
               visible={true}
               x={hoveredShot.x}
               y={hoveredShot.y}
             />
           </div>
+        )}
+        
+        {/* Video Overlay */}
+        {videoOverlay && (
+          <VideoOverlay
+            videoUrl={videoOverlay.url}
+            playerName={videoOverlay.playerName}
+            teamAbbrev={videoOverlay.teamAbbrev}
+            onClose={() => setVideoOverlay(null)}
+          />
         )}
       </div>
 
