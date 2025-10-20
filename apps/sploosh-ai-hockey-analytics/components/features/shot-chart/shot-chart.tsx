@@ -224,14 +224,33 @@ export const ShotChart: React.FC<ShotChartProps> = ({
 
   // Calculate statistics
   const stats = useMemo(() => calculateStats(filteredShots), [filteredShots])
-  const awayStats = useMemo(() => 
-    calculateStats(filterShotsByTeam(filteredShots, gameData.awayTeam?.id)),
-    [filteredShots, gameData.awayTeam?.id]
-  )
-  const homeStats = useMemo(() => 
-    calculateStats(filterShotsByTeam(filteredShots, gameData.homeTeam?.id)),
-    [filteredShots, gameData.homeTeam?.id]
-  )
+  
+  // Check if any filters are active (excluding marker scale which doesn't affect stats)
+  const hasActiveFilters = selectedTeam !== undefined || selectedPeriod !== undefined || selectedResults.length < 4
+  
+  const awayStats = useMemo(() => {
+    const calculated = calculateStats(filterShotsByTeam(filteredShots, gameData.awayTeam?.id))
+    // Use official SOG from API only when no filters are applied, otherwise use calculated value
+    // This ensures SOG updates correctly when filtering by period, team, or shot type
+    return {
+      ...calculated,
+      shotsOnGoal: !hasActiveFilters && gameData.awayTeam?.sog !== undefined 
+        ? gameData.awayTeam.sog 
+        : calculated.shotsOnGoal
+    }
+  }, [filteredShots, gameData.awayTeam?.id, gameData.awayTeam?.sog, hasActiveFilters])
+  
+  const homeStats = useMemo(() => {
+    const calculated = calculateStats(filterShotsByTeam(filteredShots, gameData.homeTeam?.id))
+    // Use official SOG from API only when no filters are applied, otherwise use calculated value
+    // This ensures SOG updates correctly when filtering by period, team, or shot type
+    return {
+      ...calculated,
+      shotsOnGoal: !hasActiveFilters && gameData.homeTeam?.sog !== undefined 
+        ? gameData.homeTeam.sog 
+        : calculated.shotsOnGoal
+    }
+  }, [filteredShots, gameData.homeTeam?.id, gameData.homeTeam?.sog, hasActiveFilters])
 
   // Get team names
   const awayTeamName = gameData.awayTeam ? formatTeamFullName(gameData.awayTeam) : 'Away'
@@ -565,84 +584,77 @@ export const ShotChart: React.FC<ShotChartProps> = ({
       </div>
 
       {/* Statistics */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {/* Away Team Stats */}
         <div className="bg-muted/50 p-4 rounded-lg">
-          <h3 className="font-semibold text-lg mb-2">{awayTeamName}</h3>
-          <div className="space-y-1 text-sm">
-            <div className="flex justify-between">
-              <span>Total Shots:</span>
-              <span className="font-medium">{awayStats.totalShots}</span>
-            </div>
-            <div className="flex justify-between">
-              <span>Goals:</span>
-              <span className="font-medium text-green-600">{awayStats.goals}</span>
-            </div>
-            <div className="flex justify-between">
-              <span>Shots on Goal:</span>
-              <span className="font-medium">{awayStats.shotsOnGoal}</span>
-            </div>
-            <div className="flex justify-between">
-              <span>Missed:</span>
-              <span className="font-medium">{awayStats.missedShots}</span>
-            </div>
-            <div className="flex justify-between">
-              <span>Blocked:</span>
-              <span className="font-medium">{awayStats.blockedShots}</span>
-            </div>
+          <div className="flex items-center gap-3 mb-3">
+            {gameData.awayTeam?.logo && (
+              <img 
+                src={gameData.awayTeam.logo} 
+                alt={`${awayTeamName} logo`}
+                className="w-8 h-8 object-contain"
+              />
+            )}
+            <h3 className="font-semibold text-lg">{awayTeamName}</h3>
           </div>
-        </div>
-
-        {/* Total Stats */}
-        <div className="bg-muted/50 p-4 rounded-lg">
-          <h3 className="font-semibold text-lg mb-2">Total</h3>
           <div className="space-y-1 text-sm">
             <div className="flex justify-between">
-              <span>Total Shots:</span>
-              <span className="font-medium">{stats.totalShots}</span>
+              <span>Goals</span>
+              <span className="font-medium text-green-600 text-right min-w-[3ch] tabular-nums">{awayStats.goals}</span>
             </div>
             <div className="flex justify-between">
-              <span>Goals:</span>
-              <span className="font-medium text-green-600">{stats.goals}</span>
+              <span>Shots on Goal</span>
+              <span className="font-medium text-right min-w-[3ch] tabular-nums">{awayStats.shotsOnGoal}</span>
+            </div>
+            <div className="border-t border-border my-2"></div>
+            <div className="flex justify-between">
+              <span>Missed Shots</span>
+              <span className="font-medium text-right min-w-[3ch] tabular-nums">{awayStats.missedShots}</span>
             </div>
             <div className="flex justify-between">
-              <span>Shots on Goal:</span>
-              <span className="font-medium">{stats.shotsOnGoal}</span>
+              <span>Blocked Shots</span>
+              <span className="font-medium text-right min-w-[3ch] tabular-nums">{awayStats.blockedShots}</span>
             </div>
             <div className="flex justify-between">
-              <span>Missed:</span>
-              <span className="font-medium">{stats.missedShots}</span>
-            </div>
-            <div className="flex justify-between">
-              <span>Blocked:</span>
-              <span className="font-medium">{stats.blockedShots}</span>
+              <span>Total Shots</span>
+              <span className="font-medium text-right min-w-[3ch] tabular-nums">{awayStats.totalShots}</span>
             </div>
           </div>
         </div>
 
         {/* Home Team Stats */}
         <div className="bg-muted/50 p-4 rounded-lg">
-          <h3 className="font-semibold text-lg mb-2">{homeTeamName}</h3>
+          <div className="flex items-center gap-3 mb-3">
+            {gameData.homeTeam?.logo && (
+              <img 
+                src={gameData.homeTeam.logo} 
+                alt={`${homeTeamName} logo`}
+                className="w-8 h-8 object-contain"
+              />
+            )}
+            <h3 className="font-semibold text-lg">{homeTeamName}</h3>
+          </div>
           <div className="space-y-1 text-sm">
             <div className="flex justify-between">
-              <span>Total Shots:</span>
-              <span className="font-medium">{homeStats.totalShots}</span>
+              <span>Goals</span>
+              <span className="font-medium text-green-600 text-right min-w-[3ch] tabular-nums">{homeStats.goals}</span>
             </div>
             <div className="flex justify-between">
-              <span>Goals:</span>
-              <span className="font-medium text-green-600">{homeStats.goals}</span>
+              <span>Shots on Goal</span>
+              <span className="font-medium text-right min-w-[3ch] tabular-nums">{homeStats.shotsOnGoal}</span>
+            </div>
+            <div className="border-t border-border my-2"></div>
+            <div className="flex justify-between">
+              <span>Missed Shots</span>
+              <span className="font-medium text-right min-w-[3ch] tabular-nums">{homeStats.missedShots}</span>
             </div>
             <div className="flex justify-between">
-              <span>Shots on Goal:</span>
-              <span className="font-medium">{homeStats.shotsOnGoal}</span>
+              <span>Blocked Shots</span>
+              <span className="font-medium text-right min-w-[3ch] tabular-nums">{homeStats.blockedShots}</span>
             </div>
             <div className="flex justify-between">
-              <span>Missed:</span>
-              <span className="font-medium">{homeStats.missedShots}</span>
-            </div>
-            <div className="flex justify-between">
-              <span>Blocked:</span>
-              <span className="font-medium">{homeStats.blockedShots}</span>
+              <span>Total Shots</span>
+              <span className="font-medium text-right min-w-[3ch] tabular-nums">{homeStats.totalShots}</span>
             </div>
           </div>
         </div>
