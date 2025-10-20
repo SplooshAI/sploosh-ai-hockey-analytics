@@ -599,25 +599,25 @@ export const ShotChart: React.FC<ShotChartProps> = ({
           </div>
           <div className="space-y-1 text-sm">
             <div className="flex justify-between">
-              <span>Goals:</span>
-              <span className="font-medium text-green-600">{awayStats.goals}</span>
+              <span>Goals</span>
+              <span className="font-medium text-green-600 text-right min-w-[3ch] tabular-nums">{awayStats.goals}</span>
             </div>
             <div className="flex justify-between">
-              <span>Shots on Goal:</span>
-              <span className="font-medium">{awayStats.shotsOnGoal}</span>
+              <span>Shots on Goal</span>
+              <span className="font-medium text-right min-w-[3ch] tabular-nums">{awayStats.shotsOnGoal}</span>
             </div>
             <div className="border-t border-border my-2"></div>
             <div className="flex justify-between">
-              <span>Missed Shots:</span>
-              <span className="font-medium">{awayStats.missedShots}</span>
+              <span>Missed Shots</span>
+              <span className="font-medium text-right min-w-[3ch] tabular-nums">{awayStats.missedShots}</span>
             </div>
             <div className="flex justify-between">
-              <span>Blocked Shots:</span>
-              <span className="font-medium">{awayStats.blockedShots}</span>
+              <span>Blocked Shots</span>
+              <span className="font-medium text-right min-w-[3ch] tabular-nums">{awayStats.blockedShots}</span>
             </div>
             <div className="flex justify-between">
-              <span>Total Shots:</span>
-              <span className="font-medium">{awayStats.totalShots}</span>
+              <span>Total Shots</span>
+              <span className="font-medium text-right min-w-[3ch] tabular-nums">{awayStats.totalShots}</span>
             </div>
           </div>
         </div>
@@ -636,25 +636,25 @@ export const ShotChart: React.FC<ShotChartProps> = ({
           </div>
           <div className="space-y-1 text-sm">
             <div className="flex justify-between">
-              <span>Goals:</span>
-              <span className="font-medium text-green-600">{homeStats.goals}</span>
+              <span>Goals</span>
+              <span className="font-medium text-green-600 text-right min-w-[3ch] tabular-nums">{homeStats.goals}</span>
             </div>
             <div className="flex justify-between">
-              <span>Shots on Goal:</span>
-              <span className="font-medium">{homeStats.shotsOnGoal}</span>
+              <span>Shots on Goal</span>
+              <span className="font-medium text-right min-w-[3ch] tabular-nums">{homeStats.shotsOnGoal}</span>
             </div>
             <div className="border-t border-border my-2"></div>
             <div className="flex justify-between">
-              <span>Missed Shots:</span>
-              <span className="font-medium">{homeStats.missedShots}</span>
+              <span>Missed Shots</span>
+              <span className="font-medium text-right min-w-[3ch] tabular-nums">{homeStats.missedShots}</span>
             </div>
             <div className="flex justify-between">
-              <span>Blocked Shots:</span>
-              <span className="font-medium">{homeStats.blockedShots}</span>
+              <span>Blocked Shots</span>
+              <span className="font-medium text-right min-w-[3ch] tabular-nums">{homeStats.blockedShots}</span>
             </div>
             <div className="flex justify-between">
-              <span>Total Shots:</span>
-              <span className="font-medium">{homeStats.totalShots}</span>
+              <span>Total Shots</span>
+              <span className="font-medium text-right min-w-[3ch] tabular-nums">{homeStats.totalShots}</span>
             </div>
           </div>
         </div>
