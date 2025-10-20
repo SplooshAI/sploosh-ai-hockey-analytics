@@ -125,8 +125,8 @@ function getOrdinalSuffix(num: number): string {
  * @returns Formatted time string
  * 
  * @example
- * formatGameTime(1, '05:30', '14:30') // "5:30 (14:30 left)"
- * formatGameTime(4, '02:15', '02:45') // "2:15 (2:45 left)"
+ * formatGameTime(1, '05:30', '14:30') // "5:30 (14:30 remaining)"
+ * formatGameTime(4, '02:15', '02:45') // "2:15 (2:45 remaining)"
  * formatGameTime(5, '00:00', '00:00') // "0:00"
  */
 export function formatGameTime(period: number, timeInPeriod?: string, timeRemaining?: string): string {
@@ -139,7 +139,7 @@ export function formatGameTime(period: number, timeInPeriod?: string, timeRemain
   
   // For regulation and overtime, show time elapsed with time remaining in parentheses
   if (timeRemaining) {
-    return `${elapsed} (${timeRemaining} left)`
+    return `${elapsed} (${timeRemaining} remaining)`
   }
   
   return elapsed
