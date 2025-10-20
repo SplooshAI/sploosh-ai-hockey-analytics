@@ -552,7 +552,7 @@ export const ShotChart: React.FC<ShotChartProps> = ({
           <svg
             xmlns="http://www.w3.org/2000/svg"
             viewBox="-75 -75 2550 1170"
-            className="w-full h-auto absolute top-0 left-0 pointer-events-auto"
+            className="w-full h-auto absolute top-0 left-0 pointer-events-none"
             onClick={(e) => {
               // Smart tap detection: find nearest marker if tap is close enough
               const svg = e.currentTarget as SVGSVGElement
@@ -611,37 +611,35 @@ export const ShotChart: React.FC<ShotChartProps> = ({
         
         {/* Render tooltip outside SVG */}
         {hoveredShot && (
-          <div
+          <ShotTooltip
+            shot={hoveredShot.shot}
+            playerName={hoveredShot.playerName}
+            teamLogo={hoveredShot.teamLogo}
+            teamName={hoveredShot.teamName}
+            teamAbbrev={hoveredShot.teamAbbrev}
+            teamColor={hoveredShot.teamColor}
+            playerHeadshot={hoveredShot.playerHeadshot}
+            assistNames={hoveredShot.assistNames}
+            goalieInNetName={hoveredShot.goalieInNetName}
+            gameData={gameData}
+            onWatchReplay={() => {
+              if (hoveredShot.shot.highlightClipId) {
+                // Construct NHL embed URL from clip ID
+                const embedUrl = `https://players.brightcove.net/6415718365001/EXtG1xJ7H_default/index.html?videoId=${hoveredShot.shot.highlightClipId}`
+                setVideoOverlay({
+                  url: embedUrl,
+                  playerName: hoveredShot.playerName,
+                  teamAbbrev: hoveredShot.teamAbbrev,
+                })
+              }
+            }}
+            visible={true}
+            x={hoveredShot.x}
+            y={hoveredShot.y}
             onMouseEnter={handleTooltipMouseEnter}
             onMouseLeave={handleTooltipMouseLeave}
-          >
-            <ShotTooltip
-              shot={hoveredShot.shot}
-              playerName={hoveredShot.playerName}
-              teamLogo={hoveredShot.teamLogo}
-              teamName={hoveredShot.teamName}
-              teamAbbrev={hoveredShot.teamAbbrev}
-              teamColor={hoveredShot.teamColor}
-              playerHeadshot={hoveredShot.playerHeadshot}
-              assistNames={hoveredShot.assistNames}
-              goalieInNetName={hoveredShot.goalieInNetName}
-              gameData={gameData}
-              onWatchReplay={() => {
-                if (hoveredShot.shot.highlightClipId) {
-                  // Construct NHL embed URL from clip ID
-                  const embedUrl = `https://players.brightcove.net/6415718365001/EXtG1xJ7H_default/index.html?videoId=${hoveredShot.shot.highlightClipId}`
-                  setVideoOverlay({
-                    url: embedUrl,
-                    playerName: hoveredShot.playerName,
-                    teamAbbrev: hoveredShot.teamAbbrev,
-                  })
-                }
-              }}
-              visible={true}
-              x={hoveredShot.x}
-              y={hoveredShot.y}
-            />
-          </div>
+            onDismiss={() => setHoveredShot(null)}
+          />
         )}
         
         {/* Video Overlay */}
