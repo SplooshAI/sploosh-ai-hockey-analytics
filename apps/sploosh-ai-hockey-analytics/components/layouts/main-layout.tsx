@@ -4,6 +4,8 @@ import { ReactNode, useState, useEffect } from 'react'
 import Sidebar from './sidebar/sidebar'
 import { Menu, ArrowUp } from 'lucide-react'
 import { SITE } from "@/lib/constants"
+import { NHLAttribution } from '../shared/nhl-attribution/nhl-attribution'
+import { SplooshCopyright } from '../shared/sploosh-copyright/sploosh-copyright'
 
 interface MainLayoutProps {
     children: ReactNode
@@ -66,6 +68,14 @@ export function MainLayout({ children, onGameSelect, onSidebarRefresh }: MainLay
                 <div className="p-4 lg:p-6">
                     {children}
                 </div>
+
+                {/* Footer */}
+                <footer className="mt-8 p-4 lg:p-6 border-t border-border/50 bg-secondary/30 space-y-6">
+                    <SplooshCopyright variant="footer" />
+                    <div className="pt-4 border-t border-border/30">
+                        <NHLAttribution variant="footer" />
+                    </div>
+                </footer>
 
                 {/* Scroll to top button - now targets main content */}
                 <button
