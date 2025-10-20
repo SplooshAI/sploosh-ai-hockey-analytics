@@ -9,20 +9,25 @@ These global rules define standardized Git workflow practices to be applied acro
 <branch_creation>
 
 - Always create feature branches from the main branch
-- **CRITICAL: Before creating a branch, you MUST run `date +%Y.%m.%d` to get the current date**
-- **NEVER hardcode or guess the date - always execute the date command first**
+- **CRITICAL: Extract the current date from the metadata timestamp in the user's request**
+- **The metadata shows the date like "Oct 19, 2025 at 9:31pm" - convert this to YYYY.MM.DD format (2025.10.19)**
+- **NEVER hardcode dates like 2025.01.19 or guess the date - ALWAYS use the actual current date from metadata**
 - Use descriptive branch names with the following format: `YYYY.MM.DD/description-in-kebab-case`
-  - Date format: Current date in YYYY.MM.DD format (e.g., 2025.10.19)
+  - Date format: Current date in YYYY.MM.DD format extracted from metadata (e.g., 2025.10.19)
   - Examples: `2025.10.19/add-player-statistics`, `2025.10.19/fix-animation-slider-bug`
-  - The date prefix MUST be obtained by running: `date +%Y.%m.%d`
 - Push new branches to the remote repository immediately after creation
 - Set up upstream tracking when pushing a new branch
 
 **Branch Creation Process:**
-1. Run `date +%Y.%m.%d` to get today's date
-2. Use the output to create the branch name: `YYYY.MM.DD/description`
-3. Create the branch: `git checkout -b YYYY.MM.DD/description`
-4. Push and set upstream: `git push -u origin YYYY.MM.DD/description`
+1. Look at the metadata timestamp: "The USER presented this request to you on Oct 19, 2025 at 9:31pm"
+2. Convert to YYYY.MM.DD format: Oct 19, 2025 → 2025.10.19
+3. Create the branch: `git checkout -b 2025.10.19/description`
+4. Push and set upstream: `git push -u origin 2025.10.19/description`
+
+**WRONG EXAMPLES TO AVOID:**
+- ❌ 2025.01.19/feature (wrong month - January instead of October)
+- ❌ 2025.05.17/feature (wrong date entirely)
+- ✅ 2025.10.19/feature (correct - matches Oct 19, 2025)
 
 </branch_creation>
 
