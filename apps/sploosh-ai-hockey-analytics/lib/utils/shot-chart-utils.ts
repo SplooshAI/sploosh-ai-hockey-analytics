@@ -2,6 +2,22 @@
  * Utility functions for parsing and transforming shot chart data from NHL EDGE API
  */
 
+/**
+ * Check if a game has location data (coordinates) for shot events
+ * Games before ~2007 typically don't have xCoord/yCoord data
+ */
+export function hasLocationData(gameData: any): boolean {
+  const plays = gameData?.plays || []
+  const shotEvents = plays.filter((play: any) => 
+    ['shot-on-goal', 'missed-shot', 'blocked-shot', 'goal'].includes(play.typeDescKey)
+  )
+  
+  // Check if any shot events have coordinate data
+  return shotEvents.some((play: any) => 
+    play.details?.xCoord !== undefined && play.details?.yCoord !== undefined
+  )
+}
+
 export interface ShotEvent {
   xCoord: number
   yCoord: number
