@@ -11,6 +11,9 @@ interface ShotTooltipProps {
   shot: ShotEvent
   playerName: string
   teamLogo?: string
+  teamName?: string
+  teamAbbrev?: string
+  teamColor?: string
   playerHeadshot?: string
   visible: boolean
   x: number
@@ -21,6 +24,9 @@ export const ShotTooltip: React.FC<ShotTooltipProps> = ({
   shot,
   playerName,
   teamLogo,
+  teamName,
+  teamAbbrev,
+  teamColor,
   playerHeadshot,
   visible,
   x,
@@ -38,11 +44,17 @@ export const ShotTooltip: React.FC<ShotTooltipProps> = ({
     ? '❌ Missed Shot'
     : '🛡️ Blocked Shot'
 
-  const resultColor = shot.result === 'goal'
+  // Use team color for header background if available
+  const resultColorClass = shot.result === 'goal'
     ? 'bg-green-500'
     : shot.result === 'shot-on-goal'
     ? 'bg-blue-500'
     : 'bg-gray-500'
+  
+  const headerStyle = teamColor ? {
+    backgroundColor: teamColor,
+    color: '#FFFFFF'
+  } : {}
 
   React.useEffect(() => {
     if (!tooltipRef.current) return
@@ -115,10 +127,20 @@ export const ShotTooltip: React.FC<ShotTooltipProps> = ({
       style={tooltipStyle}
     >
       <div className="bg-background/95 backdrop-blur-sm border-2 border-border rounded-lg shadow-2xl p-3 min-w-[280px] max-w-[calc(100vw-40px)] md:max-w-[320px]">
-        {/* Header with Result Type */}
-        <div className={`${resultColor} text-white px-3 py-1.5 rounded-md mb-2 font-bold text-sm flex items-center gap-2`}>
-          <span className="text-lg">{resultText.split(' ')[0]}</span>
-          <span>{resultText.split(' ').slice(1).join(' ')}</span>
+        {/* Header with Result Type and Team */}
+        <div 
+          className={`${teamColor ? '' : resultColorClass} text-white px-3 py-1.5 rounded-md mb-2 font-bold text-sm`}
+          style={headerStyle}
+        >
+          <div className="flex items-center justify-between gap-2">
+            <div className="flex items-center gap-2">
+              <span className="text-lg">{resultText.split(' ')[0]}</span>
+              <span>{resultText.split(' ').slice(1).join(' ')}</span>
+            </div>
+            {teamAbbrev && (
+              <span className="text-xs font-semibold opacity-90">{teamAbbrev}</span>
+            )}
+          </div>
         </div>
 
         {/* Player Info with Headshot */}
