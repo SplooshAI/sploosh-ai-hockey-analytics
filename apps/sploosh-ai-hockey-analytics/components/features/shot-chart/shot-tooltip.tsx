@@ -183,10 +183,6 @@ export const ShotTooltip: React.FC<ShotTooltipProps> = ({
             <span className="text-muted-foreground">Shot Type:</span>
             <span className="font-medium capitalize">{shot.shotType?.replace('-', ' ') || 'Unknown'}</span>
           </div>
-          <div className="flex justify-between">
-            <span className="text-muted-foreground">Zone:</span>
-            <span className="font-medium">{shot.zone || 'N/A'}</span>
-          </div>
           
           {/* Technical Details (Collapsible) */}
           <details className="mt-2 pt-2 border-t border-border">

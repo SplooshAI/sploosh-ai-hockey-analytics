@@ -333,7 +333,6 @@ export const ShotChartOverlay: React.FC<ShotChartOverlayProps> = ({
             `Player: ${playerName}`,
             `${formatPeriodLabel(shot.period)} - ${formatGameTime(shot.period, shot.time, shot.timeRemaining)}`,
             `Shot Type: ${shot.shotType || 'Unknown'}`,
-            `Zone: ${shot.zone || 'N/A'}`,
             `NHL Coords: (${shot.xCoord}, ${shot.yCoord})`,
             `SVG Coords: (${Math.round(svgX)}, ${Math.round(svgY)})`,
             `Event ID: ${shot.eventId}`
