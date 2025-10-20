@@ -15,7 +15,7 @@
  */
 
 import * as React from 'react'
-import { transformCoordinates, getTeamColor, getPlayerName, type ShotEvent } from '@/lib/utils/shot-chart-utils'
+import { transformCoordinates, getTeamColor, getTeamColorWithContrast, getStandardizedShotColor, getPlayerName, type ShotEvent } from '@/lib/utils/shot-chart-utils'
 import { ShotTooltip } from './shot-tooltip'
 
 interface ShotChartOverlayProps {
@@ -280,11 +280,18 @@ export const ShotChartOverlay: React.FC<ShotChartOverlayProps> = ({
     onShotHover(null)
   }
 
+  // Get team IDs for color calculation
+  const homeTeamId = gameData?.homeTeam?.id
+  const awayTeamId = gameData?.awayTeam?.id
+
   return (
     <g className={className}>
       {shots.map((shot, idx) => {
         const { cx, cy } = transformCoordinates(shot.xCoord, shot.yCoord)
-        const color = getTeamColor(shot.teamId)
+        // Use team colors with automatic contrast adjustment
+        const color = (homeTeamId && awayTeamId) 
+          ? getTeamColorWithContrast(homeTeamId, awayTeamId, shot.teamId)
+          : getTeamColor(shot.teamId)
         const isSelected = selectedShot?.eventId === shot.eventId
         
         // Build detailed tooltip text

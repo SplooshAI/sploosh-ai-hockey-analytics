@@ -79,6 +79,43 @@ export function transformCoordinates(x: number, y: number): { cx: number; cy: nu
 }
 
 /**
+ * Convert hex color to RGB
+ */
+function hexToRgb(hex: string): { r: number; g: number; b: number } {
+  const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex)
+  return result ? {
+    r: parseInt(result[1], 16),
+    g: parseInt(result[2], 16),
+    b: parseInt(result[3], 16)
+  } : { r: 0, g: 0, b: 0 }
+}
+
+/**
+ * Calculate relative luminance of a color (WCAG formula)
+ */
+function getLuminance(hex: string): number {
+  const rgb = hexToRgb(hex)
+  const [r, g, b] = [rgb.r, rgb.g, rgb.b].map(val => {
+    const normalized = val / 255
+    return normalized <= 0.03928
+      ? normalized / 12.92
+      : Math.pow((normalized + 0.055) / 1.055, 2.4)
+  })
+  return 0.2126 * r + 0.7152 * g + 0.0722 * b
+}
+
+/**
+ * Calculate contrast ratio between two colors (WCAG formula)
+ */
+function getContrastRatio(color1: string, color2: string): number {
+  const lum1 = getLuminance(color1)
+  const lum2 = getLuminance(color2)
+  const lighter = Math.max(lum1, lum2)
+  const darker = Math.min(lum1, lum2)
+  return (lighter + 0.05) / (darker + 0.05)
+}
+
+/**
  * Get team colors based on team ID
  * Using official NHL team primary colors
  */
@@ -119,6 +156,100 @@ export function getTeamColor(teamId: number): string {
   }
   
   return teamColors[teamId] || '#8B4789' // Purple as fallback
+}
+
+/**
+ * Alternative colors for teams when primary colors have poor contrast
+ */
+const teamAlternateColors: Record<number, string> = {
+  10: '#5DADE2',  // Toronto Maple Leafs - Lighter blue for better contrast
+  55: '#99D9D9',  // Seattle Kraken - Teal/cyan for better contrast
+  21: '#6BAED6',  // Colorado Avalanche - Lighter blue
+  7: '#4A90E2',   // Buffalo Sabres - Lighter blue
+  14: '#5DADE2',  // Tampa Bay Lightning - Lighter blue
+  12: '#E74C3C',  // Carolina Hurricanes - Red accent
+  18: '#F4D03F',  // Nashville Predators - Gold accent
+}
+
+/**
+ * Get team colors with automatic contrast adjustment
+ * If two teams have similar colors (poor contrast), one team will use an alternate color
+ * @param homeTeamId - Home team ID
+ * @param awayTeamId - Away team ID
+ * @param requestedTeamId - The team ID to get the color for
+ * @returns Color string for the requested team
+ */
+export function getTeamColorWithContrast(
+  homeTeamId: number,
+  awayTeamId: number,
+  requestedTeamId: number
+): string {
+  const homeColor = getTeamColor(homeTeamId)
+  const awayColor = getTeamColor(awayTeamId)
+  
+  // Calculate contrast ratio between the two teams
+  const contrastRatio = getContrastRatio(homeColor, awayColor)
+  
+  // WCAG AA standard requires 3:1 for large text/graphics
+  // We'll use 2.5:1 as threshold since shot markers are relatively large
+  const CONTRAST_THRESHOLD = 2.5
+  
+  if (contrastRatio < CONTRAST_THRESHOLD) {
+    // Poor contrast detected - use alternate color for away team
+    if (requestedTeamId === awayTeamId && teamAlternateColors[awayTeamId]) {
+      return teamAlternateColors[awayTeamId]
+    }
+    // If away team doesn't have alternate, try home team alternate
+    if (requestedTeamId === homeTeamId && teamAlternateColors[homeTeamId]) {
+      return teamAlternateColors[homeTeamId]
+    }
+  }
+  
+  // Good contrast or no alternate available - use primary color
+  return getTeamColor(requestedTeamId)
+}
+
+/**
+ * Standardized color scheme for shot markers
+ * Provides clear visual distinction regardless of team colors
+ */
+const STANDARD_COLORS = {
+  home: {
+    goal: '#2E7D32',        // Dark green
+    shotOnGoal: '#1976D2',  // Blue
+    missed: '#757575',      // Gray
+  },
+  away: {
+    goal: '#C62828',        // Dark red
+    shotOnGoal: '#F57C00',  // Orange
+    missed: '#424242',      // Dark gray
+  }
+}
+
+/**
+ * Get standardized color based on home/away status and shot result
+ * This provides consistent, high-contrast colors regardless of team colors
+ * @param homeTeamId - Home team ID
+ * @param shotTeamId - Team ID of the shot
+ * @param shotResult - Result of the shot
+ * @returns Color string
+ */
+export function getStandardizedShotColor(
+  homeTeamId: number,
+  shotTeamId: number,
+  shotResult: 'goal' | 'shot-on-goal' | 'missed-shot' | 'blocked-shot'
+): string {
+  const isHomeTeam = shotTeamId === homeTeamId
+  const colorSet = isHomeTeam ? STANDARD_COLORS.home : STANDARD_COLORS.away
+  
+  if (shotResult === 'goal') {
+    return colorSet.goal
+  } else if (shotResult === 'shot-on-goal') {
+    return colorSet.shotOnGoal
+  } else {
+    // missed-shot or blocked-shot
+    return colorSet.missed
+  }
 }
 
 /**
