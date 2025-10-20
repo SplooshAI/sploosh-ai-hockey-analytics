@@ -363,8 +363,6 @@ export const ShotChart: React.FC<ShotChartProps> = ({
       <div className="relative w-full">
         <div className="relative w-full">
           <NHLEdgeHockeyRink
-            awayTeamName=""
-            homeTeamName=""
             centerIceLogo={showCenterLogo ? centerIceLogo : undefined}
             centerIceLogoHeight={358}
             centerIceLogoWidth={400}
