@@ -35,8 +35,6 @@ interface ShotChartProps {
   gameData: any
   /** Optional className for the container */
   className?: string
-  /** Whether to show team names on the rink */
-  showTeamNames?: boolean
   /** Whether to show the center ice logo */
   showCenterLogo?: boolean
   /** Center ice logo URL (defaults to NHL logo) */
@@ -67,7 +65,6 @@ function calculateStats(shots: ShotEvent[]): ShotChartStats {
 export const ShotChart: React.FC<ShotChartProps> = ({
   gameData,
   className = '',
-  showTeamNames = true,
   showCenterLogo = false,
   centerIceLogo,
 }) => {
@@ -366,8 +363,6 @@ export const ShotChart: React.FC<ShotChartProps> = ({
       <div className="relative w-full">
         <div className="relative w-full">
           <NHLEdgeHockeyRink
-            awayTeamName={showTeamNames ? awayTeamName : ''}
-            homeTeamName={showTeamNames ? homeTeamName : ''}
             centerIceLogo={showCenterLogo ? centerIceLogo : undefined}
             centerIceLogoHeight={358}
             centerIceLogoWidth={400}

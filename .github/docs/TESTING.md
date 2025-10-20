@@ -22,7 +22,8 @@ When testing workflows locally using `act`:
    - These workflows can only be fully tested in GitHub Actions environment
    - Local tests still verify the workflow syntax
 
-his is normal because:
+This is normal because:
+
 - GPG signing requires GitHub's environment
 - External actions can't be downloaded during local testing
 - GitHub authentication isn't available locally
@@ -30,12 +31,14 @@ his is normal because:
 ### What's Being Tested
 
 ✅ Local Testing Verifies:
+
 - Workflow syntax is valid
 - PR title validation logic works
 - Breaking change detection works
 - Basic workflow structure
 
 ⏭️ Skipped in Local Testing:
+
 - GitHub Actions bot commit signing
 - External action execution
 - GitHub authentication
@@ -45,6 +48,7 @@ These features are automatically tested when the PR is pushed to GitHub.
 ## GitHub Environment Testing
 
 When these workflows run in GitHub Actions:
+
 1. All authentication will work properly
 2. GPG signing will be active
 3. Commits will show as verified
