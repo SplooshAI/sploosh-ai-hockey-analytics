@@ -3,6 +3,8 @@
 import { ReactNode, useState, useEffect } from 'react'
 import Sidebar from './sidebar/sidebar'
 import { Menu } from 'lucide-react'
+import { NHLAttribution } from '../shared/nhl-attribution/nhl-attribution'
+import { SplooshCopyright } from '../shared/sploosh-copyright/sploosh-copyright'
 
 interface DemoLayoutProps {
   children: ReactNode
@@ -70,6 +72,14 @@ export function DemoLayout({ children, onGameSelect, title }: DemoLayoutProps) {
         <div className="p-4 lg:p-6">
           {children}
         </div>
+
+        {/* Footer */}
+        <footer className="mt-8 p-4 lg:p-6 border-t border-border/50 bg-secondary/30 space-y-6">
+          <SplooshCopyright variant="footer" />
+          <div className="pt-4 border-t border-border/30">
+            <NHLAttribution variant="footer" />
+          </div>
+        </footer>
       </main>
     </div>
   )
