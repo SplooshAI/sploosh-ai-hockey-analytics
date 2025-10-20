@@ -245,120 +245,235 @@ export const ShotChart: React.FC<ShotChartProps> = ({
 
   return (
     <div className={`flex flex-col gap-4 ${className}`}>
-      {/* Filters */}
-      <div className="flex flex-col md:flex-row md:flex-wrap gap-3 sm:gap-4 md:items-center md:justify-between bg-muted/50 p-3 sm:p-4 rounded-lg text-sm sm:text-base">
-        <div className="flex flex-col md:flex-row md:flex-wrap gap-3 sm:gap-4 md:items-center md:justify-center flex-1">
-        {/* Team Filter */}
-        <div className="flex gap-2 items-center w-full md:w-auto">
-          <label className="text-sm font-medium">Team:</label>
-          <select
-            value={selectedTeam || ''}
-            onChange={(e) => setSelectedTeam(e.target.value ? Number(e.target.value) : undefined)}
-            className="flex-1 md:flex-initial px-3 py-2 rounded-md border bg-background text-sm min-h-[44px] cursor-pointer"
+      {/* Filters and Legend */}
+      <div className="bg-muted/50 p-3 sm:p-4 rounded-lg">
+        {/* Filter Controls */}
+        <div className="flex flex-col md:flex-row md:flex-wrap gap-3 sm:gap-4 md:items-center md:justify-between text-sm sm:text-base mb-4">
+          <div className="flex flex-col md:flex-row md:flex-wrap gap-3 sm:gap-4 md:items-center md:justify-center flex-1">
+            {/* Team Filter */}
+            <div className="flex gap-2 items-center w-full md:w-auto">
+              <label className="text-sm font-medium">Team:</label>
+              <select
+                value={selectedTeam || ''}
+                onChange={(e) => setSelectedTeam(e.target.value ? Number(e.target.value) : undefined)}
+                className="flex-1 md:flex-initial px-3 py-2 rounded-md border bg-background text-sm min-h-[44px] cursor-pointer"
+              >
+                <option value="">Both Teams</option>
+                <option value={gameData.awayTeam?.id}>{awayTeamName}</option>
+                <option value={gameData.homeTeam?.id}>{homeTeamName}</option>
+              </select>
+            </div>
+
+            {/* Period Filter */}
+            <div className="flex gap-2 items-center w-full md:w-auto">
+              <label className="text-sm font-medium">Period:</label>
+              <select
+                value={selectedPeriod || ''}
+                onChange={(e) => setSelectedPeriod(e.target.value ? Number(e.target.value) : undefined)}
+                className="flex-1 md:flex-initial px-3 py-2 rounded-md border bg-background text-sm min-h-[44px] cursor-pointer"
+              >
+                <option value="">All Periods</option>
+                {periods.map(period => (
+                  <option key={period} value={period}>
+                    {formatPeriodLabel(period)}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            {/* Shot Type Filter */}
+            <div className="flex flex-col md:flex-row gap-2 md:items-center w-full md:w-auto">
+              <label className="text-sm font-medium">Show:</label>
+              <div className="flex flex-wrap gap-2">
+                <label className="flex items-center gap-2 text-sm cursor-pointer py-2 px-1">
+                  <input
+                    type="checkbox"
+                    checked={selectedResults.includes('goal')}
+                    onChange={(e) => {
+                      if (e.target.checked) {
+                        setSelectedResults([...selectedResults, 'goal'])
+                      } else {
+                        setSelectedResults(selectedResults.filter(r => r !== 'goal'))
+                      }
+                    }}
+                    className="rounded w-5 h-5 cursor-pointer"
+                  />
+                  Goals
+                </label>
+                <label className="flex items-center gap-2 text-sm cursor-pointer py-2 px-1">
+                  <input
+                    type="checkbox"
+                    checked={selectedResults.includes('shot-on-goal')}
+                    onChange={(e) => {
+                      if (e.target.checked) {
+                        setSelectedResults([...selectedResults, 'shot-on-goal'])
+                      } else {
+                        setSelectedResults(selectedResults.filter(r => r !== 'shot-on-goal'))
+                      }
+                    }}
+                    className="rounded w-5 h-5 cursor-pointer"
+                  />
+                  Shots
+                </label>
+                <label className="flex items-center gap-2 text-sm cursor-pointer py-2 px-1">
+                  <input
+                    type="checkbox"
+                    checked={selectedResults.includes('missed-shot') || selectedResults.includes('blocked-shot')}
+                    onChange={(e) => {
+                      if (e.target.checked) {
+                        setSelectedResults([...selectedResults, 'missed-shot', 'blocked-shot'])
+                      } else {
+                        setSelectedResults(selectedResults.filter(r => r !== 'missed-shot' && r !== 'blocked-shot'))
+                      }
+                    }}
+                    className="rounded w-5 h-5 cursor-pointer"
+                  />
+                  Missed/Blocked
+                </label>
+              </div>
+            </div>
+          </div>
+
+          {/* Marker Size Slider */}
+          <div className="flex items-center gap-3 w-full md:min-w-[200px] md:w-auto py-2">
+            <label className="text-sm font-medium whitespace-nowrap">Marker Size:</label>
+            <div className="flex items-center gap-2 flex-1">
+              <input
+                type="range"
+                min="0.5"
+                max="3"
+                step="0.1"
+                value={markerScale}
+                onChange={(e) => setMarkerScale(Number(e.target.value))}
+                className="flex-1 h-2 bg-muted rounded-lg appearance-none cursor-pointer accent-primary touch-manipulation"
+              />
+              <span className="text-xs text-muted-foreground w-8 text-right">
+                {markerScale.toFixed(1)}x
+              </span>
+            </div>
+          </div>
+
+          {/* Clear Filters Button */}
+          <button
+            onClick={handleClearFilters}
+            className="w-full md:w-auto px-4 py-2.5 text-sm font-medium rounded-md border border-border hover:bg-muted transition-colors whitespace-nowrap min-h-[44px] touch-manipulation"
+            title="Clear all filters and reset to defaults"
           >
-            <option value="">Both Teams</option>
-            <option value={gameData.awayTeam?.id}>{awayTeamName}</option>
-            <option value={gameData.homeTeam?.id}>{homeTeamName}</option>
-          </select>
+            Clear Filters
+          </button>
         </div>
 
-        {/* Period Filter */}
-        <div className="flex gap-2 items-center w-full md:w-auto">
-          <label className="text-sm font-medium">Period:</label>
-          <select
-            value={selectedPeriod || ''}
-            onChange={(e) => setSelectedPeriod(e.target.value ? Number(e.target.value) : undefined)}
-            className="flex-1 md:flex-initial px-3 py-2 rounded-md border bg-background text-sm min-h-[44px] cursor-pointer"
-          >
-            <option value="">All Periods</option>
-            {periods.map(period => (
-              <option key={period} value={period}>
-                {formatPeriodLabel(period)}
-              </option>
-            ))}
-          </select>
-        </div>
+        {/* Legend - Centered */}
+        <div className="flex justify-center pt-3 border-t border-border/50">
+          <div className="flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-sm">
+            {/* Away Team */}
+            <div className="flex items-center gap-3">
+              <span className="font-medium text-xs text-muted-foreground">{awayTeamName}:</span>
+              <div className="flex items-center gap-1.5">
+                <svg width="20" height="20" viewBox="0 0 32 32" className="flex-shrink-0">
+                  <polygon
+                    points="16,6 18,13 25,13 19,17 21,24 16,20 11,24 13,17 7,13 14,13"
+                    fill={getTeamColorWithContrast(gameData.homeTeam?.id, gameData.awayTeam?.id, gameData.awayTeam?.id)}
+                    stroke="#FFD700"
+                    strokeWidth="2"
+                  />
+                </svg>
+                <span className="text-xs">Goal</span>
+              </div>
+              <div className="flex items-center gap-1.5">
+                <svg width="20" height="20" viewBox="0 0 32 32" className="flex-shrink-0">
+                  <circle 
+                    cx="16" 
+                    cy="16" 
+                    r="8" 
+                    fill={getTeamColorWithContrast(gameData.homeTeam?.id, gameData.awayTeam?.id, gameData.awayTeam?.id)} 
+                    stroke="#FFFFFF" 
+                    strokeWidth="2" 
+                  />
+                </svg>
+                <span className="text-xs">Shot</span>
+              </div>
+              <div className="flex items-center gap-1.5">
+                <svg width="20" height="20" viewBox="0 0 32 32" className="flex-shrink-0">
+                  <line 
+                    x1="8" 
+                    y1="8" 
+                    x2="24" 
+                    y2="24" 
+                    stroke={getTeamColorWithContrast(gameData.homeTeam?.id, gameData.awayTeam?.id, gameData.awayTeam?.id)} 
+                    strokeWidth="3" 
+                    strokeLinecap="round" 
+                  />
+                  <line 
+                    x1="8" 
+                    y1="24" 
+                    x2="24" 
+                    y2="8" 
+                    stroke={getTeamColorWithContrast(gameData.homeTeam?.id, gameData.awayTeam?.id, gameData.awayTeam?.id)} 
+                    strokeWidth="3" 
+                    strokeLinecap="round" 
+                  />
+                </svg>
+                <span className="text-xs">Miss/Block</span>
+              </div>
+            </div>
 
-        {/* Shot Type Filter */}
-        <div className="flex flex-col md:flex-row gap-2 md:items-center w-full md:w-auto">
-          <label className="text-sm font-medium">Show:</label>
-          <div className="flex flex-wrap gap-2">
-            <label className="flex items-center gap-2 text-sm cursor-pointer py-2 px-1">
-              <input
-                type="checkbox"
-                checked={selectedResults.includes('goal')}
-                onChange={(e) => {
-                  if (e.target.checked) {
-                    setSelectedResults([...selectedResults, 'goal'])
-                  } else {
-                    setSelectedResults(selectedResults.filter(r => r !== 'goal'))
-                  }
-                }}
-                className="rounded w-5 h-5 cursor-pointer"
-              />
-              Goals
-            </label>
-            <label className="flex items-center gap-2 text-sm cursor-pointer py-2 px-1">
-              <input
-                type="checkbox"
-                checked={selectedResults.includes('shot-on-goal')}
-                onChange={(e) => {
-                  if (e.target.checked) {
-                    setSelectedResults([...selectedResults, 'shot-on-goal'])
-                  } else {
-                    setSelectedResults(selectedResults.filter(r => r !== 'shot-on-goal'))
-                  }
-                }}
-                className="rounded w-5 h-5 cursor-pointer"
-              />
-              Shots
-            </label>
-            <label className="flex items-center gap-2 text-sm cursor-pointer py-2 px-1">
-              <input
-                type="checkbox"
-                checked={selectedResults.includes('missed-shot') || selectedResults.includes('blocked-shot')}
-                onChange={(e) => {
-                  if (e.target.checked) {
-                    setSelectedResults([...selectedResults, 'missed-shot', 'blocked-shot'])
-                  } else {
-                    setSelectedResults(selectedResults.filter(r => r !== 'missed-shot' && r !== 'blocked-shot'))
-                  }
-                }}
-                className="rounded w-5 h-5 cursor-pointer"
-              />
-              Missed/Blocked
-            </label>
+            {/* Separator */}
+            <div className="hidden sm:block h-4 w-px bg-border"></div>
+
+            {/* Home Team */}
+            <div className="flex items-center gap-3">
+              <span className="font-medium text-xs text-muted-foreground">{homeTeamName}:</span>
+              <div className="flex items-center gap-1.5">
+                <svg width="20" height="20" viewBox="0 0 32 32" className="flex-shrink-0">
+                  <polygon
+                    points="16,6 18,13 25,13 19,17 21,24 16,20 11,24 13,17 7,13 14,13"
+                    fill={getTeamColorWithContrast(gameData.homeTeam?.id, gameData.awayTeam?.id, gameData.homeTeam?.id)}
+                    stroke="#FFD700"
+                    strokeWidth="2"
+                  />
+                </svg>
+                <span className="text-xs">Goal</span>
+              </div>
+              <div className="flex items-center gap-1.5">
+                <svg width="20" height="20" viewBox="0 0 32 32" className="flex-shrink-0">
+                  <circle 
+                    cx="16" 
+                    cy="16" 
+                    r="8" 
+                    fill={getTeamColorWithContrast(gameData.homeTeam?.id, gameData.awayTeam?.id, gameData.homeTeam?.id)} 
+                    stroke="#FFFFFF" 
+                    strokeWidth="2" 
+                  />
+                </svg>
+                <span className="text-xs">Shot</span>
+              </div>
+              <div className="flex items-center gap-1.5">
+                <svg width="20" height="20" viewBox="0 0 32 32" className="flex-shrink-0">
+                  <line 
+                    x1="8" 
+                    y1="8" 
+                    x2="24" 
+                    y2="24" 
+                    stroke={getTeamColorWithContrast(gameData.homeTeam?.id, gameData.awayTeam?.id, gameData.homeTeam?.id)} 
+                    strokeWidth="3" 
+                    strokeLinecap="round" 
+                  />
+                  <line 
+                    x1="8" 
+                    y1="24" 
+                    x2="24" 
+                    y2="8" 
+                    stroke={getTeamColorWithContrast(gameData.homeTeam?.id, gameData.awayTeam?.id, gameData.homeTeam?.id)} 
+                    strokeWidth="3" 
+                    strokeLinecap="round" 
+                  />
+                </svg>
+                <span className="text-xs">Miss/Block</span>
+              </div>
+            </div>
           </div>
         </div>
-        </div>
-
-        {/* Marker Size Slider */}
-        <div className="flex items-center gap-3 w-full md:min-w-[200px] md:w-auto py-2">
-          <label className="text-sm font-medium whitespace-nowrap">Marker Size:</label>
-          <div className="flex items-center gap-2 flex-1">
-            <input
-              type="range"
-              min="0.5"
-              max="3"
-              step="0.1"
-              value={markerScale}
-              onChange={(e) => setMarkerScale(Number(e.target.value))}
-              className="flex-1 h-2 bg-muted rounded-lg appearance-none cursor-pointer accent-primary touch-manipulation"
-            />
-            <span className="text-xs text-muted-foreground w-8 text-right">
-              {markerScale.toFixed(1)}x
-            </span>
-          </div>
-        </div>
-
-        {/* Clear Filters Button */}
-        <button
-          onClick={handleClearFilters}
-          className="w-full md:w-auto px-4 py-2.5 text-sm font-medium rounded-md border border-border hover:bg-muted transition-colors whitespace-nowrap min-h-[44px] touch-manipulation"
-          title="Clear all filters and reset to defaults"
-        >
-          Clear Filters
-        </button>
       </div>
 
       {/* Shot Chart Visualization */}
@@ -533,119 +648,6 @@ export const ShotChart: React.FC<ShotChartProps> = ({
         </div>
       </div>
 
-      {/* Legend */}
-      <div className="bg-muted/50 p-4 rounded-lg">
-        <h3 className="font-semibold text-base mb-3">Legend</h3>
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          {/* Away Team Legend */}
-          <div>
-            <h4 className="font-medium text-sm mb-2">{awayTeamName}</h4>
-            <div className="space-y-2 text-sm">
-              <div className="flex items-center gap-2">
-                <svg width="32" height="32" viewBox="0 0 32 32">
-                  <polygon
-                    points="16,6 18,13 25,13 19,17 21,24 16,20 11,24 13,17 7,13 14,13"
-                    fill={getTeamColorWithContrast(gameData.homeTeam?.id, gameData.awayTeam?.id, gameData.awayTeam?.id)}
-                    stroke="#FFD700"
-                    strokeWidth="2"
-                  />
-                </svg>
-                <span>Goal</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <svg width="32" height="32" viewBox="0 0 32 32">
-                  <circle 
-                    cx="16" 
-                    cy="16" 
-                    r="8" 
-                    fill={getTeamColorWithContrast(gameData.homeTeam?.id, gameData.awayTeam?.id, gameData.awayTeam?.id)} 
-                    stroke="#FFFFFF" 
-                    strokeWidth="2" 
-                  />
-                </svg>
-                <span>Shot on Goal</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <svg width="32" height="32" viewBox="0 0 32 32">
-                  <line 
-                    x1="8" 
-                    y1="8" 
-                    x2="24" 
-                    y2="24" 
-                    stroke={getTeamColorWithContrast(gameData.homeTeam?.id, gameData.awayTeam?.id, gameData.awayTeam?.id)} 
-                    strokeWidth="3" 
-                    strokeLinecap="round" 
-                  />
-                  <line 
-                    x1="8" 
-                    y1="24" 
-                    x2="24" 
-                    y2="8" 
-                    stroke={getTeamColorWithContrast(gameData.homeTeam?.id, gameData.awayTeam?.id, gameData.awayTeam?.id)} 
-                    strokeWidth="3" 
-                    strokeLinecap="round" 
-                  />
-                </svg>
-                <span>Missed/Blocked</span>
-              </div>
-            </div>
-          </div>
-
-          {/* Home Team Legend */}
-          <div>
-            <h4 className="font-medium text-sm mb-2">{homeTeamName}</h4>
-            <div className="space-y-2 text-sm">
-              <div className="flex items-center gap-2">
-                <svg width="32" height="32" viewBox="0 0 32 32">
-                  <polygon
-                    points="16,6 18,13 25,13 19,17 21,24 16,20 11,24 13,17 7,13 14,13"
-                    fill={getTeamColorWithContrast(gameData.homeTeam?.id, gameData.awayTeam?.id, gameData.homeTeam?.id)}
-                    stroke="#FFD700"
-                    strokeWidth="2"
-                  />
-                </svg>
-                <span>Goal</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <svg width="32" height="32" viewBox="0 0 32 32">
-                  <circle 
-                    cx="16" 
-                    cy="16" 
-                    r="8" 
-                    fill={getTeamColorWithContrast(gameData.homeTeam?.id, gameData.awayTeam?.id, gameData.homeTeam?.id)} 
-                    stroke="#FFFFFF" 
-                    strokeWidth="2" 
-                  />
-                </svg>
-                <span>Shot on Goal</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <svg width="32" height="32" viewBox="0 0 32 32">
-                  <line 
-                    x1="8" 
-                    y1="8" 
-                    x2="24" 
-                    y2="24" 
-                    stroke={getTeamColorWithContrast(gameData.homeTeam?.id, gameData.awayTeam?.id, gameData.homeTeam?.id)} 
-                    strokeWidth="3" 
-                    strokeLinecap="round" 
-                  />
-                  <line 
-                    x1="8" 
-                    y1="24" 
-                    x2="24" 
-                    y2="8" 
-                    stroke={getTeamColorWithContrast(gameData.homeTeam?.id, gameData.awayTeam?.id, gameData.homeTeam?.id)} 
-                    strokeWidth="3" 
-                    strokeLinecap="round" 
-                  />
-                </svg>
-                <span>Missed/Blocked</span>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
     </div>
   )
 }
