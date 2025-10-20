@@ -226,7 +226,7 @@ export const ShotChart: React.FC<ShotChartProps> = ({
     }
   }, [])
 
-  // Apply filters
+  // Apply filters for display (includes result type filter)
   const filteredShots = useMemo(() => {
     let shots = allShots
     shots = filterShotsByTeam(shots, selectedTeam)
@@ -235,14 +235,23 @@ export const ShotChart: React.FC<ShotChartProps> = ({
     return shots
   }, [allShots, selectedTeam, selectedPeriod, selectedResults])
 
-  // Calculate statistics
-  const stats = useMemo(() => calculateStats(filteredShots), [filteredShots])
+  // Apply filters for stats (excludes result type filter so stats show all shot types)
+  const shotsForStats = useMemo(() => {
+    let shots = allShots
+    shots = filterShotsByTeam(shots, selectedTeam)
+    shots = filterShotsByPeriod(shots, selectedPeriod)
+    // Don't filter by result type for stats
+    return shots
+  }, [allShots, selectedTeam, selectedPeriod])
+
+  // Calculate statistics from all shot types (not filtered by result)
+  const stats = useMemo(() => calculateStats(shotsForStats), [shotsForStats])
   
   // Check if any filters are active (excluding marker scale which doesn't affect stats)
   const hasActiveFilters = selectedTeam !== undefined || selectedPeriod !== undefined || selectedResults.length < 4
   
   const awayStats = useMemo(() => {
-    const calculated = calculateStats(filterShotsByTeam(filteredShots, gameData.awayTeam?.id))
+    const calculated = calculateStats(filterShotsByTeam(shotsForStats, gameData.awayTeam?.id))
     // Use official SOG from API only when no filters are applied, otherwise use calculated value
     // This ensures SOG updates correctly when filtering by period, team, or shot type
     return {
@@ -251,10 +260,10 @@ export const ShotChart: React.FC<ShotChartProps> = ({
         ? gameData.awayTeam.sog 
         : calculated.shotsOnGoal
     }
-  }, [filteredShots, gameData.awayTeam?.id, gameData.awayTeam?.sog, hasActiveFilters])
+  }, [shotsForStats, gameData.awayTeam?.id, gameData.awayTeam?.sog, hasActiveFilters])
   
   const homeStats = useMemo(() => {
-    const calculated = calculateStats(filterShotsByTeam(filteredShots, gameData.homeTeam?.id))
+    const calculated = calculateStats(filterShotsByTeam(shotsForStats, gameData.homeTeam?.id))
     // Use official SOG from API only when no filters are applied, otherwise use calculated value
     // This ensures SOG updates correctly when filtering by period, team, or shot type
     return {
@@ -263,7 +272,7 @@ export const ShotChart: React.FC<ShotChartProps> = ({
         ? gameData.homeTeam.sog 
         : calculated.shotsOnGoal
     }
-  }, [filteredShots, gameData.homeTeam?.id, gameData.homeTeam?.sog, hasActiveFilters])
+  }, [shotsForStats, gameData.homeTeam?.id, gameData.homeTeam?.sog, hasActiveFilters])
 
   // Get team names
   const awayTeamName = gameData.awayTeam ? formatTeamFullName(gameData.awayTeam) : 'Away'
