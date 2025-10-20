@@ -545,7 +545,7 @@ export const ShotChart: React.FC<ShotChartProps> = ({
                 <svg width="32" height="32" viewBox="0 0 32 32">
                   <polygon
                     points="16,6 18,13 25,13 19,17 21,24 16,20 11,24 13,17 7,13 14,13"
-                    fill="#C62828"
+                    fill={getTeamColorWithContrast(gameData.homeTeam?.id, gameData.awayTeam?.id, gameData.awayTeam?.id)}
                     stroke="#FFD700"
                     strokeWidth="2"
                   />
@@ -558,7 +558,7 @@ export const ShotChart: React.FC<ShotChartProps> = ({
                     cx="16" 
                     cy="16" 
                     r="8" 
-                    fill="#F57C00" 
+                    fill={getTeamColorWithContrast(gameData.homeTeam?.id, gameData.awayTeam?.id, gameData.awayTeam?.id)} 
                     stroke="#FFFFFF" 
                     strokeWidth="2" 
                   />
@@ -572,7 +572,7 @@ export const ShotChart: React.FC<ShotChartProps> = ({
                     y1="8" 
                     x2="24" 
                     y2="24" 
-                    stroke="#424242" 
+                    stroke={getTeamColorWithContrast(gameData.homeTeam?.id, gameData.awayTeam?.id, gameData.awayTeam?.id)} 
                     strokeWidth="3" 
                     strokeLinecap="round" 
                   />
@@ -581,7 +581,7 @@ export const ShotChart: React.FC<ShotChartProps> = ({
                     y1="24" 
                     x2="24" 
                     y2="8" 
-                    stroke="#424242" 
+                    stroke={getTeamColorWithContrast(gameData.homeTeam?.id, gameData.awayTeam?.id, gameData.awayTeam?.id)} 
                     strokeWidth="3" 
                     strokeLinecap="round" 
                   />
@@ -599,7 +599,7 @@ export const ShotChart: React.FC<ShotChartProps> = ({
                 <svg width="32" height="32" viewBox="0 0 32 32">
                   <polygon
                     points="16,6 18,13 25,13 19,17 21,24 16,20 11,24 13,17 7,13 14,13"
-                    fill="#2E7D32"
+                    fill={getTeamColorWithContrast(gameData.homeTeam?.id, gameData.awayTeam?.id, gameData.homeTeam?.id)}
                     stroke="#FFD700"
                     strokeWidth="2"
                   />
@@ -612,7 +612,7 @@ export const ShotChart: React.FC<ShotChartProps> = ({
                     cx="16" 
                     cy="16" 
                     r="8" 
-                    fill="#1976D2" 
+                    fill={getTeamColorWithContrast(gameData.homeTeam?.id, gameData.awayTeam?.id, gameData.homeTeam?.id)} 
                     stroke="#FFFFFF" 
                     strokeWidth="2" 
                   />
@@ -626,7 +626,7 @@ export const ShotChart: React.FC<ShotChartProps> = ({
                     y1="8" 
                     x2="24" 
                     y2="24" 
-                    stroke="#757575" 
+                    stroke={getTeamColorWithContrast(gameData.homeTeam?.id, gameData.awayTeam?.id, gameData.homeTeam?.id)} 
                     strokeWidth="3" 
                     strokeLinecap="round" 
                   />
@@ -635,7 +635,7 @@ export const ShotChart: React.FC<ShotChartProps> = ({
                     y1="24" 
                     x2="24" 
                     y2="8" 
-                    stroke="#757575" 
+                    stroke={getTeamColorWithContrast(gameData.homeTeam?.id, gameData.awayTeam?.id, gameData.homeTeam?.id)} 
                     strokeWidth="3" 
                     strokeLinecap="round" 
                   />

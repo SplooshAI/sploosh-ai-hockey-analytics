@@ -288,9 +288,9 @@ export const ShotChartOverlay: React.FC<ShotChartOverlayProps> = ({
     <g className={className}>
       {shots.map((shot, idx) => {
         const { cx, cy } = transformCoordinates(shot.xCoord, shot.yCoord)
-        // Use standardized colors for better contrast and clarity
-        const color = homeTeamId 
-          ? getStandardizedShotColor(homeTeamId, shot.teamId, shot.result)
+        // Use team colors with automatic contrast adjustment
+        const color = (homeTeamId && awayTeamId) 
+          ? getTeamColorWithContrast(homeTeamId, awayTeamId, shot.teamId)
           : getTeamColor(shot.teamId)
         const isSelected = selectedShot?.eventId === shot.eventId
         
