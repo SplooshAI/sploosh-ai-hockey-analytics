@@ -77,24 +77,7 @@ export const NHLEdgeHockeyRink = ({
       x={1000}
       y={310}
     />
-    <text
-      x={510}
-      y={-25}
-      textAnchor="middle"
-      transform="rotate(90)"
-      className="sc-iSfqCo cLdcJN"
-    >
-      {awayTeamName}
-    </text>
-    <text
-      x={-510}
-      y={2375}
-      textAnchor="middle"
-      transform="rotate(270)"
-      className="sc-iSfqCo fInzJJ"
-    >
-      {homeTeamName}
-    </text>
+    {/* Team names removed - misleading since teams switch ends between periods */}
     <rect x={1194} width={12} height={1020} className="sc-hZlppA eaOGAc" />
     <g>
       <path
