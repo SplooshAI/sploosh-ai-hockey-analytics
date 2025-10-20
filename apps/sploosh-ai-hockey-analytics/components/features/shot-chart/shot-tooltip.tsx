@@ -226,6 +226,9 @@ export const ShotTooltip: React.FC<ShotTooltipProps> = ({
                 
                 // Determine if this is PP or SH for the shooting team
                 const situationCode = shot.situationCode || ''
+                if (situationCode.length !== 4) return null
+                
+                // Parse 4-digit code: ABCD where B=away skaters, C=home skaters
                 const awaySkaters = parseInt(situationCode[1])
                 const homeSkaters = parseInt(situationCode[2])
                 
