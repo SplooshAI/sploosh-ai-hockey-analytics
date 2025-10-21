@@ -189,6 +189,16 @@ function HomeContent() {
                     </p>
                   </div>
                 </div>
+              ) : (playByPlayData.gameState === 'LIVE' || playByPlayData.gameState === 'CRIT') ? (
+                /* Live Games with no shots yet - Show Timeline */
+                <div className="space-y-4">
+                  <div className="bg-green-500/10 border border-green-500/20 rounded-lg p-4">
+                    <p className="text-sm text-green-600 dark:text-green-400">
+                      <strong>Game in Progress:</strong> No shots recorded yet. The shot chart will appear once shots are taken.
+                    </p>
+                  </div>
+                  <GameTimeline gameData={playByPlayData} />
+                </div>
               ) : (
                 /* Historical Games - Show Timeline */
                 <div className="space-y-4">
