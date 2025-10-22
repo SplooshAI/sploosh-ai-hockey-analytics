@@ -5,6 +5,7 @@
 All commits must be signed using GPG keys. To set up commit signing:
 
 1. Generate a GPG key if you don't have one:
+
    ```bash
    gpg --full-generate-key
    ```
@@ -16,6 +17,7 @@ All commits must be signed using GPG keys. To set up commit signing:
    - Add the key to GitHub: Settings → SSH and GPG keys → New GPG key
 
 3. Configure Git to use your GPG key:
+
    ```bash
    git config --global user.signingkey YOUR_KEY_ID
    git config --global commit.gpgsign true
@@ -26,12 +28,14 @@ All commits must be signed using GPG keys. To set up commit signing:
 This project follows [Conventional Commits](https://www.conventionalcommits.org/). PR titles should be formatted as:
 
 Breaking Changes (major version bump):
+
 - `feat!: breaking feature change`
 - `fix!: breaking bug fix`
 - `refactor!: breaking code change`
 - Any type can include `!` to indicate a breaking change
 
 Regular Changes:
+
 - `feat: add new feature` (minor version bump)
 - `fix: resolve bug` (patch version bump)
 - `docs: update readme` (patch version bump)
