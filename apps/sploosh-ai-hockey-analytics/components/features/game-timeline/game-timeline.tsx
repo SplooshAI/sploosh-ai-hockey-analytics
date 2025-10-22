@@ -129,6 +129,14 @@ export function GameTimeline({ gameData, className = '' }: GameTimelineProps) {
     return filtered
   }, [events, selectedPeriod, selectedEventTypes])
 
+  // Events filtered by period only (for summary stats)
+  const periodFilteredEvents = useMemo(() => {
+    if (selectedPeriod === undefined) {
+      return events
+    }
+    return events.filter(e => e.period === selectedPeriod)
+  }, [events, selectedPeriod])
+
   const toggleEventType = (type: 'goal' | 'penalty') => {
     setSelectedEventTypes(prev => 
       prev.includes(type)
@@ -412,18 +420,18 @@ export function GameTimeline({ gameData, className = '' }: GameTimelineProps) {
       <div className="grid grid-cols-2 gap-4 pt-4 border-t border-border">
         <div className="bg-card rounded-lg p-4 text-center">
           <div className="text-3xl font-bold text-green-500">
-            {filteredEvents.filter(e => e.type === 'goal').length}
+            {periodFilteredEvents.filter(e => e.type === 'goal').length}
           </div>
           <div className="text-sm text-muted-foreground">
-            {selectedPeriod !== undefined || selectedEventTypes.length < 2 ? 'Goals' : 'Total Goals'}
+            {selectedPeriod !== undefined ? 'Goals' : 'Total Goals'}
           </div>
         </div>
         <div className="bg-card rounded-lg p-4 text-center">
           <div className="text-3xl font-bold text-yellow-500">
-            {filteredEvents.filter(e => e.type === 'penalty').length}
+            {periodFilteredEvents.filter(e => e.type === 'penalty').length}
           </div>
           <div className="text-sm text-muted-foreground">
-            {selectedPeriod !== undefined || selectedEventTypes.length < 2 ? 'Penalties' : 'Total Penalties'}
+            {selectedPeriod !== undefined ? 'Penalties' : 'Total Penalties'}
           </div>
         </div>
       </div>
