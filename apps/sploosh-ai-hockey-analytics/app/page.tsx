@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, Suspense } from 'react'
+import { useState, useEffect, useRef, Suspense } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { MainLayout } from '@/components/layouts/main-layout'
 import { NHLEdgeHockeyRink } from '@/components/features/hockey-rink/nhl-edge-hockey-rink/nhl-edge-hockey-rink'
@@ -21,6 +21,7 @@ function HomeContent() {
   const [copied, setCopied] = useState(false)
   const [selectedGameId, setSelectedGameId] = useState<number | null>(null)
   const [lastRefreshTime, setLastRefreshTime] = useState<Date | null>(null)
+  const isSelectingGameRef = useRef(false)
 
   const fetchGameData = async (gameId: number) => {
     try {
@@ -46,6 +47,9 @@ function HomeContent() {
   }
 
   const handleGameSelect = async (gameId: number) => {
+    // Prevent sidebar refresh from interfering with game selection
+    isSelectingGameRef.current = true
+    
     setLoading(true)
     setError(null)
     setSelectedGameId(gameId)
@@ -55,6 +59,9 @@ function HomeContent() {
 
     await fetchGameData(gameId)
     setLoading(false)
+    
+    // Allow sidebar refresh again after game selection is complete
+    isSelectingGameRef.current = false
   }
 
   // Load game from URL on mount or when URL changes
@@ -73,6 +80,11 @@ function HomeContent() {
 
   // Handle sidebar refresh - refresh selected game data
   const handleSidebarRefresh = () => {
+    // Don't refresh if a game selection is in progress to avoid race condition
+    if (isSelectingGameRef.current) {
+      return
+    }
+    
     if (selectedGameId && playByPlayData) {
       // Only refresh non-final games
       const isFinalGame = playByPlayData.gameState === 'FINAL' || playByPlayData.gameState === 'OFF'
