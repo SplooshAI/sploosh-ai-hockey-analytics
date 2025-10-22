@@ -71,3 +71,11 @@ echo "4. Testing actual cleanup (non-dry run)..."
 echo "⚠️  This test would perform actual deletions if run against a real repository."
 act workflow_dispatch -e .github/test-data/ghcr/actual-cleanup.json -W .github/workflows/cleanup_ghcr.yml --container-architecture linux/amd64 -s GITHUB_TOKEN="test-token"
 echo ""
+
+# Test Secrets Verification workflow
+echo "🔐 Testing Secrets Verification workflow..."
+echo ""
+
+echo "Testing secrets workflow template (no secrets configured)..."
+act workflow_dispatch -W .github/workflows/test_secrets.yml
+echo ""

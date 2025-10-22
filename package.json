@@ -39,7 +39,8 @@
     "test:workflows:ghcr": "act workflow_dispatch -e .github/test-data/ghcr/dry-run.json -W .github/workflows/cleanup_ghcr.yml --container-architecture linux/amd64",
     "test:workflows:ghcr:keep-versions": "act workflow_dispatch -e .github/test-data/ghcr/keep-versions.json -W .github/workflows/cleanup_ghcr.yml --container-architecture linux/amd64",
     "test:workflows:ghcr:keep-days": "act workflow_dispatch -e .github/test-data/ghcr/keep-days.json -W .github/workflows/cleanup_ghcr.yml --container-architecture linux/amd64",
-    "test:workflows:ghcr:cleanup": "act workflow_dispatch -e .github/test-data/ghcr/actual-cleanup.json -W .github/workflows/cleanup_ghcr.yml --container-architecture linux/amd64"
+    "test:workflows:ghcr:cleanup": "act workflow_dispatch -e .github/test-data/ghcr/actual-cleanup.json -W .github/workflows/cleanup_ghcr.yml --container-architecture linux/amd64",
+    "test:workflows:secrets": "act workflow_dispatch -W .github/workflows/test_secrets.yml"
   },
   "repository": {
     "type": "git",
