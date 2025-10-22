@@ -161,6 +161,7 @@ export const GameHeader: React.FC<GameHeaderProps> = ({ gameData, className = ''
   const formatGameDate = () => {
     // Use parseISO and format in UTC to avoid timezone conversion issues
     // gameDate is in YYYY-MM-DD format and should be displayed as-is
+    if (!gameData.gameDate) return ''
     const date = parseISO(gameData.gameDate)
     const day = formatInTimeZone(date, 'UTC', 'd')
     const ordinalSuffix = getOrdinalNum(parseInt(day))
