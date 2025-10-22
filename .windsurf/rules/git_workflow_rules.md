@@ -19,10 +19,31 @@ These global rules define standardized Git workflow practices to be applied acro
 - Set up upstream tracking when pushing a new branch
 
 **Branch Creation Process:**
-1. Look at the metadata timestamp: "The USER presented this request to you on Oct 19, 2025 at 9:31pm"
-2. Convert to YYYY.MM.DD format: Oct 19, 2025 → 2025.10.19
-3. Create the branch: `git checkout -b 2025.10.19/description`
-4. Push and set upstream: `git push -u origin 2025.10.19/description`
+For manual branch creation or in shell scripts, use the `date` command to automatically generate the correct date prefix:
+
+```bash
+# Create branch with today's date
+git checkout -b $(date +%Y.%m.%d)/feature-description
+
+# Complete workflow
+git checkout main && \
+git pull origin main && \
+git checkout -b $(date +%Y.%m.%d)/feature-description && \
+git push -u origin $(git branch --show-current)
+```
+
+The `date +%Y.%m.%d` format produces:
+
+- %Y = 4-digit year (e.g., 2025)
+- %m = 2-digit month (e.g., 10 for October)  
+- %d = 2-digit day (e.g., 22)
+- Result: 2025.10.22
+
+**When to use each method:**
+
+- AI Assistants (Cascade): Extract date from metadata timestamp
+- Manual CLI: Use `date` command
+- Scripts/Automation: Use `date` command
 
 **WRONG EXAMPLES TO AVOID:**
 - ❌ 2025.01.19/feature (wrong month - January instead of October)
