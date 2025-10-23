@@ -99,7 +99,7 @@ function parseTimelineEvents(gameData: any): TimelineEvent[] {
 export function GameTimeline({ gameData, className = '' }: GameTimelineProps) {
   const events = useMemo(() => parseTimelineEvents(gameData), [gameData])
   const [selectedPeriod, setSelectedPeriod] = useState<number | undefined>(undefined)
-  const [selectedEventTypes, setSelectedEventTypes] = useState<Array<'goal' | 'penalty'>>(['goal', 'penalty'])
+  const [selectedEventTypes, setSelectedEventTypes] = useState<Array<'goal' | 'penalty'>>(['goal'])
   
   // Video overlay state
   const [videoOverlay, setVideoOverlay] = useState<{
