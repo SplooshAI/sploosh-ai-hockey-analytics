@@ -94,24 +94,11 @@ export const VideoOverlay: React.FC<VideoOverlayProps> = ({
     }
   }, [videoUrl])
 
-  // State for manual fallback button
-  const [showManualFallback, setShowManualFallback] = React.useState(false)
-  
-  // Reset error, loading, and fallback UI when a new video URL is provided
+  // Reset error and loading UI when a new video URL is provided
   React.useEffect(() => {
     setVideoError(false)
     setIsLoading(true)
-    setShowManualFallback(false)
   }, [videoUrl])
-
-  // Add a manual "Video Not Working?" button after a delay
-  React.useEffect(() => {
-    const timer = setTimeout(() => {
-      setShowManualFallback(true)
-    }, 4000) // Show manual fallback option after 4 seconds
-
-    return () => clearTimeout(timer)
-  }, [])
 
   return (
     <div
@@ -208,21 +195,6 @@ export const VideoOverlay: React.FC<VideoOverlayProps> = ({
                     </svg>
                     <p className="text-white text-sm">Loading highlight...</p>
                   </div>
-                </div>
-              )}
-              
-              {/* Manual fallback button after delay */}
-              {showManualFallback && !videoError && (
-                <div className="absolute bottom-4 right-4 z-10">
-                  <button
-                    onClick={(e) => {
-                      e.stopPropagation()
-                      setVideoError(true)
-                    }}
-                    className="px-4 py-2 bg-red-600 hover:bg-red-700 text-white text-sm font-semibold rounded-md shadow-2xl transition-all hover:scale-105 border-2 border-red-400"
-                  >
-                    🎬 Video not working?
-                  </button>
                 </div>
               )}
             </>
