@@ -36,13 +36,20 @@ function HomeContent() {
         gameCenterResponse.json()
       ])
       
-      setPlayByPlayData(playByPlayData)
-      setGameCenterData(gameCenterData)
-      setLastRefreshTime(new Date())
-      setError(null)
+      // Only update state if this is still the selected game
+      // This prevents race conditions where a different game was selected during the fetch
+      if (selectedGameId === gameId) {
+        setPlayByPlayData(playByPlayData)
+        setGameCenterData(gameCenterData)
+        setLastRefreshTime(new Date())
+        setError(null)
+      }
     } catch (err) {
-      setError('Failed to fetch game data')
-      console.error('Error fetching game data:', err)
+      // Only show error if this is still the selected game
+      if (selectedGameId === gameId) {
+        setError('Failed to fetch game data')
+        console.error('Error fetching game data:', err)
+      }
     }
   }
 
@@ -77,7 +84,7 @@ function HomeContent() {
       }
     } else {
       // No gameId in URL - clear the selected game and show default view
-      if (selectedGameId !== null || playByPlayData !== null) {
+      if (selectedGameId !== null) {
         setSelectedGameId(null)
         setPlayByPlayData(null)
         setGameCenterData(null)
@@ -85,7 +92,7 @@ function HomeContent() {
         setLastRefreshTime(null)
       }
     }
-  }, [searchParams, selectedGameId, loading, playByPlayData])
+  }, [searchParams, selectedGameId, loading])
 
   // Handle sidebar refresh - refresh selected game data
   const handleSidebarRefresh = () => {
