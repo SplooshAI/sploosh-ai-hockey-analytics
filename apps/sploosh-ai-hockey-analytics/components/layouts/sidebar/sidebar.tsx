@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import { useRouter } from 'next/navigation'
 import { X } from 'lucide-react'
 import { GamesList } from '@/components/features/games/list/games-list'
 import { Version } from '../../shared/version/version'
@@ -16,6 +17,7 @@ interface SidebarProps {
 }
 
 export default function Sidebar({ onClose, onGameSelect, onRefresh }: SidebarProps) {
+    const router = useRouter()
     const [selectedDate, setSelectedDate] = useState<Date>(() => {
         const now = new Date()
         return startOfDay(new Date(now.getFullYear(), now.getMonth(), now.getDate()))
@@ -33,7 +35,12 @@ export default function Sidebar({ onClose, onGameSelect, onRefresh }: SidebarPro
                         <X className="h-5 w-5" />
                     </button>
 
-                    <h2 className="text-lg font-semibold">NHL Games</h2>
+                    <button
+                        onClick={() => router.push('/')}
+                        className="text-lg font-semibold hover:text-primary transition-colors cursor-pointer"
+                    >
+                        NHL Games
+                    </button>
                 </div>
 
                 <div className="relative z-10">

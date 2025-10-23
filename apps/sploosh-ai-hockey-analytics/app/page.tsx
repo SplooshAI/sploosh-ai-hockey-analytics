@@ -75,8 +75,17 @@ function HomeContent() {
         setSelectedGameId(gameId)
         fetchGameData(gameId).finally(() => setLoading(false))
       }
+    } else {
+      // No gameId in URL - clear the selected game and show default view
+      if (selectedGameId !== null || playByPlayData !== null) {
+        setSelectedGameId(null)
+        setPlayByPlayData(null)
+        setGameCenterData(null)
+        setError(null)
+        setLastRefreshTime(null)
+      }
     }
-  }, [searchParams, selectedGameId, loading])
+  }, [searchParams, selectedGameId, loading, playByPlayData])
 
   // Handle sidebar refresh - refresh selected game data
   const handleSidebarRefresh = () => {
