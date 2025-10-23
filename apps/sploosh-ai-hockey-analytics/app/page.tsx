@@ -22,13 +22,29 @@ function HomeContent() {
   const [selectedGameId, setSelectedGameId] = useState<number | null>(null)
   const [lastRefreshTime, setLastRefreshTime] = useState<Date | null>(null)
   const isSelectingGameRef = useRef(false)
+  const selectedGameIdRef = useRef<number | null>(null)
+  const abortControllerRef = useRef<AbortController | null>(null)
+
+  // Keep ref in sync with state
+  useEffect(() => {
+    selectedGameIdRef.current = selectedGameId
+  }, [selectedGameId])
 
   const fetchGameData = async (gameId: number) => {
+    // Cancel any in-flight requests
+    if (abortControllerRef.current) {
+      abortControllerRef.current.abort()
+    }
+
+    // Create new abort controller for this request
+    const abortController = new AbortController()
+    abortControllerRef.current = abortController
+
     try {
       // Fetch both play-by-play and game center data in parallel
       const [playByPlayResponse, gameCenterResponse] = await Promise.all([
-        fetch(`/api/nhl/play-by-play?gameId=${gameId}`),
-        fetch(`/api/nhl/game-center?gameId=${gameId}`)
+        fetch(`/api/nhl/play-by-play?gameId=${gameId}`, { signal: abortController.signal }),
+        fetch(`/api/nhl/game-center?gameId=${gameId}`, { signal: abortController.signal })
       ])
       
       const [playByPlayData, gameCenterData] = await Promise.all([
@@ -36,17 +52,20 @@ function HomeContent() {
         gameCenterResponse.json()
       ])
       
-      // Only update state if this is still the selected game
-      // This prevents race conditions where a different game was selected during the fetch
-      if (selectedGameId === gameId) {
+      // Only update state if this is still the selected game (use ref for current value)
+      if (selectedGameIdRef.current === gameId) {
         setPlayByPlayData(playByPlayData)
         setGameCenterData(gameCenterData)
         setLastRefreshTime(new Date())
         setError(null)
       }
     } catch (err) {
-      // Only show error if this is still the selected game
-      if (selectedGameId === gameId) {
+      // Ignore abort errors - they're expected when switching games
+      if (err instanceof Error && err.name === 'AbortError') {
+        return
+      }
+      
+      if (selectedGameIdRef.current === gameId) {
         setError('Failed to fetch game data')
         console.error('Error fetching game data:', err)
       }
@@ -57,34 +76,36 @@ function HomeContent() {
     // Prevent sidebar refresh from interfering with game selection
     isSelectingGameRef.current = true
     
-    // Immediately clear old data and show loading state
-    setLoading(true)
+    // Immediately clear old data
     setError(null)
     setPlayByPlayData(null)
     setGameCenterData(null)
-    setSelectedGameId(gameId)
 
     // Update URL with gameId query parameter
+    // The useEffect will handle setting loading state and fetching data
     router.push(`?gameId=${gameId}`, { scroll: false })
-
-    // Fetch data and update loading state when complete
-    await fetchGameData(gameId)
-    setLoading(false)
     
     // Allow sidebar refresh again after game selection is complete
-    isSelectingGameRef.current = false
+    setTimeout(() => {
+      isSelectingGameRef.current = false
+    }, 100)
   }
 
   // Load game from URL on mount or when URL changes
   useEffect(() => {
     const gameIdParam = searchParams.get('gameId')
+    console.log('useEffect triggered:', { gameIdParam, selectedGameId, loading })
     if (gameIdParam) {
       const gameId = parseInt(gameIdParam, 10)
+      console.log('Parsed gameId:', gameId, 'selectedGameId:', selectedGameId, 'loading:', loading)
       if (!isNaN(gameId) && gameId !== selectedGameId && !loading) {
+        console.log('Fetching game data for:', gameId)
         setLoading(true)
         setError(null)
         setSelectedGameId(gameId)
         fetchGameData(gameId).finally(() => setLoading(false))
+      } else {
+        console.log('Skipping fetch:', { isNaN: isNaN(gameId), sameGame: gameId === selectedGameId, loading })
       }
     } else {
       // No gameId in URL - clear the selected game and show default view
