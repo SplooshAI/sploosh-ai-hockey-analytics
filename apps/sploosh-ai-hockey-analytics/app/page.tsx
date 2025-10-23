@@ -57,13 +57,17 @@ function HomeContent() {
     // Prevent sidebar refresh from interfering with game selection
     isSelectingGameRef.current = true
     
+    // Immediately clear old data and show loading state
     setLoading(true)
     setError(null)
+    setPlayByPlayData(null)
+    setGameCenterData(null)
     setSelectedGameId(gameId)
 
     // Update URL with gameId query parameter
     router.push(`?gameId=${gameId}`, { scroll: false })
 
+    // Fetch data and update loading state when complete
     await fetchGameData(gameId)
     setLoading(false)
     

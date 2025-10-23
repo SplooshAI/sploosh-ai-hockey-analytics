@@ -107,7 +107,7 @@ export function GameCard({ game, onSelectGame, onClose }: GameCardProps) {
 
     return (
         <div
-            className="rounded-lg bg-card shadow-sm cursor-pointer hover:bg-accent/50 transition-colors w-full overflow-hidden"
+            className="rounded-lg bg-card shadow-sm cursor-pointer hover:bg-accent/50 active:bg-accent/70 transition-colors w-full overflow-hidden"
             onClick={handleGameClick}
             role="button"
             tabIndex={0}
