@@ -1,7 +1,7 @@
 'use client'
 
 import { useMemo, useState } from 'react'
-import { Clock, AlertTriangle, Play } from 'lucide-react'
+import { Clock, AlertTriangle, Play, Target, Shield, XCircle, Circle, Users, Zap, StopCircle } from 'lucide-react'
 import { formatPeriodLabel, formatSituationCode } from '@/lib/utils/formatters'
 import Image from 'next/image'
 import { RedLightIcon } from './red-light-icon'
@@ -15,7 +15,7 @@ interface GameTimelineProps {
 
 interface TimelineEvent {
   eventId: number
-  type: 'goal' | 'penalty'
+  type: string // Dynamic event type from typeDescKey
   period: number
   timeInPeriod: string
   timeRemaining: string
@@ -23,68 +23,54 @@ interface TimelineEvent {
   playerId?: number
   situationCode?: string
   highlightClipId?: number
-  details: {
-    scoringPlayerId?: number
-    scoringPlayerTotal?: number
-    assist1PlayerId?: number
-    assist2PlayerId?: number
-    awayScore?: number
-    homeScore?: number
-    committedByPlayerId?: number
-    typeCode?: string
-    descKey?: string
-    duration?: number
-  }
+  details: Record<string, any> // eslint-disable-line @typescript-eslint/no-explicit-any
 }
 
-function getPlayerName(playerId: number, rosterSpots: any[]): string {
-  const player = rosterSpots.find((spot: any) => spot.playerId === playerId)
+function getPlayerName(playerId: number, rosterSpots: any[]): string { // eslint-disable-line @typescript-eslint/no-explicit-any
+  const player = rosterSpots.find((spot: any) => spot.playerId === playerId) // eslint-disable-line @typescript-eslint/no-explicit-any
   if (!player) return 'Unknown'
   return `${player.firstName?.default || ''} ${player.lastName?.default || ''}`.trim()
 }
 
-function parseTimelineEvents(gameData: any): TimelineEvent[] {
+function parseTimelineEvents(gameData: any): TimelineEvent[] { // eslint-disable-line @typescript-eslint/no-explicit-any
   const plays = gameData.plays || []
   const events: TimelineEvent[] = []
 
-  plays.forEach((play: any) => {
-    if (play.typeDescKey === 'goal') {
-      events.push({
-        eventId: play.eventId,
-        type: 'goal',
-        period: play.periodDescriptor?.number || 1,
-        timeInPeriod: play.timeInPeriod,
-        timeRemaining: play.timeRemaining,
-        teamId: play.details?.eventOwnerTeamId,
-        playerId: play.details?.scoringPlayerId,
-        situationCode: play.situationCode,
-        highlightClipId: play.details?.highlightClip,
-        details: {
-          scoringPlayerId: play.details?.scoringPlayerId,
-          scoringPlayerTotal: play.details?.scoringPlayerTotal,
-          assist1PlayerId: play.details?.assist1PlayerId,
-          assist2PlayerId: play.details?.assist2PlayerId,
-          awayScore: play.details?.awayScore,
-          homeScore: play.details?.homeScore,
-        },
-      })
-    } else if (play.typeDescKey === 'penalty') {
-      events.push({
-        eventId: play.eventId,
-        type: 'penalty',
-        period: play.periodDescriptor?.number || 1,
-        timeInPeriod: play.timeInPeriod,
-        timeRemaining: play.timeRemaining,
-        teamId: play.details?.eventOwnerTeamId,
-        playerId: play.details?.committedByPlayerId,
-        details: {
-          committedByPlayerId: play.details?.committedByPlayerId,
-          typeCode: play.details?.typeCode,
-          descKey: play.details?.descKey,
-          duration: play.details?.duration,
-        },
-      })
+  plays.forEach((play: any) => { // eslint-disable-line @typescript-eslint/no-explicit-any
+    // Skip plays without a typeDescKey
+    if (!play.typeDescKey) return
+
+    // Parse all event types dynamically
+    const event: TimelineEvent = {
+      eventId: play.eventId,
+      type: play.typeDescKey,
+      period: play.periodDescriptor?.number || 1,
+      timeInPeriod: play.timeInPeriod,
+      timeRemaining: play.timeRemaining,
+      teamId: play.details?.eventOwnerTeamId,
+      situationCode: play.situationCode,
+      highlightClipId: play.details?.highlightClip,
+      details: play.details || {},
     }
+
+    // Set primary playerId based on event type
+    if (play.typeDescKey === 'goal') {
+      event.playerId = play.details?.scoringPlayerId
+    } else if (play.typeDescKey === 'penalty') {
+      event.playerId = play.details?.committedByPlayerId
+    } else if (play.typeDescKey === 'shot-on-goal' || play.typeDescKey === 'missed-shot') {
+      event.playerId = play.details?.shootingPlayerId
+    } else if (play.typeDescKey === 'hit') {
+      event.playerId = play.details?.hittingPlayerId
+    } else if (play.typeDescKey === 'faceoff') {
+      event.playerId = play.details?.winningPlayerId
+    } else if (play.typeDescKey === 'takeaway' || play.typeDescKey === 'giveaway') {
+      event.playerId = play.details?.playerId
+    } else if (play.typeDescKey === 'blocked-shot') {
+      event.playerId = play.details?.blockingPlayerId
+    }
+
+    events.push(event)
   })
 
   return events.sort((a, b) => {
@@ -96,10 +82,264 @@ function parseTimelineEvents(gameData: any): TimelineEvent[] {
   })
 }
 
+// Helper function to get icon and color for event type
+function getEventTypeConfig(type: string): { icon: React.ReactNode; color: string; bgColor: string; label: string } {
+  const iconSize = 16
+  const configs: Record<string, { icon: React.ReactNode; color: string; bgColor: string; label: string }> = {
+    'goal': { icon: <RedLightIcon size={iconSize} />, color: 'text-red-500', bgColor: 'bg-red-500', label: 'Goals' },
+    'penalty': { icon: <AlertTriangle className="h-4 w-4" />, color: 'text-yellow-500', bgColor: 'bg-yellow-500', label: 'Penalties' },
+    'shot-on-goal': { icon: <Target className="h-4 w-4" />, color: 'text-blue-500', bgColor: 'bg-blue-500', label: 'Shots on Goal' },
+    'missed-shot': { icon: <XCircle className="h-4 w-4" />, color: 'text-gray-500', bgColor: 'bg-gray-500', label: 'Missed Shots' },
+    'blocked-shot': { icon: <Shield className="h-4 w-4" />, color: 'text-purple-500', bgColor: 'bg-purple-500', label: 'Blocked Shots' },
+    'hit': { icon: <Zap className="h-4 w-4" />, color: 'text-orange-500', bgColor: 'bg-orange-500', label: 'Hits' },
+    'faceoff': { icon: <Circle className="h-4 w-4" />, color: 'text-cyan-500', bgColor: 'bg-cyan-500', label: 'Faceoffs' },
+    'takeaway': { icon: <Users className="h-4 w-4" />, color: 'text-green-500', bgColor: 'bg-green-500', label: 'Takeaways' },
+    'giveaway': { icon: <Users className="h-4 w-4" />, color: 'text-pink-500', bgColor: 'bg-pink-500', label: 'Giveaways' },
+    'stoppage': { icon: <StopCircle className="h-4 w-4" />, color: 'text-slate-500', bgColor: 'bg-slate-500', label: 'Stoppages' },
+  }
+  
+  return configs[type] || { 
+    icon: <Circle className="h-4 w-4" />, 
+    color: 'text-muted-foreground', 
+    bgColor: 'bg-muted', 
+    label: type.split('-').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ') 
+  }
+}
+
+function renderEventDetails(
+  event: TimelineEvent, 
+  rosterSpots: any[], // eslint-disable-line @typescript-eslint/no-explicit-any
+  teamLogo: string | undefined, 
+  teamAbbrev: string,
+  gameData: any, // eslint-disable-line @typescript-eslint/no-explicit-any
+  setVideoOverlay: (overlay: { url: string; playerName: string; teamAbbrev?: string } | null) => void
+) {
+  return (
+    <div className="space-y-2">
+      <div className="flex items-center gap-2 flex-wrap">
+        {teamLogo && (
+          <div className="relative w-6 h-6">
+            <Image
+              src={teamLogo}
+              alt={teamAbbrev}
+              fill
+              className="object-contain"
+            />
+          </div>
+        )}
+        <span className="font-bold text-lg">
+          {event.type.split('-').map(word => word.toUpperCase()).join(' ')} - {teamAbbrev}
+        </span>
+        
+        {/* Show score for goals */}
+        {event.type === 'goal' && (
+          <>
+            {(() => {
+              const situation = formatSituationCode(event.situationCode)
+              if (!situation || situation.type === 'even') return null
+              
+              // Determine if this team scored on PP or SH
+              const isAwayTeam = event.teamId === gameData.awayTeam?.id
+              const awaySkaters = parseInt(event.situationCode?.[1] || '5')
+              const homeSkaters = parseInt(event.situationCode?.[2] || '5')
+              
+              const isPowerPlay = isAwayTeam 
+                ? awaySkaters > homeSkaters 
+                : homeSkaters > awaySkaters
+              
+              return (
+                <span className={`px-2 py-0.5 text-xs font-semibold rounded ${
+                  isPowerPlay 
+                    ? 'bg-orange-500 text-white' 
+                    : 'bg-blue-500 text-white'
+                }`}>
+                  {isPowerPlay ? 'PPG' : 'SHG'}
+                </span>
+              )
+            })()}
+            <span className="text-muted-foreground">
+              {event.details.awayScore} - {event.details.homeScore}
+            </span>
+          </>
+        )}
+      </div>
+      
+      {/* Event-specific details */}
+      <div className="text-sm">
+        {event.type === 'goal' && (
+          <>
+            <div>
+              <span className="font-medium">Scored by:</span>{' '}
+              {event.details.scoringPlayerId
+                ? getPlayerName(event.details.scoringPlayerId, rosterSpots)
+                : 'Unknown'}
+              {event.details.scoringPlayerTotal && (
+                <span className="text-muted-foreground">
+                  {' '}({event.details.scoringPlayerTotal})
+                </span>
+              )}
+            </div>
+            {(event.details.assist1PlayerId || event.details.assist2PlayerId) && (
+              <div>
+                <span className="font-medium">Assists:</span>{' '}
+                {[
+                  event.details.assist1PlayerId
+                    ? getPlayerName(event.details.assist1PlayerId, rosterSpots)
+                    : null,
+                  event.details.assist2PlayerId
+                    ? getPlayerName(event.details.assist2PlayerId, rosterSpots)
+                    : null,
+                ]
+                  .filter(Boolean)
+                  .join(', ')}
+              </div>
+            )}
+            {/* Watch Replay Button */}
+            {event.highlightClipId && (
+              <div className="mt-2">
+                <button
+                  onClick={() => {
+                    const embedUrl = `https://players.brightcove.net/6415718365001/EXtG1xJ7H_default/index.html?videoId=${event.highlightClipId}`
+                    const playerName = event.details.scoringPlayerId
+                      ? getPlayerName(event.details.scoringPlayerId, rosterSpots)
+                      : 'Unknown'
+                    setVideoOverlay({
+                      url: embedUrl,
+                      playerName,
+                      teamAbbrev,
+                    })
+                  }}
+                  className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-md bg-blue-600 hover:bg-blue-700 text-white transition-colors"
+                >
+                  <Play className="h-3 w-3" />
+                  Watch Replay
+                </button>
+              </div>
+            )}
+          </>
+        )}
+        
+        {event.type === 'penalty' && (
+          <>
+            <div>
+              <span className="font-medium">Player:</span>{' '}
+              {event.details.committedByPlayerId
+                ? getPlayerName(event.details.committedByPlayerId, rosterSpots)
+                : 'Unknown'}
+            </div>
+            <div>
+              <span className="font-medium">Type:</span>{' '}
+              {event.details.descKey?.replace(/-/g, ' ').toUpperCase() || 'Unknown'}
+              {event.details.duration && (
+                <span className="text-muted-foreground">
+                  {' '}({event.details.duration} min)
+                </span>
+              )}
+            </div>
+          </>
+        )}
+        
+        {(event.type === 'shot-on-goal' || event.type === 'missed-shot') && (
+          <>
+            <div>
+              <span className="font-medium">Shooter:</span>{' '}
+              {event.details.shootingPlayerId
+                ? getPlayerName(event.details.shootingPlayerId, rosterSpots)
+                : 'Unknown'}
+            </div>
+            {event.details.shotType && (
+              <div>
+                <span className="font-medium">Shot Type:</span>{' '}
+                {event.details.shotType}
+              </div>
+            )}
+          </>
+        )}
+        
+        {event.type === 'blocked-shot' && (
+          <>
+            <div>
+              <span className="font-medium">Blocked by:</span>{' '}
+              {event.details.blockingPlayerId
+                ? getPlayerName(event.details.blockingPlayerId, rosterSpots)
+                : 'Unknown'}
+            </div>
+            {event.details.shootingPlayerId && (
+              <div>
+                <span className="font-medium">Shooter:</span>{' '}
+                {getPlayerName(event.details.shootingPlayerId, rosterSpots)}
+              </div>
+            )}
+          </>
+        )}
+        
+        {event.type === 'hit' && (
+          <>
+            <div>
+              <span className="font-medium">Hitter:</span>{' '}
+              {event.details.hittingPlayerId
+                ? getPlayerName(event.details.hittingPlayerId, rosterSpots)
+                : 'Unknown'}
+            </div>
+            {event.details.hitteePlayerId && (
+              <div>
+                <span className="font-medium">Hit on:</span>{' '}
+                {getPlayerName(event.details.hitteePlayerId, rosterSpots)}
+              </div>
+            )}
+          </>
+        )}
+        
+        {event.type === 'faceoff' && (
+          <>
+            <div>
+              <span className="font-medium">Won by:</span>{' '}
+              {event.details.winningPlayerId
+                ? getPlayerName(event.details.winningPlayerId, rosterSpots)
+                : 'Unknown'}
+            </div>
+            {event.details.losingPlayerId && (
+              <div>
+                <span className="font-medium">Lost by:</span>{' '}
+                {getPlayerName(event.details.losingPlayerId, rosterSpots)}
+              </div>
+            )}
+          </>
+        )}
+        
+        {(event.type === 'takeaway' || event.type === 'giveaway') && (
+          <div>
+            <span className="font-medium">Player:</span>{' '}
+            {event.details.playerId
+              ? getPlayerName(event.details.playerId, rosterSpots)
+              : 'Unknown'}
+          </div>
+        )}
+        
+        {/* Generic fallback for other event types */}
+        {!['goal', 'penalty', 'shot-on-goal', 'missed-shot', 'blocked-shot', 'hit', 'faceoff', 'takeaway', 'giveaway'].includes(event.type) && event.playerId && (
+          <div>
+            <span className="font-medium">Player:</span>{' '}
+            {getPlayerName(event.playerId, rosterSpots)}
+          </div>
+        )}
+      </div>
+    </div>
+  )
+}
+
 export function GameTimeline({ gameData, className = '' }: GameTimelineProps) {
   const events = useMemo(() => parseTimelineEvents(gameData), [gameData])
   const [selectedPeriod, setSelectedPeriod] = useState<number | undefined>(undefined)
-  const [selectedEventTypes, setSelectedEventTypes] = useState<Array<'goal' | 'penalty'>>(['goal'])
+  
+  // Get unique event types from the data
+  const availableEventTypes = useMemo(() => {
+    const types = [...new Set(events.map(e => e.type))]
+    return types.sort()
+  }, [events])
+  
+  // Default to showing only goals
+  const [selectedEventTypes, setSelectedEventTypes] = useState<string[]>(['goal'])
   
   // Video overlay state
   const [videoOverlay, setVideoOverlay] = useState<{
@@ -137,7 +377,7 @@ export function GameTimeline({ gameData, className = '' }: GameTimelineProps) {
     return events.filter(e => e.period === selectedPeriod)
   }, [events, selectedPeriod])
 
-  const toggleEventType = (type: 'goal' | 'penalty') => {
+  const toggleEventType = (type: string) => {
     setSelectedEventTypes(prev => 
       prev.includes(type)
         ? prev.filter(t => t !== type)
@@ -192,40 +432,31 @@ export function GameTimeline({ gameData, className = '' }: GameTimelineProps) {
           </div>
         </div>
 
-        {/* Event Type Filter */}
+        {/* Event Type Filter - Dynamically Generated */}
         <div>
           <div className="text-sm font-medium text-muted-foreground mb-2">Event Type</div>
           <div className="flex flex-wrap gap-2">
-            <button
-              onClick={() => toggleEventType('goal')}
-              className={`px-3 py-1.5 text-sm rounded-md transition-colors flex items-center gap-2 ${
-                selectedEventTypes.includes('goal')
-                  ? 'bg-green-500 text-white'
-                  : 'bg-secondary hover:bg-secondary/80'
-              }`}
-            >
-              <RedLightIcon size={16} />
-              Goals ({
-                selectedPeriod !== undefined
-                  ? events.filter(e => e.type === 'goal' && e.period === selectedPeriod).length
-                  : events.filter(e => e.type === 'goal').length
-              })
-            </button>
-            <button
-              onClick={() => toggleEventType('penalty')}
-              className={`px-3 py-1.5 text-sm rounded-md transition-colors flex items-center gap-2 ${
-                selectedEventTypes.includes('penalty')
-                  ? 'bg-yellow-500 text-white'
-                  : 'bg-secondary hover:bg-secondary/80'
-              }`}
-            >
-              <AlertTriangle className="h-4 w-4" />
-              Penalties ({
-                selectedPeriod !== undefined
-                  ? events.filter(e => e.type === 'penalty' && e.period === selectedPeriod).length
-                  : events.filter(e => e.type === 'penalty').length
-              })
-            </button>
+            {availableEventTypes.map(eventType => {
+              const config = getEventTypeConfig(eventType)
+              const count = selectedPeriod !== undefined
+                ? events.filter(e => e.type === eventType && e.period === selectedPeriod).length
+                : events.filter(e => e.type === eventType).length
+              
+              return (
+                <button
+                  key={eventType}
+                  onClick={() => toggleEventType(eventType)}
+                  className={`px-3 py-1.5 text-sm rounded-md transition-colors flex items-center gap-2 ${
+                    selectedEventTypes.includes(eventType)
+                      ? `${config.bgColor} text-white`
+                      : 'bg-secondary hover:bg-secondary/80'
+                  }`}
+                >
+                  {config.icon}
+                  {config.label} ({count})
+                </button>
+              )
+            })}
           </div>
         </div>
       </div>
@@ -256,15 +487,13 @@ export function GameTimeline({ gameData, className = '' }: GameTimelineProps) {
 
                 {/* Icon */}
                 <div className={`flex-shrink-0 w-12 h-12 rounded-full flex items-center justify-center ${
-                  event.type === 'goal'
-                    ? 'bg-red-500/20 text-red-500'
-                    : 'bg-yellow-500/20 text-yellow-500'
+                  getEventTypeConfig(event.type).bgColor
+                }/20 ${
+                  getEventTypeConfig(event.type).color
                 }`}>
-                  {event.type === 'goal' ? (
-                    <RedLightIcon size={24} />
-                  ) : (
-                    <AlertTriangle className="h-6 w-6" />
-                  )}
+                  <div className="scale-150">
+                    {getEventTypeConfig(event.type).icon}
+                  </div>
                 </div>
 
                 {/* Event Details */}
@@ -279,134 +508,7 @@ export function GameTimeline({ gameData, className = '' }: GameTimelineProps) {
                       </div>
 
                       {/* Event Type and Details */}
-                      {event.type === 'goal' && (
-                        <div className="space-y-2">
-                          <div className="flex items-center gap-2 flex-wrap">
-                            {teamLogo && (
-                              <div className="relative w-6 h-6">
-                                <Image
-                                  src={teamLogo}
-                                  alt={teamAbbrev}
-                                  fill
-                                  className="object-contain"
-                                />
-                              </div>
-                            )}
-                            <span className="font-bold text-lg">GOAL - {teamAbbrev}</span>
-                            {(() => {
-                              const situation = formatSituationCode(event.situationCode)
-                              if (!situation || situation.type === 'even') return null
-                              
-                              // Determine if this team scored on PP or SH
-                              const isAwayTeam = event.teamId === gameData.awayTeam?.id
-                              const awaySkaters = parseInt(event.situationCode?.[1] || '5')
-                              const homeSkaters = parseInt(event.situationCode?.[2] || '5')
-                              
-                              const isPowerPlay = isAwayTeam 
-                                ? awaySkaters > homeSkaters 
-                                : homeSkaters > awaySkaters
-                              
-                              return (
-                                <span className={`px-2 py-0.5 text-xs font-semibold rounded ${
-                                  isPowerPlay 
-                                    ? 'bg-orange-500 text-white' 
-                                    : 'bg-blue-500 text-white'
-                                }`}>
-                                  {isPowerPlay ? 'PPG' : 'SHG'}
-                                </span>
-                              )
-                            })()}
-                            <span className="text-muted-foreground">
-                              {event.details.awayScore} - {event.details.homeScore}
-                            </span>
-                          </div>
-                          <div className="text-sm">
-                            <div>
-                              <span className="font-medium">Scored by:</span>{' '}
-                              {event.details.scoringPlayerId
-                                ? getPlayerName(event.details.scoringPlayerId, rosterSpots)
-                                : 'Unknown'}
-                              {event.details.scoringPlayerTotal && (
-                                <span className="text-muted-foreground">
-                                  {' '}({event.details.scoringPlayerTotal})
-                                </span>
-                              )}
-                            </div>
-                            {(event.details.assist1PlayerId || event.details.assist2PlayerId) && (
-                              <div>
-                                <span className="font-medium">Assists:</span>{' '}
-                                {[
-                                  event.details.assist1PlayerId
-                                    ? getPlayerName(event.details.assist1PlayerId, rosterSpots)
-                                    : null,
-                                  event.details.assist2PlayerId
-                                    ? getPlayerName(event.details.assist2PlayerId, rosterSpots)
-                                    : null,
-                                ]
-                                  .filter(Boolean)
-                                  .join(', ')}
-                              </div>
-                            )}
-                            {/* Watch Replay Button */}
-                            {event.highlightClipId && (
-                              <div className="mt-2">
-                                <button
-                                  onClick={() => {
-                                    const embedUrl = `https://players.brightcove.net/6415718365001/EXtG1xJ7H_default/index.html?videoId=${event.highlightClipId}`
-                                    const playerName = event.details.scoringPlayerId
-                                      ? getPlayerName(event.details.scoringPlayerId, rosterSpots)
-                                      : 'Unknown'
-                                    setVideoOverlay({
-                                      url: embedUrl,
-                                      playerName,
-                                      teamAbbrev,
-                                    })
-                                  }}
-                                  className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-md bg-blue-600 hover:bg-blue-700 text-white transition-colors"
-                                >
-                                  <Play className="h-3 w-3" />
-                                  Watch Replay
-                                </button>
-                              </div>
-                            )}
-                          </div>
-                        </div>
-                      )}
-
-                      {event.type === 'penalty' && (
-                        <div className="space-y-2">
-                          <div className="flex items-center gap-2">
-                            {teamLogo && (
-                              <div className="relative w-6 h-6">
-                                <Image
-                                  src={teamLogo}
-                                  alt={teamAbbrev}
-                                  fill
-                                  className="object-contain"
-                                />
-                              </div>
-                            )}
-                            <span className="font-bold text-lg">PENALTY - {teamAbbrev}</span>
-                          </div>
-                          <div className="text-sm">
-                            <div>
-                              <span className="font-medium">Player:</span>{' '}
-                              {event.details.committedByPlayerId
-                                ? getPlayerName(event.details.committedByPlayerId, rosterSpots)
-                                : 'Unknown'}
-                            </div>
-                            <div>
-                              <span className="font-medium">Type:</span>{' '}
-                              {event.details.descKey?.replace(/-/g, ' ').toUpperCase() || 'Unknown'}
-                              {event.details.duration && (
-                                <span className="text-muted-foreground">
-                                  {' '}({event.details.duration} min)
-                                </span>
-                              )}
-                            </div>
-                          </div>
-                        </div>
-                      )}
+                      {renderEventDetails(event, rosterSpots, teamLogo, teamAbbrev, gameData, setVideoOverlay)}
                     </div>
                   </div>
                 </div>
@@ -416,24 +518,23 @@ export function GameTimeline({ gameData, className = '' }: GameTimelineProps) {
         )}
       </div>
 
-      {/* Summary Stats */}
-      <div className="grid grid-cols-2 gap-4 pt-4 border-t border-border">
-        <div className="bg-card rounded-lg p-4 text-center">
-          <div className="text-3xl font-bold text-green-500">
-            {periodFilteredEvents.filter(e => e.type === 'goal').length}
-          </div>
-          <div className="text-sm text-muted-foreground">
-            {selectedPeriod !== undefined ? 'Goals' : 'Total Goals'}
-          </div>
-        </div>
-        <div className="bg-card rounded-lg p-4 text-center">
-          <div className="text-3xl font-bold text-yellow-500">
-            {periodFilteredEvents.filter(e => e.type === 'penalty').length}
-          </div>
-          <div className="text-sm text-muted-foreground">
-            {selectedPeriod !== undefined ? 'Penalties' : 'Total Penalties'}
-          </div>
-        </div>
+      {/* Summary Stats - Dynamic */}
+      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 pt-4 border-t border-border">
+        {availableEventTypes.slice(0, 8).map(eventType => {
+          const config = getEventTypeConfig(eventType)
+          const count = periodFilteredEvents.filter(e => e.type === eventType).length
+          
+          return (
+            <div key={eventType} className="bg-card rounded-lg p-4 text-center">
+              <div className={`text-3xl font-bold ${config.color}`}>
+                {count}
+              </div>
+              <div className="text-sm text-muted-foreground">
+                {selectedPeriod !== undefined ? config.label : `Total ${config.label}`}
+              </div>
+            </div>
+          )
+        })}
       </div>
 
       {/* Video Overlay */}
