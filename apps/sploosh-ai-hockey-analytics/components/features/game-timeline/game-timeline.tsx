@@ -1,6 +1,6 @@
 'use client'
 
-import { useMemo, useState } from 'react'
+import React, { useMemo, useState } from 'react'
 import { Clock, AlertTriangle, Play, Target, Shield, XCircle, Circle, Users, Zap, StopCircle } from 'lucide-react'
 import { formatPeriodLabel, formatSituationCode } from '@/lib/utils/formatters'
 import Image from 'next/image'
@@ -330,16 +330,46 @@ function renderEventDetails(
 
 export function GameTimeline({ gameData, className = '' }: GameTimelineProps) {
   const events = useMemo(() => parseTimelineEvents(gameData), [gameData])
+  
+  // Load preferences from localStorage
+  const loadPreferences = () => {
+    if (typeof window === 'undefined') return null
+    try {
+      const saved = localStorage.getItem('gameTimelinePreferences')
+      return saved ? JSON.parse(saved) : null
+    } catch (error) {
+      console.error('Failed to load game timeline preferences:', error)
+      return null
+    }
+  }
+
+  const savedPrefs = loadPreferences()
+  
   const [selectedPeriod, setSelectedPeriod] = useState<number | undefined>(undefined)
   
-  // Get unique event types from the data
+  // Get unique event types from the data, sorted alphabetically by label
   const availableEventTypes = useMemo(() => {
     const types = [...new Set(events.map(e => e.type))]
-    return types.sort()
+    return types.sort((a, b) => {
+      const labelA = getEventTypeConfig(a).label
+      const labelB = getEventTypeConfig(b).label
+      return labelA.localeCompare(labelB)
+    })
   }, [events])
   
-  // Default to showing only goals
-  const [selectedEventTypes, setSelectedEventTypes] = useState<string[]>(['goal'])
+  // Check if there are any goals in the game
+  const hasGoals = useMemo(() => {
+    return events.some(e => e.type === 'goal')
+  }, [events])
+  
+  // Default to showing only goals if goals exist, otherwise show all events
+  // Use saved preferences if they exist
+  const [selectedEventTypes, setSelectedEventTypes] = useState<string[]>(() => {
+    if (savedPrefs?.selectedEventTypes !== undefined) {
+      return savedPrefs.selectedEventTypes
+    }
+    return hasGoals ? ['goal'] : availableEventTypes
+  })
   
   // Video overlay state
   const [videoOverlay, setVideoOverlay] = useState<{
@@ -384,6 +414,20 @@ export function GameTimeline({ gameData, className = '' }: GameTimelineProps) {
         : [...prev, type]
     )
   }
+
+  // Save preferences to localStorage whenever selectedEventTypes changes
+  React.useEffect(() => {
+    if (typeof window === 'undefined') return
+    
+    try {
+      const preferences = {
+        selectedEventTypes,
+      }
+      localStorage.setItem('gameTimelinePreferences', JSON.stringify(preferences))
+    } catch (error) {
+      console.error('Failed to save game timeline preferences:', error)
+    }
+  }, [selectedEventTypes])
 
   const rosterSpots = gameData.rosterSpots || []
 
@@ -434,7 +478,27 @@ export function GameTimeline({ gameData, className = '' }: GameTimelineProps) {
 
         {/* Event Type Filter - Dynamically Generated */}
         <div>
-          <div className="text-sm font-medium text-muted-foreground mb-2">Event Type</div>
+          <div className="flex items-center justify-between mb-2">
+            <div className="text-sm font-medium text-muted-foreground">Event Type</div>
+            <div className="flex gap-2">
+              <button
+                onClick={() => {
+                  setSelectedEventTypes(availableEventTypes)
+                }}
+                className="px-2 py-1 text-xs rounded-md bg-primary/10 hover:bg-primary/20 text-primary transition-colors"
+              >
+                Select All
+              </button>
+              <button
+                onClick={() => {
+                  setSelectedEventTypes([])
+                }}
+                className="px-2 py-1 text-xs rounded-md bg-secondary hover:bg-secondary/80 transition-colors"
+              >
+                Clear All
+              </button>
+            </div>
+          </div>
           <div className="flex flex-wrap gap-2">
             {availableEventTypes.map(eventType => {
               const config = getEventTypeConfig(eventType)
@@ -519,8 +583,8 @@ export function GameTimeline({ gameData, className = '' }: GameTimelineProps) {
       </div>
 
       {/* Summary Stats - Dynamic */}
-      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 pt-4 border-t border-border">
-        {availableEventTypes.slice(0, 8).map(eventType => {
+      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 pt-4 border-t border-border">
+        {availableEventTypes.map(eventType => {
           const config = getEventTypeConfig(eventType)
           const count = periodFilteredEvents.filter(e => e.type === eventType).length
           
@@ -530,7 +594,7 @@ export function GameTimeline({ gameData, className = '' }: GameTimelineProps) {
                 {count}
               </div>
               <div className="text-sm text-muted-foreground">
-                {selectedPeriod !== undefined ? config.label : `Total ${config.label}`}
+                {config.label}
               </div>
             </div>
           )
