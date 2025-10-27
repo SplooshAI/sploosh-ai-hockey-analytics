@@ -295,7 +295,7 @@ export const ShotChart: React.FC<ShotChartProps> = ({
         ? gameData.homeTeam.sog 
         : calculated.shotsOnGoal
     }
-  }, [shotsForStats, gameData.homeTeam?.id, gameData.homeTeam?.sog, hasActiveFilters])
+  }, [shotsForStats, gameData.homeTeam, hasActiveFilters])
 
   // Get team names
   const awayTeamName = gameData.awayTeam ? formatTeamFullName(gameData.awayTeam) : 'Away'
