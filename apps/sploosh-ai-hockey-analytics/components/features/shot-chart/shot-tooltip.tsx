@@ -12,7 +12,7 @@ interface ShotTooltipProps {
   shot: ShotEvent
   playerName: string
   teamLogo?: string
-  teamName?: string
+  teamName?: string // Reserved for future use
   teamAbbrev?: string
   teamColor?: string
   playerHeadshot?: string
@@ -32,7 +32,7 @@ export const ShotTooltip: React.FC<ShotTooltipProps> = ({
   shot,
   playerName,
   teamLogo,
-  teamName,
+  teamName: _teamName, // Reserved for future use
   teamAbbrev,
   teamColor,
   playerHeadshot,

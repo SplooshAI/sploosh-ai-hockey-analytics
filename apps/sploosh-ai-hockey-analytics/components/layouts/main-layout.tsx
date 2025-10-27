@@ -3,7 +3,6 @@
 import { ReactNode, useState, useEffect } from 'react'
 import Sidebar from './sidebar/sidebar'
 import { Menu, ArrowUp } from 'lucide-react'
-import { SITE } from "@/lib/constants"
 import { NHLAttribution } from '../shared/nhl-attribution/nhl-attribution'
 import { SplooshCopyright } from '../shared/sploosh-copyright/sploosh-copyright'
 

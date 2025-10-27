@@ -15,9 +15,8 @@
  */
 
 import * as React from 'react'
-import { transformCoordinates, getTeamColor, getTeamColorWithContrast, getStandardizedShotColor, getPlayerName, type ShotEvent } from '@/lib/utils/shot-chart-utils'
+import { transformCoordinates, getTeamColor, getTeamColorWithContrast, getPlayerName, type ShotEvent } from '@/lib/utils/shot-chart-utils'
 import { formatPeriodLabel, formatGameTime } from '@/lib/utils/formatters'
-import { ShotTooltip } from './shot-tooltip'
 
 interface ShotChartOverlayProps {
   /** Array of shot events to display */
@@ -51,18 +50,8 @@ const GoalMarker: React.FC<{
   onMouseLeave?: (shot: ShotEvent) => void
   scale?: number
   teamLogo?: string
-}> = ({ cx, cy, color, shot, tooltip, onMouseEnter, onMouseLeave, scale = 1, teamLogo }) => {
+}> = ({ cx, cy, color, shot, tooltip, onMouseEnter, onMouseLeave, scale = 1, teamLogo: _teamLogo }) => {
   const [isHovered, setIsHovered] = React.useState(false)
-
-  const handleInteraction = (e: React.MouseEvent | React.TouchEvent) => {
-    setIsHovered(true)
-    onMouseEnter?.(e)
-  }
-
-  const handleInteractionEnd = () => {
-    setIsHovered(false)
-    onMouseLeave?.(shot)
-  }
   
   // Create a 5-pointed star - scaled size (goals are largest)
   const points = []

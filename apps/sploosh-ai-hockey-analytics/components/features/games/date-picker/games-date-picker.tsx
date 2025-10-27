@@ -1,7 +1,7 @@
 'use client'
 
 import { ChevronLeft, ChevronRight, CalendarIcon, Loader2 } from 'lucide-react'
-import { addDays, format, isToday, subDays, startOfDay } from 'date-fns'
+import { addDays, subDays, startOfDay, format } from 'date-fns'
 import { formatDateWithOrdinal } from '@/lib/utils'
 import { useEffect, useState } from 'react'
 import { useDebounce } from '@/hooks/use-debounce'
