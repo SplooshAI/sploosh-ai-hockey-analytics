@@ -94,18 +94,13 @@ function HomeContent() {
   // Load game from URL on mount or when URL changes
   useEffect(() => {
     const gameIdParam = searchParams.get('gameId')
-    console.log('useEffect triggered:', { gameIdParam, selectedGameId, loading })
     if (gameIdParam) {
       const gameId = parseInt(gameIdParam, 10)
-      console.log('Parsed gameId:', gameId, 'selectedGameId:', selectedGameId, 'loading:', loading)
       if (!isNaN(gameId) && gameId !== selectedGameId && !loading) {
-        console.log('Fetching game data for:', gameId)
         setLoading(true)
         setError(null)
         setSelectedGameId(gameId)
         fetchGameData(gameId).finally(() => setLoading(false))
-      } else {
-        console.log('Skipping fetch:', { isNaN: isNaN(gameId), sameGame: gameId === selectedGameId, loading })
       }
     } else {
       // No gameId in URL - clear the selected game and show default view
@@ -193,7 +188,7 @@ function HomeContent() {
         <div className="space-y-6">
           {/* Game Header */}
           <div className="bg-card rounded-lg p-6 shadow-sm">
-            {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
+            { }
             <GameHeader 
               gameData={{
                 ...playByPlayData,
