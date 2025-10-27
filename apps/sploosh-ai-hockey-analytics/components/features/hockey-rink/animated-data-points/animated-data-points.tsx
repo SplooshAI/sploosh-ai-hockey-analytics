@@ -261,7 +261,7 @@ export const AnimatedDataPoints: React.FC<AnimatedDataPointsProps> = ({
     }, 16) // ~60fps for smooth animation
 
     return () => clearInterval(animationLoop)
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+   
   }, [animate, dataPoints, isPlaying, speed, currentIndex, dataPoints.length])
 
   // Force initial render of all points when not animating
@@ -269,14 +269,14 @@ export const AnimatedDataPoints: React.FC<AnimatedDataPointsProps> = ({
     if (!animate && dataPoints.length > 0 && isPlaying) {
       setCurrentIndex(dataPoints.length - 1)
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+   
   }, [animate, dataPoints.length, isPlaying])
 
   useEffect(() => {
     if (animate) {
       handleReset()
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+   
   }, [animate])
 
   // Get the current point only - ensure it's null when animation hasn't started
