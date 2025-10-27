@@ -16,9 +16,10 @@ interface GamesListProps {
     onClose?: () => void
     onRefresh?: () => void
     onLoadingChange?: (isLoading: boolean) => void
+    onGamesCountChange?: (count: number) => void
 }
 
-export function GamesList({ date, onGameSelect, onClose, onRefresh, onLoadingChange }: GamesListProps) {
+export function GamesList({ date, onGameSelect, onClose, onRefresh, onLoadingChange, onGamesCountChange }: GamesListProps) {
     const [games, setGames] = useState<NHLEdgeGame[]>([])
     const [isLoading, setIsLoading] = useState(true)
     const [error, setError] = useState<string | null>(null)
@@ -244,6 +245,11 @@ export function GamesList({ date, onGameSelect, onClose, onRefresh, onLoadingCha
             console.log(`Retry attempt ${retryCount} of ${MAX_RETRY_ATTEMPTS}`)
         }
     }, [retryCount])
+
+    // Notify parent of games count changes
+    useEffect(() => {
+        onGamesCountChange?.(games.length)
+    }, [games.length, onGamesCountChange])
 
     // Show skeleton when loading and either no games or navigating to a different date
     const isChangingDate = isNavigating || (isLoading && format(date, 'yyyy-MM-dd') !== currentDateRef.current)

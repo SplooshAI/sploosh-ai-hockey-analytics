@@ -22,6 +22,7 @@ export default function Sidebar({ onClose, onGameSelect, onRefresh }: SidebarPro
         return startOfDay(new Date(now.getFullYear(), now.getMonth(), now.getDate()))
     })
     const [isLoadingGames, setIsLoadingGames] = useState(false)
+    const [gamesCount, setGamesCount] = useState<number>(0)
 
     return (
         <div className="w-64 h-[100dvh] flex flex-col bg-secondary">
@@ -49,6 +50,12 @@ export default function Sidebar({ onClose, onGameSelect, onRefresh }: SidebarPro
                         isLoading={isLoadingGames}
                     />
                 </div>
+
+                {gamesCount > 0 && (
+                    <div className="mt-3 text-center text-sm text-muted-foreground font-medium">
+                        {gamesCount} {gamesCount === 1 ? 'game' : 'games'}
+                    </div>
+                )}
             </div>
 
             <div className="flex-1 min-h-0 overflow-y-auto pb-safe">
@@ -59,6 +66,7 @@ export default function Sidebar({ onClose, onGameSelect, onRefresh }: SidebarPro
                         onClose={onClose}
                         onRefresh={onRefresh}
                         onLoadingChange={setIsLoadingGames}
+                        onGamesCountChange={setGamesCount}
                     />
                     <div className="pt-4 mt-4 border-t border-border/50 space-y-4">
                         <Version />
