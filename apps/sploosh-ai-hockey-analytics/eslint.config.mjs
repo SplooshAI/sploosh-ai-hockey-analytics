@@ -9,11 +9,15 @@ export default [
     },
     {
         rules: {
-            "@typescript-eslint/no-explicit-any": "warn",
-            "@typescript-eslint/no-unused-vars": "warn",
-            "react-hooks/exhaustive-deps": "warn",
-            "react-hooks/set-state-in-effect": "warn",
-            "@next/next/no-img-element": "warn",
+            "@typescript-eslint/no-explicit-any": "off", // Allow any types in utility functions
+            "@typescript-eslint/no-unused-vars": ["error", {
+                "argsIgnorePattern": "^_",
+                "varsIgnorePattern": "^_",
+                "caughtErrorsIgnorePattern": "^_"
+            }],
+            "react-hooks/exhaustive-deps": "off", // Disable for now, requires careful review
+            "react-hooks/set-state-in-effect": "off", // Intentional pattern for SSR/client-side initialization
+            "@next/next/no-img-element": "off", // Team logos from external CDN work better with img
             "import/no-anonymous-default-export": "off",
         },
     },
