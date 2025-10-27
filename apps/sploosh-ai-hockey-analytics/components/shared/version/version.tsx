@@ -5,7 +5,7 @@ import { useSearchParams } from 'next/navigation'
 import { useState, useEffect, Suspense } from 'react'
 
 function VersionContent() {
-  const { version, gitHash, gitDate, repoUrl } = getVersionInfo()
+  const { version, gitDate } = getVersionInfo()
   const searchParams = useSearchParams()
   const [formattedDate, setFormattedDate] = useState<string>('')
   const currentYear = new Date().getFullYear()
