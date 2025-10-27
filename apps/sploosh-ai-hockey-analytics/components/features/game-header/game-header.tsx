@@ -75,7 +75,16 @@ interface GameHeaderProps {
  */
 export const GameHeader: React.FC<GameHeaderProps> = ({ gameData, className = '', lastRefreshTime }) => {
   const searchParams = useSearchParams()
-  const timeZone = searchParams.get('tz') || Intl.DateTimeFormat().resolvedOptions().timeZone
+  const timeZone = (() => {
+    const tz = searchParams.get('tz');
+    if (!tz) return Intl.DateTimeFormat().resolvedOptions().timeZone;
+    try {
+      Intl.DateTimeFormat(undefined, { timeZone: tz });
+      return tz;
+    } catch {
+      return Intl.DateTimeFormat().resolvedOptions().timeZone;
+    }
+  })();
   const awayTeamName = gameData.awayTeam?.abbrev || 'Away'
   const homeTeamName = gameData.homeTeam?.abbrev || 'Home'
 

@@ -13,7 +13,16 @@ interface GameCardProps {
 
 export function GameCard({ game, onSelectGame, onClose }: GameCardProps) {
     const searchParams = useSearchParams()
-    const timezone = searchParams.get('tz') || Intl.DateTimeFormat().resolvedOptions().timeZone
+    const timezone = (() => {
+      const tz = searchParams.get('tz');
+      if (!tz) return Intl.DateTimeFormat().resolvedOptions().timeZone;
+      try {
+        Intl.DateTimeFormat(undefined, { timeZone: tz });
+        return tz;
+      } catch {
+        return Intl.DateTimeFormat().resolvedOptions().timeZone;
+      }
+    })();
     const getTeamLogoUrl = (team: NHLEdgeTeam) => {
         return team.logo || `https://assets.nhle.com/logos/nhl/svg/${team.abbrev}_light.svg`
     }

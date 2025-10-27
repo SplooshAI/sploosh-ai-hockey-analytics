@@ -13,7 +13,16 @@ interface RefreshSettingsProps {
 
 export function RefreshSettings({ isEnabled, onToggle, lastRefreshTime, defaultEnabled = false }: RefreshSettingsProps) {
     const searchParams = useSearchParams()
-    const timeZone = searchParams.get('tz') || Intl.DateTimeFormat().resolvedOptions().timeZone
+    const timeZone = (() => {
+      const tz = searchParams.get('tz');
+      if (!tz) return Intl.DateTimeFormat().resolvedOptions().timeZone;
+      try {
+        Intl.DateTimeFormat(undefined, { timeZone: tz });
+        return tz;
+      } catch {
+        return Intl.DateTimeFormat().resolvedOptions().timeZone;
+      }
+    })();
     const [countdown, setCountdown] = useState(20)
     const [refreshCount, setRefreshCount] = useState(0)
     const lastRefreshTimeRef = useRef<Date | null>(null)
