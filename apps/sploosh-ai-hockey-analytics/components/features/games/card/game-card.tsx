@@ -1,7 +1,9 @@
+'use client'
 import Image from 'next/image'
 import { NHLEdgeGame, NHLEdgeTeam } from '@/lib/api/nhl-edge/types/nhl-edge'
 import { parseISO } from 'date-fns'
 import { formatInTimeZone } from 'date-fns-tz'
+import { useSearchParams } from 'next/navigation'
 
 interface GameCardProps {
     game: NHLEdgeGame
@@ -10,6 +12,17 @@ interface GameCardProps {
 }
 
 export function GameCard({ game, onSelectGame, onClose }: GameCardProps) {
+    const searchParams = useSearchParams()
+    const timezone = (() => {
+      const tz = searchParams.get('tz');
+      if (!tz) return Intl.DateTimeFormat().resolvedOptions().timeZone;
+      try {
+        Intl.DateTimeFormat(undefined, { timeZone: tz });
+        return tz;
+      } catch {
+        return Intl.DateTimeFormat().resolvedOptions().timeZone;
+      }
+    })();
     const getTeamLogoUrl = (team: NHLEdgeTeam) => {
         return team.logo || `https://assets.nhle.com/logos/nhl/svg/${team.abbrev}_light.svg`
     }
@@ -77,7 +90,7 @@ export function GameCard({ game, onSelectGame, onClose }: GameCardProps) {
             case 'PRE':
                 return formatInTimeZone(
                     parseISO(game.startTimeUTC),
-                    Intl.DateTimeFormat().resolvedOptions().timeZone,
+                    timezone,
                     'h:mm a zzz'
                 )
             case 'FINAL':

@@ -6,7 +6,6 @@ import { X } from 'lucide-react'
 import { GamesList } from '@/components/features/games/list/games-list'
 import { Version } from '../../shared/version/version'
 import { NHLAttribution } from '../../shared/nhl-attribution/nhl-attribution'
-import { SplooshCopyright } from '../../shared/sploosh-copyright/sploosh-copyright'
 import { GamesDatePicker } from '@/components/features/games/date-picker/games-date-picker'
 import { startOfDay } from 'date-fns'
 
@@ -63,7 +62,6 @@ export default function Sidebar({ onClose, onGameSelect, onRefresh }: SidebarPro
                     />
                     <div className="pt-4 mt-4 border-t border-border/50 space-y-4">
                         <Version />
-                        <SplooshCopyright variant="sidebar" />
                         <div className="pt-3 border-t border-border/30">
                             <NHLAttribution variant="sidebar" />
                         </div>

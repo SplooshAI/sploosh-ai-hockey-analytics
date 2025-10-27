@@ -3,6 +3,7 @@ import Image from 'next/image'
 import { parseISO } from 'date-fns'
 import { format, formatInTimeZone } from 'date-fns-tz'
 import { ExternalLink, Tv } from 'lucide-react'
+import { useSearchParams } from 'next/navigation'
 
 // Extended game data type that includes fields from both play-by-play and game center APIs
 interface GameHeaderData {
@@ -73,9 +74,19 @@ interface GameHeaderProps {
  * Matches the sidebar game card styling
  */
 export const GameHeader: React.FC<GameHeaderProps> = ({ gameData, className = '', lastRefreshTime }) => {
+  const searchParams = useSearchParams()
+  const timeZone = (() => {
+    const tz = searchParams.get('tz');
+    if (!tz) return Intl.DateTimeFormat().resolvedOptions().timeZone;
+    try {
+      Intl.DateTimeFormat(undefined, { timeZone: tz });
+      return tz;
+    } catch {
+      return Intl.DateTimeFormat().resolvedOptions().timeZone;
+    }
+  })();
   const awayTeamName = gameData.awayTeam?.abbrev || 'Away'
   const homeTeamName = gameData.homeTeam?.abbrev || 'Home'
-  const timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone
 
   // Helper function to get the OT period display (OT, 2OT, 3OT, etc.)
   const getOTPeriodDisplay = (periodNumber: number) => {
@@ -129,7 +140,7 @@ export const GameHeader: React.FC<GameHeaderProps> = ({ gameData, className = ''
         if (gameData.startTimeUTC) {
           return formatInTimeZone(
             parseISO(gameData.startTimeUTC),
-            Intl.DateTimeFormat().resolvedOptions().timeZone,
+            timeZone,
             'h:mm a zzz'
           )
         }

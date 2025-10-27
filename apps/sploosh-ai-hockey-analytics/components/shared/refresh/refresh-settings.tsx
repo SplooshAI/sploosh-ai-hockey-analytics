@@ -1,6 +1,8 @@
+'use client'
 import { format } from 'date-fns-tz'
 import { RefreshCw } from 'lucide-react'
 import { useEffect, useState, useRef } from 'react'
+import { useSearchParams } from 'next/navigation'
 
 interface RefreshSettingsProps {
     isEnabled: boolean
@@ -10,7 +12,17 @@ interface RefreshSettingsProps {
 }
 
 export function RefreshSettings({ isEnabled, onToggle, lastRefreshTime, defaultEnabled = false }: RefreshSettingsProps) {
-    const timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone
+    const searchParams = useSearchParams()
+    const timeZone = (() => {
+      const tz = searchParams.get('tz');
+      if (!tz) return Intl.DateTimeFormat().resolvedOptions().timeZone;
+      try {
+        Intl.DateTimeFormat(undefined, { timeZone: tz });
+        return tz;
+      } catch {
+        return Intl.DateTimeFormat().resolvedOptions().timeZone;
+      }
+    })();
     const [countdown, setCountdown] = useState(20)
     const [refreshCount, setRefreshCount] = useState(0)
     const lastRefreshTimeRef = useRef<Date | null>(null)
