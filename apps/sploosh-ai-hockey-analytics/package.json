@@ -7,7 +7,7 @@
     "prebuild": "node ./scripts/generate-build-info.js",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "eslint . --max-warnings=0"
   },
   "dependencies": {
     "@radix-ui/react-popover": "^1.1.15",
@@ -19,7 +19,7 @@
     "date-fns-tz": "^3.2.0",
     "framer-motion": "^12.12.1",
     "lucide-react": "^0.468.0",
-    "next": "15.5.4",
+    "next": "16.0.0",
     "react": "19.2.0",
     "react-day-picker": "^9.11.1",
     "react-dom": "19.2.0",
@@ -29,15 +29,15 @@
   "devDependencies": {
     "@types/node": "^20",
     "@types/react": "19.2.2",
-    "@types/react-dom": "19.2.1",
-    "eslint": "^8",
-    "eslint-config-next": "15.5.4",
+    "@types/react-dom": "19.2.2",
+    "eslint": "^9",
+    "eslint-config-next": "16.0.0",
     "postcss": "^8",
     "tailwindcss": "^3.4.1",
     "typescript": "^5"
   },
   "overrides": {
     "@types/react": "19.2.2",
-    "@types/react-dom": "19.2.1"
+    "@types/react-dom": "19.2.2"
   }
 }

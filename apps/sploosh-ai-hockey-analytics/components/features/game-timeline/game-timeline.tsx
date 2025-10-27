@@ -8,7 +8,7 @@ import { RedLightIcon } from './red-light-icon'
 import { VideoOverlay } from '../shot-chart/video-overlay'
 
 interface GameTimelineProps {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+   
   gameData: any
   className?: string
 }
@@ -23,20 +23,20 @@ interface TimelineEvent {
   playerId?: number
   situationCode?: string
   highlightClipId?: number
-  details: Record<string, any> // eslint-disable-line @typescript-eslint/no-explicit-any
+  details: Record<string, any>  
 }
 
-function getPlayerName(playerId: number, rosterSpots: any[]): string { // eslint-disable-line @typescript-eslint/no-explicit-any
-  const player = rosterSpots.find((spot: any) => spot.playerId === playerId) // eslint-disable-line @typescript-eslint/no-explicit-any
+function getPlayerName(playerId: number, rosterSpots: any[]): string {  
+  const player = rosterSpots.find((spot: any) => spot.playerId === playerId)  
   if (!player) return 'Unknown'
   return `${player.firstName?.default || ''} ${player.lastName?.default || ''}`.trim()
 }
 
-function parseTimelineEvents(gameData: any): TimelineEvent[] { // eslint-disable-line @typescript-eslint/no-explicit-any
+function parseTimelineEvents(gameData: any): TimelineEvent[] {  
   const plays = gameData.plays || []
   const events: TimelineEvent[] = []
 
-  plays.forEach((play: any) => { // eslint-disable-line @typescript-eslint/no-explicit-any
+  plays.forEach((play: any) => {  
     // Skip plays without a typeDescKey
     if (!play.typeDescKey) return
 
@@ -108,10 +108,10 @@ function getEventTypeConfig(type: string): { icon: React.ReactNode; color: strin
 
 function renderEventDetails(
   event: TimelineEvent, 
-  rosterSpots: any[], // eslint-disable-line @typescript-eslint/no-explicit-any
+  rosterSpots: any[],  
   teamLogo: string | undefined, 
   teamAbbrev: string,
-  gameData: any, // eslint-disable-line @typescript-eslint/no-explicit-any
+  gameData: any,  
   setVideoOverlay: (overlay: { url: string; playerName: string; teamAbbrev?: string } | null) => void
 ) {
   return (

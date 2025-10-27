@@ -22,9 +22,7 @@ import {
   filterShotsByTeam,
   filterShotsByPeriod,
   filterShotsByResult,
-  getTeamColor,
   getTeamColorWithContrast,
-  getStandardizedShotColor,
   getPlayerName,
   transformCoordinates,
   type ShotEvent,
@@ -34,7 +32,7 @@ import { ShotTooltip } from './shot-tooltip'
 
 interface ShotChartProps {
   /** Complete NHL EDGE game data */
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+   
   gameData: any
   /** Optional className for the container */
   className?: string
@@ -267,7 +265,7 @@ export const ShotChart: React.FC<ShotChartProps> = ({
   }, [allShots, selectedTeam, selectedPeriod])
 
   // Calculate statistics from all shot types (not filtered by result)
-  const stats = useMemo(() => calculateStats(shotsForStats), [shotsForStats])
+  const _stats = useMemo(() => calculateStats(shotsForStats), [shotsForStats])
   
   // Check if any filters are active that affect stats (team or period filters)
   // Result type filter is excluded since stats now show all shot types regardless
@@ -295,7 +293,7 @@ export const ShotChart: React.FC<ShotChartProps> = ({
         ? gameData.homeTeam.sog 
         : calculated.shotsOnGoal
     }
-  }, [shotsForStats, gameData.homeTeam?.id, gameData.homeTeam?.sog, hasActiveFilters])
+  }, [shotsForStats, gameData.homeTeam, hasActiveFilters])
 
   // Get team names
   const awayTeamName = gameData.awayTeam ? formatTeamFullName(gameData.awayTeam) : 'Away'

@@ -2,8 +2,6 @@ import * as React from "react";
 
 interface NHLEdgeHockeyRinkProps {
   className?: string;
-  awayTeamName?: string;
-  homeTeamName?: string;
   centerIceLogo?: string;
   centerIceLogoHeight?: number;
   centerIceLogoWidth?: number;
@@ -17,8 +15,6 @@ const DEFAULT_ICE_TEXTURE_PATTERN_URL = "https://wsr.nhle.com/static/js/../image
 const DEFAULT_ZAMBONI_IMAGE = "nhl-edge/nhl-edge-zamboni.png"
 
 export const NHLEdgeHockeyRink = ({
-  awayTeamName = "",
-  homeTeamName = "",
   centerIceLogo = DEFAULT_CENTER_ICE_LOGO_SEATTLE_KRAKEN_LIGHT,
   centerIceLogoHeight = 400,
   centerIceLogoWidth = 400,
