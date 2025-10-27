@@ -5,15 +5,16 @@ import { useSearchParams } from 'next/navigation'
 import { useState, useEffect, Suspense } from 'react'
 
 function VersionContent() {
-  const { version, gitHash, gitDate, nextJsVersion, repoUrl } = getVersionInfo()
+  const { version, gitHash, gitDate, repoUrl } = getVersionInfo()
   const searchParams = useSearchParams()
   const [formattedDate, setFormattedDate] = useState<string>('')
+  const currentYear = new Date().getFullYear()
+  const timezone = searchParams.get('tz') || Intl.DateTimeFormat().resolvedOptions().timeZone
 
   useEffect(() => {
     if (!gitDate) return
 
     try {
-      const timezone = searchParams.get('tz') || Intl.DateTimeFormat().resolvedOptions().timeZone
       const date = parseISO(gitDate)
 
       if (isNaN(date.getTime())) {
@@ -40,30 +41,21 @@ function VersionContent() {
     } catch (error) {
       console.error('Error formatting date:', error);
     }
-  }, [gitDate, searchParams])
+  }, [gitDate, timezone])
 
   return (
-    <div className="text-xs text-muted-foreground">
-      <p>
-        Next.js {nextJsVersion}
-        <span className="mx-1">•</span>
-        v{version}
-        <span className="mx-1">•</span>
-        {gitHash && (
-          <>
-            <a
-              href={`${repoUrl}/commit/${gitHash}`}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="hover:underline"
-            >
-              {gitHash.substring(0, 7)}
-            </a>
-            <br />
-            {formattedDate}
-          </>
-        )}
+    <div className="text-xs text-muted-foreground space-y-1">
+      <p className="font-medium">
+        Sploosh.AI Hockey Analytics v{version}
       </p>
+      <p>
+        © {currentYear} Sploosh.AI. All rights reserved.
+      </p>
+      {formattedDate && (
+        <p>
+          {formattedDate}
+        </p>
+      )}
     </div>
   )
 }
