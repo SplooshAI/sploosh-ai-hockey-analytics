@@ -93,6 +93,22 @@ All project dependencies are compatible with Node.js v24:
 - React 19.2.0 ✅
 - All other dependencies verified ✅
 
+### Deployment Platform Considerations
+
+**Vercel Limitation**: As of November 2025, Vercel does not yet support
+Node.js v24. The latest supported version is Node.js 22.x. To maintain
+compatibility:
+
+- `engines.node` is set to `>=22.0.0` (allows both v22 and v24)
+- Vercel deployments use Node.js 22.x
+- Local development uses Node.js v24.11.0 (via `.nvmrc`)
+- Docker containers use Node.js v24 (`node:24-alpine`)
+- GitHub Actions use Node.js v22
+
+When Vercel adds Node.js v24 support, you can optionally update the
+`engines` field to `>=24.0.0` if desired, though `>=22.0.0` will
+continue to work.
+
 ### Reference
 
 Full migration guide: <https://nodejs.org/en/blog/migrations/v22-to-v24>
