@@ -2,7 +2,8 @@
 
 ## Overview
 
-This project has been upgraded to Node.js v24 LTS (Long-Term Support), which will receive updates through April 2028.
+This project has been upgraded to Node.js v24 LTS (Long-Term Support),
+which will receive updates through April 2028.
 
 ## Changes Made
 
@@ -31,7 +32,9 @@ This project has been upgraded to Node.js v24 LTS (Long-Term Support), which wil
 
 ### Upgrade Completed ✅
 
-The local development environment has been successfully upgraded to Node.js v24.11.0 LTS, matching the Docker container environment. This ensures:
+The local development environment has been successfully upgraded to
+Node.js v24.11.0 LTS, matching the Docker container environment. This
+ensures:
 
 - Consistency across local development and Docker environments
 - Access to the latest performance improvements
@@ -103,7 +106,8 @@ While the Docker builds have been verified, comprehensive testing would benefit 
 - E2E tests for critical user flows
 - Performance benchmarks
 
-*"Sure would be nice if we had tests to validate our application before we went down this path, eh lol"* - Future enhancement opportunity! 😄
+*"Sure would be nice if we had tests to validate our application before
+we went down this path, eh lol"* - Future enhancement opportunity! 😄
 
 ## Rollback Plan
 
