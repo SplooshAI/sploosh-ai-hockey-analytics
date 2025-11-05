@@ -96,8 +96,16 @@ All project dependencies are compatible with Node.js v24:
 ### Deployment Platform Considerations
 
 **Vercel Limitation**: As of November 2025, Vercel does not yet support
-Node.js v24. The latest supported version is Node.js 22.x. To maintain
-compatibility:
+Node.js v24. The latest supported version is Node.js 22.x.
+
+**Expected Timeline**: Vercel has not announced an official timeline for
+Node.js v24 support. Based on historical patterns, support is estimated
+for Q1-Q2 2026 (3-6 months after the November 4, 2025 LTS release).
+Monitor [Vercel's changelog](https://vercel.com/changelog) and
+[Node.js versions documentation](https://vercel.com/docs/functions/runtimes/node-js/node-js-versions)
+for updates.
+
+**Compatibility Strategy**: To maintain compatibility across environments:
 
 - `engines.node` is set to `>=22.0.0` (allows both v22 and v24)
 - Vercel deployments use Node.js 22.x
