@@ -48,6 +48,11 @@
   },
   "author": "Rob Brennan <rob@sploosh.ai>",
   "license": "MIT",
+  "packageManager": "npm@11.5.2",
+  "engines": {
+    "node": ">=24.0.0",
+    "npm": ">=10.0.0"
+  },
   "bugs": {
     "url": "https://github.com/SplooshAI/sploosh-ai-hockey-analytics/issues"
   },
