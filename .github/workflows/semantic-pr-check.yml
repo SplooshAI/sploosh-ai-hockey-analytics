@@ -73,34 +73,9 @@ jobs:
             exit 0
           fi
           
-          echo "Waiting for Vercel deployment to complete..."
-          MAX_ATTEMPTS=60  # 10 minutes max (60 * 10 seconds)
-          ATTEMPT=0
-          
-          while [ $ATTEMPT -lt $MAX_ATTEMPTS ]; do
-            # Get Vercel check state
-            STATE=$(gh pr checks ${{ github.event.pull_request.number }} --json name,state,description | jq -r '.[] | select(.name=="Vercel") | .state')
-            DESCRIPTION=$(gh pr checks ${{ github.event.pull_request.number }} --json name,state,description | jq -r '.[] | select(.name=="Vercel") | .description')
-            
-            echo "Vercel state: $STATE, description: $DESCRIPTION"
-            
-            if [[ "$STATE" == "SUCCESS" ]]; then
-              echo "✅ Vercel deployment completed successfully"
-              break
-            elif [[ "$STATE" == "FAILURE" ]] || [[ "$STATE" == "ERROR" ]]; then
-              echo "❌ Vercel deployment failed"
-              exit 1
-            fi
-            
-            echo "⏳ Waiting for Vercel deployment... (attempt $((ATTEMPT+1))/$MAX_ATTEMPTS)"
-            sleep 10
-            ATTEMPT=$((ATTEMPT+1))
-          done
-          
-          if [ $ATTEMPT -eq $MAX_ATTEMPTS ]; then
-            echo "❌ Timeout waiting for Vercel deployment"
-            exit 1
-          fi
+          echo "ℹ️ Vercel deployment check is handled by GitHub's built-in status checks"
+          echo "✅ Skipping manual Vercel wait - relying on GitHub's native integration"
+          exit 0
 
       - name: Check Breaking Change Format
         if: success()
