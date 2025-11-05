@@ -100,7 +100,7 @@ Node.js v24. The latest supported version is Node.js 22.x.
 
 **Expected Timeline**: Vercel has not announced an official timeline for
 Node.js v24 support. Based on historical patterns, support is estimated
-for Q1-Q2 2026 (3-6 months after the November 4, 2025 LTS release).
+for Q1-Q2 2026 (3-6 months after the October 28, 2025 LTS release).
 Monitor [Vercel's changelog](https://vercel.com/changelog) and
 [Node.js versions documentation](https://vercel.com/docs/functions/runtimes/node-js/node-js-versions)
 for updates.
