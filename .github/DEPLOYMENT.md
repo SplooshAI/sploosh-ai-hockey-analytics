@@ -1,6 +1,7 @@
 # Deployment Guide
 
-This document provides detailed information about the deployment process for the Sploosh AI Hockey Analytics application.
+This document provides detailed information about the deployment process
+for the Sploosh AI Hockey Analytics application.
 
 ## Quick Reference - Available Scripts
 
@@ -19,32 +20,41 @@ All commands are run from the project root using npm:
 | `npm test` | Run all workflow tests |
 | `npm run ghcr:build` | Build image for GitHub Container Registry |
 
-**Recommended:** Use Docker for development (`npm run docker:up`) to ensure environment consistency.
+**Recommended:** Use Docker for development (`npm run docker:up`) to
+ensure environment consistency.
 
-See the [Build and Deployment](#build-and-deployment) section for complete command details.
+See the [Build and Deployment](#build-and-deployment) section for
+complete command details.
 
 ## CI/CD Pipeline Overview
 
-Our application uses GitHub Actions for continuous integration and deployment. The main workflows are:
+Our application uses GitHub Actions for continuous integration and
+deployment. The main workflows are:
 
 1. **semantic-pr-check.yml**: Validates PR titles follow semantic versioning format
 2. **pr-build-check.yml**: Runs build checks on pull requests
-3. **main-merge.yml**: Automatically bumps version and creates version bump PRs when changes are merged to main
+3. **main-merge.yml**: Automatically bumps version and creates version
+   bump PRs when changes are merged to main
 4. **cleanup_ghcr.yml**: Cleans up old container images from GitHub Container Registry
 
 ## Semantic Versioning
 
 The project follows semantic versioning (MAJOR.MINOR.PATCH):
 
-- **Major version** (X.0.0): Breaking changes - triggered by PR titles starting with `feat!:`
-- **Minor version** (0.X.0): New features - triggered by PR titles starting with `feat:`
-- **Patch version** (0.0.X): Bug fixes and maintenance - triggered by PR titles starting with `fix:`, `docs:`, `style:`, `refactor:`, `perf:`, `test:`, `build:`, `ci:`, `chore:`, or `revert:`
+- **Major version** (X.0.0): Breaking changes - triggered by PR titles
+  starting with `feat!:`
+- **Minor version** (0.X.0): New features - triggered by PR titles
+  starting with `feat:`
+- **Patch version** (0.0.X): Bug fixes and maintenance - triggered by PR
+  titles starting with `fix:`, `docs:`, `style:`, `refactor:`, `perf:`,
+  `test:`, `build:`, `ci:`, `chore:`, or `revert:`
 
 ## Version Bump Process
 
 When a PR is merged to main:
 
-1. The `main-merge.yml` workflow automatically determines the version bump type based on the PR title
+1. The `main-merge.yml` workflow automatically determines the version
+   bump type based on the PR title
 2. A new branch is created with the version bump changes
 3. A PR is automatically created with the version updates
 4. Once checks pass, the version bump PR is automatically merged
@@ -54,7 +64,8 @@ When a PR is merged to main:
 
 All PR titles must follow the semantic versioning format to pass CI checks:
 
-- Must start with one of: `feat`, `fix`, `docs`, `style`, `refactor`, `perf`, `test`, `build`, `ci`, `chore`, `revert`
+- Must start with one of: `feat`, `fix`, `docs`, `style`, `refactor`,
+  `perf`, `test`, `build`, `ci`, `chore`, `revert`
 - Can include `!` for breaking changes (e.g., `feat!: breaking change`)
 - Must be followed by a colon and description
 - Examples:
@@ -68,7 +79,9 @@ The application is built using Next.js and can be deployed using various methods
 
 ### Docker Development (Recommended)
 
-**Docker is the preferred development environment** as it ensures consistency across all development machines and matches the production environment.
+**Docker is the preferred development environment** as it ensures
+consistency across all development machines and matches the production
+environment.
 
 The project includes Docker configurations for both development and production:
 
@@ -128,7 +141,8 @@ npm run lint
 npm run upgrade:nextjs
 ```
 
-**Note:** Docker is the recommended approach for development to ensure environment consistency.
+**Note:** Docker is the recommended approach for development to ensure
+environment consistency.
 
 ### GitHub Container Registry (GHCR)
 
@@ -207,8 +221,24 @@ npm run test:workflows:ghcr:cleanup
 The project is configured to deploy preview builds to Vercel for each PR:
 
 - Preview deployments are automatically created for each PR
-- The `semantic-pr-check.yml` workflow waits for Vercel deployment to complete
+- Vercel reports deployment status directly to GitHub as a native status check
 - Preview URLs are available in the PR checks
+
+### Why We Don't Manually Poll Vercel
+
+The `semantic-pr-check.yml` workflow relies on GitHub's native Vercel
+integration rather than manually polling for deployment status. This approach:
+
+- **Eliminates complexity**: No custom polling logic or timeout handling
+- **Improves reliability**: GitHub's status check system is battle-tested
+- **Faster execution**: Workflow completes in seconds vs minutes of polling
+- **Reduces maintenance**: Less code to maintain and debug
+- **Leverages branch protection**: GitHub can require Vercel checks before
+  merging
+
+GitHub already handles Vercel status checks through its native integration,
+making manual polling redundant. If Vercel fails, GitHub's branch protection
+will prevent merging regardless of our workflow status.
 
 ## Troubleshooting
 

@@ -2,6 +2,7 @@
   "name": "sploosh-ai-hockey-analytics",
   "version": "2.2.0",
   "private": true,
+  "packageManager": "npm@11.5.2",
   "scripts": {
     "dev": "next dev --turbopack",
     "prebuild": "node ./scripts/generate-build-info.js",
@@ -27,7 +28,7 @@
     "tailwindcss-animate": "^1.0.7"
   },
   "devDependencies": {
-    "@types/node": "^20",
+    "@types/node": "^24",
     "@types/react": "19.2.2",
     "@types/react-dom": "19.2.2",
     "eslint": "^9",
@@ -39,5 +40,9 @@
   "overrides": {
     "@types/react": "19.2.2",
     "@types/react-dom": "19.2.2"
+  },
+  "engines": {
+    "node": ">=22.0.0",
+    "npm": ">=10.0.0"
   }
 }

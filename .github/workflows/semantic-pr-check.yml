@@ -73,22 +73,9 @@ jobs:
             exit 0
           fi
           
-          echo "Waiting for Vercel deployment to complete..."
-          while true; do
-            # Debug output to see actual states
-            gh pr checks ${{ github.event.pull_request.number }} --json name,state,description | jq -r '.[] | select(.name=="Vercel")'
-            
-            STATUS=$(gh pr checks ${{ github.event.pull_request.number }} --json name,state,description | jq -r '.[] | select(.name=="Vercel") | .description')
-            if [[ "$STATUS" == *"Deployment has completed"* ]]; then
-              echo "✅ Vercel deployment completed successfully"
-              break
-            elif [[ "$STATUS" == *"failed"* ]]; then
-              echo "❌ Vercel deployment failed"
-              exit 1
-            fi
-            echo "⏳ Waiting for Vercel deployment... (checking again in 10s)"
-            sleep 10
-          done
+          echo "ℹ️ Vercel deployment check is handled by GitHub's built-in status checks"
+          echo "✅ Skipping manual Vercel wait - relying on GitHub's native integration"
+          exit 0
 
       - name: Check Breaking Change Format
         if: success()
