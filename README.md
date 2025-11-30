@@ -1,16 +1,33 @@
 # Welcome
 
-You can view the [demo](https://sploosh-ai-hockey-analytics.vercel.app/) on Vercel at [https://sploosh-ai-hockey-analytics.vercel.app/](https://sploosh-ai-hockey-analytics.vercel.app/)
+You can view the [demo](https://sploosh-ai-hockey-analytics.vercel.app/)
+on Vercel at:
+
+[https://sploosh-ai-hockey-analytics.vercel.app/](https://sploosh-ai-hockey-analytics.vercel.app/)
 
 ## Background
 
-This project was initially created on `Thu May 25 19:07:08 2023 -0700` to generate a shot chart using game data provided by the NHL. It was initially based on the previous NHL stats API [https://statsapi.web.nhl.com/api/v1](https://statsapi.web.nhl.com/api/v1), which was deprecated on `November 7th, 2023`.
+This project was initially created on `Thu May 25 19:07:08 2023 -0700`
+to generate a shot chart using game data provided by the NHL. It was
+initially based on the previous NHL stats API:
+
+[https://statsapi.web.nhl.com/api/v1](https://statsapi.web.nhl.com/api/v1)
+
+which was deprecated on `November 7th, 2023`.
 
 This change completely broke my initial NHL shot chart implementation.
 
-Work is underway to rewrite the NHL shot chart to accommodate the new endpoints and data structure, though no release date has been targeted as of this writing.
+Work is underway to rewrite the NHL shot chart to accommodate the new
+endpoints and data structure, though no release date has been targeted
+as of this writing.
 
-**IMPORTANT:** The NHL Edge API is publicly available; however, it is undocumented and subject to change. [@Zmalski](https://github.com/Zmalski) has created an excellent repo at [https://github.com/Zmalski/NHL-API-Reference](https://github.com/Zmalski/NHL-API-Reference) which is a fantastic guide for working with the NHL Edge API in your projects.
+**IMPORTANT:** The NHL Edge API is publicly available; however, it is
+undocumented and subject to change. [@Zmalski](https://github.com/Zmalski)
+has created an excellent repo at:
+
+[https://github.com/Zmalski/NHL-API-Reference](https://github.com/Zmalski/NHL-API-Reference)
+
+which is a fantastic guide for working with the NHL Edge API in your projects.
 
 ## Copyright & Attribution
 
@@ -18,27 +35,39 @@ Work is underway to rewrite the NHL shot chart to accommodate the new endpoints 
 
 © 2025 Sploosh.AI. All rights reserved.
 
-This is an advanced hockey analytics and visualization platform developed by Sploosh.AI. The platform provides innovative tools for analyzing NHL game data, player performance, and team statistics.
+This is an advanced hockey analytics and visualization platform developed
+by Sploosh.AI. The platform provides innovative tools for analyzing NHL
+game data, player performance, and team statistics.
 
 ### NHL Data Attribution
 
-This application uses publicly available NHL and NHL EDGE data for informational and analytical purposes. We are not affiliated with or endorsed by the National Hockey League.
+This application uses publicly available NHL and NHL EDGE data for
+informational and analytical purposes. We are not affiliated with or
+endorsed by the National Hockey League.
 
-**Trademarks:** NHL, the NHL Shield, NHL EDGE, and the word mark and image of the Stanley Cup are registered trademarks of the National Hockey League. NHL and NHL team marks are the property of the NHL and its teams. © NHL. All Rights Reserved.
+**Trademarks:** NHL, the NHL Shield, NHL EDGE, and the word mark and image
+of the Stanley Cup are registered trademarks of the National Hockey
+League. NHL and NHL team marks are the property of the NHL and its
+teams. © NHL. All Rights Reserved.
 
-All statistics and data displayed in this application are sourced from publicly available NHL and NHL EDGE APIs. Proper attribution is displayed in both the sidebar and footer of the application.
+All statistics and data displayed in this application are sourced from
+publicly available NHL and NHL EDGE APIs. Proper attribution is
+displayed in both the sidebar and footer of the application.
 
 ## Demo
 
-This application is deployed on Vercel and can be accessed at <https://sploosh-ai-hockey-analytics.vercel.app/>
+This application is deployed on Vercel and can be accessed at:
+<https://sploosh-ai-hockey-analytics.vercel.app/>
 
 ## Development
 
-The application will be available at <http://localhost:3000> regardless of which method you choose.
+The application will be available at <http://localhost:3000> regardless of
+which method you choose.
 
 ## Version Control and Signed Commits
 
-This project uses semantic versioning with automated version bumps and requires signed commits. When a PR is merged to main:
+This project uses semantic versioning with automated version bumps
+and requires signed commits. When a PR is merged to main:
 
 1. The version is automatically bumped based on the PR title:
    - `feat!:` → Major version (breaking changes)
@@ -59,7 +88,8 @@ All commits must be signed. This includes:
 
 The project uses GitHub's native commit verification:
 
-- Contributors should [set up GPG signing](https://docs.github.com/en/authentication/managing-commit-signature-verification/about-commit-signature-verification) for their local environment
+- Contributors should [set up GPG signing](https://docs.github.com/en/authentication/managing-commit-signature-verification/about-commit-signature-verification)
+  for their local environment
 - GitHub Actions uses native GitHub commit verification
 
 For more details on contributing, see [CONTRIBUTING.md](./.github/CONTRIBUTING.md).
@@ -96,9 +126,12 @@ npm run docker:down
 
 ### Testing GitHub Actions Locally
 
-We recommend using [act](https://github.com/nektos/act) to test GitHub Actions workflows locally before pushing changes if you are developing on a Mac.
+We recommend using [act](https://github.com/nektos/act) to test GitHub Actions
+workflows locally before pushing changes if you are developing on a Mac.
 
-The application does not have to be running in Docker to test the workflows, but Docker Desktop must be running for the act tests to run and spin up the necessary containers.
+The application does not have to be running in Docker to test the workflows,
+but Docker Desktop must be running for the act tests to run and spin up
+the necessary containers.
 
 #### Prerequisites for macOS
 
@@ -146,4 +179,5 @@ Note: Docker Desktop must be running before using act to test workflows locally.
    - Tests version bump workflow
    - Verifies proper version incrementing
    - Checks synchronization between package.json files
-   - Note: Git operations will fail locally due to expected missing credentials (these will be available in the GitHub Actions environment)
+   - Note: Git operations will fail locally due to expected missing credentials
+     (these will be available in the GitHub Actions environment)
