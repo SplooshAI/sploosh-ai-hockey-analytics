@@ -5,10 +5,10 @@
   "scripts": {
     "dev": "npm run dev --prefix apps/sploosh-ai-hockey-analytics",
     "build": "npm run build --prefix apps/sploosh-ai-hockey-analytics",
-    "start": "npm run start --prefix apps/sploosh-ai-hockey-analytics",
     "lint": "npm run lint --prefix apps/sploosh-ai-hockey-analytics",
     "upgrade:nextjs": "cd apps/sploosh-ai-hockey-analytics && npx @next/codemod@canary upgrade latest",
-    "test": "npm run test:workflows",
+    "test": "npm run test:race-condition && npm run test:workflows",
+    "test:race-condition": "npm run test:race-condition --prefix apps/sploosh-ai-hockey-analytics",
     "ghcr:build": "docker build -t ghcr.io/splooshai/sploosh-ai-hockey-analytics:latest -t ghcr.io/splooshai/sploosh-ai-hockey-analytics:$npm_package_version --build-arg GIT_HASH=$(git rev-parse HEAD) --build-arg GIT_DATE=$(git log -1 --format=%aI) ./apps/sploosh-ai-hockey-analytics",
     "ghcr:push": "docker push ghcr.io/splooshai/sploosh-ai-hockey-analytics:latest && docker push ghcr.io/splooshai/sploosh-ai-hockey-analytics:$npm_package_version",
     "ghcr:test": "npm run test:workflows:ghcr",
