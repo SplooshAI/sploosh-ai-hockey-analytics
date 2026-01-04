@@ -229,8 +229,8 @@ export const GameHeader: React.FC<GameHeaderProps> = ({ gameData, className = ''
             {/* Records and SOG */}
             <div className="flex items-center justify-between w-full text-xs text-muted-foreground">
               <div className="flex items-center gap-2">
-                {gameData.awayTeam?.sog !== undefined && (
-                  <span>{gameData.awayTeam.sog} SOG</span>
+                {(gameData.gameState === 'LIVE' || gameData.gameState === 'CRIT' || gameData.gameState === 'FINAL' || gameData.gameState === 'OFF') && (
+                  <span>{gameData.awayTeam?.sog ?? 0} SOG</span>
                 )}
                 {gameData.awayTeam?.record && (
                   <span>{gameData.awayTeam.record}</span>
@@ -240,8 +240,8 @@ export const GameHeader: React.FC<GameHeaderProps> = ({ gameData, className = ''
                 {gameData.homeTeam?.record && (
                   <span>{gameData.homeTeam.record}</span>
                 )}
-                {gameData.homeTeam?.sog !== undefined && (
-                  <span>{gameData.homeTeam.sog} SOG</span>
+                {(gameData.gameState === 'LIVE' || gameData.gameState === 'CRIT' || gameData.gameState === 'FINAL' || gameData.gameState === 'OFF') && (
+                  <span>{gameData.homeTeam?.sog ?? 0} SOG</span>
                 )}
               </div>
             </div>

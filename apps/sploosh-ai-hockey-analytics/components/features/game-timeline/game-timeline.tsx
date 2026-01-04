@@ -138,6 +138,33 @@ function renderEventDetails(
               const situation = formatSituationCode(event.situationCode)
               if (!situation || situation.type === 'even') return null
               
+              // Check if this is a goalie pulled situation (empty net)
+              // Situation code format: ABCD where A=away goalie, D=home goalie (1=in, 0=pulled)
+              const situationCode = event.situationCode || ''
+              if (situationCode.length === 4) {
+                const awayGoalieIn = situationCode[0] === '1'
+                const homeGoalieIn = situationCode[3] === '1'
+                const isAwayTeam = event.teamId === gameData.awayTeam?.id
+                
+                // If ANY goalie is pulled, show ENG badge instead of PPG/SHG
+                if (!awayGoalieIn || !homeGoalieIn) {
+                  // Determine if it's an empty net goal or goal with own goalie pulled
+                  const isEmptyNet = (isAwayTeam && !homeGoalieIn) || (!isAwayTeam && !awayGoalieIn)
+                  
+                  // Get team abbreviation for clarity
+                  const scoringTeamAbbrev = isAwayTeam ? gameData.awayTeam?.abbrev : gameData.homeTeam?.abbrev
+                  
+                  // Different colors: cyan for empty net (icing on the cake), green for extra attacker (successful risky play)
+                  const badgeColor = isEmptyNet ? 'bg-cyan-600' : 'bg-green-600'
+                  
+                  return (
+                    <span className={`px-2 py-0.5 text-xs font-semibold rounded ${badgeColor} text-white`}>
+                      {isEmptyNet ? 'ENG' : `ENG (${scoringTeamAbbrev} +1 skater)`}
+                    </span>
+                  )
+                }
+              }
+              
               // Determine if this team scored on PP or SH
               const isAwayTeam = event.teamId === gameData.awayTeam?.id
               const awaySkaters = parseInt(event.situationCode?.[1] || '5')
