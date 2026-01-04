@@ -166,14 +166,18 @@ export function GameCard({ game, onSelectGame, onClose }: GameCardProps) {
                             <div className="flex items-center justify-between w-full text-[10px] text-muted-foreground">
                                 <div className="flex flex-col items-start gap-0.5">
                                     <div className="flex items-center gap-2">
-                                        {game.awayTeam.sog !== undefined && <span className="min-w-[45px]">{game.awayTeam.sog} SOG</span>}
+                                        {(game.gameState === 'LIVE' || game.gameState === 'CRIT' || game.gameState === 'FINAL' || game.gameState === 'OFF') && (
+                                            <span className="min-w-[45px]">{game.awayTeam.sog ?? 0} SOG</span>
+                                        )}
                                         <span>{game.awayTeam.record}</span>
                                     </div>
                                 </div>
                                 <div className="flex flex-col items-end gap-0.5">
                                     <div className="flex items-center gap-2">
                                         <span>{game.homeTeam.record}</span>
-                                        {game.homeTeam.sog !== undefined && <span className="min-w-[45px] text-right">{game.homeTeam.sog} SOG</span>}
+                                        {(game.gameState === 'LIVE' || game.gameState === 'CRIT' || game.gameState === 'FINAL' || game.gameState === 'OFF') && (
+                                            <span className="min-w-[45px] text-right">{game.homeTeam.sog ?? 0} SOG</span>
+                                        )}
                                     </div>
                                 </div>
                             </div>
