@@ -5,6 +5,31 @@ This is a [Next.js](https://nextjs.org) project bootstrapped with
 
 ## Getting Started
 
+### Environment Variables
+
+**No environment variables are required to run this application.** The NHL EDGE
+API is public and requires no authentication.
+
+If you want to set up optional environment variables:
+
+1. Copy the example file:
+
+   ```bash
+   cp .env.example .env.local
+   ```
+
+2. (Optional) Pull environment variables from Vercel:
+
+   ```bash
+   npm run env:pull
+   ```
+
+   Note: This requires the Vercel CLI to be installed and authenticated.
+
+See `.env.example` for documentation of all available environment variables.
+
+### Running the Development Server
+
 First, run the development server:
 
 ```bash
