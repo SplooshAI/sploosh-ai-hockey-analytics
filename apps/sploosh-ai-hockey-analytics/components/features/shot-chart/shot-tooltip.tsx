@@ -259,6 +259,41 @@ export const ShotTooltip: React.FC<ShotTooltipProps> = ({
                 const situationCode = shot.situationCode || ''
                 if (situationCode.length !== 4) return null
                 
+                // Check if this is a goalie pulled situation (empty net)
+                // Situation code format: ABCD where A=away goalie, D=home goalie (1=in, 0=pulled)
+                const awayGoalieIn = situationCode[0] === '1'
+                const homeGoalieIn = situationCode[3] === '1'
+                
+                // If ANY goalie is pulled, show with colored background matching timeline badges
+                // This covers both empty net goals and goals scored with own goalie pulled
+                if (!awayGoalieIn || !homeGoalieIn) {
+                  // Determine if it's an empty net goal or goal with own goalie pulled
+                  const isAwayTeam = shot.teamId === gameData?.awayTeam?.id
+                  const isEmptyNet = (isAwayTeam && !homeGoalieIn) || (!isAwayTeam && !awayGoalieIn)
+                  
+                  // Parse skater counts from situation code
+                  // Note: The situation code already reflects the actual skaters on ice
+                  // When a goalie is pulled, the skater count includes the extra attacker
+                  const awaySkaters = parseInt(situationCode[1])
+                  const homeSkaters = parseInt(situationCode[2])
+                  
+                  // Display from shooting team's perspective (shooting team first)
+                  const shootingTeamOnIce = isAwayTeam ? awaySkaters : homeSkaters
+                  const opposingTeamOnIce = isAwayTeam ? homeSkaters : awaySkaters
+                  const situationDisplay = `${shootingTeamOnIce}v${opposingTeamOnIce} ENG`
+                  
+                  // Different colors: cyan for empty net (icing on the cake), green for +1 skater (successful risky play)
+                  const bgColor = isEmptyNet ? 'bg-cyan-500/20' : 'bg-green-500/20'
+                  const textColor = isEmptyNet ? 'text-cyan-600' : 'text-green-600'
+                  
+                  return (
+                    <div className={`flex-1 ${bgColor} rounded px-2 py-1`}>
+                      <div className="text-[10px] text-muted-foreground">Situation</div>
+                      <div className={`text-sm ${textColor} font-bold`}>{situationDisplay}</div>
+                    </div>
+                  )
+                }
+                
                 // Parse 4-digit code: ABCD where B=away skaters, C=home skaters
                 const awaySkaters = parseInt(situationCode[1])
                 const homeSkaters = parseInt(situationCode[2])
@@ -269,7 +304,7 @@ export const ShotTooltip: React.FC<ShotTooltipProps> = ({
                 
                 if (awaySkaters !== homeSkaters && gameData) {
                   // Determine if shooting team is away or home
-                  const isAwayTeam = shot.teamId === gameData.awayTeam?.id
+                  const isAwayTeam = shot.teamId === gameData?.awayTeam?.id
                   const shootingTeamSkaters = isAwayTeam ? awaySkaters : homeSkaters
                   const opposingTeamSkaters = isAwayTeam ? homeSkaters : awaySkaters
                   const playerDifference = Math.abs(shootingTeamSkaters - opposingTeamSkaters)
