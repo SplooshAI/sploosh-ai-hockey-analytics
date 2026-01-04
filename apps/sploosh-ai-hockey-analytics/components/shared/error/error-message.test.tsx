@@ -3,6 +3,7 @@ import { ErrorMessage } from './error-message'
 
 describe('ErrorMessage', () => {
   it('should render error message with default title', () => {
+    
     render(<ErrorMessage message="Something went wrong" />)
     
     expect(screen.getByText('Error')).toBeInTheDocument()
