@@ -107,12 +107,23 @@ foundation
    - ✅ Docker containers rebuilt and verified
    - ✅ PR #355 merged, version bumped to 2.2.11
 
-5. **Critical Bug Fixes** - Fix data integrity issues immediately
-   - Fix goalie pulled situations appearing as PPG/SHG
-   - Fix game reload bug when clicking current game in URL
-   - Fix timeline SHG/empty net goal bug
-   - Fix 0 SOG display issue
-   - Replace magic number (20000ms) with named constant for auto-refresh delay
+5. ✅ **Critical Bug Fixes** - Completed 2026-01-04
+   - ✅ Fixed goalie pulled situations appearing as PPG/SHG
+     - Added color-coded ENG badges (cyan for empty net, green for +1 skater)
+     - Displays situation from shooting team's perspective in shot tooltips
+     - Handles complex scenarios with penalties + goalie pulled
+   - ✅ Fixed game reload bug when clicking current game in URL
+     - Removed !loading check from useEffect dependency
+   - ✅ Fixed 0 SOG display issue
+     - Shows "0 SOG" for live/completed games using nullish coalescing
+     - Hides SOG for upcoming games (FUT, PRE states)
+   - ✅ Replaced magic number (20000ms) with AUTO_REFRESH_INTERVAL_MS constant
+   - ✅ Added test coverage infrastructure
+     - Created 26 regression tests across 6 test files (all passing)
+     - Added test:coverage and test:coverage:open scripts
+     - Configured vitest for accurate coverage reporting
+     - Achieved 32.7% code coverage baseline
+   - ✅ PR #359 merged, version bumped to 2.4.0
 
 6. **Error Handling & Resilience**
    - Improve UX when game data errors or fails to load (sidebar)
