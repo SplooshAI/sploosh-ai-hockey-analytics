@@ -346,10 +346,15 @@ have NO testing infrastructure, so establishing this is critical.
 
 **Test Organization:**
 
+- **Colocate tests with code** - Test files live next to the code they test
+  - Example: `app/page.tsx` → `app/page.test.tsx`
+  - Example: `components/game-header.tsx` → `components/game-header.test.tsx`
+  - No separate `__tests__` directories to avoid replicating folder structures
 - Keep `package.json` scripts simple
-- `npm test` runs ALL tests (unit + integration + E2E)
+- `npm test` runs ALL tests (unit + integration + E2E + workflow tests)
 - Tests should be fast and reliable
 - Use descriptive test names that explain what's being verified
+- See [Testing Documentation](/docs/architecture/TESTING.md) for details
 
 **Examples of Test Coverage Needed:**
 
@@ -427,10 +432,11 @@ Keep it simple - flat structure until we need to reorganize.
 ## Next Steps
 
 1. **Review and Finalize** - Confirm this strategy aligns with priorities
-- [Game Plan Items (JSON)](game-plan-items.json)
-- [Full Asana Export](20260103-asana-export-hockey-analytics.json)
-4. **Weekly Check-ins** - Review progress and adjust phases as needed
-5. **Iterate** - Use analytics and feedback to inform Phase 2-4 priorities
+2. Review planning resources:
+   - [Game Plan Items (JSON)](game-plan-items.json)
+   - [Full Asana Export](20260103-asana-export-hockey-analytics.json)
+3. **Weekly Check-ins** - Review progress and adjust phases as needed
+4. **Iterate** - Use analytics and feedback to inform Phase 2-4 priorities
 
 ## Resources
 

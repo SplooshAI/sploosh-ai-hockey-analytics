@@ -1,6 +1,10 @@
 /**
- * Test to prove the race condition bug exists
- * Then verify our fix works
+ * Game Data Loading Tests
+ * 
+ * Tests for the main game page data loading functionality, including:
+ * - Proper data fetching and state management
+ * - Regression test for race condition bug (fixed by removing 'loading' from useEffect deps)
+ * - Loading states and error handling
  */
 
 import { render, screen, waitFor } from '@testing-library/react'
@@ -20,7 +24,7 @@ global.fetch = vi.fn()
 const mockRouter = { push: vi.fn() }
 const mockSearchParams = { get: vi.fn() }
 
-describe('Race Condition Bug Test', () => {
+describe('Game Data Loading', () => {
   beforeEach(() => {
     vi.clearAllMocks()
     ;(useRouter as any).mockReturnValue(mockRouter)
@@ -53,10 +57,10 @@ describe('Race Condition Bug Test', () => {
     })
   })
 
-  describe('Bug Reproduction', () => {
-    it('should demonstrate the current component loads data correctly', async () => {
-      // This test verifies that our fix works - data loads properly
-      // In the original buggy version, this would get stuck in loading state
+  describe('Data Loading', () => {
+    it('should load game data correctly when gameId is provided', async () => {
+      // Regression test: ensures data loads properly without race condition
+      // (Original bug: 'loading' in useEffect deps caused stuck loading state)
       
       mockSearchParams.get.mockReturnValue('2025020386')
       
@@ -88,37 +92,12 @@ describe('Race Condition Bug Test', () => {
       
       // Verify that fetch was called and data loaded successfully
       expect(fetchCallCount).toBeGreaterThan(0)
-      
-      // This test proves our fix works - data loads without getting stuck
     })
 
-    it('should document what the race condition bug looked like', async () => {
-      // This test documents the original bug behavior for reference
-      // The race condition occurred when 'loading' was in useEffect dependencies
-      
-      // The original problematic code was:
-      // }, [searchParams, selectedGameId, loading]) // BUG: loading causes race condition
-      
-      // Note: Using 'any' type for fetch mock to avoid TypeScript issues
-      // In a real scenario, this would be properly typed with Vitest's Mock type
-      
-      // This would cause:
-      // 1. useEffect runs with loading=false, sets loading=true, starts fetch
-      // 2. loading changes to true, but useEffect won't re-run during fetch
-      // 3. If URL changed during loading, new fetch wouldn't trigger
-      // 4. User gets stuck in loading state
-      
-      // Our fix: }, [searchParams, selectedGameId]) // FIXED: removed loading
-      
-      // This test serves as documentation of the bug we fixed
-      expect(true).toBe(true) // Placeholder test for documentation
-    })
-  })
-
-  describe('Fix Verification', () => {
-    it('should verify the race condition fix works properly', async () => {
-      // This test verifies that removing 'loading' from useEffect dependencies
-      // fixes the race condition and allows proper data loading
+    it('should handle network delays without getting stuck in loading state', async () => {
+      // Regression test: verifies race condition fix with realistic network delay
+      // Bug was: }, [searchParams, selectedGameId, loading]) caused race condition
+      // Fix: }, [searchParams, selectedGameId]) - removed 'loading' dependency
       
       mockSearchParams.get.mockReturnValue('2025020386')
       
@@ -161,9 +140,6 @@ describe('Race Condition Bug Test', () => {
       await waitFor(() => {
         expect(screen.getByText('Raw Game Data (JSON)')).toBeInTheDocument()
       })
-      
-      // SUCCESS: The race condition fix works!
-      // Data loads properly and loading state clears correctly
     })
   })
 })
