@@ -5,7 +5,7 @@ export default [
     ...nextCoreWebVitals,
     ...nextTypescript,
     {
-        ignores: ["scripts/**/*.js", "tailwind.config.ts"],
+        ignores: ["scripts/**/*.js", "tailwind.config.ts", "coverage/**"],
     },
     {
         rules: {
