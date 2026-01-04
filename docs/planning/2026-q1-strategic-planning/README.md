@@ -125,12 +125,28 @@ foundation
      - Achieved 32.7% code coverage baseline
    - ✅ PR #359 merged, version bumped to 2.4.0
 
-6. **Error Handling & Resilience**
-   - Improve UX when game data errors or fails to load (sidebar)
-   - Improve UX when game data errors or fails to load (main page)
-   - Add ability to retain and display cached data when network requests fail
-   - Integrate error tracking (Sentry or similar) for automatic error reporting
-   - Implement request deduplication to prevent duplicate API calls
+6. ✅ **Error Handling & Resilience** - Completed 2026-01-04 (Priority 1: Error UX)
+   - ✅ Created reusable error UI components
+     - ErrorMessage component with retry functionality and error/warning variants
+     - ErrorBoundary component for catching unhandled React errors
+     - Added comprehensive test coverage (37 tests total)
+   - ✅ Improved error UX in GamesList (sidebar)
+     - Friendly error messages instead of technical jargon
+     - Automatic retry with progress indicators (Reconnecting... attempt X of Y)
+     - Manual retry with "Try Again" button
+     - Warning state (yellow) vs error state (red) distinction
+   - ✅ Improved error UX in main page
+     - Ice rink background overlay for error states
+     - Friendly, actionable error messages
+     - Fixed offline navigation issues (replaced router.push with window.history.replaceState)
+     - Manual retry functionality
+   - ✅ User-friendly error message utility
+     - Converts technical errors into friendly messages
+     - Handles network errors, timeouts, 404s, 500s, rate limiting, parse errors
+     - Context-appropriate error titles
+   - ⏳ Add ability to retain and display cached data when network requests fail (Priority 2)
+   - ⏳ Integrate error tracking (Sentry or similar) for automatic error reporting (Priority 2)
+   - ⏳ Implement request deduplication to prevent duplicate API calls (Priority 2)
 
 7. **Lightweight Testing Setup** - Basic foundation only
    - Set up Jest and React Testing Library
