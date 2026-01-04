@@ -1,6 +1,6 @@
 {
   "name": "sploosh-ai-hockey-analytics",
-  "version": "2.4.0",
+  "version": "2.4.1",
   "description": "Explore hockey data from the NHL EDGE API.",
   "scripts": {
     "dev": "npm run dev --prefix apps/sploosh-ai-hockey-analytics",
