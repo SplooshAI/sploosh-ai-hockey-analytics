@@ -97,11 +97,15 @@ foundation
    - ✅ Documented that build variables are auto-populated by Vercel/Docker
    - ✅ PR #351 merged, version bumped to 2.2.9
 
-4. **Upgrade Next.js** - Upgrade to latest version before testing
-   - Run `npm run upgrade:nextjs` to upgrade to Next.js 16.1.1+
-   - Follow guide: <https://nextjs.org/docs/app/guides/upgrading/version-16>
-   - Test application after upgrade
-   - Update dependencies as needed
+4. ✅ **Upgrade Next.js** - COMPLETED 2026-01-04
+   - ✅ Upgraded Next.js from 16.0.7 to 16.1.1
+   - ✅ Upgraded React from 19.2.1 to 19.2.3
+   - ✅ Upgraded React DOM from 19.2.1 to 19.2.3
+   - ✅ Upgraded eslint-config-next from 16.0.7 to 16.1.1
+   - ✅ Used automated upgrade script (npm run upgrade:nextjs)
+   - ✅ All tests passing, linting clean
+   - ✅ Docker containers rebuilt and verified
+   - ✅ PR #355 merged, version bumped to 2.2.11
 
 5. **Critical Bug Fixes** - Fix data integrity issues immediately
    - Fix goalie pulled situations appearing as PPG/SHG
