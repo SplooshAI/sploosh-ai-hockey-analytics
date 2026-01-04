@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect, useRef, Suspense } from 'react'
-import { useRouter, useSearchParams } from 'next/navigation'
+import { useSearchParams } from 'next/navigation'
 import { MainLayout } from '@/components/layouts/main-layout'
 import { NHLEdgeHockeyRink } from '@/components/features/hockey-rink/nhl-edge-hockey-rink/nhl-edge-hockey-rink'
 import { GameHeader } from '@/components/features/game-header'
@@ -14,7 +14,6 @@ import { Check, Copy, Download } from 'lucide-react'
 import type { NHLEdgePlayByPlay } from '../lib/api/nhl-edge/types/nhl-edge'
 
 function HomeContent() {
-  const router = useRouter()
   const searchParams = useSearchParams()
   const [playByPlayData, setPlayByPlayData] = useState<NHLEdgePlayByPlay | null>(null)
   const [gameCenterData, setGameCenterData] = useState<any | null>(null)
