@@ -8,7 +8,7 @@ for the Sploosh AI Hockey Analytics application.
 All commands are run from the project root using npm:
 
 | Command | Description |
-|---------|-------------|
+| ------- | ----------- |
 | `npm run docker:up` | **⭐ Start development Docker containers (recommended)** |
 | `npm run docker:build` | Build and start development containers (no cache) |
 | `npm run docker:prod:up` | Start production Docker containers |
