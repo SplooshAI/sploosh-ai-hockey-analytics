@@ -1,18 +1,19 @@
 'use client'
 
 import { useState, useEffect, useRef, Suspense } from 'react'
-import { useRouter, useSearchParams } from 'next/navigation'
+import { useSearchParams } from 'next/navigation'
 import { MainLayout } from '@/components/layouts/main-layout'
 import { NHLEdgeHockeyRink } from '@/components/features/hockey-rink/nhl-edge-hockey-rink/nhl-edge-hockey-rink'
 import { GameHeader } from '@/components/features/game-header'
 import { ShotChart } from '@/components/features/shot-chart/shot-chart'
 import { GameTimeline } from '@/components/features/game-timeline/game-timeline'
+import { ErrorMessage } from '@/components/shared/error'
 import { hasLocationData } from '@/lib/utils/shot-chart-utils'
+import { getFriendlyErrorMessage, getFriendlyErrorTitle } from '@/lib/utils/error-messages'
 import { Check, Copy, Download } from 'lucide-react'
 import type { NHLEdgePlayByPlay } from '../lib/api/nhl-edge/types/nhl-edge'
 
 function HomeContent() {
-  const router = useRouter()
   const searchParams = useSearchParams()
   const [playByPlayData, setPlayByPlayData] = useState<NHLEdgePlayByPlay | null>(null)
   const [gameCenterData, setGameCenterData] = useState<any | null>(null)
@@ -66,7 +67,7 @@ function HomeContent() {
       }
       
       if (selectedGameIdRef.current === gameId) {
-        setError('Failed to fetch game data')
+        setError(getFriendlyErrorMessage(err))
         console.error('Error fetching game data:', err)
       }
     }
@@ -76,14 +77,24 @@ function HomeContent() {
     // Prevent sidebar refresh from interfering with game selection
     isSelectingGameRef.current = true
     
-    // Immediately clear old data
+    // Immediately clear old data and set loading
     setError(null)
     setPlayByPlayData(null)
     setGameCenterData(null)
+    setLoading(true)
+    setSelectedGameId(gameId)
 
-    // Update URL with gameId query parameter
-    // The useEffect will handle setting loading state and fetching data
-    router.push(`?gameId=${gameId}`, { scroll: false })
+    // Update URL with gameId query parameter (use replace to avoid navigation issues offline)
+    try {
+      const url = new URL(window.location.href)
+      url.searchParams.set('gameId', gameId.toString())
+      window.history.replaceState({}, '', url)
+    } catch (err) {
+      console.error('Failed to update URL:', err)
+    }
+    
+    // Fetch game data directly
+    await fetchGameData(gameId).finally(() => setLoading(false))
     
     // Allow sidebar refresh again after game selection is complete
     setTimeout(() => {
@@ -181,8 +192,32 @@ function HomeContent() {
       )}
 
       {error && (
-        <div className="text-center text-destructive">
-          {error}
+        <div className="relative">
+          {/* Background ice rink with zambonis */}
+          <div className="absolute inset-0 flex justify-center items-center opacity-10 pointer-events-none">
+            <NHLEdgeHockeyRink
+              className="w-full max-w-4xl h-auto"
+              centerIceLogo='/sploosh.ai/sploosh-ai-character-transparent.png'
+              centerIceLogoHeight={358}
+              centerIceLogoWidth={400}
+              displayZamboni={true}
+            />
+          </div>
+          {/* Error message overlay */}
+          <div className="relative z-10 flex items-center justify-center min-h-[500px]">
+            <div className="max-w-2xl mx-auto">
+              <ErrorMessage
+                title={getFriendlyErrorTitle(error)}
+                message={error}
+                onRetry={selectedGameId ? () => {
+                  setLoading(true)
+                  setError(null)
+                  fetchGameData(selectedGameId).finally(() => setLoading(false))
+                } : undefined}
+                retryLabel="Try Again"
+              />
+            </div>
+          </div>
         </div>
       )}
 
