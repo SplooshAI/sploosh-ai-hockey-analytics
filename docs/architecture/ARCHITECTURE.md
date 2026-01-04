@@ -57,8 +57,8 @@ including shot charts, game timelines, and hockey rink animations.
 
 - **ESLint 9** - Linting (--max-warnings=0)
 - **PostCSS 8** - CSS processing
-- **npm 11.5.2** - Package manager
-- **Node.js >=22.0.0** - Runtime
+- **npm 11.7.0** - Package manager
+- **Node.js >=24.0.0** - Runtime
 
 ### Deployment
 
@@ -471,7 +471,7 @@ interface Play {
 - Build command: `npm run build`
 - Output directory: `.next`
 - Install command: `npm install`
-- Node version: >=22.0.0
+- Node version: >=24.0.0
 
 **Environment Variables:**
 

@@ -1,9 +1,9 @@
-# Initial State Architecture - Sploosh.AI Hockey Analytics
+# Current State Architecture - Sploosh.AI Hockey Analytics
 
-**Date:** 2026-01-03  
-**Version:** 2.2.3  
+**Last Updated:** 2026-01-04  
+**Version:** 2.2.6  
 **Type:** Architecture Documentation  
-**Status:** Historical Snapshot (Initial State)
+**Status:** Living Document (Current State)
 
 ## Executive Summary
 
@@ -57,8 +57,8 @@ including shot charts, game timelines, and hockey rink animations.
 
 - **ESLint 9** - Linting (--max-warnings=0)
 - **PostCSS 8** - CSS processing
-- **npm 11.5.2** - Package manager
-- **Node.js >=22.0.0** - Runtime
+- **npm 11.7.0** - Package manager
+- **Node.js >=24.0.0** - Runtime
 
 ### Deployment
 
@@ -471,7 +471,7 @@ interface Play {
 - Build command: `npm run build`
 - Output directory: `.next`
 - Install command: `npm install`
-- Node version: >=22.0.0
+- Node version: >=24.0.0
 
 **Environment Variables:**
 
@@ -711,8 +711,8 @@ prioritizes simplicity and rapid development over scalability and resilience.
 3. Caching and performance optimization
 4. Multi-league architecture
 
-This document serves as a historical snapshot of the system architecture as of
-January 3, 2026 - the starting point before Q1 2026 strategic planning work
-began. For the current architecture, see `/docs/architecture/ARCHITECTURE.md`.
-Significant architectural changes are documented as Architecture Decision
-Records (ADRs) in the `/docs/architecture/` folder.
+This document serves as the current state of the system architecture and is
+actively maintained as a living document. It reflects the architecture as of
+January 4, 2026 and will be updated as the system evolves. Significant
+architectural changes are documented as Architecture Decision Records (ADRs)
+in the `/docs/architecture/` folder.
