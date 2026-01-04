@@ -475,8 +475,31 @@ interface Play {
 
 **Environment Variables:**
 
-- Managed in Vercel dashboard
-- No documented environment variables currently
+The application requires **no manual environment variable configuration**. All
+variables are automatically populated by build systems (Vercel/Docker).
+
+**Build Variables (Auto-Populated):**
+
+- `NEXT_PUBLIC_GIT_HASH` - Git commit hash for version display
+  (auto-set by Vercel/Docker, required for version info)
+- `NEXT_PUBLIC_GIT_DATE` - Git commit date for version display
+  (auto-set by Vercel/Docker, required for version info)
+- `VERCEL_GIT_COMMIT_SHA` - Vercel's commit SHA (auto-set by Vercel)
+- `NODE_ENV` - Node environment (auto-set by Next.js)
+
+**API Configuration:**
+
+- No API keys required - NHL EDGE API is public and requires no
+  authentication
+- Future integrations (e.g., Sentry, additional analytics) may require
+  API keys
+
+**Environment Setup:**
+
+- See `.env.example` for complete documentation
+- Use `npm run env:pull` to pull environment variables from Vercel
+  (requires Vercel CLI)
+- Copy `.env.example` to `.env.local` for local development (optional)
 
 **Docker Support:**
 
