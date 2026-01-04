@@ -71,38 +71,45 @@ foundation
 
 **Priority Items:**
 
-1. **Update Node.js Version Requirement** - Enforce Node.js v24.0.0+
+1. **Review and Clean Up Test Scripts** - Remove obsolete test scripts
+   - Review `test:race-condition` script in root `package.json`
+   - Verify if race condition bug still exists despite test
+   - Remove `test:race-condition` script if no longer useful
+   - Update `test` script to remove dependency on race-condition test
+   - Clean up any related test files if obsolete
+
+2. **Update Node.js Version Requirement** - Enforce Node.js v24.0.0+
    - Update `package.json` engines to require `"node": ">=24.0.0"`
    - Update any documentation referencing Node.js version requirements
    - Verify local environment is running Node.js v24.x
 
-2. **Document Environment Variables** - Pull and document Vercel env vars
+3. **Document Environment Variables** - Pull and document Vercel env vars
    - Add script to `package.json`: `"env:pull": "vercel env pull"`
    - Pull production, preview, and development environment variables
    - Document all environment variables in architecture documentation
    - Create `.env.example` file with all required variables (no values)
 
-3. **Upgrade Next.js** - Upgrade to latest version before testing
+4. **Upgrade Next.js** - Upgrade to latest version before testing
    - Run `npm run upgrade:nextjs` to upgrade to Next.js 16.1.1+
    - Follow guide: <https://nextjs.org/docs/app/guides/upgrading/version-16>
    - Test application after upgrade
    - Update dependencies as needed
 
-4. **Critical Bug Fixes** - Fix data integrity issues immediately
+5. **Critical Bug Fixes** - Fix data integrity issues immediately
    - Fix goalie pulled situations appearing as PPG/SHG
    - Fix game reload bug when clicking current game in URL
    - Fix timeline SHG/empty net goal bug
    - Fix 0 SOG display issue
    - Replace magic number (20000ms) with named constant for auto-refresh delay
 
-5. **Error Handling & Resilience**
+6. **Error Handling & Resilience**
    - Improve UX when game data errors or fails to load (sidebar)
    - Improve UX when game data errors or fails to load (main page)
    - Add ability to retain and display cached data when network requests fail
    - Integrate error tracking (Sentry or similar) for automatic error reporting
    - Implement request deduplication to prevent duplicate API calls
 
-6. **Lightweight Testing Setup** - Basic foundation only
+7. **Lightweight Testing Setup** - Basic foundation only
    - Set up Jest and React Testing Library
    - Create smoke tests for critical user paths
    - Add basic E2E tests for game loading and navigation
@@ -420,8 +427,8 @@ Keep it simple - flat structure until we need to reorganize.
 ## Next Steps
 
 1. **Review and Finalize** - Confirm this strategy aligns with priorities
-2. **Begin Phase 1** - Start with critical bug fixes
-3. **Track Progress** - Update this document as work completes
+- [Game Plan Items (JSON)](game-plan-items.json)
+- [Full Asana Export](20260103-asana-export-hockey-analytics.json)
 4. **Weekly Check-ins** - Review progress and adjust phases as needed
 5. **Iterate** - Use analytics and feedback to inform Phase 2-4 priorities
 

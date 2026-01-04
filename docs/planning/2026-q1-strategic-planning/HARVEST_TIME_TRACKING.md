@@ -7,6 +7,8 @@ for Q1 2026 strategic planning work.
 
 ### Setup & Configuration
 
+- **Test Script Cleanup**: Review and remove obsolete test:race-condition
+  script from package.json
 - **Node.js v24 Update**: Update Node.js requirement to v24.0.0+ in
   package.json and docs
 - **Environment Variables**: Pull and document Vercel environment
