@@ -123,7 +123,8 @@ Full migration guide: <https://nodejs.org/en/blog/migrations/v22-to-v24>
 
 ## Testing Recommendations
 
-While the Docker builds have been verified, comprehensive testing would benefit from:
+While the Docker builds have been verified, comprehensive testing would
+benefit from:
 
 - Unit tests for API endpoints
 - Integration tests for data fetching
