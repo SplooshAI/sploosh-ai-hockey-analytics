@@ -711,8 +711,8 @@ prioritizes simplicity and rapid development over scalability and resilience.
 3. Caching and performance optimization
 4. Multi-league architecture
 
-This document serves as a historical snapshot of the system architecture as of
-January 3, 2026 - the starting point before Q1 2026 strategic planning work
-began. For the current architecture, see `/docs/architecture/ARCHITECTURE.md`.
-Significant architectural changes are documented as Architecture Decision
-Records (ADRs) in the `/docs/architecture/` folder.
+This document serves as the current state of the system architecture and is
+actively maintained as a living document. It reflects the architecture as of
+January 4, 2026 and will be updated as the system evolves. Significant
+architectural changes are documented as Architecture Decision Records (ADRs)
+in the `/docs/architecture/` folder.
