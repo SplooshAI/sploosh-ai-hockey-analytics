@@ -475,15 +475,15 @@ interface Play {
 
 **Environment Variables:**
 
-The application currently requires **no environment variables** to run. All
-variables are optional and auto-populated by build systems.
+The application requires **no manual environment variable configuration**. All
+variables are automatically populated by build systems (Vercel/Docker).
 
-**Optional Build Variables:**
+**Build Variables (Auto-Populated):**
 
 - `NEXT_PUBLIC_GIT_HASH` - Git commit hash for version display
-  (auto-set by Vercel/Docker)
+  (auto-set by Vercel/Docker, required for version info)
 - `NEXT_PUBLIC_GIT_DATE` - Git commit date for version display
-  (auto-set by Vercel/Docker)
+  (auto-set by Vercel/Docker, required for version info)
 - `VERCEL_GIT_COMMIT_SHA` - Vercel's commit SHA (auto-set by Vercel)
 - `NODE_ENV` - Node environment (auto-set by Next.js)
 

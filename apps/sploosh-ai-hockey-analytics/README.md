@@ -7,8 +7,9 @@ This is a [Next.js](https://nextjs.org) project bootstrapped with
 
 ### Environment Variables
 
-**No environment variables are required to run this application.** The NHL EDGE
-API is public and requires no authentication.
+**No manual environment variable configuration is required.** The NHL EDGE API
+is public and requires no authentication. Build variables for version display
+are automatically populated by Vercel and Docker.
 
 If you want to set up optional environment variables:
 
