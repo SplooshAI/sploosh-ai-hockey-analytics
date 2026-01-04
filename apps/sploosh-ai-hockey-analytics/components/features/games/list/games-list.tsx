@@ -4,6 +4,8 @@ import { useEffect, useState, useCallback, useRef } from 'react'
 import { format } from 'date-fns'
 import { GameCard } from '../card/game-card'
 import { RefreshSettings } from '@/components/shared/refresh/refresh-settings'
+import { ErrorMessage } from '@/components/shared/error'
+import { getFriendlyErrorMessage } from '@/lib/utils/error-messages'
 import type { NHLEdgeGame } from '@/lib/api/nhl-edge/types/nhl-edge'
 import { getScores, getGameCenter } from '@/lib/api/nhl-edge'
 import { useDebounce } from '@/hooks/use-debounce'
@@ -114,7 +116,7 @@ export function GamesList({ date, onGameSelect, onClose, onRefresh, onLoadingCha
                 setRetryCount(attemptNumber + 1)
 
                 // Set a temporary error message indicating retry attempt
-                setError(`Network error. Retrying... (${attemptNumber + 1}/${MAX_RETRY_ATTEMPTS})`)
+                setError(`Reconnecting... (attempt ${attemptNumber + 1} of ${MAX_RETRY_ATTEMPTS})`)
 
                 // Schedule retry after delay
                 setTimeout(() => {
@@ -125,7 +127,7 @@ export function GamesList({ date, onGameSelect, onClose, onRefresh, onLoadingCha
                 return
             } else {
                 // Either not a network error or max retries reached
-                setError(`Failed to fetch games: ${error}`)
+                setError(getFriendlyErrorMessage(error))
                 // Reset auto-refresh if we've hit max retries for network errors
                 if (isNetworkError && attemptNumber >= MAX_RETRY_ATTEMPTS) {
                     setAutoRefreshEnabled(false)
@@ -193,7 +195,7 @@ export function GamesList({ date, onGameSelect, onClose, onRefresh, onLoadingCha
                         setRetryCount(attemptNumber + 1)
 
                         // Set a temporary error message indicating retry attempt
-                        setError(`Network error. Retrying... (${attemptNumber + 1}/${MAX_RETRY_ATTEMPTS})`)
+                        setError(`Reconnecting... (attempt ${attemptNumber + 1} of ${MAX_RETRY_ATTEMPTS})`)
 
                         // Schedule retry after delay
                         setTimeout(() => {
@@ -204,7 +206,7 @@ export function GamesList({ date, onGameSelect, onClose, onRefresh, onLoadingCha
                         return
                     } else {
                         // Either not a network error or max retries reached
-                        setError(`Failed to fetch games: ${error}`)
+                        setError(getFriendlyErrorMessage(error))
                         // Reset auto-refresh if we've hit max retries for network errors
                         if (isNetworkError && attemptNumber >= MAX_RETRY_ATTEMPTS) {
                             setAutoRefreshEnabled(false)
@@ -268,24 +270,20 @@ export function GamesList({ date, onGameSelect, onClose, onRefresh, onLoadingCha
                 defaultEnabled={shouldEnableAutoRefresh(games)}
             />
             {error && (
-                <div className="text-sm text-destructive space-y-2">
-                    <div>{error}</div>
-                    {error.includes('Failed to fetch') && !error.includes('Retrying') && (
-                        <button
-                            onClick={() => {
-                                // When manually retrying, check if auto-refresh should be re-enabled
-                                const shouldEnable = shouldEnableAutoRefresh(games)
-                                if (shouldEnable && !autoRefreshEnabled) {
-                                    setAutoRefreshEnabled(true)
-                                }
-                                fetchGames()
-                            }}
-                            className="mt-2 px-3 py-1 text-xs rounded border border-gray-300 hover:bg-gray-100"
-                        >
-                            Retry Now
-                        </button>
-                    )}
-                </div>
+                <ErrorMessage
+                    title={error.includes('Reconnecting') ? 'Connection Issue' : 'Unable to Load Games'}
+                    message={error}
+                    variant={error.includes('Reconnecting') ? 'warning' : 'error'}
+                    onRetry={!error.includes('Reconnecting') ? () => {
+                        // When manually retrying, check if auto-refresh should be re-enabled
+                        const shouldEnable = shouldEnableAutoRefresh(games)
+                        if (shouldEnable && !autoRefreshEnabled) {
+                            setAutoRefreshEnabled(true)
+                        }
+                        fetchGames()
+                    } : undefined}
+                    retryLabel="Try Again"
+                />
             )}
             <div className="space-y-2">
                 {games.map((game) => (
