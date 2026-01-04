@@ -1,0 +1,168 @@
+{
+  "gid": "1212622189999736",
+  "name": "Review, prioritize, and create a development plan that can be managed in the repoo",
+  "notes": "",
+  "created_at": "2026-01-04T05:37:28.008Z",
+  "modified_at": "2026-01-04T05:38:31.267Z",
+  "permalink_url": "https://app.asana.com/1/9284095956886/project/1211556182487866/task/1212622189999736"
+}
+{
+  "gid": "1211985828213068",
+  "name": "BRAINSTORM: How might you incorporate testing to cover the current state of the hockey analytics project?",
+  "notes": "",
+  "created_at": "2025-11-19T18:32:29.094Z",
+  "modified_at": "2025-11-20T08:33:02.915Z",
+  "permalink_url": "https://app.asana.com/1/9284095956886/project/1211556182487866/task/1211985828213068"
+}
+{
+  "gid": "1211985828213071",
+  "name": "Fix bug where sometimes clicking the current game in the URL doesn't reload data as expected",
+  "notes": "This bug may be fixed with https://app.asana.com/1/9284095956886/task/1212223034069913 - but see if you can cause it to repro.\n\n\nBug Repro\n\nUse https://sploosh-ai-hockey-analytics.vercel.app/?gameId=2025020248 as an example. If I load the page and click another game to view play-by-play data, sometimes clicking back on the original game (in this case SEA @ DAL on 11/9/25) doesn't load anything and just shows the animated Zambonis on the ice.",
+  "created_at": "2025-11-19T18:56:47.079Z",
+  "modified_at": "2025-12-06T22:32:05.768Z",
+  "permalink_url": "https://app.asana.com/1/9284095956886/project/1211556182487866/task/1211985828213071"
+}
+{
+  "gid": "1204992974275904",
+  "name": "Fix bug where goalie pulled situations appear as PPG or SHG",
+  "notes": "Reproduce using https://sploosh-ai-hockey-analytics.vercel.app/?gameId=2025020164 for reference. The third Kraken goal in that game was not a PPG but rather a goal scored with our goalie pulled for the extra attacker.\n\nSimilarly, use https://sploosh-ai-hockey-analytics.vercel.app/?gameId=2025020308 for an example where the Kraken pulled their goalie and Detroit tallied the empty net goal - appearing as SHG.",
+  "created_at": "2025-10-29T05:23:04.318Z",
+  "modified_at": "2025-11-20T08:33:04.306Z",
+  "permalink_url": "https://app.asana.com/1/9284095956886/project/1211556182487866/task/1204992974275904"
+}
+{
+  "gid": "1211736156185245",
+  "name": "Improve UX to display the game header and shot chart plus details above the fold where possible in our responsive layout",
+  "notes": "",
+  "created_at": "2025-10-23T22:56:19.201Z",
+  "modified_at": "2025-10-27T23:00:23.132Z",
+  "permalink_url": "https://app.asana.com/1/9284095956886/project/1211556182487866/task/1211736156185245"
+}
+{
+  "gid": "1211763436079819",
+  "name": "Improve UX by adding an ability to easily change the timezone for the app as a local setting",
+  "notes": "",
+  "created_at": "2025-10-27T22:59:17.722Z",
+  "modified_at": "2025-10-27T23:00:23.169Z",
+  "permalink_url": "https://app.asana.com/1/9284095956886/project/1211556182487866/task/1211763436079819"
+}
+{
+  "gid": "1207304002449618",
+  "name": "Improve markers on shot chart with custom graphics or artwork",
+  "notes": "For example, if we use the hockey stick emoji for shots on goal, we can probably avoid the issue where team colors/dots are too close to rink markings.",
+  "created_at": "2025-10-27T02:52:11.963Z",
+  "modified_at": "2025-11-01T22:30:57.814Z",
+  "permalink_url": "https://app.asana.com/1/9284095956886/project/1211556182487866/task/1207304002449618"
+}
+{
+  "gid": "1211749017511875",
+  "name": "Improve UX so game header display 0 SOG instead of nothing",
+  "notes": "https://app.asana.com/app/asana/-/get_asset?asset_id=1211749017511879\n\n\n",
+  "created_at": "2025-10-26T22:20:11.092Z",
+  "modified_at": "2025-10-27T23:00:23.332Z",
+  "permalink_url": "https://app.asana.com/1/9284095956886/project/1211556182487866/task/1211749017511875"
+}
+{
+  "gid": "1211734460701440",
+  "name": "Improve UX when game data errors or fails to load in the sidebar",
+  "notes": "",
+  "created_at": "2025-10-23T17:50:50.222Z",
+  "modified_at": "2025-10-27T23:00:23.506Z",
+  "permalink_url": "https://app.asana.com/1/9284095956886/project/1211556182487866/task/1211734460701440"
+}
+{
+  "gid": "1211734460701442",
+  "name": "Improve UX when game data errors or fails to load in the main page",
+  "notes": "",
+  "created_at": "2025-10-23T17:51:07.767Z",
+  "modified_at": "2025-10-27T23:00:23.586Z",
+  "permalink_url": "https://app.asana.com/1/9284095956886/project/1211556182487866/task/1211734460701442"
+}
+{
+  "gid": "1207304002449617",
+  "name": "Fix bug in timeline UX where the last SHG was also an empty net goal",
+  "notes": "https://sploosh-ai-hockey-analytics.vercel.app/?gameId=2025020144",
+  "created_at": "2025-10-27T01:46:25.184Z",
+  "modified_at": "2025-10-27T23:00:23.667Z",
+  "permalink_url": "https://app.asana.com/1/9284095956886/project/1211556182487866/task/1207304002449617"
+}
+{
+  "gid": "1211746945438821",
+  "name": "Improve timeline UX to display an image similar to the placeholder upcoming rink for where an event took place on the rink",
+  "notes": "",
+  "created_at": "2025-10-25T04:15:17.143Z",
+  "modified_at": "2025-10-27T23:00:23.749Z",
+  "permalink_url": "https://app.asana.com/1/9284095956886/project/1211556182487866/task/1211746945438821"
+}
+{
+  "gid": "1211746945438841",
+  "name": "Consider implementing a playlist-like feature to view all goal replays in succession - perhaps updating a mini-scoreboard or some other cool way of visualizing it",
+  "notes": "",
+  "created_at": "2025-10-25T05:51:31.594Z",
+  "modified_at": "2025-10-27T23:00:23.916Z",
+  "permalink_url": "https://app.asana.com/1/9284095956886/project/1211556182487866/task/1211746945438841"
+}
+{
+  "gid": "1211779027585089",
+  "name": "Consider improving sidebar UX to \"shuffle\" final games toward the bottom of the list when complete",
+  "notes": "",
+  "created_at": "2025-10-29T00:51:00.064Z",
+  "modified_at": "2025-10-29T00:51:36.051Z",
+  "permalink_url": "https://app.asana.com/1/9284095956886/project/1211556182487866/task/1211779027585089"
+}
+{
+  "gid": "1211712496765300",
+  "name": "Initial implementation of Vercel analytics and event tracking",
+  "notes": "https://vercel.com/docs/analytics/custom-events \n\n",
+  "created_at": "2025-10-22T16:19:14.457Z",
+  "modified_at": "2025-10-27T23:00:23.830Z",
+  "permalink_url": "https://app.asana.com/1/9284095956886/project/1211556182487866/task/1211712496765300"
+}
+{
+  "gid": "1211746945648741",
+  "name": "Add QR codes to share the home page as well as selected game and NHL Game Center links",
+  "notes": "",
+  "created_at": "2025-10-25T18:04:42.012Z",
+  "modified_at": "2025-10-27T23:00:23.416Z",
+  "permalink_url": "https://app.asana.com/1/9284095956886/project/1211556182487866/task/1211746945648741"
+}
+{
+  "gid": "1204992974275906",
+  "name": "Add a hat or symbol to indicate hat trick(s) in a game",
+  "notes": "Use https://sploosh-ai-hockey-analytics.vercel.app/?gameId=2025020160 with Bedard scoring his first NHL hat trick \n\nHat trick data also exists for Bedard (2nd hat trick) and Celebrini (3rd hat trick)",
+  "created_at": "2025-10-29T05:26:53.180Z",
+  "modified_at": "2025-11-19T06:18:49.932Z",
+  "permalink_url": "https://app.asana.com/1/9284095956886/project/1211556182487866/task/1204992974275906"
+}
+{
+  "gid": "1211790030718598",
+  "name": "BRAINSTORM: Create a visualization showing home games for the selected day",
+  "notes": "Canada and USA should be sufficient for most cases, but we do want to show the world when international games are being played - such as on 2025.11.14 🇸🇪 Pittsburgh Penguins vs. Nashville Predators (Global Series Sweden)",
+  "created_at": "2025-10-30T18:08:30.574Z",
+  "modified_at": "2025-10-30T18:09:47.415Z",
+  "permalink_url": "https://app.asana.com/1/9284095956886/project/1211556182487866/task/1211790030718598"
+}
+{
+  "gid": "1204992974275907",
+  "name": "Add ability to retain and display cached data when network requests are unsuccessful ",
+  "notes": "",
+  "created_at": "2025-11-02T03:57:42.108Z",
+  "modified_at": "2025-11-02T03:57:43.462Z",
+  "permalink_url": "https://app.asana.com/1/9284095956886/project/1211556182487866/task/1204992974275907"
+}
+{
+  "gid": "1211985827921084",
+  "name": "BRAINSTORM: How might you incorporate PWHL preseason and regular season data into the hockey analytics app?",
+  "notes": "",
+  "created_at": "2025-11-19T18:01:56.649Z",
+  "modified_at": "2025-11-20T08:33:02.144Z",
+  "permalink_url": "https://app.asana.com/1/9284095956886/project/1211556182487866/task/1211985827921084"
+}
+{
+  "gid": "1211985828213065",
+  "name": "BRAINSTORM: How might you incorporate WHL data into the hockey analytics app?",
+  "notes": "",
+  "created_at": "2025-11-19T18:31:13.536Z",
+  "modified_at": "2025-11-20T08:33:01.480Z",
+  "permalink_url": "https://app.asana.com/1/9284095956886/project/1211556182487866/task/1211985828213065"
+}

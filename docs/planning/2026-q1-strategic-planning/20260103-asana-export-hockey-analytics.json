@@ -1,0 +1,3816 @@
+{
+  "data" : [ {
+    "gid" : "1212622189999736",
+    "actual_time_minutes" : null,
+    "assignee" : {
+      "gid" : "1204951450576595",
+      "name" : "Rob Brennan",
+      "resource_type" : "user"
+    },
+    "assignee_status" : "inbox",
+    "assignee_section" : {
+      "gid" : "1204951450576623",
+      "name" : "🎫 Recently assigned",
+      "resource_type" : "section"
+    },
+    "completed" : false,
+    "completed_at" : null,
+    "created_at" : "2026-01-04T05:37:28.008Z",
+    "due_at" : null,
+    "due_on" : "2026-01-03",
+    "followers" : [ {
+      "gid" : "1204951450576595",
+      "name" : "Rob Brennan",
+      "resource_type" : "user"
+    } ],
+    "hearted" : false,
+    "hearts" : [ ],
+    "liked" : false,
+    "likes" : [ ],
+    "memberships" : [ {
+      "project" : {
+        "gid" : "1211556182487866",
+        "name" : "Sploosh.AI Hockey Analytics v2026.01.03",
+        "resource_type" : "project"
+      },
+      "section" : {
+        "gid" : "1211566459676394",
+        "name" : "📋 Game plan",
+        "resource_type" : "section"
+      }
+    } ],
+    "modified_at" : "2026-01-04T05:38:31.267Z",
+    "name" : "Review, prioritize, and create a development plan that can be managed in the repoo",
+    "notes" : "",
+    "num_hearts" : 0,
+    "num_likes" : 0,
+    "parent" : null,
+    "permalink_url" : "https://app.asana.com/1/9284095956886/project/1211556182487866/task/1212622189999736",
+    "projects" : [ {
+      "gid" : "1211556182487866",
+      "name" : "Sploosh.AI Hockey Analytics v2026.01.03",
+      "resource_type" : "project"
+    } ],
+    "resource_type" : "task",
+    "start_at" : null,
+    "start_on" : null,
+    "subtasks" : [ ],
+    "tags" : [ ],
+    "resource_subtype" : "default_task",
+    "workspace" : {
+      "gid" : "9284095956886",
+      "name" : "therobbrennan.com",
+      "resource_type" : "workspace"
+    }
+  }, {
+    "gid" : "1211985828213068",
+    "actual_time_minutes" : null,
+    "assignee" : null,
+    "assignee_status" : "inbox",
+    "completed" : false,
+    "completed_at" : null,
+    "created_at" : "2025-11-19T18:32:29.094Z",
+    "due_at" : null,
+    "due_on" : null,
+    "followers" : [ {
+      "gid" : "1204951450576595",
+      "name" : "Rob Brennan",
+      "resource_type" : "user"
+    } ],
+    "hearted" : false,
+    "hearts" : [ ],
+    "liked" : false,
+    "likes" : [ ],
+    "memberships" : [ {
+      "project" : {
+        "gid" : "1211556182487866",
+        "name" : "Sploosh.AI Hockey Analytics v2026.01.03",
+        "resource_type" : "project"
+      },
+      "section" : {
+        "gid" : "1211566459676394",
+        "name" : "📋 Game plan",
+        "resource_type" : "section"
+      }
+    } ],
+    "modified_at" : "2025-11-20T08:33:02.915Z",
+    "name" : "BRAINSTORM: How might you incorporate testing to cover the current state of the hockey analytics project?",
+    "notes" : "",
+    "num_hearts" : 0,
+    "num_likes" : 0,
+    "parent" : null,
+    "permalink_url" : "https://app.asana.com/1/9284095956886/project/1211556182487866/task/1211985828213068",
+    "projects" : [ {
+      "gid" : "1211556182487866",
+      "name" : "Sploosh.AI Hockey Analytics v2026.01.03",
+      "resource_type" : "project"
+    } ],
+    "resource_type" : "task",
+    "start_at" : null,
+    "start_on" : null,
+    "subtasks" : [ ],
+    "tags" : [ ],
+    "resource_subtype" : "default_task",
+    "workspace" : {
+      "gid" : "9284095956886",
+      "name" : "therobbrennan.com",
+      "resource_type" : "workspace"
+    }
+  }, {
+    "gid" : "1211985828213071",
+    "actual_time_minutes" : null,
+    "assignee" : null,
+    "assignee_status" : "inbox",
+    "completed" : false,
+    "completed_at" : null,
+    "created_at" : "2025-11-19T18:56:47.079Z",
+    "due_at" : null,
+    "due_on" : null,
+    "followers" : [ {
+      "gid" : "1204951450576595",
+      "name" : "Rob Brennan",
+      "resource_type" : "user"
+    } ],
+    "hearted" : false,
+    "hearts" : [ ],
+    "liked" : false,
+    "likes" : [ ],
+    "memberships" : [ {
+      "project" : {
+        "gid" : "1211556182487866",
+        "name" : "Sploosh.AI Hockey Analytics v2026.01.03",
+        "resource_type" : "project"
+      },
+      "section" : {
+        "gid" : "1211566459676394",
+        "name" : "📋 Game plan",
+        "resource_type" : "section"
+      }
+    } ],
+    "modified_at" : "2025-12-06T22:32:05.768Z",
+    "name" : "Fix bug where sometimes clicking the current game in the URL doesn't reload data as expected",
+    "notes" : "This bug may be fixed with https://app.asana.com/1/9284095956886/task/1212223034069913 - but see if you can cause it to repro.\n\n\nBug Repro\n\nUse https://sploosh-ai-hockey-analytics.vercel.app/?gameId=2025020248 as an example. If I load the page and click another game to view play-by-play data, sometimes clicking back on the original game (in this case SEA @ DAL on 11/9/25) doesn't load anything and just shows the animated Zambonis on the ice.",
+    "num_hearts" : 0,
+    "num_likes" : 0,
+    "parent" : null,
+    "permalink_url" : "https://app.asana.com/1/9284095956886/project/1211556182487866/task/1211985828213071",
+    "projects" : [ {
+      "gid" : "1211556182487866",
+      "name" : "Sploosh.AI Hockey Analytics v2026.01.03",
+      "resource_type" : "project"
+    } ],
+    "resource_type" : "task",
+    "start_at" : null,
+    "start_on" : null,
+    "subtasks" : [ ],
+    "tags" : [ ],
+    "resource_subtype" : "default_task",
+    "workspace" : {
+      "gid" : "9284095956886",
+      "name" : "therobbrennan.com",
+      "resource_type" : "workspace"
+    }
+  }, {
+    "gid" : "1204992974275904",
+    "actual_time_minutes" : null,
+    "assignee" : null,
+    "assignee_status" : "inbox",
+    "completed" : false,
+    "completed_at" : null,
+    "created_at" : "2025-10-29T05:23:04.318Z",
+    "due_at" : null,
+    "due_on" : null,
+    "followers" : [ {
+      "gid" : "1204951450576595",
+      "name" : "Rob Brennan",
+      "resource_type" : "user"
+    } ],
+    "hearted" : false,
+    "hearts" : [ ],
+    "liked" : false,
+    "likes" : [ ],
+    "memberships" : [ {
+      "project" : {
+        "gid" : "1211556182487866",
+        "name" : "Sploosh.AI Hockey Analytics v2026.01.03",
+        "resource_type" : "project"
+      },
+      "section" : {
+        "gid" : "1211566459676394",
+        "name" : "📋 Game plan",
+        "resource_type" : "section"
+      }
+    } ],
+    "modified_at" : "2025-11-20T08:33:04.306Z",
+    "name" : "Fix bug where goalie pulled situations appear as PPG or SHG",
+    "notes" : "Reproduce using https://sploosh-ai-hockey-analytics.vercel.app/?gameId=2025020164 for reference. The third Kraken goal in that game was not a PPG but rather a goal scored with our goalie pulled for the extra attacker.\n\nSimilarly, use https://sploosh-ai-hockey-analytics.vercel.app/?gameId=2025020308 for an example where the Kraken pulled their goalie and Detroit tallied the empty net goal - appearing as SHG.",
+    "num_hearts" : 0,
+    "num_likes" : 0,
+    "parent" : null,
+    "permalink_url" : "https://app.asana.com/1/9284095956886/project/1211556182487866/task/1204992974275904",
+    "projects" : [ {
+      "gid" : "1211556182487866",
+      "name" : "Sploosh.AI Hockey Analytics v2026.01.03",
+      "resource_type" : "project"
+    } ],
+    "resource_type" : "task",
+    "start_at" : null,
+    "start_on" : null,
+    "subtasks" : [ ],
+    "tags" : [ ],
+    "resource_subtype" : "default_task",
+    "workspace" : {
+      "gid" : "9284095956886",
+      "name" : "therobbrennan.com",
+      "resource_type" : "workspace"
+    }
+  }, {
+    "gid" : "1211736156185245",
+    "actual_time_minutes" : null,
+    "assignee" : null,
+    "assignee_status" : "inbox",
+    "completed" : false,
+    "completed_at" : null,
+    "created_at" : "2025-10-23T22:56:19.201Z",
+    "due_at" : null,
+    "due_on" : null,
+    "followers" : [ {
+      "gid" : "1204951450576595",
+      "name" : "Rob Brennan",
+      "resource_type" : "user"
+    } ],
+    "hearted" : false,
+    "hearts" : [ ],
+    "liked" : false,
+    "likes" : [ ],
+    "memberships" : [ {
+      "project" : {
+        "gid" : "1211556182487866",
+        "name" : "Sploosh.AI Hockey Analytics v2026.01.03",
+        "resource_type" : "project"
+      },
+      "section" : {
+        "gid" : "1211566459676394",
+        "name" : "📋 Game plan",
+        "resource_type" : "section"
+      }
+    } ],
+    "modified_at" : "2025-10-27T23:00:23.132Z",
+    "name" : "Improve UX to display the game header and shot chart plus details above the fold where possible in our responsive layout",
+    "notes" : "",
+    "num_hearts" : 0,
+    "num_likes" : 0,
+    "parent" : null,
+    "permalink_url" : "https://app.asana.com/1/9284095956886/project/1211556182487866/task/1211736156185245",
+    "projects" : [ {
+      "gid" : "1211556182487866",
+      "name" : "Sploosh.AI Hockey Analytics v2026.01.03",
+      "resource_type" : "project"
+    } ],
+    "resource_type" : "task",
+    "start_at" : null,
+    "start_on" : null,
+    "subtasks" : [ ],
+    "tags" : [ ],
+    "resource_subtype" : "default_task",
+    "workspace" : {
+      "gid" : "9284095956886",
+      "name" : "therobbrennan.com",
+      "resource_type" : "workspace"
+    }
+  }, {
+    "gid" : "1211763436079819",
+    "actual_time_minutes" : null,
+    "assignee" : null,
+    "assignee_status" : "inbox",
+    "completed" : false,
+    "completed_at" : null,
+    "created_at" : "2025-10-27T22:59:17.722Z",
+    "due_at" : null,
+    "due_on" : null,
+    "followers" : [ {
+      "gid" : "1204951450576595",
+      "name" : "Rob Brennan",
+      "resource_type" : "user"
+    } ],
+    "hearted" : false,
+    "hearts" : [ ],
+    "liked" : false,
+    "likes" : [ ],
+    "memberships" : [ {
+      "project" : {
+        "gid" : "1211556182487866",
+        "name" : "Sploosh.AI Hockey Analytics v2026.01.03",
+        "resource_type" : "project"
+      },
+      "section" : {
+        "gid" : "1211566459676394",
+        "name" : "📋 Game plan",
+        "resource_type" : "section"
+      }
+    } ],
+    "modified_at" : "2025-10-27T23:00:23.169Z",
+    "name" : "Improve UX by adding an ability to easily change the timezone for the app as a local setting",
+    "notes" : "",
+    "num_hearts" : 0,
+    "num_likes" : 0,
+    "parent" : null,
+    "permalink_url" : "https://app.asana.com/1/9284095956886/project/1211556182487866/task/1211763436079819",
+    "projects" : [ {
+      "gid" : "1211556182487866",
+      "name" : "Sploosh.AI Hockey Analytics v2026.01.03",
+      "resource_type" : "project"
+    } ],
+    "resource_type" : "task",
+    "start_at" : null,
+    "start_on" : null,
+    "subtasks" : [ ],
+    "tags" : [ ],
+    "resource_subtype" : "default_task",
+    "workspace" : {
+      "gid" : "9284095956886",
+      "name" : "therobbrennan.com",
+      "resource_type" : "workspace"
+    }
+  }, {
+    "gid" : "1207304002449618",
+    "actual_time_minutes" : null,
+    "assignee" : null,
+    "assignee_status" : "inbox",
+    "completed" : false,
+    "completed_at" : null,
+    "created_at" : "2025-10-27T02:52:11.963Z",
+    "due_at" : null,
+    "due_on" : null,
+    "followers" : [ {
+      "gid" : "1204951450576595",
+      "name" : "Rob Brennan",
+      "resource_type" : "user"
+    } ],
+    "hearted" : false,
+    "hearts" : [ ],
+    "liked" : false,
+    "likes" : [ ],
+    "memberships" : [ {
+      "project" : {
+        "gid" : "1211556182487866",
+        "name" : "Sploosh.AI Hockey Analytics v2026.01.03",
+        "resource_type" : "project"
+      },
+      "section" : {
+        "gid" : "1211566459676394",
+        "name" : "📋 Game plan",
+        "resource_type" : "section"
+      }
+    } ],
+    "modified_at" : "2025-11-01T22:30:57.814Z",
+    "name" : "Improve markers on shot chart with custom graphics or artwork",
+    "notes" : "For example, if we use the hockey stick emoji for shots on goal, we can probably avoid the issue where team colors/dots are too close to rink markings.",
+    "num_hearts" : 0,
+    "num_likes" : 0,
+    "parent" : null,
+    "permalink_url" : "https://app.asana.com/1/9284095956886/project/1211556182487866/task/1207304002449618",
+    "projects" : [ {
+      "gid" : "1211556182487866",
+      "name" : "Sploosh.AI Hockey Analytics v2026.01.03",
+      "resource_type" : "project"
+    } ],
+    "resource_type" : "task",
+    "start_at" : null,
+    "start_on" : null,
+    "subtasks" : [ ],
+    "tags" : [ ],
+    "resource_subtype" : "default_task",
+    "workspace" : {
+      "gid" : "9284095956886",
+      "name" : "therobbrennan.com",
+      "resource_type" : "workspace"
+    }
+  }, {
+    "gid" : "1211749017511875",
+    "actual_time_minutes" : null,
+    "assignee" : null,
+    "assignee_status" : "inbox",
+    "completed" : false,
+    "completed_at" : null,
+    "created_at" : "2025-10-26T22:20:11.092Z",
+    "due_at" : null,
+    "due_on" : null,
+    "followers" : [ {
+      "gid" : "1204951450576595",
+      "name" : "Rob Brennan",
+      "resource_type" : "user"
+    } ],
+    "hearted" : false,
+    "hearts" : [ ],
+    "liked" : false,
+    "likes" : [ ],
+    "memberships" : [ {
+      "project" : {
+        "gid" : "1211556182487866",
+        "name" : "Sploosh.AI Hockey Analytics v2026.01.03",
+        "resource_type" : "project"
+      },
+      "section" : {
+        "gid" : "1211566459676394",
+        "name" : "📋 Game plan",
+        "resource_type" : "section"
+      }
+    } ],
+    "modified_at" : "2025-10-27T23:00:23.332Z",
+    "name" : "Improve UX so game header display 0 SOG instead of nothing",
+    "notes" : "https://app.asana.com/app/asana/-/get_asset?asset_id=1211749017511879\n\n\n",
+    "num_hearts" : 0,
+    "num_likes" : 0,
+    "parent" : null,
+    "permalink_url" : "https://app.asana.com/1/9284095956886/project/1211556182487866/task/1211749017511875",
+    "projects" : [ {
+      "gid" : "1211556182487866",
+      "name" : "Sploosh.AI Hockey Analytics v2026.01.03",
+      "resource_type" : "project"
+    } ],
+    "resource_type" : "task",
+    "start_at" : null,
+    "start_on" : null,
+    "subtasks" : [ ],
+    "tags" : [ ],
+    "resource_subtype" : "default_task",
+    "workspace" : {
+      "gid" : "9284095956886",
+      "name" : "therobbrennan.com",
+      "resource_type" : "workspace"
+    }
+  }, {
+    "gid" : "1211734460701440",
+    "actual_time_minutes" : null,
+    "assignee" : null,
+    "assignee_status" : "inbox",
+    "completed" : false,
+    "completed_at" : null,
+    "created_at" : "2025-10-23T17:50:50.222Z",
+    "due_at" : null,
+    "due_on" : null,
+    "followers" : [ {
+      "gid" : "1204951450576595",
+      "name" : "Rob Brennan",
+      "resource_type" : "user"
+    } ],
+    "hearted" : false,
+    "hearts" : [ ],
+    "liked" : false,
+    "likes" : [ ],
+    "memberships" : [ {
+      "project" : {
+        "gid" : "1211556182487866",
+        "name" : "Sploosh.AI Hockey Analytics v2026.01.03",
+        "resource_type" : "project"
+      },
+      "section" : {
+        "gid" : "1211566459676394",
+        "name" : "📋 Game plan",
+        "resource_type" : "section"
+      }
+    } ],
+    "modified_at" : "2025-10-27T23:00:23.506Z",
+    "name" : "Improve UX when game data errors or fails to load in the sidebar",
+    "notes" : "",
+    "num_hearts" : 0,
+    "num_likes" : 0,
+    "parent" : null,
+    "permalink_url" : "https://app.asana.com/1/9284095956886/project/1211556182487866/task/1211734460701440",
+    "projects" : [ {
+      "gid" : "1211556182487866",
+      "name" : "Sploosh.AI Hockey Analytics v2026.01.03",
+      "resource_type" : "project"
+    } ],
+    "resource_type" : "task",
+    "start_at" : null,
+    "start_on" : null,
+    "subtasks" : [ ],
+    "tags" : [ ],
+    "resource_subtype" : "default_task",
+    "workspace" : {
+      "gid" : "9284095956886",
+      "name" : "therobbrennan.com",
+      "resource_type" : "workspace"
+    }
+  }, {
+    "gid" : "1211734460701442",
+    "actual_time_minutes" : null,
+    "assignee" : null,
+    "assignee_status" : "inbox",
+    "completed" : false,
+    "completed_at" : null,
+    "created_at" : "2025-10-23T17:51:07.767Z",
+    "due_at" : null,
+    "due_on" : null,
+    "followers" : [ {
+      "gid" : "1204951450576595",
+      "name" : "Rob Brennan",
+      "resource_type" : "user"
+    } ],
+    "hearted" : false,
+    "hearts" : [ ],
+    "liked" : false,
+    "likes" : [ ],
+    "memberships" : [ {
+      "project" : {
+        "gid" : "1211556182487866",
+        "name" : "Sploosh.AI Hockey Analytics v2026.01.03",
+        "resource_type" : "project"
+      },
+      "section" : {
+        "gid" : "1211566459676394",
+        "name" : "📋 Game plan",
+        "resource_type" : "section"
+      }
+    } ],
+    "modified_at" : "2025-10-27T23:00:23.586Z",
+    "name" : "Improve UX when game data errors or fails to load in the main page",
+    "notes" : "",
+    "num_hearts" : 0,
+    "num_likes" : 0,
+    "parent" : null,
+    "permalink_url" : "https://app.asana.com/1/9284095956886/project/1211556182487866/task/1211734460701442",
+    "projects" : [ {
+      "gid" : "1211556182487866",
+      "name" : "Sploosh.AI Hockey Analytics v2026.01.03",
+      "resource_type" : "project"
+    } ],
+    "resource_type" : "task",
+    "start_at" : null,
+    "start_on" : null,
+    "subtasks" : [ ],
+    "tags" : [ ],
+    "resource_subtype" : "default_task",
+    "workspace" : {
+      "gid" : "9284095956886",
+      "name" : "therobbrennan.com",
+      "resource_type" : "workspace"
+    }
+  }, {
+    "gid" : "1207304002449617",
+    "actual_time_minutes" : null,
+    "assignee" : null,
+    "assignee_status" : "inbox",
+    "completed" : false,
+    "completed_at" : null,
+    "created_at" : "2025-10-27T01:46:25.184Z",
+    "due_at" : null,
+    "due_on" : null,
+    "followers" : [ {
+      "gid" : "1204951450576595",
+      "name" : "Rob Brennan",
+      "resource_type" : "user"
+    } ],
+    "hearted" : false,
+    "hearts" : [ ],
+    "liked" : false,
+    "likes" : [ ],
+    "memberships" : [ {
+      "project" : {
+        "gid" : "1211556182487866",
+        "name" : "Sploosh.AI Hockey Analytics v2026.01.03",
+        "resource_type" : "project"
+      },
+      "section" : {
+        "gid" : "1211566459676394",
+        "name" : "📋 Game plan",
+        "resource_type" : "section"
+      }
+    } ],
+    "modified_at" : "2025-10-27T23:00:23.667Z",
+    "name" : "Fix bug in timeline UX where the last SHG was also an empty net goal",
+    "notes" : "https://sploosh-ai-hockey-analytics.vercel.app/?gameId=2025020144",
+    "num_hearts" : 0,
+    "num_likes" : 0,
+    "parent" : null,
+    "permalink_url" : "https://app.asana.com/1/9284095956886/project/1211556182487866/task/1207304002449617",
+    "projects" : [ {
+      "gid" : "1211556182487866",
+      "name" : "Sploosh.AI Hockey Analytics v2026.01.03",
+      "resource_type" : "project"
+    } ],
+    "resource_type" : "task",
+    "start_at" : null,
+    "start_on" : null,
+    "subtasks" : [ ],
+    "tags" : [ ],
+    "resource_subtype" : "default_task",
+    "workspace" : {
+      "gid" : "9284095956886",
+      "name" : "therobbrennan.com",
+      "resource_type" : "workspace"
+    }
+  }, {
+    "gid" : "1211746945438821",
+    "actual_time_minutes" : null,
+    "assignee" : null,
+    "assignee_status" : "inbox",
+    "completed" : false,
+    "completed_at" : null,
+    "created_at" : "2025-10-25T04:15:17.143Z",
+    "due_at" : null,
+    "due_on" : null,
+    "followers" : [ {
+      "gid" : "1204951450576595",
+      "name" : "Rob Brennan",
+      "resource_type" : "user"
+    } ],
+    "hearted" : false,
+    "hearts" : [ ],
+    "liked" : false,
+    "likes" : [ ],
+    "memberships" : [ {
+      "project" : {
+        "gid" : "1211556182487866",
+        "name" : "Sploosh.AI Hockey Analytics v2026.01.03",
+        "resource_type" : "project"
+      },
+      "section" : {
+        "gid" : "1211566459676394",
+        "name" : "📋 Game plan",
+        "resource_type" : "section"
+      }
+    } ],
+    "modified_at" : "2025-10-27T23:00:23.749Z",
+    "name" : "Improve timeline UX to display an image similar to the placeholder upcoming rink for where an event took place on the rink",
+    "notes" : "",
+    "num_hearts" : 0,
+    "num_likes" : 0,
+    "parent" : null,
+    "permalink_url" : "https://app.asana.com/1/9284095956886/project/1211556182487866/task/1211746945438821",
+    "projects" : [ {
+      "gid" : "1211556182487866",
+      "name" : "Sploosh.AI Hockey Analytics v2026.01.03",
+      "resource_type" : "project"
+    } ],
+    "resource_type" : "task",
+    "start_at" : null,
+    "start_on" : null,
+    "subtasks" : [ ],
+    "tags" : [ ],
+    "resource_subtype" : "default_task",
+    "workspace" : {
+      "gid" : "9284095956886",
+      "name" : "therobbrennan.com",
+      "resource_type" : "workspace"
+    }
+  }, {
+    "gid" : "1211746945438841",
+    "actual_time_minutes" : null,
+    "assignee" : null,
+    "assignee_status" : "inbox",
+    "completed" : false,
+    "completed_at" : null,
+    "created_at" : "2025-10-25T05:51:31.594Z",
+    "due_at" : null,
+    "due_on" : null,
+    "followers" : [ {
+      "gid" : "1204951450576595",
+      "name" : "Rob Brennan",
+      "resource_type" : "user"
+    } ],
+    "hearted" : false,
+    "hearts" : [ ],
+    "liked" : false,
+    "likes" : [ ],
+    "memberships" : [ {
+      "project" : {
+        "gid" : "1211556182487866",
+        "name" : "Sploosh.AI Hockey Analytics v2026.01.03",
+        "resource_type" : "project"
+      },
+      "section" : {
+        "gid" : "1211566459676394",
+        "name" : "📋 Game plan",
+        "resource_type" : "section"
+      }
+    } ],
+    "modified_at" : "2025-10-27T23:00:23.916Z",
+    "name" : "Consider implementing a playlist-like feature to view all goal replays in succession - perhaps updating a mini-scoreboard or some other cool way of visualizing it",
+    "notes" : "",
+    "num_hearts" : 0,
+    "num_likes" : 0,
+    "parent" : null,
+    "permalink_url" : "https://app.asana.com/1/9284095956886/project/1211556182487866/task/1211746945438841",
+    "projects" : [ {
+      "gid" : "1211556182487866",
+      "name" : "Sploosh.AI Hockey Analytics v2026.01.03",
+      "resource_type" : "project"
+    } ],
+    "resource_type" : "task",
+    "start_at" : null,
+    "start_on" : null,
+    "subtasks" : [ ],
+    "tags" : [ ],
+    "resource_subtype" : "default_task",
+    "workspace" : {
+      "gid" : "9284095956886",
+      "name" : "therobbrennan.com",
+      "resource_type" : "workspace"
+    }
+  }, {
+    "gid" : "1211779027585089",
+    "actual_time_minutes" : null,
+    "assignee" : null,
+    "assignee_status" : "upcoming",
+    "completed" : false,
+    "completed_at" : null,
+    "created_at" : "2025-10-29T00:51:00.064Z",
+    "due_at" : null,
+    "due_on" : null,
+    "followers" : [ {
+      "gid" : "1204951450576595",
+      "name" : "Rob Brennan",
+      "resource_type" : "user"
+    } ],
+    "hearted" : false,
+    "hearts" : [ ],
+    "liked" : false,
+    "likes" : [ ],
+    "memberships" : [ {
+      "project" : {
+        "gid" : "1211556182487866",
+        "name" : "Sploosh.AI Hockey Analytics v2026.01.03",
+        "resource_type" : "project"
+      },
+      "section" : {
+        "gid" : "1211566459676394",
+        "name" : "📋 Game plan",
+        "resource_type" : "section"
+      }
+    } ],
+    "modified_at" : "2025-10-29T00:51:36.051Z",
+    "name" : "Consider improving sidebar UX to \"shuffle\" final games toward the bottom of the list when complete",
+    "notes" : "",
+    "num_hearts" : 0,
+    "num_likes" : 0,
+    "parent" : null,
+    "permalink_url" : "https://app.asana.com/1/9284095956886/project/1211556182487866/task/1211779027585089",
+    "projects" : [ {
+      "gid" : "1211556182487866",
+      "name" : "Sploosh.AI Hockey Analytics v2026.01.03",
+      "resource_type" : "project"
+    } ],
+    "resource_type" : "task",
+    "start_at" : null,
+    "start_on" : null,
+    "subtasks" : [ ],
+    "tags" : [ ],
+    "resource_subtype" : "default_task",
+    "workspace" : {
+      "gid" : "9284095956886",
+      "name" : "therobbrennan.com",
+      "resource_type" : "workspace"
+    }
+  }, {
+    "gid" : "1211712496765300",
+    "actual_time_minutes" : null,
+    "assignee" : null,
+    "assignee_status" : "inbox",
+    "completed" : false,
+    "completed_at" : null,
+    "created_at" : "2025-10-22T16:19:14.457Z",
+    "due_at" : null,
+    "due_on" : null,
+    "followers" : [ {
+      "gid" : "1204951450576595",
+      "name" : "Rob Brennan",
+      "resource_type" : "user"
+    } ],
+    "hearted" : false,
+    "hearts" : [ ],
+    "liked" : false,
+    "likes" : [ ],
+    "memberships" : [ {
+      "project" : {
+        "gid" : "1211556182487866",
+        "name" : "Sploosh.AI Hockey Analytics v2026.01.03",
+        "resource_type" : "project"
+      },
+      "section" : {
+        "gid" : "1211566459676394",
+        "name" : "📋 Game plan",
+        "resource_type" : "section"
+      }
+    } ],
+    "modified_at" : "2025-10-27T23:00:23.830Z",
+    "name" : "Initial implementation of Vercel analytics and event tracking",
+    "notes" : "https://vercel.com/docs/analytics/custom-events \n\n",
+    "num_hearts" : 0,
+    "num_likes" : 0,
+    "parent" : null,
+    "permalink_url" : "https://app.asana.com/1/9284095956886/project/1211556182487866/task/1211712496765300",
+    "projects" : [ {
+      "gid" : "1211556182487866",
+      "name" : "Sploosh.AI Hockey Analytics v2026.01.03",
+      "resource_type" : "project"
+    } ],
+    "resource_type" : "task",
+    "start_at" : null,
+    "start_on" : null,
+    "subtasks" : [ ],
+    "tags" : [ ],
+    "resource_subtype" : "default_task",
+    "workspace" : {
+      "gid" : "9284095956886",
+      "name" : "therobbrennan.com",
+      "resource_type" : "workspace"
+    }
+  }, {
+    "gid" : "1211746945648741",
+    "actual_time_minutes" : null,
+    "assignee" : null,
+    "assignee_status" : "inbox",
+    "completed" : false,
+    "completed_at" : null,
+    "created_at" : "2025-10-25T18:04:42.012Z",
+    "due_at" : null,
+    "due_on" : null,
+    "followers" : [ {
+      "gid" : "1204951450576595",
+      "name" : "Rob Brennan",
+      "resource_type" : "user"
+    } ],
+    "hearted" : false,
+    "hearts" : [ ],
+    "liked" : false,
+    "likes" : [ ],
+    "memberships" : [ {
+      "project" : {
+        "gid" : "1211556182487866",
+        "name" : "Sploosh.AI Hockey Analytics v2026.01.03",
+        "resource_type" : "project"
+      },
+      "section" : {
+        "gid" : "1211566459676394",
+        "name" : "📋 Game plan",
+        "resource_type" : "section"
+      }
+    } ],
+    "modified_at" : "2025-10-27T23:00:23.416Z",
+    "name" : "Add QR codes to share the home page as well as selected game and NHL Game Center links",
+    "notes" : "",
+    "num_hearts" : 0,
+    "num_likes" : 0,
+    "parent" : null,
+    "permalink_url" : "https://app.asana.com/1/9284095956886/project/1211556182487866/task/1211746945648741",
+    "projects" : [ {
+      "gid" : "1211556182487866",
+      "name" : "Sploosh.AI Hockey Analytics v2026.01.03",
+      "resource_type" : "project"
+    } ],
+    "resource_type" : "task",
+    "start_at" : null,
+    "start_on" : null,
+    "subtasks" : [ ],
+    "tags" : [ ],
+    "resource_subtype" : "default_task",
+    "workspace" : {
+      "gid" : "9284095956886",
+      "name" : "therobbrennan.com",
+      "resource_type" : "workspace"
+    }
+  }, {
+    "gid" : "1204992974275906",
+    "actual_time_minutes" : null,
+    "assignee" : null,
+    "assignee_status" : "upcoming",
+    "completed" : false,
+    "completed_at" : null,
+    "created_at" : "2025-10-29T05:26:53.180Z",
+    "due_at" : null,
+    "due_on" : null,
+    "followers" : [ {
+      "gid" : "1204951450576595",
+      "name" : "Rob Brennan",
+      "resource_type" : "user"
+    } ],
+    "hearted" : false,
+    "hearts" : [ ],
+    "liked" : false,
+    "likes" : [ ],
+    "memberships" : [ {
+      "project" : {
+        "gid" : "1211556182487866",
+        "name" : "Sploosh.AI Hockey Analytics v2026.01.03",
+        "resource_type" : "project"
+      },
+      "section" : {
+        "gid" : "1211566459676394",
+        "name" : "📋 Game plan",
+        "resource_type" : "section"
+      }
+    } ],
+    "modified_at" : "2025-11-19T06:18:49.932Z",
+    "name" : "Add a hat or symbol to indicate hat trick(s) in a game",
+    "notes" : "Use https://sploosh-ai-hockey-analytics.vercel.app/?gameId=2025020160 with Bedard scoring his first NHL hat trick \n\nHat trick data also exists for Bedard (2nd hat trick) and Celebrini (3rd hat trick)",
+    "num_hearts" : 0,
+    "num_likes" : 0,
+    "parent" : null,
+    "permalink_url" : "https://app.asana.com/1/9284095956886/project/1211556182487866/task/1204992974275906",
+    "projects" : [ {
+      "gid" : "1211556182487866",
+      "name" : "Sploosh.AI Hockey Analytics v2026.01.03",
+      "resource_type" : "project"
+    } ],
+    "resource_type" : "task",
+    "start_at" : null,
+    "start_on" : null,
+    "subtasks" : [ ],
+    "tags" : [ ],
+    "resource_subtype" : "default_task",
+    "workspace" : {
+      "gid" : "9284095956886",
+      "name" : "therobbrennan.com",
+      "resource_type" : "workspace"
+    }
+  }, {
+    "gid" : "1211790030718598",
+    "actual_time_minutes" : null,
+    "assignee" : null,
+    "assignee_status" : "upcoming",
+    "completed" : false,
+    "completed_at" : null,
+    "created_at" : "2025-10-30T18:08:30.574Z",
+    "due_at" : null,
+    "due_on" : null,
+    "followers" : [ {
+      "gid" : "1204951450576595",
+      "name" : "Rob Brennan",
+      "resource_type" : "user"
+    } ],
+    "hearted" : false,
+    "hearts" : [ ],
+    "liked" : false,
+    "likes" : [ ],
+    "memberships" : [ {
+      "project" : {
+        "gid" : "1211556182487866",
+        "name" : "Sploosh.AI Hockey Analytics v2026.01.03",
+        "resource_type" : "project"
+      },
+      "section" : {
+        "gid" : "1211566459676394",
+        "name" : "📋 Game plan",
+        "resource_type" : "section"
+      }
+    } ],
+    "modified_at" : "2025-10-30T18:09:47.415Z",
+    "name" : "BRAINSTORM: Create a visualization showing home games for the selected day",
+    "notes" : "Canada and USA should be sufficient for most cases, but we do want to show the world when international games are being played - such as on 2025.11.14 🇸🇪 Pittsburgh Penguins vs. Nashville Predators (Global Series Sweden)",
+    "num_hearts" : 0,
+    "num_likes" : 0,
+    "parent" : null,
+    "permalink_url" : "https://app.asana.com/1/9284095956886/project/1211556182487866/task/1211790030718598",
+    "projects" : [ {
+      "gid" : "1211556182487866",
+      "name" : "Sploosh.AI Hockey Analytics v2026.01.03",
+      "resource_type" : "project"
+    } ],
+    "resource_type" : "task",
+    "start_at" : null,
+    "start_on" : null,
+    "subtasks" : [ ],
+    "tags" : [ ],
+    "resource_subtype" : "default_task",
+    "workspace" : {
+      "gid" : "9284095956886",
+      "name" : "therobbrennan.com",
+      "resource_type" : "workspace"
+    }
+  }, {
+    "gid" : "1204992974275907",
+    "actual_time_minutes" : null,
+    "assignee" : null,
+    "assignee_status" : "upcoming",
+    "completed" : false,
+    "completed_at" : null,
+    "created_at" : "2025-11-02T03:57:42.108Z",
+    "due_at" : null,
+    "due_on" : null,
+    "followers" : [ {
+      "gid" : "1204951450576595",
+      "name" : "Rob Brennan",
+      "resource_type" : "user"
+    } ],
+    "hearted" : false,
+    "hearts" : [ ],
+    "liked" : false,
+    "likes" : [ ],
+    "memberships" : [ {
+      "project" : {
+        "gid" : "1211556182487866",
+        "name" : "Sploosh.AI Hockey Analytics v2026.01.03",
+        "resource_type" : "project"
+      },
+      "section" : {
+        "gid" : "1211566459676394",
+        "name" : "📋 Game plan",
+        "resource_type" : "section"
+      }
+    } ],
+    "modified_at" : "2025-11-02T03:57:43.462Z",
+    "name" : "Add ability to retain and display cached data when network requests are unsuccessful ",
+    "notes" : "",
+    "num_hearts" : 0,
+    "num_likes" : 0,
+    "parent" : null,
+    "permalink_url" : "https://app.asana.com/1/9284095956886/project/1211556182487866/task/1204992974275907",
+    "projects" : [ {
+      "gid" : "1211556182487866",
+      "name" : "Sploosh.AI Hockey Analytics v2026.01.03",
+      "resource_type" : "project"
+    } ],
+    "resource_type" : "task",
+    "start_at" : null,
+    "start_on" : null,
+    "subtasks" : [ ],
+    "tags" : [ ],
+    "resource_subtype" : "default_task",
+    "workspace" : {
+      "gid" : "9284095956886",
+      "name" : "therobbrennan.com",
+      "resource_type" : "workspace"
+    }
+  }, {
+    "gid" : "1211985827921084",
+    "actual_time_minutes" : null,
+    "assignee" : null,
+    "assignee_status" : "inbox",
+    "completed" : false,
+    "completed_at" : null,
+    "created_at" : "2025-11-19T18:01:56.649Z",
+    "due_at" : null,
+    "due_on" : null,
+    "followers" : [ {
+      "gid" : "1204951450576595",
+      "name" : "Rob Brennan",
+      "resource_type" : "user"
+    } ],
+    "hearted" : false,
+    "hearts" : [ ],
+    "liked" : false,
+    "likes" : [ ],
+    "memberships" : [ {
+      "project" : {
+        "gid" : "1211556182487866",
+        "name" : "Sploosh.AI Hockey Analytics v2026.01.03",
+        "resource_type" : "project"
+      },
+      "section" : {
+        "gid" : "1211566459676394",
+        "name" : "📋 Game plan",
+        "resource_type" : "section"
+      }
+    } ],
+    "modified_at" : "2025-11-20T08:33:02.144Z",
+    "name" : "BRAINSTORM: How might you incorporate PWHL preseason and regular season data into the hockey analytics app?",
+    "notes" : "",
+    "num_hearts" : 0,
+    "num_likes" : 0,
+    "parent" : null,
+    "permalink_url" : "https://app.asana.com/1/9284095956886/project/1211556182487866/task/1211985827921084",
+    "projects" : [ {
+      "gid" : "1211556182487866",
+      "name" : "Sploosh.AI Hockey Analytics v2026.01.03",
+      "resource_type" : "project"
+    } ],
+    "resource_type" : "task",
+    "start_at" : null,
+    "start_on" : null,
+    "subtasks" : [ ],
+    "tags" : [ ],
+    "resource_subtype" : "default_task",
+    "workspace" : {
+      "gid" : "9284095956886",
+      "name" : "therobbrennan.com",
+      "resource_type" : "workspace"
+    }
+  }, {
+    "gid" : "1211985828213065",
+    "actual_time_minutes" : null,
+    "assignee" : null,
+    "assignee_status" : "inbox",
+    "completed" : false,
+    "completed_at" : null,
+    "created_at" : "2025-11-19T18:31:13.536Z",
+    "due_at" : null,
+    "due_on" : null,
+    "followers" : [ {
+      "gid" : "1204951450576595",
+      "name" : "Rob Brennan",
+      "resource_type" : "user"
+    } ],
+    "hearted" : false,
+    "hearts" : [ ],
+    "liked" : false,
+    "likes" : [ ],
+    "memberships" : [ {
+      "project" : {
+        "gid" : "1211556182487866",
+        "name" : "Sploosh.AI Hockey Analytics v2026.01.03",
+        "resource_type" : "project"
+      },
+      "section" : {
+        "gid" : "1211566459676394",
+        "name" : "📋 Game plan",
+        "resource_type" : "section"
+      }
+    } ],
+    "modified_at" : "2025-11-20T08:33:01.480Z",
+    "name" : "BRAINSTORM: How might you incorporate WHL data into the hockey analytics app?",
+    "notes" : "",
+    "num_hearts" : 0,
+    "num_likes" : 0,
+    "parent" : null,
+    "permalink_url" : "https://app.asana.com/1/9284095956886/project/1211556182487866/task/1211985828213065",
+    "projects" : [ {
+      "gid" : "1211556182487866",
+      "name" : "Sploosh.AI Hockey Analytics v2026.01.03",
+      "resource_type" : "project"
+    } ],
+    "resource_type" : "task",
+    "start_at" : null,
+    "start_on" : null,
+    "subtasks" : [ ],
+    "tags" : [ ],
+    "resource_subtype" : "default_task",
+    "workspace" : {
+      "gid" : "9284095956886",
+      "name" : "therobbrennan.com",
+      "resource_type" : "workspace"
+    }
+  }, {
+    "gid" : "1211688282864752",
+    "actual_time_minutes" : null,
+    "assignee" : null,
+    "assignee_status" : "upcoming",
+    "completed" : false,
+    "completed_at" : null,
+    "created_at" : "2025-10-19T08:14:10.829Z",
+    "due_at" : null,
+    "due_on" : null,
+    "followers" : [ {
+      "gid" : "1204951450576595",
+      "name" : "Rob Brennan",
+      "resource_type" : "user"
+    } ],
+    "hearted" : false,
+    "hearts" : [ ],
+    "liked" : false,
+    "likes" : [ ],
+    "memberships" : [ {
+      "project" : {
+        "gid" : "1211556182487866",
+        "name" : "Sploosh.AI Hockey Analytics v2026.01.03",
+        "resource_type" : "project"
+      },
+      "section" : {
+        "gid" : "1211688282864747",
+        "name" : "🏈 Punt",
+        "resource_type" : "section"
+      }
+    } ],
+    "modified_at" : "2025-10-19T08:18:45.103Z",
+    "name" : "VERIFY: Shootout game with three skaters on each team",
+    "notes" : "https://sploosh-ai-hockey-analytics.vercel.app/?gameId=2025020063\n\nhttps://app.asana.com/app/asana/-/get_asset?asset_id=1211688282864755\n\n\n",
+    "num_hearts" : 0,
+    "num_likes" : 0,
+    "parent" : null,
+    "permalink_url" : "https://app.asana.com/1/9284095956886/project/1211556182487866/task/1211688282864752",
+    "projects" : [ {
+      "gid" : "1211556182487866",
+      "name" : "Sploosh.AI Hockey Analytics v2026.01.03",
+      "resource_type" : "project"
+    } ],
+    "resource_type" : "task",
+    "start_at" : null,
+    "start_on" : null,
+    "subtasks" : [ ],
+    "tags" : [ ],
+    "resource_subtype" : "default_task",
+    "workspace" : {
+      "gid" : "9284095956886",
+      "name" : "therobbrennan.com",
+      "resource_type" : "workspace"
+    }
+  }, {
+    "gid" : "1211571392508563",
+    "actual_time_minutes" : null,
+    "assignee" : null,
+    "assignee_status" : "inbox",
+    "completed" : false,
+    "completed_at" : null,
+    "created_at" : "2025-10-07T21:27:09.050Z",
+    "due_at" : null,
+    "due_on" : null,
+    "followers" : [ {
+      "gid" : "1204951450576595",
+      "name" : "Rob Brennan",
+      "resource_type" : "user"
+    } ],
+    "hearted" : false,
+    "hearts" : [ ],
+    "liked" : false,
+    "likes" : [ ],
+    "memberships" : [ {
+      "project" : {
+        "gid" : "1211556182487866",
+        "name" : "Sploosh.AI Hockey Analytics v2026.01.03",
+        "resource_type" : "project"
+      },
+      "section" : {
+        "gid" : "1211688282864747",
+        "name" : "🏈 Punt",
+        "resource_type" : "section"
+      }
+    } ],
+    "modified_at" : "2025-10-19T08:18:13.632Z",
+    "name" : "Create a visualization that starts with all 32 teams having an equal shot/weight",
+    "notes" : "Similar to Moneypuck and the playoff circle with teams and likelihood of making the playoffs, it'd be cool to create a visualization where all 32 teams start with equal weight (or no weight). Perhaps able to be viewed as a whole for all 32 teams, by conference, by division, etc. It'd be nice to step through day-by-day.",
+    "num_hearts" : 0,
+    "num_likes" : 0,
+    "parent" : null,
+    "permalink_url" : "https://app.asana.com/1/9284095956886/project/1211556182487866/task/1211571392508563",
+    "projects" : [ {
+      "gid" : "1211556182487866",
+      "name" : "Sploosh.AI Hockey Analytics v2026.01.03",
+      "resource_type" : "project"
+    } ],
+    "resource_type" : "task",
+    "start_at" : null,
+    "start_on" : null,
+    "subtasks" : [ ],
+    "tags" : [ ],
+    "resource_subtype" : "default_task",
+    "workspace" : {
+      "gid" : "9284095956886",
+      "name" : "therobbrennan.com",
+      "resource_type" : "workspace"
+    }
+  }, {
+    "gid" : "1211615926344381",
+    "actual_time_minutes" : null,
+    "assignee" : null,
+    "assignee_status" : "upcoming",
+    "completed" : false,
+    "completed_at" : null,
+    "created_at" : "2025-10-11T19:58:03.343Z",
+    "due_at" : null,
+    "due_on" : null,
+    "followers" : [ {
+      "gid" : "1204951450576595",
+      "name" : "Rob Brennan",
+      "resource_type" : "user"
+    } ],
+    "hearted" : false,
+    "hearts" : [ ],
+    "liked" : false,
+    "likes" : [ ],
+    "memberships" : [ {
+      "project" : {
+        "gid" : "1211556182487866",
+        "name" : "Sploosh.AI Hockey Analytics v2026.01.03",
+        "resource_type" : "project"
+      },
+      "section" : {
+        "gid" : "1211688282864747",
+        "name" : "🏈 Punt",
+        "resource_type" : "section"
+      }
+    } ],
+    "modified_at" : "2025-10-19T08:18:13.145Z",
+    "name" : "Add ability to display NHL standings on the main page",
+    "notes" : "",
+    "num_hearts" : 0,
+    "num_likes" : 0,
+    "parent" : null,
+    "permalink_url" : "https://app.asana.com/1/9284095956886/project/1211556182487866/task/1211615926344381",
+    "projects" : [ {
+      "gid" : "1211556182487866",
+      "name" : "Sploosh.AI Hockey Analytics v2026.01.03",
+      "resource_type" : "project"
+    } ],
+    "resource_type" : "task",
+    "start_at" : null,
+    "start_on" : null,
+    "subtasks" : [ ],
+    "tags" : [ ],
+    "resource_subtype" : "default_task",
+    "workspace" : {
+      "gid" : "9284095956886",
+      "name" : "therobbrennan.com",
+      "resource_type" : "workspace"
+    }
+  }, {
+    "gid" : "1211615926344385",
+    "actual_time_minutes" : null,
+    "assignee" : null,
+    "assignee_status" : "upcoming",
+    "completed" : false,
+    "completed_at" : null,
+    "created_at" : "2025-10-11T19:58:24.516Z",
+    "due_at" : null,
+    "due_on" : null,
+    "followers" : [ {
+      "gid" : "1204951450576595",
+      "name" : "Rob Brennan",
+      "resource_type" : "user"
+    } ],
+    "hearted" : false,
+    "hearts" : [ ],
+    "liked" : false,
+    "likes" : [ ],
+    "memberships" : [ {
+      "project" : {
+        "gid" : "1211556182487866",
+        "name" : "Sploosh.AI Hockey Analytics v2026.01.03",
+        "resource_type" : "project"
+      },
+      "section" : {
+        "gid" : "1211688282864747",
+        "name" : "🏈 Punt",
+        "resource_type" : "section"
+      }
+    } ],
+    "modified_at" : "2025-10-19T08:13:49.787Z",
+    "name" : "Add ability to incorporate displaying WHL games in the sidebar",
+    "notes" : "",
+    "num_hearts" : 0,
+    "num_likes" : 0,
+    "parent" : null,
+    "permalink_url" : "https://app.asana.com/1/9284095956886/project/1211556182487866/task/1211615926344385",
+    "projects" : [ {
+      "gid" : "1211556182487866",
+      "name" : "Sploosh.AI Hockey Analytics v2026.01.03",
+      "resource_type" : "project"
+    } ],
+    "resource_type" : "task",
+    "start_at" : null,
+    "start_on" : null,
+    "subtasks" : [ ],
+    "tags" : [ ],
+    "resource_subtype" : "default_task",
+    "workspace" : {
+      "gid" : "9284095956886",
+      "name" : "therobbrennan.com",
+      "resource_type" : "workspace"
+    }
+  }, {
+    "gid" : "1211615926344383",
+    "actual_time_minutes" : null,
+    "assignee" : null,
+    "assignee_status" : "upcoming",
+    "completed" : false,
+    "completed_at" : null,
+    "created_at" : "2025-10-11T19:58:19.954Z",
+    "due_at" : null,
+    "due_on" : null,
+    "followers" : [ {
+      "gid" : "1204951450576595",
+      "name" : "Rob Brennan",
+      "resource_type" : "user"
+    } ],
+    "hearted" : false,
+    "hearts" : [ ],
+    "liked" : false,
+    "likes" : [ ],
+    "memberships" : [ {
+      "project" : {
+        "gid" : "1211556182487866",
+        "name" : "Sploosh.AI Hockey Analytics v2026.01.03",
+        "resource_type" : "project"
+      },
+      "section" : {
+        "gid" : "1211688282864747",
+        "name" : "🏈 Punt",
+        "resource_type" : "section"
+      }
+    } ],
+    "modified_at" : "2025-10-19T08:13:49.268Z",
+    "name" : "Add ability to display WHL standings on the main page",
+    "notes" : "",
+    "num_hearts" : 0,
+    "num_likes" : 0,
+    "parent" : null,
+    "permalink_url" : "https://app.asana.com/1/9284095956886/project/1211556182487866/task/1211615926344383",
+    "projects" : [ {
+      "gid" : "1211556182487866",
+      "name" : "Sploosh.AI Hockey Analytics v2026.01.03",
+      "resource_type" : "project"
+    } ],
+    "resource_type" : "task",
+    "start_at" : null,
+    "start_on" : null,
+    "subtasks" : [ ],
+    "tags" : [ ],
+    "resource_subtype" : "default_task",
+    "workspace" : {
+      "gid" : "9284095956886",
+      "name" : "therobbrennan.com",
+      "resource_type" : "workspace"
+    }
+  }, {
+    "gid" : "1212636743305173",
+    "actual_time_minutes" : null,
+    "assignee" : {
+      "gid" : "1204951450576595",
+      "name" : "Rob Brennan",
+      "resource_type" : "user"
+    },
+    "assignee_status" : "inbox",
+    "assignee_section" : {
+      "gid" : "1205702603131679",
+      "name" : "🧠 Top of mind",
+      "resource_type" : "section"
+    },
+    "completed" : true,
+    "completed_at" : "2026-01-03T06:50:57.373Z",
+    "created_at" : "2026-01-02T22:55:01.687Z",
+    "due_at" : "2026-01-03T01:00:00.000Z",
+    "due_on" : "2026-01-02",
+    "followers" : [ {
+      "gid" : "1204951450576595",
+      "name" : "Rob Brennan",
+      "resource_type" : "user"
+    } ],
+    "hearted" : false,
+    "hearts" : [ ],
+    "liked" : false,
+    "likes" : [ ],
+    "memberships" : [ {
+      "project" : {
+        "gid" : "1211556182487866",
+        "name" : "Sploosh.AI Hockey Analytics v2026.01.03",
+        "resource_type" : "project"
+      },
+      "section" : {
+        "gid" : "1212634569701287",
+        "name" : "🗄️ Archive 2026'Q1",
+        "resource_type" : "section"
+      }
+    } ],
+    "modified_at" : "2026-01-04T05:31:27.023Z",
+    "name" : "🏖️ New York Rangers at Florida Panthers (2026 Discover NHL Winter Classic)",
+    "notes" : "",
+    "num_hearts" : 0,
+    "num_likes" : 0,
+    "parent" : null,
+    "permalink_url" : "https://app.asana.com/1/9284095956886/project/1211556182487866/task/1212636743305173",
+    "projects" : [ {
+      "gid" : "1211556182487866",
+      "name" : "Sploosh.AI Hockey Analytics v2026.01.03",
+      "resource_type" : "project"
+    } ],
+    "resource_type" : "task",
+    "start_at" : null,
+    "start_on" : null,
+    "subtasks" : [ ],
+    "tags" : [ ],
+    "resource_subtype" : "default_task",
+    "workspace" : {
+      "gid" : "9284095956886",
+      "name" : "therobbrennan.com",
+      "resource_type" : "workspace"
+    }
+  }, {
+    "gid" : "1212291629077267",
+    "actual_time_minutes" : null,
+    "assignee" : {
+      "gid" : "1204951450576595",
+      "name" : "Rob Brennan",
+      "resource_type" : "user"
+    },
+    "assignee_status" : "inbox",
+    "assignee_section" : {
+      "gid" : "1205702603131679",
+      "name" : "🧠 Top of mind",
+      "resource_type" : "section"
+    },
+    "completed" : true,
+    "completed_at" : "2025-12-04T23:30:40.709Z",
+    "created_at" : "2025-12-04T22:43:39.355Z",
+    "due_at" : null,
+    "due_on" : "2025-12-04",
+    "followers" : [ {
+      "gid" : "1204951450576595",
+      "name" : "Rob Brennan",
+      "resource_type" : "user"
+    } ],
+    "hearted" : false,
+    "hearts" : [ ],
+    "liked" : false,
+    "likes" : [ ],
+    "memberships" : [ {
+      "project" : {
+        "gid" : "1211556182487866",
+        "name" : "Sploosh.AI Hockey Analytics v2026.01.03",
+        "resource_type" : "project"
+      },
+      "section" : {
+        "gid" : "1211566459676400",
+        "name" : "🗄️ Archive 2025'Q4",
+        "resource_type" : "section"
+      }
+    } ],
+    "modified_at" : "2025-12-04T23:34:19.009Z",
+    "name" : "‼️ Upgrade to Next.js v16.0.7 or later to address CVE-2025-55182",
+    "notes" : "https://vercel.com/changelog/cve-2025-55182\n\n",
+    "num_hearts" : 0,
+    "num_likes" : 0,
+    "parent" : null,
+    "permalink_url" : "https://app.asana.com/1/9284095956886/project/1211556182487866/task/1212291629077267",
+    "projects" : [ {
+      "gid" : "1211556182487866",
+      "name" : "Sploosh.AI Hockey Analytics v2026.01.03",
+      "resource_type" : "project"
+    } ],
+    "resource_type" : "task",
+    "start_at" : null,
+    "start_on" : null,
+    "subtasks" : [ ],
+    "tags" : [ ],
+    "resource_subtype" : "default_task",
+    "workspace" : {
+      "gid" : "9284095956886",
+      "name" : "therobbrennan.com",
+      "resource_type" : "workspace"
+    }
+  }, {
+    "gid" : "1212223034069913",
+    "actual_time_minutes" : null,
+    "assignee" : {
+      "gid" : "1204951450576595",
+      "name" : "Rob Brennan",
+      "resource_type" : "user"
+    },
+    "assignee_status" : "inbox",
+    "assignee_section" : {
+      "gid" : "1208369087047586",
+      "name" : "📋 Game plan",
+      "resource_type" : "section"
+    },
+    "completed" : true,
+    "completed_at" : "2025-11-30T06:16:36.534Z",
+    "created_at" : "2025-11-29T02:10:08.664Z",
+    "due_at" : null,
+    "due_on" : "2025-11-29",
+    "followers" : [ {
+      "gid" : "1204951450576595",
+      "name" : "Rob Brennan",
+      "resource_type" : "user"
+    } ],
+    "hearted" : false,
+    "hearts" : [ ],
+    "liked" : false,
+    "likes" : [ ],
+    "memberships" : [ {
+      "project" : {
+        "gid" : "1211556182487866",
+        "name" : "Sploosh.AI Hockey Analytics v2026.01.03",
+        "resource_type" : "project"
+      },
+      "section" : {
+        "gid" : "1211566459676400",
+        "name" : "🗄️ Archive 2025'Q4",
+        "resource_type" : "section"
+      }
+    } ],
+    "modified_at" : "2025-12-04T22:43:21.688Z",
+    "name" : "Fix bug reported by Mike Hackworth where game data doesn't load in a long-running window",
+    "notes" : "Mike Hackworth reported a bug where game data seemed to be stuck either loading the Zambonis as a placeholder or just quietly stuck when trying to view game and shot chart details for today's Washington Capitals game - https://sploosh-ai-hockey-analytics.vercel.app/?gameId=2025020386\n\nPer Mike:\nI just opened the website for the Caps and got it again.\n\nhttps://app.asana.com/app/asana/-/get_asset?asset_id=1212223034069916\n\nClosing the window reset and it came back.  I keep the window chrome open all the time if that matters.\n\n",
+    "num_hearts" : 0,
+    "num_likes" : 0,
+    "parent" : null,
+    "permalink_url" : "https://app.asana.com/1/9284095956886/project/1211556182487866/task/1212223034069913",
+    "projects" : [ {
+      "gid" : "1211556182487866",
+      "name" : "Sploosh.AI Hockey Analytics v2026.01.03",
+      "resource_type" : "project"
+    } ],
+    "resource_type" : "task",
+    "start_at" : null,
+    "start_on" : null,
+    "subtasks" : [ ],
+    "tags" : [ ],
+    "resource_subtype" : "default_task",
+    "workspace" : {
+      "gid" : "9284095956886",
+      "name" : "therobbrennan.com",
+      "resource_type" : "workspace"
+    }
+  }, {
+    "gid" : "1211985828213074",
+    "actual_time_minutes" : null,
+    "assignee" : {
+      "gid" : "1204951450576595",
+      "name" : "Rob Brennan",
+      "resource_type" : "user"
+    },
+    "assignee_status" : "inbox",
+    "assignee_section" : {
+      "gid" : "1208369087047586",
+      "name" : "📋 Game plan",
+      "resource_type" : "section"
+    },
+    "completed" : true,
+    "completed_at" : "2025-11-19T20:23:12.763Z",
+    "created_at" : "2025-11-19T19:11:11.332Z",
+    "due_at" : null,
+    "due_on" : "2025-11-19",
+    "followers" : [ {
+      "gid" : "1204951450576595",
+      "name" : "Rob Brennan",
+      "resource_type" : "user"
+    } ],
+    "hearted" : false,
+    "hearts" : [ ],
+    "liked" : false,
+    "likes" : [ ],
+    "memberships" : [ {
+      "project" : {
+        "gid" : "1211017905607389",
+        "name" : "Sports Data Analytics v2025.08.11 ",
+        "resource_type" : "project"
+      },
+      "section" : {
+        "gid" : "1211549352293435",
+        "name" : "🗄️ Archive 2025'Q4",
+        "resource_type" : "section"
+      }
+    }, {
+      "project" : {
+        "gid" : "1211556182487866",
+        "name" : "Sploosh.AI Hockey Analytics v2026.01.03",
+        "resource_type" : "project"
+      },
+      "section" : {
+        "gid" : "1211566459676400",
+        "name" : "🗄️ Archive 2025'Q4",
+        "resource_type" : "section"
+      }
+    } ],
+    "modified_at" : "2025-11-20T08:32:53.706Z",
+    "name" : "Create a shell script that can be run from a package.json helper script to grab NHL games and results for a specified date",
+    "notes" : "Use today's date as a default value if no command-line argument is specified.",
+    "num_hearts" : 0,
+    "num_likes" : 0,
+    "parent" : null,
+    "permalink_url" : "https://app.asana.com/1/9284095956886/project/1211017905607389/task/1211985828213074",
+    "projects" : [ {
+      "gid" : "1211017905607389",
+      "name" : "Sports Data Analytics v2025.08.11 ",
+      "resource_type" : "project"
+    }, {
+      "gid" : "1211556182487866",
+      "name" : "Sploosh.AI Hockey Analytics v2026.01.03",
+      "resource_type" : "project"
+    } ],
+    "resource_type" : "task",
+    "start_at" : null,
+    "start_on" : null,
+    "subtasks" : [ {
+      "gid" : "1211985828213078",
+      "actual_time_minutes" : null,
+      "assignee" : {
+        "gid" : "1204951450576595",
+        "name" : "Rob Brennan",
+        "resource_type" : "user"
+      },
+      "assignee_status" : "inbox",
+      "assignee_section" : {
+        "gid" : "1208369087047586",
+        "name" : "📋 Game plan",
+        "resource_type" : "section"
+      },
+      "completed" : true,
+      "completed_at" : "2025-11-19T20:23:11.347Z",
+      "created_at" : "2025-11-19T20:04:23.562Z",
+      "due_at" : null,
+      "due_on" : "2025-11-19",
+      "followers" : [ {
+        "gid" : "1204951450576595",
+        "name" : "Rob Brennan",
+        "resource_type" : "user"
+      } ],
+      "hearted" : false,
+      "hearts" : [ ],
+      "liked" : false,
+      "likes" : [ ],
+      "memberships" : [ ],
+      "modified_at" : "2025-11-19T20:23:11.807Z",
+      "name" : "Fix a bug where the new NHL schedule script is displaying incorrect start times",
+      "notes" : "https://app.asana.com/app/asana/-/get_asset?asset_id=1211985828213080\n\nhttps://app.asana.com/app/asana/-/get_asset?asset_id=1211985828213082\n\n\n",
+      "num_hearts" : 0,
+      "num_likes" : 0,
+      "parent" : {
+        "gid" : "1211985828213074",
+        "name" : "Create a shell script that can be run from a package.json helper script to grab NHL games and results for a specified date",
+        "resource_type" : "task",
+        "resource_subtype" : "default_task"
+      },
+      "permalink_url" : "https://app.asana.com/1/9284095956886/task/1211985828213078",
+      "projects" : [ ],
+      "resource_type" : "task",
+      "start_at" : null,
+      "start_on" : null,
+      "subtasks" : [ ],
+      "tags" : [ ],
+      "resource_subtype" : "default_task",
+      "workspace" : {
+        "gid" : "9284095956886",
+        "name" : "therobbrennan.com",
+        "resource_type" : "workspace"
+      }
+    } ],
+    "tags" : [ ],
+    "resource_subtype" : "default_task",
+    "workspace" : {
+      "gid" : "9284095956886",
+      "name" : "therobbrennan.com",
+      "resource_type" : "workspace"
+    }
+  }, {
+    "gid" : "1211809868621445",
+    "actual_time_minutes" : null,
+    "assignee" : {
+      "gid" : "1204951450576595",
+      "name" : "Rob Brennan",
+      "resource_type" : "user"
+    },
+    "assignee_status" : "inbox",
+    "assignee_section" : {
+      "gid" : "1208369087047586",
+      "name" : "📋 Game plan",
+      "resource_type" : "section"
+    },
+    "completed" : true,
+    "completed_at" : "2025-11-05T07:24:25.965Z",
+    "created_at" : "2025-11-01T22:49:35.135Z",
+    "due_at" : null,
+    "due_on" : "2025-11-04",
+    "followers" : [ {
+      "gid" : "1204951450576595",
+      "name" : "Rob Brennan",
+      "resource_type" : "user"
+    } ],
+    "hearted" : false,
+    "hearts" : [ ],
+    "liked" : false,
+    "likes" : [ ],
+    "memberships" : [ {
+      "project" : {
+        "gid" : "1211556182487866",
+        "name" : "Sploosh.AI Hockey Analytics v2026.01.03",
+        "resource_type" : "project"
+      },
+      "section" : {
+        "gid" : "1211566459676400",
+        "name" : "🗄️ Archive 2025'Q4",
+        "resource_type" : "section"
+      }
+    }, {
+      "project" : {
+        "gid" : "1211017905607389",
+        "name" : "Sports Data Analytics v2025.08.11 ",
+        "resource_type" : "project"
+      },
+      "section" : {
+        "gid" : "1211549352293435",
+        "name" : "🗄️ Archive 2025'Q4",
+        "resource_type" : "section"
+      }
+    }, {
+      "project" : {
+        "gid" : "1209068034674039",
+        "name" : "NativeBio",
+        "resource_type" : "project"
+      },
+      "section" : {
+        "gid" : "1211556182487873",
+        "name" : "🗄️ Archive 2025'Q4",
+        "resource_type" : "section"
+      }
+    } ],
+    "modified_at" : "2025-11-17T22:09:31.509Z",
+    "name" : "Upgrade Node.js v22 to v24",
+    "notes" : "https://nodejs.org/en/blog/migrations/v22-to-v24\n\nWith the release of Node.js 24.11.0, the Node.js 24 release line has entered Long-Term Support (LTS) and will continue to receive updates through to the end of April 2028.  Please create a new branch so we can review the guide at https://nodejs.org/en/blog/migrations/v22-to-v24 and then see if we can upgrade to Node.js v24 in our project.  Do we need to upgrade our local Node.js version, too? We can and should if v24 is going to be LTS.   Let's do fresh builds of any Dockerized services or applications with the latest LTS version of Node.js and verify our project works as expected.  Sure would be nice if we had tests to validate our application before we went down this path, eh lol",
+    "num_hearts" : 0,
+    "num_likes" : 0,
+    "parent" : null,
+    "permalink_url" : "https://app.asana.com/1/9284095956886/project/1209068034674039/task/1211809868621445",
+    "projects" : [ {
+      "gid" : "1209068034674039",
+      "name" : "NativeBio",
+      "resource_type" : "project"
+    }, {
+      "gid" : "1211017905607389",
+      "name" : "Sports Data Analytics v2025.08.11 ",
+      "resource_type" : "project"
+    }, {
+      "gid" : "1211556182487866",
+      "name" : "Sploosh.AI Hockey Analytics v2026.01.03",
+      "resource_type" : "project"
+    } ],
+    "resource_type" : "task",
+    "start_at" : null,
+    "start_on" : null,
+    "subtasks" : [ ],
+    "tags" : [ ],
+    "resource_subtype" : "default_task",
+    "workspace" : {
+      "gid" : "9284095956886",
+      "name" : "therobbrennan.com",
+      "resource_type" : "workspace"
+    }
+  }, {
+    "gid" : "1211725024673362",
+    "actual_time_minutes" : null,
+    "assignee" : null,
+    "assignee_status" : "inbox",
+    "completed" : true,
+    "completed_at" : "2025-10-27T23:47:31.007Z",
+    "created_at" : "2025-10-23T17:06:18.109Z",
+    "due_at" : null,
+    "due_on" : null,
+    "followers" : [ {
+      "gid" : "1204951450576595",
+      "name" : "Rob Brennan",
+      "resource_type" : "user"
+    } ],
+    "hearted" : false,
+    "hearts" : [ ],
+    "liked" : false,
+    "likes" : [ ],
+    "memberships" : [ {
+      "project" : {
+        "gid" : "1211556182487866",
+        "name" : "Sploosh.AI Hockey Analytics v2026.01.03",
+        "resource_type" : "project"
+      },
+      "section" : {
+        "gid" : "1211566459676400",
+        "name" : "🗄️ Archive 2025'Q4",
+        "resource_type" : "section"
+      }
+    } ],
+    "modified_at" : "2025-10-27T23:47:37.291Z",
+    "name" : "Add count of total games for the day in the sidebar",
+    "notes" : "",
+    "num_hearts" : 0,
+    "num_likes" : 0,
+    "parent" : null,
+    "permalink_url" : "https://app.asana.com/1/9284095956886/project/1211556182487866/task/1211725024673362",
+    "projects" : [ {
+      "gid" : "1211556182487866",
+      "name" : "Sploosh.AI Hockey Analytics v2026.01.03",
+      "resource_type" : "project"
+    } ],
+    "resource_type" : "task",
+    "start_at" : null,
+    "start_on" : null,
+    "subtasks" : [ ],
+    "tags" : [ ],
+    "resource_subtype" : "default_task",
+    "workspace" : {
+      "gid" : "9284095956886",
+      "name" : "therobbrennan.com",
+      "resource_type" : "workspace"
+    }
+  }, {
+    "gid" : "1211763436079816",
+    "actual_time_minutes" : null,
+    "assignee" : {
+      "gid" : "1204951450576595",
+      "name" : "Rob Brennan",
+      "resource_type" : "user"
+    },
+    "assignee_status" : "inbox",
+    "assignee_section" : {
+      "gid" : "1208369087047586",
+      "name" : "📋 Game plan",
+      "resource_type" : "section"
+    },
+    "completed" : true,
+    "completed_at" : "2025-10-27T23:13:06.666Z",
+    "created_at" : "2025-10-27T22:40:04.571Z",
+    "due_at" : null,
+    "due_on" : "2025-10-27",
+    "followers" : [ {
+      "gid" : "1204951450576595",
+      "name" : "Rob Brennan",
+      "resource_type" : "user"
+    } ],
+    "hearted" : false,
+    "hearts" : [ ],
+    "liked" : false,
+    "likes" : [ ],
+    "memberships" : [ {
+      "project" : {
+        "gid" : "1211556182487866",
+        "name" : "Sploosh.AI Hockey Analytics v2026.01.03",
+        "resource_type" : "project"
+      },
+      "section" : {
+        "gid" : "1211566459676400",
+        "name" : "🗄️ Archive 2025'Q4",
+        "resource_type" : "section"
+      }
+    } ],
+    "modified_at" : "2025-10-27T23:13:11.198Z",
+    "name" : "Improve sidebar footer for Sploosh.AI Hockey Analytics version and last released information",
+    "notes" : "",
+    "num_hearts" : 0,
+    "num_likes" : 0,
+    "parent" : null,
+    "permalink_url" : "https://app.asana.com/1/9284095956886/project/1211556182487866/task/1211763436079816",
+    "projects" : [ {
+      "gid" : "1211556182487866",
+      "name" : "Sploosh.AI Hockey Analytics v2026.01.03",
+      "resource_type" : "project"
+    } ],
+    "resource_type" : "task",
+    "start_at" : null,
+    "start_on" : null,
+    "subtasks" : [ ],
+    "tags" : [ ],
+    "resource_subtype" : "default_task",
+    "workspace" : {
+      "gid" : "9284095956886",
+      "name" : "therobbrennan.com",
+      "resource_type" : "workspace"
+    }
+  }, {
+    "gid" : "1211736156185237",
+    "actual_time_minutes" : null,
+    "assignee" : {
+      "gid" : "1204951450576595",
+      "name" : "Rob Brennan",
+      "resource_type" : "user"
+    },
+    "assignee_status" : "inbox",
+    "assignee_section" : {
+      "gid" : "1208369087047586",
+      "name" : "📋 Game plan",
+      "resource_type" : "section"
+    },
+    "completed" : true,
+    "completed_at" : "2025-10-27T22:38:56.437Z",
+    "created_at" : "2025-10-23T22:14:08.982Z",
+    "due_at" : null,
+    "due_on" : "2025-10-27",
+    "followers" : [ {
+      "gid" : "1204951450576595",
+      "name" : "Rob Brennan",
+      "resource_type" : "user"
+    } ],
+    "hearted" : false,
+    "hearts" : [ ],
+    "liked" : false,
+    "likes" : [ ],
+    "memberships" : [ {
+      "project" : {
+        "gid" : "1211556182487866",
+        "name" : "Sploosh.AI Hockey Analytics v2026.01.03",
+        "resource_type" : "project"
+      },
+      "section" : {
+        "gid" : "1211566459676400",
+        "name" : "🗄️ Archive 2025'Q4",
+        "resource_type" : "section"
+      }
+    } ],
+    "modified_at" : "2025-10-27T22:40:03.304Z",
+    "name" : "Upgrade to Next.js 16",
+    "notes" : "https://nextjs.org/blog/next-16",
+    "num_hearts" : 0,
+    "num_likes" : 0,
+    "parent" : null,
+    "permalink_url" : "https://app.asana.com/1/9284095956886/project/1211556182487866/task/1211736156185237",
+    "projects" : [ {
+      "gid" : "1211556182487866",
+      "name" : "Sploosh.AI Hockey Analytics v2026.01.03",
+      "resource_type" : "project"
+    } ],
+    "resource_type" : "task",
+    "start_at" : null,
+    "start_on" : null,
+    "subtasks" : [ ],
+    "tags" : [ ],
+    "resource_subtype" : "default_task",
+    "workspace" : {
+      "gid" : "9284095956886",
+      "name" : "therobbrennan.com",
+      "resource_type" : "workspace"
+    }
+  }, {
+    "gid" : "1211725024673356",
+    "actual_time_minutes" : null,
+    "assignee" : {
+      "gid" : "1204951450576595",
+      "name" : "Rob Brennan",
+      "resource_type" : "user"
+    },
+    "assignee_status" : "inbox",
+    "assignee_section" : {
+      "gid" : "1208369087047586",
+      "name" : "📋 Game plan",
+      "resource_type" : "section"
+    },
+    "completed" : true,
+    "completed_at" : "2025-10-23T01:57:43.829Z",
+    "created_at" : "2025-10-23T01:43:30.321Z",
+    "due_at" : null,
+    "due_on" : "2025-10-22",
+    "followers" : [ {
+      "gid" : "1204951450576595",
+      "name" : "Rob Brennan",
+      "resource_type" : "user"
+    } ],
+    "hearted" : false,
+    "hearts" : [ ],
+    "liked" : false,
+    "likes" : [ ],
+    "memberships" : [ {
+      "project" : {
+        "gid" : "1211556182487866",
+        "name" : "Sploosh.AI Hockey Analytics v2026.01.03",
+        "resource_type" : "project"
+      },
+      "section" : {
+        "gid" : "1211566459676400",
+        "name" : "🗄️ Archive 2025'Q4",
+        "resource_type" : "section"
+      }
+    } ],
+    "modified_at" : "2025-10-23T17:06:17.364Z",
+    "name" : "Remove clunky Video not working? overlay in replay",
+    "notes" : "",
+    "num_hearts" : 0,
+    "num_likes" : 0,
+    "parent" : null,
+    "permalink_url" : "https://app.asana.com/1/9284095956886/project/1211556182487866/task/1211725024673356",
+    "projects" : [ {
+      "gid" : "1211556182487866",
+      "name" : "Sploosh.AI Hockey Analytics v2026.01.03",
+      "resource_type" : "project"
+    } ],
+    "resource_type" : "task",
+    "start_at" : null,
+    "start_on" : null,
+    "subtasks" : [ ],
+    "tags" : [ ],
+    "resource_subtype" : "default_task",
+    "workspace" : {
+      "gid" : "9284095956886",
+      "name" : "therobbrennan.com",
+      "resource_type" : "workspace"
+    }
+  }, {
+    "gid" : "1211701204766384",
+    "actual_time_minutes" : null,
+    "assignee" : {
+      "gid" : "1204951450576595",
+      "name" : "Rob Brennan",
+      "resource_type" : "user"
+    },
+    "assignee_status" : "inbox",
+    "assignee_section" : {
+      "gid" : "1208369087047586",
+      "name" : "📋 Game plan",
+      "resource_type" : "section"
+    },
+    "completed" : true,
+    "completed_at" : "2025-10-22T23:10:29.254Z",
+    "created_at" : "2025-10-21T18:41:13.879Z",
+    "due_at" : null,
+    "due_on" : "2025-10-22",
+    "followers" : [ {
+      "gid" : "1204951450576595",
+      "name" : "Rob Brennan",
+      "resource_type" : "user"
+    } ],
+    "hearted" : false,
+    "hearts" : [ ],
+    "liked" : false,
+    "likes" : [ ],
+    "memberships" : [ {
+      "project" : {
+        "gid" : "1211556182487866",
+        "name" : "Sploosh.AI Hockey Analytics v2026.01.03",
+        "resource_type" : "project"
+      },
+      "section" : {
+        "gid" : "1211566459676400",
+        "name" : "🗄️ Archive 2025'Q4",
+        "resource_type" : "section"
+      }
+    } ],
+    "modified_at" : "2025-10-23T01:33:42.403Z",
+    "name" : "Fix bug in Game Timeline where penalties count doesn't match identified penalties",
+    "notes" : "Using http://localhost:3000/?gameId=2025020094 to reproduce, notice how if we have the 3rd period selected and goals selected, we have 0 goals and 6 penalties identified in event type, but under \"No events to display\" it shows 0 goals and 0 penalties.\n\n\nhttps://app.asana.com/app/asana/-/get_asset?asset_id=1211701204766387\n\n\n",
+    "num_hearts" : 0,
+    "num_likes" : 0,
+    "parent" : null,
+    "permalink_url" : "https://app.asana.com/1/9284095956886/project/1211556182487866/task/1211701204766384",
+    "projects" : [ {
+      "gid" : "1211556182487866",
+      "name" : "Sploosh.AI Hockey Analytics v2026.01.03",
+      "resource_type" : "project"
+    } ],
+    "resource_type" : "task",
+    "start_at" : null,
+    "start_on" : null,
+    "subtasks" : [ ],
+    "tags" : [ ],
+    "resource_subtype" : "default_task",
+    "workspace" : {
+      "gid" : "9284095956886",
+      "name" : "therobbrennan.com",
+      "resource_type" : "workspace"
+    }
+  }, {
+    "gid" : "1211721919093569",
+    "actual_time_minutes" : null,
+    "assignee" : {
+      "gid" : "1204951450576595",
+      "name" : "Rob Brennan",
+      "resource_type" : "user"
+    },
+    "assignee_status" : "inbox",
+    "assignee_section" : {
+      "gid" : "1208369087047586",
+      "name" : "📋 Game plan",
+      "resource_type" : "section"
+    },
+    "completed" : true,
+    "completed_at" : "2025-10-22T23:40:16.923Z",
+    "created_at" : "2025-10-22T22:39:11.031Z",
+    "due_at" : null,
+    "due_on" : "2025-10-22",
+    "followers" : [ {
+      "gid" : "1204951450576595",
+      "name" : "Rob Brennan",
+      "resource_type" : "user"
+    } ],
+    "hearted" : false,
+    "hearts" : [ ],
+    "liked" : false,
+    "likes" : [ ],
+    "memberships" : [ {
+      "project" : {
+        "gid" : "1211556182487866",
+        "name" : "Sploosh.AI Hockey Analytics v2026.01.03",
+        "resource_type" : "project"
+      },
+      "section" : {
+        "gid" : "1211566459676400",
+        "name" : "🗄️ Archive 2025'Q4",
+        "resource_type" : "section"
+      }
+    } ],
+    "modified_at" : "2025-10-23T01:33:42.352Z",
+    "name" : "Add GitHub rules from demo-hello-tdr",
+    "notes" : "",
+    "num_hearts" : 0,
+    "num_likes" : 0,
+    "parent" : null,
+    "permalink_url" : "https://app.asana.com/1/9284095956886/project/1211556182487866/task/1211721919093569",
+    "projects" : [ {
+      "gid" : "1211556182487866",
+      "name" : "Sploosh.AI Hockey Analytics v2026.01.03",
+      "resource_type" : "project"
+    } ],
+    "resource_type" : "task",
+    "start_at" : null,
+    "start_on" : null,
+    "subtasks" : [ ],
+    "tags" : [ ],
+    "resource_subtype" : "default_task",
+    "workspace" : {
+      "gid" : "9284095956886",
+      "name" : "therobbrennan.com",
+      "resource_type" : "workspace"
+    }
+  }, {
+    "gid" : "1211721919093575",
+    "actual_time_minutes" : null,
+    "assignee" : {
+      "gid" : "1204951450576595",
+      "name" : "Rob Brennan",
+      "resource_type" : "user"
+    },
+    "assignee_status" : "inbox",
+    "assignee_section" : {
+      "gid" : "1204951450576623",
+      "name" : "🎫 Recently assigned",
+      "resource_type" : "section"
+    },
+    "completed" : true,
+    "completed_at" : "2025-10-22T23:49:44.457Z",
+    "created_at" : "2025-10-22T23:40:18.712Z",
+    "due_at" : null,
+    "due_on" : "2025-10-22",
+    "followers" : [ {
+      "gid" : "1204951450576595",
+      "name" : "Rob Brennan",
+      "resource_type" : "user"
+    } ],
+    "hearted" : false,
+    "hearts" : [ ],
+    "liked" : false,
+    "likes" : [ ],
+    "memberships" : [ {
+      "project" : {
+        "gid" : "1211556182487866",
+        "name" : "Sploosh.AI Hockey Analytics v2026.01.03",
+        "resource_type" : "project"
+      },
+      "section" : {
+        "gid" : "1211566459676400",
+        "name" : "🗄️ Archive 2025'Q4",
+        "resource_type" : "section"
+      }
+    } ],
+    "modified_at" : "2025-10-23T01:33:42.303Z",
+    "name" : "Fix linting issues for the contributing guide",
+    "notes" : "",
+    "num_hearts" : 0,
+    "num_likes" : 0,
+    "parent" : null,
+    "permalink_url" : "https://app.asana.com/1/9284095956886/project/1211556182487866/task/1211721919093575",
+    "projects" : [ {
+      "gid" : "1211556182487866",
+      "name" : "Sploosh.AI Hockey Analytics v2026.01.03",
+      "resource_type" : "project"
+    } ],
+    "resource_type" : "task",
+    "start_at" : null,
+    "start_on" : null,
+    "subtasks" : [ ],
+    "tags" : [ ],
+    "resource_subtype" : "default_task",
+    "workspace" : {
+      "gid" : "9284095956886",
+      "name" : "therobbrennan.com",
+      "resource_type" : "workspace"
+    }
+  }, {
+    "gid" : "1211721919093572",
+    "actual_time_minutes" : null,
+    "assignee" : {
+      "gid" : "1204951450576595",
+      "name" : "Rob Brennan",
+      "resource_type" : "user"
+    },
+    "assignee_status" : "inbox",
+    "assignee_section" : {
+      "gid" : "1208369087047586",
+      "name" : "📋 Game plan",
+      "resource_type" : "section"
+    },
+    "completed" : true,
+    "completed_at" : "2025-10-23T00:02:05.352Z",
+    "created_at" : "2025-10-22T22:50:23.169Z",
+    "due_at" : null,
+    "due_on" : "2025-10-22",
+    "followers" : [ {
+      "gid" : "1204951450576595",
+      "name" : "Rob Brennan",
+      "resource_type" : "user"
+    } ],
+    "hearted" : false,
+    "hearts" : [ ],
+    "liked" : false,
+    "likes" : [ ],
+    "memberships" : [ {
+      "project" : {
+        "gid" : "1211556182487866",
+        "name" : "Sploosh.AI Hockey Analytics v2026.01.03",
+        "resource_type" : "project"
+      },
+      "section" : {
+        "gid" : "1211566459676400",
+        "name" : "🗄️ Archive 2025'Q4",
+        "resource_type" : "section"
+      }
+    } ],
+    "modified_at" : "2025-10-23T01:33:42.254Z",
+    "name" : "Update the sidebar so clicking NHL Games returns you to the default page with no games selected",
+    "notes" : "",
+    "num_hearts" : 0,
+    "num_likes" : 0,
+    "parent" : null,
+    "permalink_url" : "https://app.asana.com/1/9284095956886/project/1211556182487866/task/1211721919093572",
+    "projects" : [ {
+      "gid" : "1211556182487866",
+      "name" : "Sploosh.AI Hockey Analytics v2026.01.03",
+      "resource_type" : "project"
+    } ],
+    "resource_type" : "task",
+    "start_at" : null,
+    "start_on" : null,
+    "subtasks" : [ ],
+    "tags" : [ ],
+    "resource_subtype" : "default_task",
+    "workspace" : {
+      "gid" : "9284095956886",
+      "name" : "therobbrennan.com",
+      "resource_type" : "workspace"
+    }
+  }, {
+    "gid" : "1211725024673351",
+    "actual_time_minutes" : null,
+    "assignee" : {
+      "gid" : "1204951450576595",
+      "name" : "Rob Brennan",
+      "resource_type" : "user"
+    },
+    "assignee_status" : "inbox",
+    "assignee_section" : {
+      "gid" : "1208369087047586",
+      "name" : "📋 Game plan",
+      "resource_type" : "section"
+    },
+    "completed" : true,
+    "completed_at" : "2025-10-23T00:20:18.702Z",
+    "created_at" : "2025-10-22T23:59:16.176Z",
+    "due_at" : null,
+    "due_on" : "2025-10-22",
+    "followers" : [ {
+      "gid" : "1204951450576595",
+      "name" : "Rob Brennan",
+      "resource_type" : "user"
+    } ],
+    "hearted" : false,
+    "hearts" : [ ],
+    "liked" : false,
+    "likes" : [ ],
+    "memberships" : [ {
+      "project" : {
+        "gid" : "1211556182487866",
+        "name" : "Sploosh.AI Hockey Analytics v2026.01.03",
+        "resource_type" : "project"
+      },
+      "section" : {
+        "gid" : "1211566459676400",
+        "name" : "🗄️ Archive 2025'Q4",
+        "resource_type" : "section"
+      }
+    } ],
+    "modified_at" : "2025-10-23T01:33:42.206Z",
+    "name" : "Fix the responsive view of our shot chart options",
+    "notes" : "https://app.asana.com/app/asana/-/get_asset?asset_id=1211725024673354\n\n\n",
+    "num_hearts" : 0,
+    "num_likes" : 0,
+    "parent" : null,
+    "permalink_url" : "https://app.asana.com/1/9284095956886/project/1211556182487866/task/1211725024673351",
+    "projects" : [ {
+      "gid" : "1211556182487866",
+      "name" : "Sploosh.AI Hockey Analytics v2026.01.03",
+      "resource_type" : "project"
+    } ],
+    "resource_type" : "task",
+    "start_at" : null,
+    "start_on" : null,
+    "subtasks" : [ ],
+    "tags" : [ ],
+    "resource_subtype" : "default_task",
+    "workspace" : {
+      "gid" : "9284095956886",
+      "name" : "therobbrennan.com",
+      "resource_type" : "workspace"
+    }
+  }, {
+    "gid" : "1211701204766388",
+    "actual_time_minutes" : null,
+    "assignee" : {
+      "gid" : "1204951450576595",
+      "name" : "Rob Brennan",
+      "resource_type" : "user"
+    },
+    "assignee_status" : "inbox",
+    "assignee_section" : {
+      "gid" : "1208369087047586",
+      "name" : "📋 Game plan",
+      "resource_type" : "section"
+    },
+    "completed" : true,
+    "completed_at" : "2025-10-23T00:52:15.361Z",
+    "created_at" : "2025-10-21T18:43:08.638Z",
+    "due_at" : null,
+    "due_on" : "2025-10-22",
+    "followers" : [ {
+      "gid" : "1204951450576595",
+      "name" : "Rob Brennan",
+      "resource_type" : "user"
+    } ],
+    "hearted" : false,
+    "hearts" : [ ],
+    "liked" : false,
+    "likes" : [ ],
+    "memberships" : [ {
+      "project" : {
+        "gid" : "1211556182487866",
+        "name" : "Sploosh.AI Hockey Analytics v2026.01.03",
+        "resource_type" : "project"
+      },
+      "section" : {
+        "gid" : "1211566459676400",
+        "name" : "🗄️ Archive 2025'Q4",
+        "resource_type" : "section"
+      }
+    } ],
+    "modified_at" : "2025-10-23T01:33:42.156Z",
+    "name" : "Update Game Timeline to only display goals and all periods by default",
+    "notes" : "",
+    "num_hearts" : 0,
+    "num_likes" : 0,
+    "parent" : null,
+    "permalink_url" : "https://app.asana.com/1/9284095956886/project/1211556182487866/task/1211701204766388",
+    "projects" : [ {
+      "gid" : "1211556182487866",
+      "name" : "Sploosh.AI Hockey Analytics v2026.01.03",
+      "resource_type" : "project"
+    } ],
+    "resource_type" : "task",
+    "start_at" : null,
+    "start_on" : null,
+    "subtasks" : [ ],
+    "tags" : [ ],
+    "resource_subtype" : "default_task",
+    "workspace" : {
+      "gid" : "9284095956886",
+      "name" : "therobbrennan.com",
+      "resource_type" : "workspace"
+    }
+  }, {
+    "gid" : "1211701204766390",
+    "actual_time_minutes" : null,
+    "assignee" : {
+      "gid" : "1204951450576595",
+      "name" : "Rob Brennan",
+      "resource_type" : "user"
+    },
+    "assignee_status" : "inbox",
+    "assignee_section" : {
+      "gid" : "1208369087047586",
+      "name" : "📋 Game plan",
+      "resource_type" : "section"
+    },
+    "completed" : true,
+    "completed_at" : "2025-10-23T01:33:26.922Z",
+    "created_at" : "2025-10-21T18:43:43.042Z",
+    "due_at" : null,
+    "due_on" : "2025-10-22",
+    "followers" : [ {
+      "gid" : "1204951450576595",
+      "name" : "Rob Brennan",
+      "resource_type" : "user"
+    } ],
+    "hearted" : false,
+    "hearts" : [ ],
+    "liked" : false,
+    "likes" : [ ],
+    "memberships" : [ {
+      "project" : {
+        "gid" : "1211556182487866",
+        "name" : "Sploosh.AI Hockey Analytics v2026.01.03",
+        "resource_type" : "project"
+      },
+      "section" : {
+        "gid" : "1211566459676400",
+        "name" : "🗄️ Archive 2025'Q4",
+        "resource_type" : "section"
+      }
+    } ],
+    "modified_at" : "2025-10-23T01:33:41.196Z",
+    "name" : "Update Game Timeline to dynamically create filters for all event types and display all event data",
+    "notes" : "",
+    "num_hearts" : 0,
+    "num_likes" : 0,
+    "parent" : null,
+    "permalink_url" : "https://app.asana.com/1/9284095956886/project/1211556182487866/task/1211701204766390",
+    "projects" : [ {
+      "gid" : "1211556182487866",
+      "name" : "Sploosh.AI Hockey Analytics v2026.01.03",
+      "resource_type" : "project"
+    } ],
+    "resource_type" : "task",
+    "start_at" : null,
+    "start_on" : null,
+    "subtasks" : [ ],
+    "tags" : [ ],
+    "resource_subtype" : "default_task",
+    "workspace" : {
+      "gid" : "9284095956886",
+      "name" : "therobbrennan.com",
+      "resource_type" : "workspace"
+    }
+  }, {
+    "gid" : "1211710399607680",
+    "actual_time_minutes" : null,
+    "assignee" : {
+      "gid" : "1204951450576595",
+      "name" : "Rob Brennan",
+      "resource_type" : "user"
+    },
+    "assignee_status" : "inbox",
+    "assignee_section" : {
+      "gid" : "1204951450576623",
+      "name" : "🎫 Recently assigned",
+      "resource_type" : "section"
+    },
+    "completed" : true,
+    "completed_at" : "2025-10-22T00:15:22.659Z",
+    "created_at" : "2025-10-21T23:56:16.665Z",
+    "due_at" : null,
+    "due_on" : "2025-10-21",
+    "followers" : [ {
+      "gid" : "1204951450576595",
+      "name" : "Rob Brennan",
+      "resource_type" : "user"
+    } ],
+    "hearted" : false,
+    "hearts" : [ ],
+    "liked" : false,
+    "likes" : [ ],
+    "memberships" : [ {
+      "project" : {
+        "gid" : "1211556182487866",
+        "name" : "Sploosh.AI Hockey Analytics v2026.01.03",
+        "resource_type" : "project"
+      },
+      "section" : {
+        "gid" : "1211566459676400",
+        "name" : "🗄️ Archive 2025'Q4",
+        "resource_type" : "section"
+      }
+    } ],
+    "modified_at" : "2025-10-22T00:16:15.158Z",
+    "name" : "Fix bug where clicking a game in the sidebar doesn't clear the pre-existing game and content loads/refreshes",
+    "notes" : "",
+    "num_hearts" : 0,
+    "num_likes" : 0,
+    "parent" : null,
+    "permalink_url" : "https://app.asana.com/1/9284095956886/project/1211556182487866/task/1211710399607680",
+    "projects" : [ {
+      "gid" : "1211556182487866",
+      "name" : "Sploosh.AI Hockey Analytics v2026.01.03",
+      "resource_type" : "project"
+    } ],
+    "resource_type" : "task",
+    "start_at" : null,
+    "start_on" : null,
+    "subtasks" : [ ],
+    "tags" : [ ],
+    "resource_subtype" : "default_task",
+    "workspace" : {
+      "gid" : "9284095956886",
+      "name" : "therobbrennan.com",
+      "resource_type" : "workspace"
+    }
+  }, {
+    "gid" : "1211710399607671",
+    "actual_time_minutes" : null,
+    "assignee" : {
+      "gid" : "1204951450576595",
+      "name" : "Rob Brennan",
+      "resource_type" : "user"
+    },
+    "assignee_status" : "inbox",
+    "assignee_section" : {
+      "gid" : "1205702603131679",
+      "name" : "🧠 Top of mind",
+      "resource_type" : "section"
+    },
+    "completed" : true,
+    "completed_at" : "2025-10-21T23:49:45.022Z",
+    "created_at" : "2025-10-21T23:08:56.608Z",
+    "due_at" : "2025-10-21T23:30:00.000Z",
+    "due_on" : "2025-10-21",
+    "followers" : [ {
+      "gid" : "1204951450576595",
+      "name" : "Rob Brennan",
+      "resource_type" : "user"
+    } ],
+    "hearted" : false,
+    "hearts" : [ ],
+    "liked" : false,
+    "likes" : [ ],
+    "memberships" : [ {
+      "project" : {
+        "gid" : "1211556182487866",
+        "name" : "Sploosh.AI Hockey Analytics v2026.01.03",
+        "resource_type" : "project"
+      },
+      "section" : {
+        "gid" : "1211566459676400",
+        "name" : "🗄️ Archive 2025'Q4",
+        "resource_type" : "section"
+      }
+    } ],
+    "modified_at" : "2025-10-21T23:56:15.499Z",
+    "name" : "Fix bug where a game waiting to start shows as a historical game before shot tracking was enabled",
+    "notes" : "https://app.asana.com/app/asana/-/get_asset?asset_id=1211710399607674\n\n\n",
+    "num_hearts" : 0,
+    "num_likes" : 0,
+    "parent" : null,
+    "permalink_url" : "https://app.asana.com/1/9284095956886/project/1211556182487866/task/1211710399607671",
+    "projects" : [ {
+      "gid" : "1211556182487866",
+      "name" : "Sploosh.AI Hockey Analytics v2026.01.03",
+      "resource_type" : "project"
+    } ],
+    "resource_type" : "task",
+    "start_at" : null,
+    "start_on" : null,
+    "subtasks" : [ ],
+    "tags" : [ ],
+    "resource_subtype" : "default_task",
+    "workspace" : {
+      "gid" : "9284095956886",
+      "name" : "therobbrennan.com",
+      "resource_type" : "workspace"
+    }
+  }, {
+    "gid" : "1211701204766377",
+    "actual_time_minutes" : null,
+    "assignee" : {
+      "gid" : "1204951450576595",
+      "name" : "Rob Brennan",
+      "resource_type" : "user"
+    },
+    "assignee_status" : "inbox",
+    "assignee_section" : {
+      "gid" : "1204951450576623",
+      "name" : "🎫 Recently assigned",
+      "resource_type" : "section"
+    },
+    "completed" : true,
+    "completed_at" : "2025-10-21T06:39:03.430Z",
+    "created_at" : "2025-10-20T23:34:39.128Z",
+    "due_at" : null,
+    "due_on" : "2025-10-20",
+    "followers" : [ {
+      "gid" : "1204951450576595",
+      "name" : "Rob Brennan",
+      "resource_type" : "user"
+    } ],
+    "hearted" : false,
+    "hearts" : [ ],
+    "liked" : false,
+    "likes" : [ ],
+    "memberships" : [ {
+      "project" : {
+        "gid" : "1211556182487866",
+        "name" : "Sploosh.AI Hockey Analytics v2026.01.03",
+        "resource_type" : "project"
+      },
+      "section" : {
+        "gid" : "1211566459676400",
+        "name" : "🗄️ Archive 2025'Q4",
+        "resource_type" : "section"
+      }
+    } ],
+    "modified_at" : "2025-10-21T18:41:09.347Z",
+    "name" : "Handle the case where a replay URL is available but the replay is not",
+    "notes" : "",
+    "num_hearts" : 0,
+    "num_likes" : 0,
+    "parent" : null,
+    "permalink_url" : "https://app.asana.com/1/9284095956886/project/1211556182487866/task/1211701204766377",
+    "projects" : [ {
+      "gid" : "1211556182487866",
+      "name" : "Sploosh.AI Hockey Analytics v2026.01.03",
+      "resource_type" : "project"
+    } ],
+    "resource_type" : "task",
+    "start_at" : null,
+    "start_on" : null,
+    "subtasks" : [ ],
+    "tags" : [ ],
+    "resource_subtype" : "default_task",
+    "workspace" : {
+      "gid" : "9284095956886",
+      "name" : "therobbrennan.com",
+      "resource_type" : "workspace"
+    }
+  }, {
+    "gid" : "1211691153363907",
+    "actual_time_minutes" : null,
+    "assignee" : {
+      "gid" : "1204951450576595",
+      "name" : "Rob Brennan",
+      "resource_type" : "user"
+    },
+    "assignee_status" : "inbox",
+    "assignee_section" : {
+      "gid" : "1208369087047586",
+      "name" : "📋 Game plan",
+      "resource_type" : "section"
+    },
+    "completed" : true,
+    "completed_at" : "2025-10-20T23:34:17.783Z",
+    "created_at" : "2025-10-20T06:47:36.231Z",
+    "due_at" : null,
+    "due_on" : "2025-10-20",
+    "followers" : [ {
+      "gid" : "1204951450576595",
+      "name" : "Rob Brennan",
+      "resource_type" : "user"
+    } ],
+    "hearted" : false,
+    "hearts" : [ ],
+    "liked" : false,
+    "likes" : [ ],
+    "memberships" : [ {
+      "project" : {
+        "gid" : "1211556182487866",
+        "name" : "Sploosh.AI Hockey Analytics v2026.01.03",
+        "resource_type" : "project"
+      },
+      "section" : {
+        "gid" : "1211566459676400",
+        "name" : "🗄️ Archive 2025'Q4",
+        "resource_type" : "section"
+      }
+    } ],
+    "modified_at" : "2025-10-20T23:34:38.800Z",
+    "name" : "Add appropriate copyright details for the NHL and appropriate usage from the NHL EDGE API",
+    "notes" : "",
+    "num_hearts" : 0,
+    "num_likes" : 0,
+    "parent" : null,
+    "permalink_url" : "https://app.asana.com/1/9284095956886/project/1211556182487866/task/1211691153363907",
+    "projects" : [ {
+      "gid" : "1211556182487866",
+      "name" : "Sploosh.AI Hockey Analytics v2026.01.03",
+      "resource_type" : "project"
+    } ],
+    "resource_type" : "task",
+    "start_at" : null,
+    "start_on" : null,
+    "subtasks" : [ ],
+    "tags" : [ ],
+    "resource_subtype" : "default_task",
+    "workspace" : {
+      "gid" : "9284095956886",
+      "name" : "therobbrennan.com",
+      "resource_type" : "workspace"
+    }
+  }, {
+    "gid" : "1211700890123907",
+    "actual_time_minutes" : null,
+    "assignee" : {
+      "gid" : "1204951450576595",
+      "name" : "Rob Brennan",
+      "resource_type" : "user"
+    },
+    "assignee_status" : "inbox",
+    "assignee_section" : {
+      "gid" : "1205702603131679",
+      "name" : "🧠 Top of mind",
+      "resource_type" : "section"
+    },
+    "completed" : true,
+    "completed_at" : "2025-10-20T23:10:39.466Z",
+    "created_at" : "2025-10-20T22:17:51.053Z",
+    "due_at" : null,
+    "due_on" : "2025-10-20",
+    "followers" : [ {
+      "gid" : "1204951450576595",
+      "name" : "Rob Brennan",
+      "resource_type" : "user"
+    } ],
+    "hearted" : false,
+    "hearts" : [ ],
+    "liked" : false,
+    "likes" : [ ],
+    "memberships" : [ {
+      "project" : {
+        "gid" : "1211556182487866",
+        "name" : "Sploosh.AI Hockey Analytics v2026.01.03",
+        "resource_type" : "project"
+      },
+      "section" : {
+        "gid" : "1211566459676400",
+        "name" : "🗄️ Archive 2025'Q4",
+        "resource_type" : "section"
+      }
+    } ],
+    "modified_at" : "2025-10-20T23:34:38.301Z",
+    "name" : "Troubleshoot and resolved failed AWS-caused build and deployment issues",
+    "notes" : "",
+    "num_hearts" : 0,
+    "num_likes" : 0,
+    "parent" : null,
+    "permalink_url" : "https://app.asana.com/1/9284095956886/project/1211556182487866/task/1211700890123907",
+    "projects" : [ {
+      "gid" : "1211556182487866",
+      "name" : "Sploosh.AI Hockey Analytics v2026.01.03",
+      "resource_type" : "project"
+    } ],
+    "resource_type" : "task",
+    "start_at" : null,
+    "start_on" : null,
+    "subtasks" : [ ],
+    "tags" : [ ],
+    "resource_subtype" : "default_task",
+    "workspace" : {
+      "gid" : "9284095956886",
+      "name" : "therobbrennan.com",
+      "resource_type" : "workspace"
+    }
+  }, {
+    "gid" : "1211691153363899",
+    "actual_time_minutes" : null,
+    "assignee" : {
+      "gid" : "1204951450576595",
+      "name" : "Rob Brennan",
+      "resource_type" : "user"
+    },
+    "assignee_status" : "inbox",
+    "assignee_section" : {
+      "gid" : "1208369087047586",
+      "name" : "📋 Game plan",
+      "resource_type" : "section"
+    },
+    "completed" : true,
+    "completed_at" : "2025-10-20T22:15:56.734Z",
+    "created_at" : "2025-10-20T03:40:25.946Z",
+    "due_at" : null,
+    "due_on" : "2025-10-19",
+    "followers" : [ {
+      "gid" : "1204951450576595",
+      "name" : "Rob Brennan",
+      "resource_type" : "user"
+    } ],
+    "hearted" : false,
+    "hearts" : [ ],
+    "liked" : false,
+    "likes" : [ ],
+    "memberships" : [ {
+      "project" : {
+        "gid" : "1211556182487866",
+        "name" : "Sploosh.AI Hockey Analytics v2026.01.03",
+        "resource_type" : "project"
+      },
+      "section" : {
+        "gid" : "1211566459676400",
+        "name" : "🗄️ Archive 2025'Q4",
+        "resource_type" : "section"
+      }
+    } ],
+    "modified_at" : "2025-10-20T22:17:50.846Z",
+    "name" : "Improve UX for marker overlays using team colors",
+    "notes" : "",
+    "num_hearts" : 0,
+    "num_likes" : 0,
+    "parent" : null,
+    "permalink_url" : "https://app.asana.com/1/9284095956886/project/1211556182487866/task/1211691153363899",
+    "projects" : [ {
+      "gid" : "1211556182487866",
+      "name" : "Sploosh.AI Hockey Analytics v2026.01.03",
+      "resource_type" : "project"
+    } ],
+    "resource_type" : "task",
+    "start_at" : null,
+    "start_on" : null,
+    "subtasks" : [ ],
+    "tags" : [ ],
+    "resource_subtype" : "default_task",
+    "workspace" : {
+      "gid" : "9284095956886",
+      "name" : "therobbrennan.com",
+      "resource_type" : "workspace"
+    }
+  }, {
+    "gid" : "1211691153363905",
+    "actual_time_minutes" : null,
+    "assignee" : {
+      "gid" : "1204951450576595",
+      "name" : "Rob Brennan",
+      "resource_type" : "user"
+    },
+    "assignee_status" : "inbox",
+    "assignee_section" : {
+      "gid" : "1208369087047586",
+      "name" : "📋 Game plan",
+      "resource_type" : "section"
+    },
+    "completed" : true,
+    "completed_at" : "2025-10-20T22:15:57.968Z",
+    "created_at" : "2025-10-20T06:47:22.886Z",
+    "due_at" : null,
+    "due_on" : "2025-10-19",
+    "followers" : [ {
+      "gid" : "1204951450576595",
+      "name" : "Rob Brennan",
+      "resource_type" : "user"
+    } ],
+    "hearted" : false,
+    "hearts" : [ ],
+    "liked" : false,
+    "likes" : [ ],
+    "memberships" : [ {
+      "project" : {
+        "gid" : "1211556182487866",
+        "name" : "Sploosh.AI Hockey Analytics v2026.01.03",
+        "resource_type" : "project"
+      },
+      "section" : {
+        "gid" : "1211566459676400",
+        "name" : "🗄️ Archive 2025'Q4",
+        "resource_type" : "section"
+      }
+    } ],
+    "modified_at" : "2025-10-20T22:17:50.790Z",
+    "name" : "Improve UX by adding NHL Game Center and broadcast details to the header",
+    "notes" : "",
+    "num_hearts" : 0,
+    "num_likes" : 0,
+    "parent" : null,
+    "permalink_url" : "https://app.asana.com/1/9284095956886/project/1211556182487866/task/1211691153363905",
+    "projects" : [ {
+      "gid" : "1211556182487866",
+      "name" : "Sploosh.AI Hockey Analytics v2026.01.03",
+      "resource_type" : "project"
+    } ],
+    "resource_type" : "task",
+    "start_at" : null,
+    "start_on" : null,
+    "subtasks" : [ ],
+    "tags" : [ ],
+    "resource_subtype" : "default_task",
+    "workspace" : {
+      "gid" : "9284095956886",
+      "name" : "therobbrennan.com",
+      "resource_type" : "workspace"
+    }
+  }, {
+    "gid" : "1211571392508560",
+    "actual_time_minutes" : null,
+    "assignee" : {
+      "gid" : "1204951450576595",
+      "name" : "Rob Brennan",
+      "resource_type" : "user"
+    },
+    "assignee_status" : "inbox",
+    "assignee_section" : {
+      "gid" : "1208369087047586",
+      "name" : "📋 Game plan",
+      "resource_type" : "section"
+    },
+    "completed" : true,
+    "completed_at" : "2025-10-20T22:16:00.711Z",
+    "created_at" : "2025-10-07T19:46:10.343Z",
+    "due_at" : null,
+    "due_on" : "2025-10-19",
+    "followers" : [ {
+      "gid" : "1204951450576595",
+      "name" : "Rob Brennan",
+      "resource_type" : "user"
+    } ],
+    "hearted" : false,
+    "hearts" : [ ],
+    "liked" : false,
+    "likes" : [ ],
+    "memberships" : [ {
+      "project" : {
+        "gid" : "1211556182487866",
+        "name" : "Sploosh.AI Hockey Analytics v2026.01.03",
+        "resource_type" : "project"
+      },
+      "section" : {
+        "gid" : "1211566459676400",
+        "name" : "🗄️ Archive 2025'Q4",
+        "resource_type" : "section"
+      }
+    } ],
+    "modified_at" : "2025-10-20T22:17:50.143Z",
+    "name" : "Add a calendar to quickly select specific dates for viewing game data",
+    "notes" : "",
+    "num_hearts" : 0,
+    "num_likes" : 0,
+    "parent" : null,
+    "permalink_url" : "https://app.asana.com/1/9284095956886/project/1211556182487866/task/1211571392508560",
+    "projects" : [ {
+      "gid" : "1211556182487866",
+      "name" : "Sploosh.AI Hockey Analytics v2026.01.03",
+      "resource_type" : "project"
+    } ],
+    "resource_type" : "task",
+    "start_at" : null,
+    "start_on" : null,
+    "subtasks" : [ ],
+    "tags" : [ ],
+    "resource_subtype" : "default_task",
+    "workspace" : {
+      "gid" : "9284095956886",
+      "name" : "therobbrennan.com",
+      "resource_type" : "workspace"
+    }
+  }, {
+    "gid" : "1211688282864763",
+    "actual_time_minutes" : null,
+    "assignee" : {
+      "gid" : "1204951450576595",
+      "name" : "Rob Brennan",
+      "resource_type" : "user"
+    },
+    "assignee_status" : "inbox",
+    "assignee_section" : {
+      "gid" : "1208369087047586",
+      "name" : "📋 Game plan",
+      "resource_type" : "section"
+    },
+    "completed" : true,
+    "completed_at" : "2025-10-20T05:12:15.047Z",
+    "created_at" : "2025-10-19T08:16:35.821Z",
+    "due_at" : null,
+    "due_on" : "2025-10-19",
+    "followers" : [ {
+      "gid" : "1204951450576595",
+      "name" : "Rob Brennan",
+      "resource_type" : "user"
+    } ],
+    "hearted" : false,
+    "hearts" : [ ],
+    "liked" : false,
+    "likes" : [ ],
+    "memberships" : [ {
+      "project" : {
+        "gid" : "1211556182487866",
+        "name" : "Sploosh.AI Hockey Analytics v2026.01.03",
+        "resource_type" : "project"
+      },
+      "section" : {
+        "gid" : "1211566459676400",
+        "name" : "🗄️ Archive 2025'Q4",
+        "resource_type" : "section"
+      }
+    } ],
+    "modified_at" : "2025-10-20T06:48:55.252Z",
+    "name" : "Improve UX for displaying shot chart legend",
+    "notes" : "https://app.asana.com/app/asana/-/get_asset?asset_id=1211688282864766\n\n\n",
+    "num_hearts" : 0,
+    "num_likes" : 0,
+    "parent" : null,
+    "permalink_url" : "https://app.asana.com/1/9284095956886/project/1211556182487866/task/1211688282864763",
+    "projects" : [ {
+      "gid" : "1211556182487866",
+      "name" : "Sploosh.AI Hockey Analytics v2026.01.03",
+      "resource_type" : "project"
+    } ],
+    "resource_type" : "task",
+    "start_at" : null,
+    "start_on" : null,
+    "subtasks" : [ ],
+    "tags" : [ ],
+    "resource_subtype" : "default_task",
+    "workspace" : {
+      "gid" : "9284095956886",
+      "name" : "therobbrennan.com",
+      "resource_type" : "workspace"
+    }
+  }, {
+    "gid" : "1211688282864767",
+    "actual_time_minutes" : null,
+    "assignee" : {
+      "gid" : "1204951450576595",
+      "name" : "Rob Brennan",
+      "resource_type" : "user"
+    },
+    "assignee_status" : "inbox",
+    "assignee_section" : {
+      "gid" : "1208369087047586",
+      "name" : "📋 Game plan",
+      "resource_type" : "section"
+    },
+    "completed" : true,
+    "completed_at" : "2025-10-20T05:31:59.774Z",
+    "created_at" : "2025-10-19T08:17:22.662Z",
+    "due_at" : null,
+    "due_on" : "2025-10-19",
+    "followers" : [ {
+      "gid" : "1204951450576595",
+      "name" : "Rob Brennan",
+      "resource_type" : "user"
+    } ],
+    "hearted" : false,
+    "hearts" : [ ],
+    "liked" : false,
+    "likes" : [ ],
+    "memberships" : [ {
+      "project" : {
+        "gid" : "1211556182487866",
+        "name" : "Sploosh.AI Hockey Analytics v2026.01.03",
+        "resource_type" : "project"
+      },
+      "section" : {
+        "gid" : "1211566459676400",
+        "name" : "🗄️ Archive 2025'Q4",
+        "resource_type" : "section"
+      }
+    } ],
+    "modified_at" : "2025-10-20T06:48:55.192Z",
+    "name" : "Improve UX for displaying shot chart game stats",
+    "notes" : "https://app.asana.com/app/asana/-/get_asset?asset_id=1211688283049687\n\n\n",
+    "num_hearts" : 0,
+    "num_likes" : 0,
+    "parent" : null,
+    "permalink_url" : "https://app.asana.com/1/9284095956886/project/1211556182487866/task/1211688282864767",
+    "projects" : [ {
+      "gid" : "1211556182487866",
+      "name" : "Sploosh.AI Hockey Analytics v2026.01.03",
+      "resource_type" : "project"
+    } ],
+    "resource_type" : "task",
+    "start_at" : null,
+    "start_on" : null,
+    "subtasks" : [ ],
+    "tags" : [ ],
+    "resource_subtype" : "default_task",
+    "workspace" : {
+      "gid" : "9284095956886",
+      "name" : "therobbrennan.com",
+      "resource_type" : "workspace"
+    }
+  }, {
+    "gid" : "1211688283049693",
+    "actual_time_minutes" : null,
+    "assignee" : {
+      "gid" : "1204951450576595",
+      "name" : "Rob Brennan",
+      "resource_type" : "user"
+    },
+    "assignee_status" : "inbox",
+    "assignee_section" : {
+      "gid" : "1208369087047586",
+      "name" : "📋 Game plan",
+      "resource_type" : "section"
+    },
+    "completed" : true,
+    "completed_at" : "2025-10-20T04:23:30.501Z",
+    "created_at" : "2025-10-19T08:20:21.113Z",
+    "due_at" : null,
+    "due_on" : "2025-10-19",
+    "followers" : [ {
+      "gid" : "1204951450576595",
+      "name" : "Rob Brennan",
+      "resource_type" : "user"
+    } ],
+    "hearted" : false,
+    "hearts" : [ ],
+    "liked" : false,
+    "likes" : [ ],
+    "memberships" : [ {
+      "project" : {
+        "gid" : "1211556182487866",
+        "name" : "Sploosh.AI Hockey Analytics v2026.01.03",
+        "resource_type" : "project"
+      },
+      "section" : {
+        "gid" : "1211566459676400",
+        "name" : "🗄️ Archive 2025'Q4",
+        "resource_type" : "section"
+      }
+    } ],
+    "modified_at" : "2025-10-20T06:48:55.130Z",
+    "name" : "Improve UX for displaying team abbreviations or name near the goal",
+    "notes" : "https://app.asana.com/app/asana/-/get_asset?asset_id=1211688283049697\n\n\n",
+    "num_hearts" : 0,
+    "num_likes" : 0,
+    "parent" : null,
+    "permalink_url" : "https://app.asana.com/1/9284095956886/project/1211556182487866/task/1211688283049693",
+    "projects" : [ {
+      "gid" : "1211556182487866",
+      "name" : "Sploosh.AI Hockey Analytics v2026.01.03",
+      "resource_type" : "project"
+    } ],
+    "resource_type" : "task",
+    "start_at" : null,
+    "start_on" : null,
+    "subtasks" : [ ],
+    "tags" : [ ],
+    "resource_subtype" : "default_task",
+    "workspace" : {
+      "gid" : "9284095956886",
+      "name" : "therobbrennan.com",
+      "resource_type" : "workspace"
+    }
+  }, {
+    "gid" : "1211691153363902",
+    "actual_time_minutes" : null,
+    "assignee" : {
+      "gid" : "1204951450576595",
+      "name" : "Rob Brennan",
+      "resource_type" : "user"
+    },
+    "assignee_status" : "inbox",
+    "assignee_section" : {
+      "gid" : "1208369087047586",
+      "name" : "📋 Game plan",
+      "resource_type" : "section"
+    },
+    "completed" : true,
+    "completed_at" : "2025-10-20T04:52:42.166Z",
+    "created_at" : "2025-10-20T04:10:50.442Z",
+    "due_at" : null,
+    "due_on" : "2025-10-19",
+    "followers" : [ {
+      "gid" : "1204951450576595",
+      "name" : "Rob Brennan",
+      "resource_type" : "user"
+    } ],
+    "hearted" : false,
+    "hearts" : [ ],
+    "liked" : false,
+    "likes" : [ ],
+    "memberships" : [ {
+      "project" : {
+        "gid" : "1211556182487866",
+        "name" : "Sploosh.AI Hockey Analytics v2026.01.03",
+        "resource_type" : "project"
+      },
+      "section" : {
+        "gid" : "1211566459676400",
+        "name" : "🗄️ Archive 2025'Q4",
+        "resource_type" : "section"
+      }
+    } ],
+    "modified_at" : "2025-10-20T06:48:54.484Z",
+    "name" : "Improve UX for when team colors do not provide a reasonable contrast on the shot chart",
+    "notes" : "Use http://localhost:3000/?gameId=2025020079 as an example - SEA vs TOR where both have similar colors",
+    "num_hearts" : 0,
+    "num_likes" : 0,
+    "parent" : null,
+    "permalink_url" : "https://app.asana.com/1/9284095956886/project/1211556182487866/task/1211691153363902",
+    "projects" : [ {
+      "gid" : "1211556182487866",
+      "name" : "Sploosh.AI Hockey Analytics v2026.01.03",
+      "resource_type" : "project"
+    } ],
+    "resource_type" : "task",
+    "start_at" : null,
+    "start_on" : null,
+    "subtasks" : [ ],
+    "tags" : [ ],
+    "resource_subtype" : "default_task",
+    "workspace" : {
+      "gid" : "9284095956886",
+      "name" : "therobbrennan.com",
+      "resource_type" : "workspace"
+    }
+  }, {
+    "gid" : "1211691153363896",
+    "actual_time_minutes" : null,
+    "assignee" : {
+      "gid" : "1204951450576595",
+      "name" : "Rob Brennan",
+      "resource_type" : "user"
+    },
+    "assignee_status" : "inbox",
+    "assignee_section" : {
+      "gid" : "1208369087047586",
+      "name" : "📋 Game plan",
+      "resource_type" : "section"
+    },
+    "completed" : true,
+    "completed_at" : "2025-10-20T03:28:08.915Z",
+    "created_at" : "2025-10-20T03:15:33.999Z",
+    "due_at" : null,
+    "due_on" : "2025-10-19",
+    "followers" : [ {
+      "gid" : "1204951450576595",
+      "name" : "Rob Brennan",
+      "resource_type" : "user"
+    } ],
+    "hearted" : false,
+    "hearts" : [ ],
+    "liked" : false,
+    "likes" : [ ],
+    "memberships" : [ {
+      "project" : {
+        "gid" : "1211556182487866",
+        "name" : "Sploosh.AI Hockey Analytics v2026.01.03",
+        "resource_type" : "project"
+      },
+      "section" : {
+        "gid" : "1211566459676400",
+        "name" : "🗄️ Archive 2025'Q4",
+        "resource_type" : "section"
+      }
+    } ],
+    "modified_at" : "2025-10-20T04:11:39.950Z",
+    "name" : "Incorporate GitHub actions and workflows as well as Windsurf rules from the sports data analytics project",
+    "notes" : "",
+    "num_hearts" : 0,
+    "num_likes" : 0,
+    "parent" : null,
+    "permalink_url" : "https://app.asana.com/1/9284095956886/project/1211556182487866/task/1211691153363896",
+    "projects" : [ {
+      "gid" : "1211556182487866",
+      "name" : "Sploosh.AI Hockey Analytics v2026.01.03",
+      "resource_type" : "project"
+    } ],
+    "resource_type" : "task",
+    "start_at" : null,
+    "start_on" : null,
+    "subtasks" : [ ],
+    "tags" : [ ],
+    "resource_subtype" : "default_task",
+    "workspace" : {
+      "gid" : "9284095956886",
+      "name" : "therobbrennan.com",
+      "resource_type" : "workspace"
+    }
+  }, {
+    "gid" : "1211688282864748",
+    "actual_time_minutes" : null,
+    "assignee" : {
+      "gid" : "1204951450576595",
+      "name" : "Rob Brennan",
+      "resource_type" : "user"
+    },
+    "assignee_status" : "inbox",
+    "assignee_section" : {
+      "gid" : "1208369087047586",
+      "name" : "📋 Game plan",
+      "resource_type" : "section"
+    },
+    "completed" : true,
+    "completed_at" : "2025-10-20T04:01:24.012Z",
+    "created_at" : "2025-10-19T08:13:53.772Z",
+    "due_at" : null,
+    "due_on" : "2025-10-19",
+    "followers" : [ {
+      "gid" : "1204951450576595",
+      "name" : "Rob Brennan",
+      "resource_type" : "user"
+    } ],
+    "hearted" : false,
+    "hearts" : [ ],
+    "liked" : false,
+    "likes" : [ ],
+    "memberships" : [ {
+      "project" : {
+        "gid" : "1211556182487866",
+        "name" : "Sploosh.AI Hockey Analytics v2026.01.03",
+        "resource_type" : "project"
+      },
+      "section" : {
+        "gid" : "1211566459676400",
+        "name" : "🗄️ Archive 2025'Q4",
+        "resource_type" : "section"
+      }
+    } ],
+    "modified_at" : "2025-10-20T04:11:39.881Z",
+    "name" : "Improve UX for selecting a specific team for the shot chart",
+    "notes" : "https://app.asana.com/app/asana/-/get_asset?asset_id=1211688282864758\n\n\n",
+    "num_hearts" : 0,
+    "num_likes" : 0,
+    "parent" : null,
+    "permalink_url" : "https://app.asana.com/1/9284095956886/project/1211556182487866/task/1211688282864748",
+    "projects" : [ {
+      "gid" : "1211556182487866",
+      "name" : "Sploosh.AI Hockey Analytics v2026.01.03",
+      "resource_type" : "project"
+    } ],
+    "resource_type" : "task",
+    "start_at" : null,
+    "start_on" : null,
+    "subtasks" : [ ],
+    "tags" : [ ],
+    "resource_subtype" : "default_task",
+    "workspace" : {
+      "gid" : "9284095956886",
+      "name" : "therobbrennan.com",
+      "resource_type" : "workspace"
+    }
+  }, {
+    "gid" : "1211688282864759",
+    "actual_time_minutes" : null,
+    "assignee" : {
+      "gid" : "1204951450576595",
+      "name" : "Rob Brennan",
+      "resource_type" : "user"
+    },
+    "assignee_status" : "inbox",
+    "assignee_section" : {
+      "gid" : "1208369087047586",
+      "name" : "📋 Game plan",
+      "resource_type" : "section"
+    },
+    "completed" : true,
+    "completed_at" : "2025-10-20T04:03:16.257Z",
+    "created_at" : "2025-10-19T08:15:53.900Z",
+    "due_at" : null,
+    "due_on" : "2025-10-19",
+    "followers" : [ {
+      "gid" : "1204951450576595",
+      "name" : "Rob Brennan",
+      "resource_type" : "user"
+    } ],
+    "hearted" : false,
+    "hearts" : [ ],
+    "liked" : false,
+    "likes" : [ ],
+    "memberships" : [ {
+      "project" : {
+        "gid" : "1211556182487866",
+        "name" : "Sploosh.AI Hockey Analytics v2026.01.03",
+        "resource_type" : "project"
+      },
+      "section" : {
+        "gid" : "1211566459676400",
+        "name" : "🗄️ Archive 2025'Q4",
+        "resource_type" : "section"
+      }
+    } ],
+    "modified_at" : "2025-10-20T04:11:39.137Z",
+    "name" : "Improve UX for selecting a specific period",
+    "notes" : "https://app.asana.com/app/asana/-/get_asset?asset_id=1211688282864762\n\n\n",
+    "num_hearts" : 0,
+    "num_likes" : 0,
+    "parent" : null,
+    "permalink_url" : "https://app.asana.com/1/9284095956886/project/1211556182487866/task/1211688282864759",
+    "projects" : [ {
+      "gid" : "1211556182487866",
+      "name" : "Sploosh.AI Hockey Analytics v2026.01.03",
+      "resource_type" : "project"
+    } ],
+    "resource_type" : "task",
+    "start_at" : null,
+    "start_on" : null,
+    "subtasks" : [ ],
+    "tags" : [ ],
+    "resource_subtype" : "default_task",
+    "workspace" : {
+      "gid" : "9284095956886",
+      "name" : "therobbrennan.com",
+      "resource_type" : "workspace"
+    }
+  }, {
+    "gid" : "1211688282864743",
+    "actual_time_minutes" : null,
+    "assignee" : {
+      "gid" : "1204951450576595",
+      "name" : "Rob Brennan",
+      "resource_type" : "user"
+    },
+    "assignee_status" : "inbox",
+    "assignee_section" : {
+      "gid" : "1204951450576623",
+      "name" : "🎫 Recently assigned",
+      "resource_type" : "section"
+    },
+    "completed" : true,
+    "completed_at" : "2025-10-19T06:38:23.982Z",
+    "created_at" : "2025-10-19T05:59:24.823Z",
+    "due_at" : null,
+    "due_on" : "2025-10-18",
+    "followers" : [ {
+      "gid" : "1204951450576595",
+      "name" : "Rob Brennan",
+      "resource_type" : "user"
+    } ],
+    "hearted" : false,
+    "hearts" : [ ],
+    "liked" : false,
+    "likes" : [ ],
+    "memberships" : [ {
+      "project" : {
+        "gid" : "1211556182487866",
+        "name" : "Sploosh.AI Hockey Analytics v2026.01.03",
+        "resource_type" : "project"
+      },
+      "section" : {
+        "gid" : "1211566459676400",
+        "name" : "🗄️ Archive 2025'Q4",
+        "resource_type" : "section"
+      }
+    } ],
+    "modified_at" : "2025-10-19T06:38:27.770Z",
+    "name" : "Improve touch targets and UX on mobile devices",
+    "notes" : "",
+    "num_hearts" : 0,
+    "num_likes" : 0,
+    "parent" : null,
+    "permalink_url" : "https://app.asana.com/1/9284095956886/project/1211556182487866/task/1211688282864743",
+    "projects" : [ {
+      "gid" : "1211556182487866",
+      "name" : "Sploosh.AI Hockey Analytics v2026.01.03",
+      "resource_type" : "project"
+    } ],
+    "resource_type" : "task",
+    "start_at" : null,
+    "start_on" : null,
+    "subtasks" : [ ],
+    "tags" : [ ],
+    "resource_subtype" : "default_task",
+    "workspace" : {
+      "gid" : "9284095956886",
+      "name" : "therobbrennan.com",
+      "resource_type" : "workspace"
+    }
+  }, {
+    "gid" : "1211678410815532",
+    "actual_time_minutes" : null,
+    "assignee" : {
+      "gid" : "1204951450576595",
+      "name" : "Rob Brennan",
+      "resource_type" : "user"
+    },
+    "assignee_status" : "inbox",
+    "assignee_section" : {
+      "gid" : "1204951450576623",
+      "name" : "🎫 Recently assigned",
+      "resource_type" : "section"
+    },
+    "completed" : true,
+    "completed_at" : "2025-10-19T04:55:45.065Z",
+    "created_at" : "2025-10-18T21:11:32.661Z",
+    "due_at" : null,
+    "due_on" : "2025-10-18",
+    "followers" : [ {
+      "gid" : "1204951450576595",
+      "name" : "Rob Brennan",
+      "resource_type" : "user"
+    } ],
+    "hearted" : false,
+    "hearts" : [ ],
+    "liked" : false,
+    "likes" : [ ],
+    "memberships" : [ {
+      "project" : {
+        "gid" : "1211556182487866",
+        "name" : "Sploosh.AI Hockey Analytics v2026.01.03",
+        "resource_type" : "project"
+      },
+      "section" : {
+        "gid" : "1211566459676400",
+        "name" : "🗄️ Archive 2025'Q4",
+        "resource_type" : "section"
+      }
+    } ],
+    "modified_at" : "2025-10-19T04:55:49.285Z",
+    "name" : "Initial shot chart implementation post move to the NHL EDGE API in November 2023",
+    "notes" : "",
+    "num_hearts" : 0,
+    "num_likes" : 0,
+    "parent" : null,
+    "permalink_url" : "https://app.asana.com/1/9284095956886/project/1211556182487866/task/1211678410815532",
+    "projects" : [ {
+      "gid" : "1211556182487866",
+      "name" : "Sploosh.AI Hockey Analytics v2026.01.03",
+      "resource_type" : "project"
+    } ],
+    "resource_type" : "task",
+    "start_at" : null,
+    "start_on" : null,
+    "subtasks" : [ ],
+    "tags" : [ ],
+    "resource_subtype" : "default_task",
+    "workspace" : {
+      "gid" : "9284095956886",
+      "name" : "therobbrennan.com",
+      "resource_type" : "workspace"
+    }
+  }, {
+    "gid" : "1211556182487881",
+    "actual_time_minutes" : null,
+    "assignee" : {
+      "gid" : "1204951450576595",
+      "name" : "Rob Brennan",
+      "resource_type" : "user"
+    },
+    "assignee_status" : "inbox",
+    "assignee_section" : {
+      "gid" : "1208369087047586",
+      "name" : "📋 Game plan",
+      "resource_type" : "section"
+    },
+    "completed" : true,
+    "completed_at" : "2025-10-08T05:52:30.006Z",
+    "created_at" : "2025-10-06T23:05:24.242Z",
+    "due_at" : null,
+    "due_on" : "2025-10-07",
+    "followers" : [ {
+      "gid" : "1204951450576595",
+      "name" : "Rob Brennan",
+      "resource_type" : "user"
+    } ],
+    "hearted" : false,
+    "hearts" : [ ],
+    "liked" : false,
+    "likes" : [ ],
+    "memberships" : [ {
+      "project" : {
+        "gid" : "1211556182487866",
+        "name" : "Sploosh.AI Hockey Analytics v2026.01.03",
+        "resource_type" : "project"
+      },
+      "section" : {
+        "gid" : "1211566459676400",
+        "name" : "🗄️ Archive 2025'Q4",
+        "resource_type" : "section"
+      }
+    } ],
+    "modified_at" : "2025-10-11T19:57:58.003Z",
+    "name" : "Upgrade to the latest stable version of Next.js",
+    "notes" : "",
+    "num_hearts" : 0,
+    "num_likes" : 0,
+    "parent" : null,
+    "permalink_url" : "https://app.asana.com/1/9284095956886/project/1211556182487866/task/1211556182487881",
+    "projects" : [ {
+      "gid" : "1211556182487866",
+      "name" : "Sploosh.AI Hockey Analytics v2026.01.03",
+      "resource_type" : "project"
+    } ],
+    "resource_type" : "task",
+    "start_at" : null,
+    "start_on" : null,
+    "subtasks" : [ {
+      "gid" : "1211583613301024",
+      "actual_time_minutes" : null,
+      "assignee" : {
+        "gid" : "1204951450576595",
+        "name" : "Rob Brennan",
+        "resource_type" : "user"
+      },
+      "assignee_status" : "inbox",
+      "assignee_section" : {
+        "gid" : "1204951450576623",
+        "name" : "🎫 Recently assigned",
+        "resource_type" : "section"
+      },
+      "completed" : true,
+      "completed_at" : "2025-10-08T05:16:56.091Z",
+      "created_at" : "2025-10-08T05:01:58.173Z",
+      "due_at" : null,
+      "due_on" : "2025-10-07",
+      "followers" : [ {
+        "gid" : "1204951450576595",
+        "name" : "Rob Brennan",
+        "resource_type" : "user"
+      } ],
+      "hearted" : false,
+      "hearts" : [ ],
+      "liked" : false,
+      "likes" : [ ],
+      "memberships" : [ ],
+      "modified_at" : "2025-10-08T05:16:56.259Z",
+      "name" : "TROUBLESHOOT: Why isn't the scoreboard loading live data for the Colorado game in progress?",
+      "notes" : "",
+      "num_hearts" : 0,
+      "num_likes" : 0,
+      "parent" : {
+        "gid" : "1211556182487881",
+        "name" : "Upgrade to the latest stable version of Next.js",
+        "resource_type" : "task",
+        "resource_subtype" : "default_task"
+      },
+      "permalink_url" : "https://app.asana.com/1/9284095956886/task/1211583613301024",
+      "projects" : [ ],
+      "resource_type" : "task",
+      "start_at" : null,
+      "start_on" : null,
+      "subtasks" : [ ],
+      "tags" : [ ],
+      "resource_subtype" : "default_task",
+      "workspace" : {
+        "gid" : "9284095956886",
+        "name" : "therobbrennan.com",
+        "resource_type" : "workspace"
+      }
+    }, {
+      "gid" : "1211583613301026",
+      "actual_time_minutes" : null,
+      "assignee" : {
+        "gid" : "1204951450576595",
+        "name" : "Rob Brennan",
+        "resource_type" : "user"
+      },
+      "assignee_status" : "inbox",
+      "assignee_section" : {
+        "gid" : "1204951450576623",
+        "name" : "🎫 Recently assigned",
+        "resource_type" : "section"
+      },
+      "completed" : true,
+      "completed_at" : "2025-10-08T05:52:20.567Z",
+      "created_at" : "2025-10-08T05:17:02.332Z",
+      "due_at" : null,
+      "due_on" : "2025-10-07",
+      "followers" : [ {
+        "gid" : "1204951450576595",
+        "name" : "Rob Brennan",
+        "resource_type" : "user"
+      } ],
+      "hearted" : false,
+      "hearts" : [ ],
+      "liked" : false,
+      "likes" : [ ],
+      "memberships" : [ ],
+      "modified_at" : "2025-10-08T05:52:20.735Z",
+      "name" : "FIX: Context access might be invalid: ACT",
+      "notes" : "",
+      "num_hearts" : 0,
+      "num_likes" : 0,
+      "parent" : {
+        "gid" : "1211556182487881",
+        "name" : "Upgrade to the latest stable version of Next.js",
+        "resource_type" : "task",
+        "resource_subtype" : "default_task"
+      },
+      "permalink_url" : "https://app.asana.com/1/9284095956886/task/1211583613301026",
+      "projects" : [ ],
+      "resource_type" : "task",
+      "start_at" : null,
+      "start_on" : null,
+      "subtasks" : [ ],
+      "tags" : [ ],
+      "resource_subtype" : "default_task",
+      "workspace" : {
+        "gid" : "9284095956886",
+        "name" : "therobbrennan.com",
+        "resource_type" : "workspace"
+      }
+    } ],
+    "tags" : [ ],
+    "resource_subtype" : "default_task",
+    "workspace" : {
+      "gid" : "9284095956886",
+      "name" : "therobbrennan.com",
+      "resource_type" : "workspace"
+    }
+  }, {
+    "gid" : "1211556182487868",
+    "actual_time_minutes" : null,
+    "assignee" : {
+      "gid" : "1204951450576595",
+      "name" : "Rob Brennan",
+      "resource_type" : "user"
+    },
+    "assignee_status" : "inbox",
+    "assignee_section" : {
+      "gid" : "1208369087047586",
+      "name" : "📋 Game plan",
+      "resource_type" : "section"
+    },
+    "completed" : true,
+    "completed_at" : "2025-10-06T23:01:19.105Z",
+    "created_at" : "2025-10-06T17:15:03.127Z",
+    "due_at" : null,
+    "due_on" : "2025-10-06",
+    "followers" : [ {
+      "gid" : "1204951450576595",
+      "name" : "Rob Brennan",
+      "resource_type" : "user"
+    } ],
+    "hearted" : false,
+    "hearts" : [ ],
+    "liked" : false,
+    "likes" : [ ],
+    "memberships" : [ {
+      "project" : {
+        "gid" : "1211556182487866",
+        "name" : "Sploosh.AI Hockey Analytics v2026.01.03",
+        "resource_type" : "project"
+      },
+      "section" : {
+        "gid" : "1211566459676400",
+        "name" : "🗄️ Archive 2025'Q4",
+        "resource_type" : "section"
+      }
+    } ],
+    "modified_at" : "2025-10-06T23:05:19.793Z",
+    "name" : "Spin up and review the current state of your Sploosh.AI Hockey Analytics project",
+    "notes" : "",
+    "num_hearts" : 0,
+    "num_likes" : 0,
+    "parent" : null,
+    "permalink_url" : "https://app.asana.com/1/9284095956886/project/1211556182487866/task/1211556182487868",
+    "projects" : [ {
+      "gid" : "1211556182487866",
+      "name" : "Sploosh.AI Hockey Analytics v2026.01.03",
+      "resource_type" : "project"
+    } ],
+    "resource_type" : "task",
+    "start_at" : null,
+    "start_on" : null,
+    "subtasks" : [ ],
+    "tags" : [ ],
+    "resource_subtype" : "default_task",
+    "workspace" : {
+      "gid" : "9284095956886",
+      "name" : "therobbrennan.com",
+      "resource_type" : "workspace"
+    }
+  } ]
+}
