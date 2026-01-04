@@ -96,9 +96,9 @@ function HomeContent() {
     const gameIdParam = searchParams.get('gameId')
     if (gameIdParam) {
       const gameId = parseInt(gameIdParam, 10)
-      // FIXED: Removed 'loading' from dependencies to prevent race condition
-      // Now effect properly triggers when URL changes, regardless of loading state
-      if (!isNaN(gameId) && gameId !== selectedGameId && !loading) {
+      // Allow reloading the same game by checking if it's a valid gameId
+      // This fixes the bug where clicking the current game in URL wouldn't reload
+      if (!isNaN(gameId) && gameId !== selectedGameId) {
         setLoading(true)
         setError(null)
         setSelectedGameId(gameId)
@@ -114,7 +114,7 @@ function HomeContent() {
         setLastRefreshTime(null)
       }
     }
-  }, [searchParams, selectedGameId]) // FIXED: Removed loading to prevent race condition
+  }, [searchParams, selectedGameId])
 
   // Handle sidebar refresh - refresh selected game data
   const handleSidebarRefresh = () => {
