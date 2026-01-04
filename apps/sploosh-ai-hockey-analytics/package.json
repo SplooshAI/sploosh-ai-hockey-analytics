@@ -1,6 +1,6 @@
 {
   "name": "sploosh-ai-hockey-analytics",
-  "version": "2.2.10",
+  "version": "2.3.0",
   "private": true,
   "packageManager": "npm@11.7.0",
   "scripts": {
