@@ -4,8 +4,7 @@
   "private": true,
   "packageManager": "npm@11.5.2",
   "scripts": {
-    "test": "vitest",
-    "test:race-condition": "vitest run __tests__/race-condition.test.tsx",
+    "test": "vitest run",
     "test:ui": "vitest --ui",
     "dev": "next dev --turbopack",
     "prebuild": "node ./scripts/generate-build-info.js",
