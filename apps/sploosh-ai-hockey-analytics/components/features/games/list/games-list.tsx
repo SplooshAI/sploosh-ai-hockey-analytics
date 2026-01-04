@@ -19,6 +19,8 @@ interface GamesListProps {
     onGamesCountChange?: (count: number) => void
 }
 
+const AUTO_REFRESH_INTERVAL_MS = 20000 // 20 seconds
+
 export function GamesList({ date, onGameSelect, onClose, onRefresh, onLoadingChange, onGamesCountChange }: GamesListProps) {
     const [games, setGames] = useState<NHLEdgeGame[]>([])
     const [isLoading, setIsLoading] = useState(true)
@@ -33,7 +35,6 @@ export function GamesList({ date, onGameSelect, onClose, onRefresh, onLoadingCha
     const currentDateRef = useRef(format(date, 'yyyy-MM-dd'))
     const refreshTimeoutRef = useRef<NodeJS.Timeout | null>(null)
     const MAX_RETRY_ATTEMPTS = 3
-    const RETRY_DELAY = 20000 // 20 seconds - matching the regular refresh interval
 
     const fetchGames = useCallback(async (attemptNumber = 0) => {
         try {
@@ -118,7 +119,7 @@ export function GamesList({ date, onGameSelect, onClose, onRefresh, onLoadingCha
                 // Schedule retry after delay
                 setTimeout(() => {
                     fetchGames(attemptNumber + 1)
-                }, RETRY_DELAY)
+                }, AUTO_REFRESH_INTERVAL_MS)
 
                 // Don't set isLoading to false yet since we're retrying
                 return
@@ -197,7 +198,7 @@ export function GamesList({ date, onGameSelect, onClose, onRefresh, onLoadingCha
                         // Schedule retry after delay
                         setTimeout(() => {
                             fetchData(attemptNumber + 1)
-                        }, RETRY_DELAY)
+                        }, AUTO_REFRESH_INTERVAL_MS)
 
                         // Don't set isLoading to false yet since we're retrying
                         return
@@ -230,7 +231,7 @@ export function GamesList({ date, onGameSelect, onClose, onRefresh, onLoadingCha
 
         refreshTimeoutRef.current = setTimeout(() => {
             fetchGames()
-        }, 20000) // 20 seconds
+        }, AUTO_REFRESH_INTERVAL_MS)
 
         return () => {
             if (refreshTimeoutRef.current) {
