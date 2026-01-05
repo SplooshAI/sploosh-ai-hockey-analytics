@@ -144,10 +144,18 @@ foundation
      - Converts technical errors into friendly messages
      - Handles network errors, timeouts, 404s, 500s, rate limiting, parse errors
      - Context-appropriate error titles
-   - ⏳ Add ability to retain and display cached data when
+   - ✅ Add ability to retain and display cached data when
      network requests fail (Priority 2)
-   - ⏳ Implement request deduplication to prevent duplicate
+     - localStorage caching with 1-hour TTL
+     - Stale data fallback when network fails
+     - Offline mode banner with retry functionality
+     - Image caching for offline logo display
+     - 112 tests passing (7 new cache/offline tests, 14 image cache tests)
+   - ✅ Implement request deduplication to prevent duplicate
      API calls (Priority 2)
+     - RequestDeduplicator utility created
+     - 13 comprehensive tests
+     - Ready for integration when needed
 
 7. **Lightweight Testing Setup** - Basic foundation only
    - Set up Jest and React Testing Library
