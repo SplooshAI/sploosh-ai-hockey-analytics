@@ -1,4 +1,5 @@
 import * as React from "react";
+import { useState, useEffect } from "react";
 
 interface NHLEdgeHockeyRinkProps {
   className?: string;
@@ -22,7 +23,20 @@ export const NHLEdgeHockeyRink = ({
   iceTexturePattern = DEFAULT_ICE_TEXTURE_PATTERN_URL,
   zamboniImage = DEFAULT_ZAMBONI_IMAGE,
   displayZamboni = false
-}: NHLEdgeHockeyRinkProps) => (
+}: NHLEdgeHockeyRinkProps) => {
+  const [logoError, setLogoError] = useState(false)
+  
+  // Reset logo error when network comes back online
+  useEffect(() => {
+    const handleOnline = () => {
+      setLogoError(false)
+    }
+    
+    window.addEventListener('online', handleOnline)
+    return () => window.removeEventListener('online', handleOnline)
+  }, [])
+  
+  return (
   <svg
     xmlns="http://www.w3.org/2000/svg"
     xmlnsXlink="http://www.w3.org/1999/xlink"
@@ -66,13 +80,16 @@ export const NHLEdgeHockeyRink = ({
         </pattern>
       )}
     </defs>
-    <image
-      href={centerIceLogo}
-      height={centerIceLogoHeight}
-      width={centerIceLogoWidth}
-      x={1000}
-      y={310}
-    />
+    {centerIceLogo && !logoError && (
+      <image
+        href={centerIceLogo}
+        height={centerIceLogoHeight}
+        width={centerIceLogoWidth}
+        x={1000}
+        y={310}
+        onError={() => setLogoError(true)}
+      />
+    )}
     {/* Team names removed - misleading since teams switch ends between periods */}
     <rect x={1194} width={12} height={1020} className="sc-hZlppA eaOGAc" />
     <g>
@@ -547,4 +564,5 @@ export const NHLEdgeHockeyRink = ({
 
 
   </svg>
-);
+  )
+}
