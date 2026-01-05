@@ -105,7 +105,8 @@ export class Cache {
       if (!item) return null
 
       const entry: CacheEntry<unknown> = JSON.parse(item)
-      return Date.now() - entry.timestamp
+      const age = Date.now() - entry.timestamp
+      return age < 0 ? 0 : age
     } catch (_error) {
       return null
     }
