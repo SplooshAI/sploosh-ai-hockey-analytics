@@ -146,8 +146,6 @@ foundation
      - Context-appropriate error titles
    - ⏳ Add ability to retain and display cached data when
      network requests fail (Priority 2)
-   - ⏳ Integrate error tracking (Sentry or similar) for
-     automatic error reporting (Priority 2)
    - ⏳ Implement request deduplication to prevent duplicate
      API calls (Priority 2)
 
@@ -161,7 +159,6 @@ foundation
 
 - All critical bugs resolved and deployed
 - Zero unhandled error states in production
-- Error tracking capturing issues in real-time
 - Basic test suite running in CI/CD (>30% coverage acceptable)
 
 ### Phase 2: Analytics & User Feedback (Q1 2026 - Weeks 4-6)
@@ -189,7 +186,9 @@ mechanisms
    - Add email notifications for new feedback submissions
    - Create basic feedback management view (admin only)
 
-3. **Performance Monitoring**
+3. **Error Tracking & Performance Monitoring**
+   - Integrate error tracking (Sentry or similar) for automatic error reporting
+   - Set up error alerting and monitoring dashboard
    - Track API response times and failures
    - Monitor client-side performance (Core Web Vitals)
    - Set up alerts for degraded performance
@@ -200,6 +199,7 @@ mechanisms
 - Custom analytics events tracking all major user interactions
 - Feedback widget accessible from all pages
 - At least 5 feedback submissions received and addressed
+- Error tracking capturing issues in real-time
 - Performance monitoring capturing 100% of page loads
 - Clear visibility into most/least used features
 
