@@ -144,9 +144,12 @@ foundation
      - Converts technical errors into friendly messages
      - Handles network errors, timeouts, 404s, 500s, rate limiting, parse errors
      - Context-appropriate error titles
-   - ⏳ Add ability to retain and display cached data when network requests fail (Priority 2)
-   - ⏳ Integrate error tracking (Sentry or similar) for automatic error reporting (Priority 2)
-   - ⏳ Implement request deduplication to prevent duplicate API calls (Priority 2)
+   - ⏳ Add ability to retain and display cached data when
+     network requests fail (Priority 2)
+   - ⏳ Integrate error tracking (Sentry or similar) for
+     automatic error reporting (Priority 2)
+   - ⏳ Implement request deduplication to prevent duplicate
+     API calls (Priority 2)
 
 7. **Lightweight Testing Setup** - Basic foundation only
    - Set up Jest and React Testing Library
