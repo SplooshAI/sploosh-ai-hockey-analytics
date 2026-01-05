@@ -1,5 +1,4 @@
 'use client'
-
 import { useState, useEffect, useRef, Suspense } from 'react'
 import { useSearchParams } from 'next/navigation'
 import { MainLayout } from '@/components/layouts/main-layout'
@@ -10,6 +9,8 @@ import { GameTimeline } from '@/components/features/game-timeline/game-timeline'
 import { ErrorMessage } from '@/components/shared/error'
 import { hasLocationData } from '@/lib/utils/shot-chart-utils'
 import { getFriendlyErrorMessage, getFriendlyErrorTitle } from '@/lib/utils/error-messages'
+import { Cache } from '@/lib/utils/cache'
+import { cacheImage, getImageUrl } from '@/lib/utils/image-cache'
 import { Check, Copy, Download } from 'lucide-react'
 import type { NHLEdgePlayByPlay } from '../lib/api/nhl-edge/types/nhl-edge'
 
@@ -22,6 +23,8 @@ function HomeContent() {
   const [copied, setCopied] = useState(false)
   const [selectedGameId, setSelectedGameId] = useState<number | null>(null)
   const [lastRefreshTime, setLastRefreshTime] = useState<Date | null>(null)
+  const [isUsingCachedData, setIsUsingCachedData] = useState(false)
+  const [cachedLogoUrl, setCachedLogoUrl] = useState<string>('/sploosh.ai/sploosh-ai-character-transparent.png')
   const isSelectingGameRef = useRef(false)
   const selectedGameIdRef = useRef<number | null>(null)
   const abortControllerRef = useRef<AbortController | null>(null)
@@ -30,6 +33,25 @@ function HomeContent() {
   useEffect(() => {
     selectedGameIdRef.current = selectedGameId
   }, [selectedGameId])
+
+  // Cache the Sploosh.AI logo on mount
+  useEffect(() => {
+    const logoUrl = '/sploosh.ai/sploosh-ai-character-transparent.png'
+    const cacheKey = 'sploosh-logo'
+    
+    // Get cached version or original URL
+    const url = getImageUrl(logoUrl, cacheKey)
+    setCachedLogoUrl(url)
+    
+    // If not cached yet, cache it in the background
+    if (url === logoUrl && navigator.onLine) {
+      cacheImage(logoUrl, cacheKey).then(cached => {
+        if (cached) {
+          setCachedLogoUrl(cached)
+        }
+      }).catch(console.error)
+    }
+  }, [])
 
   const fetchGameData = async (gameId: number) => {
     // Cancel any in-flight requests
@@ -59,6 +81,10 @@ function HomeContent() {
         setGameCenterData(gameCenterData)
         setLastRefreshTime(new Date())
         setError(null)
+        setIsUsingCachedData(false)
+        
+        // Cache the successful response
+        Cache.set(`game_${gameId}`, { playByPlayData, gameCenterData })
       }
     } catch (err) {
       // Ignore abort errors - they're expected when switching games
@@ -67,7 +93,18 @@ function HomeContent() {
       }
       
       if (selectedGameIdRef.current === gameId) {
-        setError(getFriendlyErrorMessage(err))
+        // Try to load cached data as fallback
+        const cached = Cache.getStale<{ playByPlayData: any; gameCenterData: any }>(`game_${gameId}`)
+        
+        if (cached) {
+          setPlayByPlayData(cached.data.playByPlayData)
+          setGameCenterData(cached.data.gameCenterData)
+          setIsUsingCachedData(true)
+          setError(null) // Clear error since we have cached data to show
+        } else {
+          setError(getFriendlyErrorMessage(err))
+        }
+        
         console.error('Error fetching game data:', err)
       }
     }
@@ -176,10 +213,8 @@ function HomeContent() {
           <div className="flex justify-center items-center w-full h-full">
             <NHLEdgeHockeyRink
               className="w-full h-auto"
-              centerIceLogo='/sploosh.ai/sploosh-ai-character-transparent.png'
-              centerIceLogoHeight={358}
-              centerIceLogoWidth={400}
               displayZamboni={true}
+              iceTexturePattern="none"
             />
           </div>
         </div>
@@ -197,10 +232,8 @@ function HomeContent() {
           <div className="absolute inset-0 flex justify-center items-center opacity-10 pointer-events-none">
             <NHLEdgeHockeyRink
               className="w-full max-w-4xl h-auto"
-              centerIceLogo='/sploosh.ai/sploosh-ai-character-transparent.png'
-              centerIceLogoHeight={358}
-              centerIceLogoWidth={400}
               displayZamboni={true}
+              iceTexturePattern="none"
             />
           </div>
           {/* Error message overlay */}
@@ -223,6 +256,36 @@ function HomeContent() {
 
       {playByPlayData && (
         <div className="space-y-6">
+          {/* Cached data indicator */}
+          {isUsingCachedData && (
+            <div className="bg-yellow-500/10 border border-yellow-500/20 rounded-lg p-4">
+              <div className="flex items-start gap-3">
+                <svg className="h-5 w-5 flex-shrink-0 mt-0.5 text-yellow-600 dark:text-yellow-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                <div className="flex-1">
+                  <h3 className="text-sm font-semibold text-yellow-600 dark:text-yellow-400">Offline Mode</h3>
+                  <p className="text-sm text-yellow-600/90 dark:text-yellow-400/90 mt-1">
+                    Unable to connect to NHL servers. Showing cached data from your last visit. 
+                    <button 
+                      onClick={() => {
+                        setLoading(true)
+                        setError(null)
+                        setIsUsingCachedData(false)
+                        if (selectedGameId) {
+                          fetchGameData(selectedGameId).finally(() => setLoading(false))
+                        }
+                      }}
+                      className="ml-2 underline hover:no-underline font-medium"
+                    >
+                      Try again
+                    </button>
+                  </p>
+                </div>
+              </div>
+            </div>
+          )}
+          
           {/* Game Header */}
           <div className="bg-card rounded-lg p-6 shadow-sm">
             { }
@@ -245,7 +308,7 @@ function HomeContent() {
                 <ShotChart 
                   gameData={playByPlayData}
                   showCenterLogo={true}
-                  centerIceLogo='/sploosh.ai/sploosh-ai-character-transparent.png'
+                  centerIceLogo={cachedLogoUrl}
                 />
               </div>
 

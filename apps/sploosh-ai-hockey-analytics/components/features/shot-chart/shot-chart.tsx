@@ -545,6 +545,7 @@ export const ShotChart: React.FC<ShotChartProps> = ({
             centerIceLogoHeight={358}
             centerIceLogoWidth={400}
             className="w-full h-auto"
+            iceTexturePattern="none"
           />
           <svg
             xmlns="http://www.w3.org/2000/svg"

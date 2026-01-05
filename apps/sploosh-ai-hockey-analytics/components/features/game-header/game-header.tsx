@@ -4,6 +4,7 @@ import { parseISO } from 'date-fns'
 import { format, formatInTimeZone } from 'date-fns-tz'
 import { ExternalLink, Tv } from 'lucide-react'
 import { useSearchParams } from 'next/navigation'
+import { useState, useEffect } from 'react'
 
 // Extended game data type that includes fields from both play-by-play and game center APIs
 interface GameHeaderData {
@@ -75,6 +76,20 @@ interface GameHeaderProps {
  */
 export const GameHeader: React.FC<GameHeaderProps> = ({ gameData, className = '', lastRefreshTime }) => {
   const searchParams = useSearchParams()
+  const [awayLogoError, setAwayLogoError] = useState(false)
+  const [homeLogoError, setHomeLogoError] = useState(false)
+  
+  // Reset logo errors when network comes back online
+  useEffect(() => {
+    const handleOnline = () => {
+      setAwayLogoError(false)
+      setHomeLogoError(false)
+    }
+    
+    window.addEventListener('online', handleOnline)
+    return () => window.removeEventListener('online', handleOnline)
+  }, [])
+  
   const timeZone = (() => {
     const tz = searchParams.get('tz');
     if (!tz) return Intl.DateTimeFormat().resolvedOptions().timeZone;
@@ -205,14 +220,19 @@ export const GameHeader: React.FC<GameHeaderProps> = ({ gameData, className = ''
       <div className="flex flex-col items-center gap-2">
         <div className="flex items-center justify-center gap-3">
           {/* Away Team Logo */}
-          {gameData.awayTeam?.logo && (
+          {gameData.awayTeam?.logo && !awayLogoError ? (
             <div className="relative w-12 h-12 sm:w-16 sm:h-16">
               <Image
                 src={gameData.awayTeam.logo}
                 alt={awayTeamName}
                 fill
                 className="object-contain"
+                onError={() => setAwayLogoError(true)}
               />
+            </div>
+          ) : (
+            <div className="w-12 h-12 sm:w-16 sm:h-16 flex items-center justify-center bg-muted rounded-full">
+              <span className="text-lg sm:text-xl font-bold text-muted-foreground">{awayTeamName}</span>
             </div>
           )}
 
@@ -248,14 +268,19 @@ export const GameHeader: React.FC<GameHeaderProps> = ({ gameData, className = ''
           </div>
 
           {/* Home Team Logo */}
-          {gameData.homeTeam?.logo && (
+          {gameData.homeTeam?.logo && !homeLogoError ? (
             <div className="relative w-12 h-12 sm:w-16 sm:h-16">
               <Image
                 src={gameData.homeTeam.logo}
                 alt={homeTeamName}
                 fill
                 className="object-contain"
+                onError={() => setHomeLogoError(true)}
               />
+            </div>
+          ) : (
+            <div className="w-12 h-12 sm:w-16 sm:h-16 flex items-center justify-center bg-muted rounded-full">
+              <span className="text-lg sm:text-xl font-bold text-muted-foreground">{homeTeamName}</span>
             </div>
           )}
         </div>
