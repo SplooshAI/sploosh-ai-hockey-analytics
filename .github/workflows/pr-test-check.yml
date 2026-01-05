@@ -1,0 +1,100 @@
+name: PR Test Check
+
+on:
+  pull_request:
+    types:
+      - opened
+      - synchronize
+      - reopened
+    branches:
+      - main
+
+permissions:
+  contents: read
+  issues: write
+  pull-requests: write
+  checks: write
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+
+      - name: Check if app directory exists
+        id: check-app-dir
+        run: |
+          if [ -d "apps/sploosh-ai-hockey-analytics" ]; then
+            echo "app_dir_exists=true" >> $GITHUB_OUTPUT
+          else
+            echo "app_dir_exists=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Install app dependencies
+        if: steps.check-app-dir.outputs.app_dir_exists == 'true'
+        working-directory: apps/sploosh-ai-hockey-analytics
+        run: npm install
+
+      - name: Check if test scripts exist
+        if: steps.check-app-dir.outputs.app_dir_exists == 'true'
+        working-directory: apps/sploosh-ai-hockey-analytics
+        run: |
+          if ! npm run | grep -q "test"; then
+            echo "❌ Error: 'test' script not found in package.json!"
+            echo "Please add a test script to your package.json."
+            exit 1
+          fi
+          if ! npm run | grep -q "test:coverage"; then
+            echo "❌ Error: 'test:coverage' script not found in package.json!"
+            echo "Please add a test:coverage script to your package.json."
+            exit 1
+          fi
+
+      - name: Run tests
+        if: steps.check-app-dir.outputs.app_dir_exists == 'true'
+        working-directory: apps/sploosh-ai-hockey-analytics
+        run: npm test
+
+      - name: Run test coverage
+        if: steps.check-app-dir.outputs.app_dir_exists == 'true'
+        working-directory: apps/sploosh-ai-hockey-analytics
+        run: npm run test:coverage
+
+      - name: Fail if app directory missing
+        if: steps.check-app-dir.outputs.app_dir_exists == 'false'
+        run: |
+          echo "❌ Error: apps/sploosh-ai-hockey-analytics directory not found!"
+          echo "This workflow expects an app directory structure. Please ensure the directory exists or update the workflow."
+          exit 1
+
+      - name: Comment on PR - Success
+        if: success()
+        uses: actions/github-script@v7
+        with:
+          script: |
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: '✅ All tests passed! Test suite is running successfully with coverage reporting.'
+            })
+
+      - name: Comment on PR - Failure
+        if: failure()
+        uses: actions/github-script@v7
+        with:
+          script: |
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: '❌ Tests failed! Please fix the failing tests before merging.\n\nCheck the [workflow run](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}) for details.'
+            })
