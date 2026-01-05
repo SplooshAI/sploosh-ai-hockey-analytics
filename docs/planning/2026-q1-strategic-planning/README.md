@@ -160,7 +160,6 @@ foundation
 7. **Lightweight Testing Setup** - Basic foundation only
    - Set up Jest and React Testing Library
    - Create smoke tests for critical user paths
-   - Add basic E2E tests for game loading and navigation
    - Set up CI/CD testing pipeline (run on PR)
 
 **Success Metrics:**
@@ -176,7 +175,13 @@ mechanisms
 
 **Priority Items:**
 
-1. **Enhanced Vercel Analytics**
+1. **E2E Testing with Playwright**
+   - Set up Playwright for end-to-end testing
+   - Add basic E2E tests for game loading and navigation
+   - Test critical user paths (game selection, shot chart, timeline)
+   - Integrate E2E tests into CI/CD pipeline
+
+2. **Enhanced Vercel Analytics**
    - Implement custom event tracking for user interactions:
      - Game views (which games are most popular)
      - Feature usage (shot chart, timeline, replays)
@@ -186,7 +191,7 @@ mechanisms
    - Set up analytics dashboard views for key metrics
    - Add conversion funnels (landing → game selection → feature usage)
 
-2. **User Feedback System**
+3. **User Feedback System**
    - Add in-app feedback widget (bug reports + feature requests)
    - Implement screenshot capture for bug reports
    - Create feedback submission API endpoint
@@ -194,7 +199,7 @@ mechanisms
    - Add email notifications for new feedback submissions
    - Create basic feedback management view (admin only)
 
-3. **Error Tracking & Performance Monitoring**
+4. **Error Tracking & Performance Monitoring**
    - Integrate error tracking (Sentry or similar) for automatic error reporting
    - Set up error alerting and monitoring dashboard
    - Track API response times and failures
