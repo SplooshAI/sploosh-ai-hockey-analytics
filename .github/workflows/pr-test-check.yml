@@ -29,20 +29,51 @@ jobs:
         with:
           node-version: '24'
 
-      - name: Install dependencies
-        run: npm install
+      - name: Check if app directory exists
+        id: check-app-dir
+        run: |
+          if [ -d "apps/sploosh-ai-hockey-analytics" ]; then
+            echo "app_dir_exists=true" >> $GITHUB_OUTPUT
+          else
+            echo "app_dir_exists=false" >> $GITHUB_OUTPUT
+          fi
 
       - name: Install app dependencies
+        if: steps.check-app-dir.outputs.app_dir_exists == 'true'
         working-directory: apps/sploosh-ai-hockey-analytics
         run: npm install
 
+      - name: Check if test scripts exist
+        if: steps.check-app-dir.outputs.app_dir_exists == 'true'
+        working-directory: apps/sploosh-ai-hockey-analytics
+        run: |
+          if ! npm run | grep -q "test"; then
+            echo "❌ Error: 'test' script not found in package.json!"
+            echo "Please add a test script to your package.json."
+            exit 1
+          fi
+          if ! npm run | grep -q "test:coverage"; then
+            echo "❌ Error: 'test:coverage' script not found in package.json!"
+            echo "Please add a test:coverage script to your package.json."
+            exit 1
+          fi
+
       - name: Run tests
+        if: steps.check-app-dir.outputs.app_dir_exists == 'true'
         working-directory: apps/sploosh-ai-hockey-analytics
         run: npm test
 
       - name: Run test coverage
+        if: steps.check-app-dir.outputs.app_dir_exists == 'true'
         working-directory: apps/sploosh-ai-hockey-analytics
         run: npm run test:coverage
+
+      - name: Fail if app directory missing
+        if: steps.check-app-dir.outputs.app_dir_exists == 'false'
+        run: |
+          echo "❌ Error: apps/sploosh-ai-hockey-analytics directory not found!"
+          echo "This workflow expects an app directory structure. Please ensure the directory exists or update the workflow."
+          exit 1
 
       - name: Comment on PR - Success
         if: success()
