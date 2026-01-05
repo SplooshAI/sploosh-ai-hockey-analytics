@@ -1,0 +1,69 @@
+name: PR Test Check
+
+on:
+  pull_request:
+    types:
+      - opened
+      - synchronize
+      - reopened
+    branches:
+      - main
+
+permissions:
+  contents: read
+  issues: write
+  pull-requests: write
+  checks: write
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Install app dependencies
+        working-directory: apps/sploosh-ai-hockey-analytics
+        run: npm install
+
+      - name: Run tests
+        working-directory: apps/sploosh-ai-hockey-analytics
+        run: npm test
+
+      - name: Run test coverage
+        working-directory: apps/sploosh-ai-hockey-analytics
+        run: npm run test:coverage
+
+      - name: Comment on PR - Success
+        if: success()
+        uses: actions/github-script@v7
+        with:
+          script: |
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: '✅ All tests passed! Test suite is running successfully with coverage reporting.'
+            })
+
+      - name: Comment on PR - Failure
+        if: failure()
+        uses: actions/github-script@v7
+        with:
+          script: |
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: '❌ Tests failed! Please fix the failing tests before merging.\n\nCheck the [workflow run](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}) for details.'
+            })
