@@ -175,15 +175,31 @@ foundation
 - ✅ Zero unhandled error states in production
 - ✅ Basic test suite running in CI/CD (36.36% coverage achieved)
 
-**Phase 1 Status: COMPLETE** ✅
+**Phase 1 Status: IN PROGRESS** 🔄
 
-All 7 items completed on 2026-01-04:
+Items 1-7 completed on 2026-01-04:
 
 - 10 PRs merged (#345, #347, #351, #355, #359, #361, #365, #367, #368, #369)
 - Version bumped from 2.2.6 to 2.7.0
 - 112 tests passing with 36.36% coverage
 - CI/CD pipeline operational
 - All success metrics achieved
+
+**Additional Phase 1 Items (Added 2026-01-11):**
+
+1. **Reinstate Textured Hockey Rink Background**
+   - Download and store the textured background for offline use
+   - Similar approach to the Sploosh.AI logo implementation
+   - Ensures consistent visual experience across all environments
+   - Reduces external dependencies and improves load times
+
+2. **Improve Responsive Styling for iOS**
+   - Fix shot chart and tooltip display issues in portrait and landscape modes
+   - Address specific rendering problems on mobile devices
+   - Example case: Catton's first goal (gameId: 2025020676)
+   - URL: <https://sploosh-ai-hockey-analytics.vercel.app/?gameId=2025020676>
+   - Ensure tooltips are fully visible and properly positioned
+   - Optimize layout for various iOS screen sizes and orientations
 
 ### Phase 2: Analytics & User Feedback (Q1 2026 - Weeks 4-6)
 
