@@ -192,6 +192,11 @@ Items 1-7 completed on 2026-01-04:
    - Similar approach to the Sploosh.AI logo implementation
    - Ensures consistent visual experience across all environments
    - Reduces external dependencies and improves load times
+   - **Testing Requirements:**
+     - Create tests to verify background image loads correctly
+     - Test offline availability of textured background
+     - Verify fallback behavior if image fails to load
+     - Test rendering performance with local vs external images
 
 2. **Improve Responsive Styling for iOS**
    - Fix shot chart and tooltip display issues in portrait and landscape modes
@@ -200,6 +205,13 @@ Items 1-7 completed on 2026-01-04:
    - URL: <https://sploosh-ai-hockey-analytics.vercel.app/?gameId=2025020676>
    - Ensure tooltips are fully visible and properly positioned
    - Optimize layout for various iOS screen sizes and orientations
+   - **Testing Requirements:**
+     - Create tests that reproduce the current rendering issues
+     - Test tooltip positioning in portrait and landscape modes
+     - Verify shot chart responsiveness across iOS screen sizes
+     - Test with the specific example case (gameId: 2025020676)
+     - Ensure tests pass after fixes are implemented
+     - Add regression tests to prevent future iOS styling issues
 
 ### Phase 2: Analytics & User Feedback (Q1 2026 - Weeks 4-6)
 
