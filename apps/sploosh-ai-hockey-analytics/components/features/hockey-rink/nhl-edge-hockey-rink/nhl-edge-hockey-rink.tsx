@@ -11,13 +11,13 @@ interface NHLEdgeHockeyRinkProps {
   displayZamboni?: boolean;
 }
 
-const DEFAULT_CENTER_ICE_LOGO_SEATTLE_KRAKEN_LIGHT = "https://assets.nhle.com/logos/nhl/svg/SEA_light.svg"
+const DEFAULT_CENTER_ICE_LOGO_SPLOOSH_AI = "/sploosh.ai/sploosh-ai-character-transparent.png"
 const DEFAULT_ICE_TEXTURE_PATTERN_URL = "https://wsr.nhle.com/static/js/../images/f7597e93d3f2a4b23d41.png"
 const DEFAULT_ZAMBONI_IMAGE = "nhl-edge/nhl-edge-zamboni.png"
 
 export const NHLEdgeHockeyRink = ({
-  centerIceLogo = DEFAULT_CENTER_ICE_LOGO_SEATTLE_KRAKEN_LIGHT,
-  centerIceLogoHeight = 400,
+  centerIceLogo = DEFAULT_CENTER_ICE_LOGO_SPLOOSH_AI,
+  centerIceLogoHeight = 358,
   centerIceLogoWidth = 400,
   className = "w-full h-auto",
   iceTexturePattern = DEFAULT_ICE_TEXTURE_PATTERN_URL,
