@@ -24,8 +24,8 @@ jobs:
       - name: Configure Git for GitHub Actions
         if: ${{ github.actor != 'nektos/act' }}
         run: |
-          git config --global user.name "github-actions[bot]"
-          git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git config --global user.name "Rob Brennan"
+          git config --global user.email "rob@sploosh.ai"
       
       - name: Setup Node.js
         uses: actions/setup-node@v4
