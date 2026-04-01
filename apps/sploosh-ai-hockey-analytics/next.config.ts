@@ -9,6 +9,9 @@ const nextConfig: NextConfig = {
   experimental: {
     disableOptimizedLoading: true,
   },
+  // Enable cross-origin HMR for mobile development from MacBook Pro
+  // Allows iPhone/iPad on same network to receive live updates
+  allowedDevOrigins: ['192.168.0.33'],
   // Enable Turbopack for both development and builds (stable configuration)
   turbopack: {
     rules: {

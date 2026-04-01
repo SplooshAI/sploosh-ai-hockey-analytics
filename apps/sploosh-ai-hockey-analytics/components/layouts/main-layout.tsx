@@ -35,7 +35,9 @@ export function MainLayout({ children, onGameSelect, onSidebarRefresh }: MainLay
         <div className="flex h-[100dvh] relative">
             {/* Mobile menu button - aligned with header height */}
             <button
-                onClick={() => setIsSidebarOpen(!isSidebarOpen)}
+                onClick={() => {
+                    setIsSidebarOpen(!isSidebarOpen);
+                }}
                 className="lg:hidden fixed left-4 z-50 p-2 rounded-md bg-background border h-10 my-3"
                 style={{ top: '0' }}
             >
