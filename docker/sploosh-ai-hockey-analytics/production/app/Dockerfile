@@ -18,10 +18,10 @@ FROM node:24.14.1-alpine AS runner
 WORKDIR /app
 
 # Set environment variables
-ENV NODE_ENV production
-ENV PORT 3000
-ENV HOSTNAME "0.0.0.0"
-ENV NEXT_TELEMETRY_DISABLED 1
+ENV NODE_ENV=production
+ENV PORT=3000
+ENV HOSTNAME="0.0.0.0"
+ENV NEXT_TELEMETRY_DISABLED=1
 
 # Copy necessary files from the builder stage
 COPY --from=builder /app/public ./public
