@@ -209,11 +209,11 @@ function HomeContent() {
     <MainLayout onGameSelect={handleGameSelect} onSidebarRefresh={handleSidebarRefresh}>
       {/* Show playful rink only when no game is selected */}
       {!playByPlayData && !loading && !error && (
-        <div className="text-center text-muted-foreground">
+        <div className="text-center text-muted-foreground pt-16">
           <div className="flex justify-center items-center w-full h-full">
             <NHLEdgeHockeyRink
               className="w-full h-auto"
-              displayZamboni={true}
+              displayZamboni={false}
               iceTexturePattern="none"
             />
           </div>
