@@ -36,7 +36,6 @@ export function MainLayout({ children, onGameSelect, onSidebarRefresh }: MainLay
             {/* Mobile menu button - aligned with header height */}
             <button
                 onClick={() => {
-                    console.log('Menu button clicked!');
                     setIsSidebarOpen(!isSidebarOpen);
                 }}
                 className="lg:hidden fixed left-4 z-50 p-2 rounded-md bg-background border h-10 my-3"
