@@ -25,6 +25,7 @@ export const NHLEdgeHockeyRink = ({
   displayZamboni = false
 }: NHLEdgeHockeyRinkProps) => {
   const [logoError, setLogoError] = useState(false)
+  const [isClient, setIsClient] = useState(false)
   
   // Reset logo error when network comes back online
   useEffect(() => {
@@ -34,6 +35,11 @@ export const NHLEdgeHockeyRink = ({
     
     window.addEventListener('online', handleOnline)
     return () => window.removeEventListener('online', handleOnline)
+  }, [])
+  
+  // Set isClient to true after component mounts (for SSR hydration)
+  useEffect(() => {
+    setIsClient(true)
   }, [])
   
   return (
@@ -472,7 +478,7 @@ export const NHLEdgeHockeyRink = ({
     </g>
 
     {/* Wrap any Zamboni-related elements in a conditional render */}
-    {displayZamboni && (
+    {displayZamboni && isClient && (
       <>
         {/* Insert Zamboni-related SVG elements here */}
         <path
