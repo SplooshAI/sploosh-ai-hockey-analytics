@@ -213,7 +213,7 @@ function HomeContent() {
           <div className="flex justify-center items-center w-full h-full">
             <NHLEdgeHockeyRink
               className="w-full h-auto"
-              displayZamboni={false}
+              displayZamboni={true}
               iceTexturePattern="none"
             />
           </div>
