@@ -16,8 +16,10 @@ import {
   type ShotEvent,
 } from '@/lib/utils/shot-chart-utils'
 import { formatTeamFullName, formatPeriodLabel } from '@/lib/utils/formatters'
+
 import { ShotTooltip } from '../shot-chart/shot-tooltip'
 import { VideoOverlay } from '../shot-chart/video-overlay'
+import { ShotStatistics } from '../shot-chart/shot-statistics'
 import { ArenaScene } from './arena-scene'
 
 interface ShotChart3DProps {
@@ -136,6 +138,18 @@ export const ShotChart3D: React.FC<ShotChart3DProps> = ({
   const homeTeamName = gameData.homeTeam ? formatTeamFullName(gameData.homeTeam) : 'Home'
 
   const periods = useMemo(() => Array.from(new Set(allShots.map((s) => s.period))).sort((a, b) => a - b), [allShots])
+
+  // Calculate statistics from all shot types (not filtered by result)
+  const shotsForStats = useMemo(() => {
+    return allShots.filter((shot) => {
+      const teamMatch = selectedTeam === undefined || shot.teamId === selectedTeam
+      const periodMatch = selectedPeriod === undefined || shot.period === selectedPeriod
+      return teamMatch && periodMatch
+    })
+  }, [allShots, selectedTeam, selectedPeriod])
+
+  // Check if any filters are active that affect stats (team or period filters)
+  const hasActiveFilters = selectedTeam !== undefined || selectedPeriod !== undefined
 
   
   const preset = CAMERA_PRESETS[cameraPreset]
@@ -377,82 +391,13 @@ export const ShotChart3D: React.FC<ShotChart3DProps> = ({
         )}
       </div>
 
-      {/* Statistics - Optimized for mobile portrait */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 mt-3 sm:mt-4">
-        {/* Away Team Stats */}
-        <div className="bg-muted/50 p-4 rounded-lg">
-          <div className="flex items-center gap-3 mb-3">
-            {gameData.awayTeam?.logo && (
-              <img 
-                src={gameData.awayTeam.logo} 
-                alt={`${awayTeamName} logo`}
-                className="w-8 h-8 object-contain"
-              />
-            )}
-            <h3 className="font-semibold text-lg">{awayTeamName}</h3>
-          </div>
-          <div className="space-y-1 text-sm">
-            <div className="flex justify-between">
-              <span>Goals</span>
-              <span className="font-medium text-green-600 text-right min-w-[3ch] tabular-nums">{filteredShots.filter(s => s.teamId === gameData.awayTeam?.id && s.result === 'goal').length}</span>
-            </div>
-            <div className="flex justify-between">
-              <span>Shots on Goal</span>
-              <span className="font-medium text-right min-w-[3ch] tabular-nums">{filteredShots.filter(s => s.teamId === gameData.awayTeam?.id).length}</span>
-            </div>
-            <div className="border-t border-border my-2"></div>
-            <div className="flex justify-between">
-              <span>Missed Shots</span>
-              <span className="font-medium text-right min-w-[3ch] tabular-nums">{filteredShots.filter(s => s.teamId === gameData.awayTeam?.id && s.result === 'missed-shot').length}</span>
-            </div>
-            <div className="flex justify-between">
-              <span>Blocked Shots</span>
-              <span className="font-medium text-right min-w-[3ch] tabular-nums">{filteredShots.filter(s => s.teamId === gameData.awayTeam?.id && s.result === 'blocked-shot').length}</span>
-            </div>
-            <div className="flex justify-between">
-              <span>Total Shots</span>
-              <span className="font-medium text-right min-w-[3ch] tabular-nums">{filteredShots.filter(s => s.teamId === gameData.awayTeam?.id).length}</span>
-            </div>
-          </div>
-        </div>
-
-        {/* Home Team Stats */}
-        <div className="bg-muted/50 p-4 rounded-lg">
-          <div className="flex items-center gap-3 mb-3">
-            {gameData.homeTeam?.logo && (
-              <img 
-                src={gameData.homeTeam.logo} 
-                alt={`${homeTeamName} logo`}
-                className="w-8 h-8 object-contain"
-              />
-            )}
-            <h3 className="font-semibold text-lg">{homeTeamName}</h3>
-          </div>
-          <div className="space-y-1 text-sm">
-            <div className="flex justify-between">
-              <span>Goals</span>
-              <span className="font-medium text-green-600 text-right min-w-[3ch] tabular-nums">{filteredShots.filter(s => s.teamId === gameData.homeTeam?.id && s.result === 'goal').length}</span>
-            </div>
-            <div className="flex justify-between">
-              <span>Shots on Goal</span>
-              <span className="font-medium text-right min-w-[3ch] tabular-nums">{filteredShots.filter(s => s.teamId === gameData.homeTeam?.id).length}</span>
-            </div>
-            <div className="border-t border-border my-2"></div>
-            <div className="flex justify-between">
-              <span>Missed Shots</span>
-              <span className="font-medium text-right min-w-[3ch] tabular-nums">{filteredShots.filter(s => s.teamId === gameData.homeTeam?.id && s.result === 'missed-shot').length}</span>
-            </div>
-            <div className="flex justify-between">
-              <span>Blocked Shots</span>
-              <span className="font-medium text-right min-w-[3ch] tabular-nums">{filteredShots.filter(s => s.teamId === gameData.homeTeam?.id && s.result === 'blocked-shot').length}</span>
-            </div>
-            <div className="flex justify-between">
-              <span>Total Shots</span>
-              <span className="font-medium text-right min-w-[3ch] tabular-nums">{filteredShots.filter(s => s.teamId === gameData.homeTeam?.id).length}</span>
-            </div>
-          </div>
-        </div>
-      </div>
+      {/* Statistics - Shared component */}
+      <ShotStatistics 
+        gameData={gameData}
+        shotsForStats={shotsForStats}
+        hasActiveFilters={hasActiveFilters}
+        className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 mt-3 sm:mt-4"
+      />
     </div>
   )
 }
