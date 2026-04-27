@@ -72,8 +72,6 @@ export const ShotChart3D: React.FC<ShotChart3DProps> = ({
   const [selectedResults, setSelectedResults] = useState<Array<'goal' | 'shot-on-goal' | 'missed-shot' | 'blocked-shot'>>([
     'goal',
     'shot-on-goal',
-    'missed-shot',
-    'blocked-shot',
   ])
   const [cameraPreset, setCameraPreset] = useState<CameraPreset>('broadcast')
   const [autoRotate, setAutoRotate] = useState(false)
@@ -313,7 +311,53 @@ export const ShotChart3D: React.FC<ShotChart3DProps> = ({
 
         <div className="absolute top-3 left-3 px-3 py-1.5 rounded-md bg-black/60 backdrop-blur-sm text-white text-xs font-semibold pointer-events-none">
           Sploosh.AI Arena
-          <span className="block text-[10px] font-normal opacity-70">Drag to orbit • Scroll to zoom</span>
+          <span className="block text-[10px] font-normal opacity-70">Drag to orbit / Scroll to zoom</span>
+        </div>
+        
+        <div className="absolute bottom-3 left-3 flex gap-1">
+          <button
+            onClick={() => {
+              const controls = orbitRef.current
+              if (controls) {
+                const currentDistance = controls.getDistance()
+                const newDistance = Math.max(40, currentDistance - 20)
+                const direction = controls.object.position.clone().normalize()
+                controls.object.position.copy(direction.multiplyScalar(newDistance))
+                controls.update()
+              }
+            }}
+            className="px-2 py-1 text-xs font-medium rounded border bg-black/60 text-white border-white/20 hover:bg-black/80 transition-colors"
+            title="Zoom in"
+          >
+            +
+          </button>
+          <button
+            onClick={() => {
+              const controls = orbitRef.current
+              if (controls) {
+                const currentDistance = controls.getDistance()
+                const newDistance = Math.min(320, currentDistance + 20)
+                const direction = controls.object.position.clone().normalize()
+                controls.object.position.copy(direction.multiplyScalar(newDistance))
+                controls.update()
+              }
+            }}
+            className="px-2 py-1 text-xs font-medium rounded border bg-black/60 text-white border-white/20 hover:bg-black/80 transition-colors"
+            title="Zoom out"
+          >
+            -
+          </button>
+          <button
+            onClick={() => setAutoRotate(!autoRotate)}
+            className={`px-2 py-1 text-xs font-medium rounded border transition-colors ${
+              autoRotate
+                ? 'bg-primary text-primary-foreground border-primary'
+                : 'bg-black/60 text-white border-white/20 hover:bg-black/80'
+            }`}
+            title={autoRotate ? 'Stop rotation' : 'Start rotation'}
+          >
+            {autoRotate ? '||' : '->'}
+          </button>
         </div>
 
         {hoveredShot && (
