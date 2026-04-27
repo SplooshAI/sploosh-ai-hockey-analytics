@@ -22,6 +22,7 @@ interface ArenaSceneProps {
   homeColor: string
   awayColor: string
   onShotClick?: (shot: ShotEvent, clientX: number, clientY: number) => void
+  onShotHover?: (shot: ShotEvent, clientX: number, clientY: number) => void
   selectedShotEventId?: number
   centerIceLogo?: string
   centerIceLogoWidthFt?: number
@@ -200,13 +201,14 @@ interface ShotMarkerProps {
   isHome: boolean
   onClick?: (shot: ShotEvent, clientX: number, clientY: number) => void
   isSelected: boolean
+  onHover?: (shot: ShotEvent, clientX: number, clientY: number) => void
 }
 
 function nhlToWorld(x: number, y: number): [number, number] {
   return [x, -y]
 }
 
-function ShotMarker({ shot, color, onClick, isSelected }: ShotMarkerProps) {
+function ShotMarker({ shot, color, onClick, onHover, isSelected }: ShotMarkerProps) {
   const [wx, wz] = nhlToWorld(shot.xCoord, shot.yCoord)
   const goalRef = useRef<THREE.Group>(null)
   const isGoal = shot.result === 'goal'
@@ -224,9 +226,14 @@ function ShotMarker({ shot, color, onClick, isSelected }: ShotMarkerProps) {
     onClick?.(shot, e.nativeEvent.clientX, e.nativeEvent.clientY)
   }
 
+  const handlePointerOver = (e: { stopPropagation: () => void; nativeEvent: MouseEvent }) => {
+    e.stopPropagation()
+    onHover?.(shot, e.nativeEvent.clientX, e.nativeEvent.clientY)
+  }
+
   if (isGoal) {
     return (
-      <group position={[wx, ICE_LEVEL + 0.05, wz]} ref={goalRef} onClick={handleClick}>
+      <group position={[wx, ICE_LEVEL + 0.05, wz]} ref={goalRef} onClick={handleClick} onPointerOver={handlePointerOver}>
         <mesh position={[0, 6, 0]}>
           <cylinderGeometry args={[0.6, 0.9, 12, 16]} />
           <meshStandardMaterial
@@ -252,7 +259,7 @@ function ShotMarker({ shot, color, onClick, isSelected }: ShotMarkerProps) {
 
   if (isMissBlock) {
     return (
-      <group position={[wx, ICE_LEVEL + 0.05, wz]} onClick={handleClick}>
+      <group position={[wx, ICE_LEVEL + 0.05, wz]} onClick={handleClick} onPointerOver={handlePointerOver}>
         <mesh rotation={[-Math.PI / 2, 0, 0]}>
           <ringGeometry args={[0.7, 1.1, 16]} />
           <meshStandardMaterial
@@ -269,7 +276,7 @@ function ShotMarker({ shot, color, onClick, isSelected }: ShotMarkerProps) {
   }
 
   return (
-    <group position={[wx, ICE_LEVEL + 0.05, wz]} onClick={handleClick}>
+    <group position={[wx, ICE_LEVEL + 0.05, wz]} onClick={handleClick} onPointerOver={handlePointerOver}>
       <mesh position={[0, 1, 0]}>
         <cylinderGeometry args={[0.7, 0.9, 2, 12]} />
         <meshStandardMaterial
@@ -288,6 +295,7 @@ export function ArenaScene({
   homeColor,
   awayColor,
   onShotClick,
+  onShotHover,
   selectedShotEventId,
   centerIceLogo,
   centerIceLogoWidthFt,
@@ -315,6 +323,7 @@ export function ArenaScene({
             color={color}
             isHome={isHome}
             onClick={onShotClick}
+            onHover={onShotHover}
             isSelected={selectedShotEventId === shot.eventId}
           />
         )
