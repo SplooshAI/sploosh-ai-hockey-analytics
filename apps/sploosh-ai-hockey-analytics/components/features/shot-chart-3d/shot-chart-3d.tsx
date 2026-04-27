@@ -321,8 +321,10 @@ export const ShotChart3D: React.FC<ShotChart3DProps> = ({
               if (controls) {
                 const currentDistance = controls.getDistance()
                 const newDistance = Math.max(40, currentDistance - 20)
-                const direction = controls.object.position.clone().normalize()
-                controls.object.position.copy(direction.multiplyScalar(newDistance))
+                const direction = new THREE.Vector3()
+                  .subVectors(controls.object.position, controls.target)
+                  .normalize()
+                controls.object.position.copy(controls.target).add(direction.multiplyScalar(newDistance))
                 controls.update()
               }
             }}
