@@ -11,11 +11,9 @@ const RINK_LENGTH = 200
 const RINK_WIDTH = 85
 const CORNER_RADIUS = 28
 const BOARDS_HEIGHT = 3.5
-const GLASS_HEIGHT = 8
 const ICE_LEVEL = 0
 
 const KRAKEN_DEEP = '#001628'
-const KRAKEN_ICE = '#99D9D9'
 
 interface ArenaSceneProps {
   shots: ShotEvent[]
@@ -181,134 +179,6 @@ function Boards() {
   )
 }
 
-function GlassRing() {
-  const geometry = useMemo(() => {
-    const shape = boardsShape(0.2)
-    return new THREE.ExtrudeGeometry(shape, {
-      depth: GLASS_HEIGHT,
-      bevelEnabled: false,
-      curveSegments: 24,
-    })
-  }, [])
-
-  return (
-    <mesh
-      geometry={geometry}
-      rotation={[-Math.PI / 2, 0, 0]}
-      position={[0, ICE_LEVEL + BOARDS_HEIGHT, 0]}
-    >
-      <meshPhysicalMaterial
-        color="#cce8ff"
-        transparent
-        opacity={0.18}
-        roughness={0.05}
-        metalness={0}
-        transmission={0.85}
-        ior={1.45}
-        thickness={0.3}
-        side={THREE.DoubleSide}
-      />
-    </mesh>
-  )
-}
-
-interface SeatingBowlProps {
-  innerRadiusX: number
-  innerRadiusZ: number
-}
-
-function SeatingBowl({ innerRadiusX, innerRadiusZ }: SeatingBowlProps) {
-  const tiers = useMemo(() => {
-    const result: Array<{
-      radiusX: number
-      radiusZ: number
-      height: number
-      color: string
-      ringHeight: number
-    }> = []
-    const tierCount = 18
-    const baseHeight = BOARDS_HEIGHT + GLASS_HEIGHT + 2
-    const tierDepth = 4
-    const tierRise = 2.2
-    for (let i = 0; i < tierCount; i++) {
-      const offset = i * tierDepth
-      result.push({
-        radiusX: innerRadiusX + offset,
-        radiusZ: innerRadiusZ + offset,
-        height: baseHeight + i * tierRise,
-        color: i % 2 === 0 ? '#0a0a0e' : '#15171c',
-        ringHeight: tierRise,
-      })
-    }
-    return result
-  }, [innerRadiusX, innerRadiusZ])
-
-  return (
-    <group>
-      {tiers.map((tier, i) => (
-        <mesh
-          key={i}
-          position={[0, tier.height, 0]}
-          rotation={[-Math.PI / 2, 0, 0]}
-        >
-          <ringGeometry args={[tier.radiusX, tier.radiusX + 4, 96]} />
-          <meshStandardMaterial
-            color={tier.color}
-            roughness={0.95}
-            side={THREE.DoubleSide}
-          />
-        </mesh>
-      ))}
-      {tiers.map((tier, i) => (
-        <mesh key={`riser-${i}`} position={[0, tier.height - tier.ringHeight / 2, 0]}>
-          <cylinderGeometry
-            args={[tier.radiusX, tier.radiusX, tier.ringHeight, 96, 1, true]}
-          />
-          <meshStandardMaterial
-            color="#05060a"
-            side={THREE.DoubleSide}
-            roughness={1}
-          />
-        </mesh>
-      ))}
-    </group>
-  )
-}
-
-function LedRing({ radius, height }: { radius: number; height: number }) {
-  const matRef = useRef<THREE.MeshStandardMaterial>(null)
-  useFrame(({ clock }) => {
-    if (matRef.current) {
-      const t = clock.getElapsedTime()
-      const pulse = 0.6 + Math.sin(t * 1.5) * 0.2
-      matRef.current.emissiveIntensity = pulse
-    }
-  })
-  return (
-    <mesh position={[0, height, 0]}>
-      <cylinderGeometry args={[radius, radius, 2.5, 96, 1, true]} />
-      <meshStandardMaterial
-        ref={matRef}
-        color={KRAKEN_DEEP}
-        emissive={KRAKEN_ICE}
-        emissiveIntensity={0.7}
-        side={THREE.DoubleSide}
-      />
-    </mesh>
-  )
-}
-
-function ArenaRoof({ radius, height }: { radius: number; height: number }) {
-  const domeY = height
-  const domeRadius = radius * 0.95
-  return (
-    <mesh position={[0, domeY, 0]}>
-      <sphereGeometry args={[domeRadius, 64, 24, 0, Math.PI * 2, 0, Math.PI / 2.4]} />
-      <meshStandardMaterial color="#04050b" side={THREE.BackSide} roughness={1} />
-    </mesh>
-  )
-}
-
 function ArenaLighting() {
   return (
     <>
@@ -423,10 +293,7 @@ export function ArenaScene({
   centerIceLogoWidthFt,
   centerIceLogoHeightFt,
 }: ArenaSceneProps) {
-  const innerRadiusX = RINK_LENGTH / 2 + 12
-  const innerRadiusZ = RINK_WIDTH / 2 + 18
-  const bowlOuterRadius = innerRadiusX + 18 * 4
-
+  
   return (
     <>
       <color attach="background" args={['#02030a']} />
@@ -438,10 +305,6 @@ export function ArenaScene({
         centerIceLogoHeightFt={centerIceLogoHeightFt}
       />
       <Boards />
-      <GlassRing />
-      <SeatingBowl innerRadiusX={innerRadiusX} innerRadiusZ={innerRadiusZ} />
-      <LedRing radius={innerRadiusX - 4} height={BOARDS_HEIGHT + GLASS_HEIGHT + 1} />
-      <ArenaRoof radius={bowlOuterRadius} height={BOARDS_HEIGHT + GLASS_HEIGHT + 60} />
       {shots.map((shot) => {
         const isHome = shot.teamId === homeTeamId
         const color = isHome ? homeColor : awayColor
