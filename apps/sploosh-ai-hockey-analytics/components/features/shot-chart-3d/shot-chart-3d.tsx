@@ -275,7 +275,7 @@ export const ShotChart3D: React.FC<ShotChart3DProps> = ({
         </div>
       </div>
 
-      <div className="relative w-full" style={{ aspectRatio: '16 / 9', minHeight: 380 }}>
+      <div className="relative w-full aspect-[16/9] portrait:min-h-[150px] landscape:min-h-[220px]">
         <Canvas
           shadows
           dpr={[1, 2]}
@@ -314,7 +314,7 @@ export const ShotChart3D: React.FC<ShotChart3DProps> = ({
           <span className="block text-[10px] font-normal opacity-70">Drag to orbit / Scroll to zoom</span>
         </div>
         
-        <div className="absolute bottom-3 left-3 flex gap-1">
+        <div className="absolute bottom-2 left-3 flex gap-1">
           <button
             onClick={() => {
               const controls = orbitRef.current
@@ -397,6 +397,83 @@ export const ShotChart3D: React.FC<ShotChart3DProps> = ({
             onClose={() => setVideoOverlay(null)}
           />
         )}
+      </div>
+
+      {/* Statistics - Optimized for mobile portrait */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 mt-3 sm:mt-4">
+        {/* Away Team Stats */}
+        <div className="bg-muted/50 p-4 rounded-lg">
+          <div className="flex items-center gap-3 mb-3">
+            {gameData.awayTeam?.logo && (
+              <img 
+                src={gameData.awayTeam.logo} 
+                alt={`${awayTeamName} logo`}
+                className="w-8 h-8 object-contain"
+              />
+            )}
+            <h3 className="font-semibold text-lg">{awayTeamName}</h3>
+          </div>
+          <div className="space-y-1 text-sm">
+            <div className="flex justify-between">
+              <span>Goals</span>
+              <span className="font-medium text-green-600 text-right min-w-[3ch] tabular-nums">{filteredShots.filter(s => s.teamId === gameData.awayTeam?.id && s.result === 'goal').length}</span>
+            </div>
+            <div className="flex justify-between">
+              <span>Shots on Goal</span>
+              <span className="font-medium text-right min-w-[3ch] tabular-nums">{filteredShots.filter(s => s.teamId === gameData.awayTeam?.id).length}</span>
+            </div>
+            <div className="border-t border-border my-2"></div>
+            <div className="flex justify-between">
+              <span>Missed Shots</span>
+              <span className="font-medium text-right min-w-[3ch] tabular-nums">0</span>
+            </div>
+            <div className="flex justify-between">
+              <span>Blocked Shots</span>
+              <span className="font-medium text-right min-w-[3ch] tabular-nums">0</span>
+            </div>
+            <div className="flex justify-between">
+              <span>Total Shots</span>
+              <span className="font-medium text-right min-w-[3ch] tabular-nums">{filteredShots.filter(s => s.teamId === gameData.awayTeam?.id).length}</span>
+            </div>
+          </div>
+        </div>
+
+        {/* Home Team Stats */}
+        <div className="bg-muted/50 p-4 rounded-lg">
+          <div className="flex items-center gap-3 mb-3">
+            {gameData.homeTeam?.logo && (
+              <img 
+                src={gameData.homeTeam.logo} 
+                alt={`${homeTeamName} logo`}
+                className="w-8 h-8 object-contain"
+              />
+            )}
+            <h3 className="font-semibold text-lg">{homeTeamName}</h3>
+          </div>
+          <div className="space-y-1 text-sm">
+            <div className="flex justify-between">
+              <span>Goals</span>
+              <span className="font-medium text-green-600 text-right min-w-[3ch] tabular-nums">{filteredShots.filter(s => s.teamId === gameData.homeTeam?.id && s.result === 'goal').length}</span>
+            </div>
+            <div className="flex justify-between">
+              <span>Shots on Goal</span>
+              <span className="font-medium text-right min-w-[3ch] tabular-nums">{filteredShots.filter(s => s.teamId === gameData.homeTeam?.id).length}</span>
+            </div>
+            <div className="border-t border-border my-2"></div>
+            <div className="flex justify-between">
+              <span>Missed Shots</span>
+              <span className="font-medium text-right min-w-[3ch] tabular-nums">0</span>
+            </div>
+            <div className="flex justify-between">
+              <span>Blocked Shots</span>
+              <span className="font-medium text-right min-w-[3ch] tabular-nums">0</span>
+            </div>
+            <div className="flex justify-between">
+              <span>Total Shots</span>
+              <span className="font-medium text-right min-w-[3ch] tabular-nums">{filteredShots.filter(s => s.teamId === gameData.homeTeam?.id).length}</span>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   )
