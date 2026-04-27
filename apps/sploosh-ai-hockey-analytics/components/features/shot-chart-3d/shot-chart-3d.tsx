@@ -72,6 +72,8 @@ export const ShotChart3D: React.FC<ShotChart3DProps> = ({
   const [selectedResults, setSelectedResults] = useState<Array<'goal' | 'shot-on-goal' | 'missed-shot' | 'blocked-shot'>>([
     'goal',
     'shot-on-goal',
+    'missed-shot',
+    'blocked-shot',
   ])
   const [cameraPreset, setCameraPreset] = useState<CameraPreset>('broadcast')
   const [autoRotate, setAutoRotate] = useState(false)
@@ -135,15 +137,7 @@ export const ShotChart3D: React.FC<ShotChart3DProps> = ({
 
   const periods = useMemo(() => Array.from(new Set(allShots.map((s) => s.period))).sort((a, b) => a - b), [allShots])
 
-  const stats = useMemo(() => {
-    const home = filteredShots.filter((s) => s.teamId === gameData.homeTeam?.id)
-    const away = filteredShots.filter((s) => s.teamId === gameData.awayTeam?.id)
-    return {
-      home: { goals: home.filter((s) => s.result === 'goal').length, total: home.length },
-      away: { goals: away.filter((s) => s.result === 'goal').length, total: away.length },
-    }
-  }, [filteredShots, gameData.homeTeam?.id, gameData.awayTeam?.id])
-
+  
   const preset = CAMERA_PRESETS[cameraPreset]
   const orbitRef = useRef<OrbitControlsImpl | null>(null)
   const initialCamera = useMemo(
@@ -256,23 +250,7 @@ export const ShotChart3D: React.FC<ShotChart3DProps> = ({
             </div>
           </div>
 
-          <div className="flex items-center justify-center lg:justify-end lg:border-l lg:border-border/50 lg:pl-6">
-            <div className="flex flex-col gap-2 text-xs">
-              <div className="flex items-center gap-2">
-                <span className="font-medium text-muted-foreground min-w-[3ch]">{gameData.awayTeam?.abbrev || 'Away'}:</span>
-                <span style={{ color: awayColor }} className="font-semibold">
-                  {stats.away.goals} G • {stats.away.total} shots
-                </span>
-              </div>
-              <div className="flex items-center gap-2">
-                <span className="font-medium text-muted-foreground min-w-[3ch]">{gameData.homeTeam?.abbrev || 'Home'}:</span>
-                <span style={{ color: homeColor }} className="font-semibold">
-                  {stats.home.goals} G • {stats.home.total} shots
-                </span>
-              </div>
-            </div>
-          </div>
-        </div>
+                  </div>
       </div>
 
       <div className="relative w-full aspect-[16/9] portrait:min-h-[150px] landscape:min-h-[220px]">
@@ -425,11 +403,11 @@ export const ShotChart3D: React.FC<ShotChart3DProps> = ({
             <div className="border-t border-border my-2"></div>
             <div className="flex justify-between">
               <span>Missed Shots</span>
-              <span className="font-medium text-right min-w-[3ch] tabular-nums">0</span>
+              <span className="font-medium text-right min-w-[3ch] tabular-nums">{filteredShots.filter(s => s.teamId === gameData.awayTeam?.id && s.result === 'missed-shot').length}</span>
             </div>
             <div className="flex justify-between">
               <span>Blocked Shots</span>
-              <span className="font-medium text-right min-w-[3ch] tabular-nums">0</span>
+              <span className="font-medium text-right min-w-[3ch] tabular-nums">{filteredShots.filter(s => s.teamId === gameData.awayTeam?.id && s.result === 'blocked-shot').length}</span>
             </div>
             <div className="flex justify-between">
               <span>Total Shots</span>
@@ -462,11 +440,11 @@ export const ShotChart3D: React.FC<ShotChart3DProps> = ({
             <div className="border-t border-border my-2"></div>
             <div className="flex justify-between">
               <span>Missed Shots</span>
-              <span className="font-medium text-right min-w-[3ch] tabular-nums">0</span>
+              <span className="font-medium text-right min-w-[3ch] tabular-nums">{filteredShots.filter(s => s.teamId === gameData.homeTeam?.id && s.result === 'missed-shot').length}</span>
             </div>
             <div className="flex justify-between">
               <span>Blocked Shots</span>
-              <span className="font-medium text-right min-w-[3ch] tabular-nums">0</span>
+              <span className="font-medium text-right min-w-[3ch] tabular-nums">{filteredShots.filter(s => s.teamId === gameData.homeTeam?.id && s.result === 'blocked-shot').length}</span>
             </div>
             <div className="flex justify-between">
               <span>Total Shots</span>
