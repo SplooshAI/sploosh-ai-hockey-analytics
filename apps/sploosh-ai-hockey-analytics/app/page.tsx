@@ -5,6 +5,7 @@ import { MainLayout } from '@/components/layouts/main-layout'
 import { NHLEdgeHockeyRink } from '@/components/features/hockey-rink/nhl-edge-hockey-rink/nhl-edge-hockey-rink'
 import { GameHeader } from '@/components/features/game-header'
 import { ShotChart } from '@/components/features/shot-chart/shot-chart'
+import { ShotChart3D } from '@/components/features/shot-chart-3d'
 import { GameTimeline } from '@/components/features/game-timeline/game-timeline'
 import { ErrorMessage } from '@/components/shared/error'
 import { hasLocationData } from '@/lib/utils/shot-chart-utils'
@@ -25,6 +26,7 @@ function HomeContent() {
   const [lastRefreshTime, setLastRefreshTime] = useState<Date | null>(null)
   const [isUsingCachedData, setIsUsingCachedData] = useState(false)
   const [cachedLogoUrl, setCachedLogoUrl] = useState<string>('/sploosh.ai/sploosh-ai-character-transparent.png')
+  const [shotChartView, setShotChartView] = useState<'2d' | '3d'>('2d')
   const isSelectingGameRef = useRef(false)
   const selectedGameIdRef = useRef<number | null>(null)
   const abortControllerRef = useRef<AbortController | null>(null)
@@ -305,11 +307,50 @@ function HomeContent() {
             <>
               {/* Shot Chart */}
               <div className="bg-card rounded-lg p-6 shadow-sm">
-                <ShotChart 
-                  gameData={playByPlayData}
-                  showCenterLogo={true}
-                  centerIceLogo={cachedLogoUrl}
-                />
+                <div className="flex items-center justify-between gap-4 mb-4 flex-wrap">
+                  <div className="inline-flex rounded-lg border border-border bg-muted/40 p-1" role="tablist" aria-label="Shot chart view">
+                    <button
+                      role="tab"
+                      aria-selected={shotChartView === '2d'}
+                      onClick={() => setShotChartView('2d')}
+                      className={`px-4 py-1.5 text-sm font-medium rounded-md transition-colors ${
+                        shotChartView === '2d'
+                          ? 'bg-background shadow-sm text-foreground'
+                          : 'text-muted-foreground hover:text-foreground'
+                      }`}
+                    >
+                      2D Rink
+                    </button>
+                    <button
+                      role="tab"
+                      aria-selected={shotChartView === '3d'}
+                      onClick={() => setShotChartView('3d')}
+                      className={`px-4 py-1.5 text-sm font-medium rounded-md transition-colors ${
+                        shotChartView === '3d'
+                          ? 'bg-background shadow-sm text-foreground'
+                          : 'text-muted-foreground hover:text-foreground'
+                      }`}
+                    >
+                      3D Arena
+                      <span className="ml-1.5 text-[10px] uppercase tracking-wider px-1.5 py-0.5 rounded bg-cyan-500/20 text-cyan-400">New</span>
+                    </button>
+                  </div>
+                  {shotChartView === '3d' && (
+                    <span className="text-xs text-muted-foreground">
+                      Inside Sploosh.AI Arena
+                    </span>
+                  )}
+                </div>
+
+                {shotChartView === '2d' ? (
+                  <ShotChart
+                    gameData={playByPlayData}
+                    showCenterLogo={true}
+                    centerIceLogo={cachedLogoUrl}
+                  />
+                ) : (
+                  <ShotChart3D gameData={playByPlayData} centerIceLogo={cachedLogoUrl} />
+                )}
               </div>
 
               {/* Timeline */}
