@@ -240,6 +240,47 @@ export function getTeamColor(teamId: number): string {
 }
 
 /**
+ * Curated per-team display color for rendering on a bright ice surface (3D rink view).
+ *
+ * Each entry overrides the primary `getTeamColor` value for a team whose official
+ * primary brand color is too dark (near-black) to read on white ice. The replacement
+ * is always another color from that team's official brand palette — most often the
+ * team's well-known accent (Kraken Ice Blue, Capitals red, Oilers orange, etc.) —
+ * so markers stay visually identifiable as the right team.
+ *
+ * Teams not listed here use their primary color from `getTeamColor`.
+ */
+const teamRinkDisplayColors: Record<number, string> = {
+  7: '#FCB514',   // Buffalo Sabres — gold accent
+  10: '#5DADE2',  // Toronto Maple Leafs — lighter blue
+  12: '#CC0000',  // Carolina Hurricanes — red
+  14: '#5DADE2',  // Tampa Bay Lightning — lighter blue
+  15: '#C8102E',  // Washington Capitals — red
+  18: '#FFB81C',  // Nashville Predators — gold
+  19: '#FCB514',  // St. Louis Blues — gold accent
+  21: '#6F263D',  // Colorado Avalanche — burgundy
+  25: '#006847',  // Dallas Stars — green
+  26: '#A2AAAD',  // Los Angeles Kings — silver
+  29: '#CE1126',  // Columbus Blue Jackets — red accent
+  30: '#AF1E2D',  // Minnesota Wild — red
+  52: '#4990CD',  // Winnipeg Jets — aviator blue
+  55: '#99D9D9',  // Seattle Kraken — Ice Blue
+}
+
+/**
+ * Get a team's rink display color — the brand-recognizable color used to render
+ * shot markers on the 3D ice. Same color for the same team across every game.
+ *
+ * For teams whose official primary is bright enough to read on ice (BOS gold,
+ * NJD red, etc.), this returns the primary. For teams with very dark primaries
+ * (Kraken navy, Caps black, etc.), it returns a curated brand accent that's
+ * both visible and recognizable.
+ */
+export function getTeamRinkColor(teamId: number): string {
+  return teamRinkDisplayColors[teamId] ?? getTeamColor(teamId)
+}
+
+/**
  * Alternative colors for teams when primary colors have poor contrast
  */
 const teamAlternateColors: Record<number, string> = {
