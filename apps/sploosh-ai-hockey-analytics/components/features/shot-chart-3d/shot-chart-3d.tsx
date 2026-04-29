@@ -400,18 +400,100 @@ export const ShotChart3D: React.FC<ShotChart3DProps> = ({
           <span className="block text-[10px] font-normal opacity-70">Drag to orbit · scroll to zoom · ? for help</span>
         </div>
         
-        <ArenaControlBar
-          onResetView={resetView}
-          onOrbitLeft={() => orbitBy(-Math.PI / 18, 0)}
-          onOrbitRight={() => orbitBy(Math.PI / 18, 0)}
-          onTiltUp={() => orbitBy(0, -Math.PI / 36)}
-          onTiltDown={() => orbitBy(0, Math.PI / 36)}
-          onZoomIn={() => zoomBy(-20)}
-          onZoomOut={() => zoomBy(20)}
-          autoRotate={autoRotate}
-          onToggleAutoRotate={() => setAutoRotate((v) => !v)}
-          onToggleHelp={() => setShowHelp((v) => !v)}
-        />
+        <div className="absolute bottom-3 left-3 flex items-center gap-1 px-2 py-1.5 rounded-lg bg-black/40 backdrop-blur-sm border border-white/10">
+          {/* Mobile: Compact layout */}
+          <div className="sm:hidden flex items-center gap-1">
+            <button onClick={resetView} className="w-7 h-7 flex items-center justify-center rounded border border-white/15 bg-black/55 text-white text-xs hover:bg-black/80 active:scale-95 transition" title="Reset view (R)" aria-label="Reset view">
+              <svg viewBox="0 0 16 16" width="12" height="12" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M2 8a6 6 0 1 0 1.76-4.24" />
+                <path d="M2 2v4h4" />
+              </svg>
+            </button>
+            <button onClick={() => orbitBy(-Math.PI / 18, 0)} className="w-7 h-7 flex items-center justify-center rounded border border-white/15 bg-black/55 text-white text-xs hover:bg-black/80 active:scale-95 transition" title="Orbit left (←)" aria-label="Orbit left">
+              <span className="text-xs">←</span>
+            </button>
+            <button onClick={() => orbitBy(0, -Math.PI / 36)} className="w-7 h-7 flex items-center justify-center rounded border border-white/15 bg-black/55 text-white text-xs hover:bg-black/80 active:scale-95 transition" title="Tilt up (↑)" aria-label="Tilt up">
+              <span className="text-xs">↑</span>
+            </button>
+            <button onClick={() => orbitBy(0, Math.PI / 36)} className="w-7 h-7 flex items-center justify-center rounded border border-white/15 bg-black/55 text-white text-xs hover:bg-black/80 active:scale-95 transition" title="Tilt down (↓)" aria-label="Tilt down">
+              <span className="text-xs">↓</span>
+            </button>
+            <button onClick={() => orbitBy(Math.PI / 18, 0)} className="w-7 h-7 flex items-center justify-center rounded border border-white/15 bg-black/55 text-white text-xs hover:bg-black/80 active:scale-95 transition" title="Orbit right (→)" aria-label="Orbit right">
+              <span className="text-xs">→</span>
+            </button>
+            <button onClick={() => zoomBy(-20)} className="w-7 h-7 flex items-center justify-center rounded border border-white/15 bg-black/55 text-white text-xs hover:bg-black/80 active:scale-95 transition" title="Zoom in (+)" aria-label="Zoom in">
+              <span className="text-xs">+</span>
+            </button>
+            <button onClick={() => zoomBy(20)} className="w-7 h-7 flex items-center justify-center rounded border border-white/15 bg-black/55 text-white text-xs hover:bg-black/80 active:scale-95 transition" title="Zoom out (−)" aria-label="Zoom out">
+              <span className="text-xs">−</span>
+            </button>
+            <button
+              onClick={() => setAutoRotate((v) => !v)}
+              className={`w-7 h-7 flex items-center justify-center rounded border ${autoRotate ? 'border-primary bg-primary text-primary-foreground' : 'border-white/15 bg-black/55 text-white'} text-xs hover:bg-black/80 active:scale-95 transition`}
+              title={autoRotate ? 'Stop auto-rotate' : 'Start auto-rotate'}
+              aria-label={autoRotate ? 'Stop auto-rotate' : 'Start auto-rotate'}
+              aria-pressed={autoRotate}
+            >
+              <svg viewBox="0 0 16 16" width="12" height="12" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M2.5 8a5.5 5.5 0 0 1 9.5-3.8" />
+                <path d="M13.5 8a5.5 5.5 0 0 1-9.5 3.8" />
+                <path d="M12 1.5v3h-3" />
+                <path d="M4 14.5v-3h3" />
+              </svg>
+            </button>
+            <button onClick={() => setShowHelp((v) => !v)} className="w-7 h-7 flex items-center justify-center rounded border border-white/15 bg-black/55 text-white text-xs hover:bg-black/80 active:scale-95 transition" title="Show help (?)" aria-label="Show help">
+              <span className="text-xs">?</span>
+            </button>
+          </div>
+
+          {/* Desktop: Horizontal layout */}
+          <div className="hidden sm:flex items-center gap-1">
+            <button onClick={resetView} className="w-8 h-8 flex items-center justify-center rounded-md border border-white/15 bg-black/55 text-white text-sm hover:bg-black/80 active:scale-95 transition" title="Reset view (R)" aria-label="Reset view">
+              <svg viewBox="0 0 16 16" width="14" height="14" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M2 8a6 6 0 1 0 1.76-4.24" />
+                <path d="M2 2v4h4" />
+              </svg>
+            </button>
+            <div className="w-px h-5 bg-white/15 mx-0.5" aria-hidden />
+            <button onClick={() => orbitBy(-Math.PI / 18, 0)} className="w-8 h-8 flex items-center justify-center rounded-md border border-white/15 bg-black/55 text-white text-sm hover:bg-black/80 active:scale-95 transition" title="Orbit left (←)" aria-label="Orbit left">
+              <span>←</span>
+            </button>
+            <button onClick={() => orbitBy(0, -Math.PI / 36)} className="w-8 h-8 flex items-center justify-center rounded-md border border-white/15 bg-black/55 text-white text-sm hover:bg-black/80 active:scale-95 transition" title="Tilt up (↑)" aria-label="Tilt up">
+              <span>↑</span>
+            </button>
+            <button onClick={() => orbitBy(0, Math.PI / 36)} className="w-8 h-8 flex items-center justify-center rounded-md border border-white/15 bg-black/55 text-white text-sm hover:bg-black/80 active:scale-95 transition" title="Tilt down (↓)" aria-label="Tilt down">
+              <span>↓</span>
+            </button>
+            <button onClick={() => orbitBy(Math.PI / 18, 0)} className="w-8 h-8 flex items-center justify-center rounded-md border border-white/15 bg-black/55 text-white text-sm hover:bg-black/80 active:scale-95 transition" title="Orbit right (→)" aria-label="Orbit right">
+              <span>→</span>
+            </button>
+            <div className="w-px h-5 bg-white/15 mx-0.5" aria-hidden />
+            <button onClick={() => zoomBy(-20)} className="w-8 h-8 flex items-center justify-center rounded-md border border-white/15 bg-black/55 text-white text-sm hover:bg-black/80 active:scale-95 transition" title="Zoom in (+)" aria-label="Zoom in">
+              <span>+</span>
+            </button>
+            <button onClick={() => zoomBy(20)} className="w-8 h-8 flex items-center justify-center rounded-md border border-white/15 bg-black/55 text-white text-sm hover:bg-black/80 active:scale-95 transition" title="Zoom out (−)" aria-label="Zoom out">
+              <span>−</span>
+            </button>
+            <div className="w-px h-5 bg-white/15 mx-0.5" aria-hidden />
+            <button
+              onClick={() => setAutoRotate((v) => !v)}
+              className={`w-8 h-8 flex items-center justify-center rounded-md border ${autoRotate ? 'border-primary bg-primary text-primary-foreground' : 'border-white/15 bg-black/55 text-white'} text-sm hover:bg-black/80 active:scale-95 transition`}
+              title={autoRotate ? 'Stop auto-rotate' : 'Start auto-rotate'}
+              aria-label={autoRotate ? 'Stop auto-rotate' : 'Start auto-rotate'}
+              aria-pressed={autoRotate}
+            >
+              <svg viewBox="0 0 16 16" width="14" height="14" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M2.5 8a5.5 5.5 0 0 1 9.5-3.8" />
+                <path d="M13.5 8a5.5 5.5 0 0 1-9.5 3.8" />
+                <path d="M12 1.5v3h-3" />
+                <path d="M4 14.5v-3h3" />
+              </svg>
+            </button>
+            <button onClick={() => setShowHelp((v) => !v)} className="w-8 h-8 flex items-center justify-center rounded-md border border-white/15 bg-black/55 text-white text-sm hover:bg-black/80 active:scale-95 transition" title="Show help (?)" aria-label="Show help">
+              <span>?</span>
+            </button>
+          </div>
+        </div>
 
         {showHelp && (
           <div
@@ -532,83 +614,4 @@ function CameraRig({ preset, controlsRef, resetSignal }: CameraRigProps) {
   }, [preset, resetSignal, camera, controlsRef, invalidate])
 
   return null
-}
-
-interface ArenaControlBarProps {
-  onResetView: () => void
-  onOrbitLeft: () => void
-  onOrbitRight: () => void
-  onTiltUp: () => void
-  onTiltDown: () => void
-  onZoomIn: () => void
-  onZoomOut: () => void
-  autoRotate: boolean
-  onToggleAutoRotate: () => void
-  onToggleHelp: () => void
-}
-
-function ArenaControlBar({
-  onResetView,
-  onOrbitLeft,
-  onOrbitRight,
-  onTiltUp,
-  onTiltDown,
-  onZoomIn,
-  onZoomOut,
-  autoRotate,
-  onToggleAutoRotate,
-  onToggleHelp,
-}: ArenaControlBarProps) {
-  const btnBase =
-    'w-10 h-10 sm:w-8 sm:h-8 flex items-center justify-center rounded-md border border-white/15 bg-black/55 text-white text-sm sm:text-sm hover:bg-black/80 active:scale-95 transition'
-  const btnActive = 'w-10 h-10 sm:w-8 sm:h-8 flex items-center justify-center rounded-md border border-primary bg-primary text-primary-foreground text-sm sm:text-sm hover:opacity-90 active:scale-95 transition'
-
-  return (
-    <div className="absolute bottom-16 right-3 sm:bottom-4 sm:right-4 flex items-center gap-1 px-1.5 py-1.5 sm:px-2 sm:py-2 rounded-lg bg-black/40 backdrop-blur-sm border border-white/10">
-      <button onClick={onResetView} className={btnBase} title="Reset view (R)" aria-label="Reset view">
-        <svg viewBox="0 0 16 16" width="12" height="12" className="sm:w-14 sm:h-14" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
-          <path d="M2 8a6 6 0 1 0 1.76-4.24" />
-          <path d="M2 2v4h4" />
-        </svg>
-      </button>
-      <div className="w-px h-4 sm:h-5 bg-white/15 mx-0.5" aria-hidden />
-      <button onClick={onOrbitLeft} className={btnBase} title="Orbit left (←)" aria-label="Orbit left">
-        <span className="text-xs sm:text-sm">←</span>
-      </button>
-      <button onClick={onTiltUp} className={btnBase} title="Tilt up (↑)" aria-label="Tilt up">
-        <span className="text-xs sm:text-sm">↑</span>
-      </button>
-      <button onClick={onTiltDown} className={btnBase} title="Tilt down (↓)" aria-label="Tilt down">
-        <span className="text-xs sm:text-sm">↓</span>
-      </button>
-      <button onClick={onOrbitRight} className={btnBase} title="Orbit right (→)" aria-label="Orbit right">
-        <span className="text-xs sm:text-sm">→</span>
-      </button>
-      <div className="w-px h-4 sm:h-5 bg-white/15 mx-0.5" aria-hidden />
-      <button onClick={onZoomIn} className={btnBase} title="Zoom in (+)" aria-label="Zoom in">
-        <span className="text-xs sm:text-sm">+</span>
-      </button>
-      <button onClick={onZoomOut} className={btnBase} title="Zoom out (−)" aria-label="Zoom out">
-        <span className="text-xs sm:text-sm">−</span>
-      </button>
-      <div className="w-px h-4 sm:h-5 bg-white/15 mx-0.5" aria-hidden />
-      <button
-        onClick={onToggleAutoRotate}
-        className={autoRotate ? btnActive : btnBase}
-        title={autoRotate ? 'Stop auto-rotate' : 'Start auto-rotate'}
-        aria-label={autoRotate ? 'Stop auto-rotate' : 'Start auto-rotate'}
-        aria-pressed={autoRotate}
-      >
-        <svg viewBox="0 0 16 16" width="12" height="12" className="sm:w-14 sm:h-14" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
-          <path d="M2.5 8a5.5 5.5 0 0 1 9.5-3.8" />
-          <path d="M13.5 8a5.5 5.5 0 0 1-9.5 3.8" />
-          <path d="M12 1.5v3h-3" />
-          <path d="M4 14.5v-3h3" />
-        </svg>
-      </button>
-      <button onClick={onToggleHelp} className={btnBase} title="Show help (?)" aria-label="Show help">
-        <span className="text-xs sm:text-sm">?</span>
-      </button>
-    </div>
-  )
 }
