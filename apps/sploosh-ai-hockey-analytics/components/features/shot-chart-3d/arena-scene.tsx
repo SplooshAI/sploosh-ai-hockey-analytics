@@ -218,19 +218,32 @@ function isLightColor(hex: string): boolean {
   return luminance > 0.6
 }
 
+const GOAL_LIGHT_RED = '#ff1a1a'
+
 function ShotMarker({ shot, color, isHome, onClick, onHover, isSelected }: ShotMarkerProps) {
   const [wx, wz] = nhlToWorld(shot.xCoord, shot.yCoord)
-  const goalRef = useRef<THREE.Group>(null)
   const isGoal = shot.result === 'goal'
   const isMissBlock = shot.result === 'missed-shot' || shot.result === 'blocked-shot'
   const needsContrast = isLightColor(color)
   const contrastColor = '#0b1220'
 
+  const lightDomeRef = useRef<THREE.MeshStandardMaterial>(null)
+  const lightHaloRef = useRef<THREE.MeshBasicMaterial>(null)
+  const lightSourceRef = useRef<THREE.PointLight>(null)
+
   useFrame(({ clock }) => {
-    if (isGoal && goalRef.current) {
-      const t = clock.getElapsedTime() + shot.eventId * 0.13
-      goalRef.current.scale.y = 1 + Math.sin(t * 2) * 0.06
-    }
+    if (!isGoal) return
+    const t = clock.getElapsedTime() + shot.eventId * 0.41
+    // Square the sine so the pulse spends more time bright then dims sharply,
+    // closer to a real rotating goal lamp than a smooth oscillation.
+    const pulse = Math.pow(Math.max(0, Math.sin(t * 4)), 2)
+    const base = isSelected ? 1.6 : 1.0
+    const peak = isSelected ? 5.5 : 4.0
+    const intensity = base + (peak - base) * pulse
+
+    if (lightDomeRef.current) lightDomeRef.current.emissiveIntensity = intensity
+    if (lightHaloRef.current) lightHaloRef.current.opacity = 0.15 + 0.5 * pulse
+    if (lightSourceRef.current) lightSourceRef.current.intensity = (isSelected ? 12 : 6) + 24 * pulse
   })
 
   const handleClick = (e: { stopPropagation: () => void; nativeEvent: MouseEvent }) => {
@@ -244,47 +257,63 @@ function ShotMarker({ shot, color, isHome, onClick, onHover, isSelected }: ShotM
   }
 
   if (isGoal) {
-    const goalCapColor = needsContrast ? contrastColor : '#FFD700'
     return (
-      <group position={[wx, ICE_LEVEL + 0.05, wz]} ref={goalRef} onClick={handleClick} onPointerOver={handlePointerOver}>
+      <group position={[wx, ICE_LEVEL + 0.05, wz]} onClick={handleClick} onPointerOver={handlePointerOver}>
+        {/* dark ice base + team-colored identification ring */}
         <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0.02, 0]}>
-          <ringGeometry args={[0.9, 1.6, 24]} />
-          <meshBasicMaterial color={contrastColor} transparent opacity={0.75} side={THREE.DoubleSide} />
+          <ringGeometry args={[1.0, 1.7, 24]} />
+          <meshBasicMaterial color={contrastColor} transparent opacity={0.8} side={THREE.DoubleSide} />
         </mesh>
-        <mesh position={[0, 6, 0]} rotation={[0, isHome ? 0 : Math.PI / 4, 0]}>
-          {isHome ? (
-            <cylinderGeometry args={[0.6, 0.9, 12, 16]} />
-          ) : (
-            <boxGeometry args={[1.4, 12, 1.4]} />
-          )}
+        <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0.04, 0]}>
+          <ringGeometry args={[1.15, 1.55, isHome ? 24 : 4]} />
           <meshStandardMaterial
             color={color}
             emissive={color}
-            emissiveIntensity={isSelected ? 2.2 : 1.4}
-            transparent
-            opacity={0.85}
+            emissiveIntensity={isSelected ? 1.6 : 0.9}
+            side={THREE.DoubleSide}
           />
         </mesh>
-        {isHome ? (
-          <mesh position={[0, 13, 0]}>
-            <sphereGeometry args={[1.2, 16, 16]} />
-            <meshStandardMaterial
-              color={goalCapColor}
-              emissive={goalCapColor}
-              emissiveIntensity={isSelected ? 2.5 : 1.6}
-            />
-          </mesh>
-        ) : (
-          <mesh position={[0, 13, 0]} rotation={[0, Math.PI / 4, 0]}>
-            <octahedronGeometry args={[1.4, 0]} />
-            <meshStandardMaterial
-              color={goalCapColor}
-              emissive={goalCapColor}
-              emissiveIntensity={isSelected ? 2.5 : 1.6}
-            />
-          </mesh>
-        )}
-        <pointLight position={[0, 6, 0]} color={color} intensity={isSelected ? 30 : 18} distance={20} decay={2} />
+        {/* mounting post */}
+        <mesh position={[0, 1.2, 0]}>
+          <cylinderGeometry args={[0.18, 0.22, 2.4, 10]} />
+          <meshStandardMaterial color="#1a1a1a" roughness={0.5} metalness={0.4} />
+        </mesh>
+        {/* base plate where the lamp sits */}
+        <mesh position={[0, 2.55, 0]}>
+          <cylinderGeometry args={[0.85, 0.85, 0.3, 16]} />
+          <meshStandardMaterial color="#2b2b2b" roughness={0.4} metalness={0.6} />
+        </mesh>
+        {/* glowing red dome — the goal light */}
+        <mesh position={[0, 3.4, 0]}>
+          <sphereGeometry args={[0.95, 24, 18]} />
+          <meshStandardMaterial
+            ref={lightDomeRef}
+            color={GOAL_LIGHT_RED}
+            emissive={GOAL_LIGHT_RED}
+            emissiveIntensity={isSelected ? 3.0 : 2.0}
+            transparent
+            opacity={0.92}
+          />
+        </mesh>
+        {/* outer halo that fades with the pulse */}
+        <mesh position={[0, 3.4, 0]}>
+          <sphereGeometry args={[1.45, 16, 12]} />
+          <meshBasicMaterial
+            ref={lightHaloRef}
+            color={GOAL_LIGHT_RED}
+            transparent
+            opacity={0.25}
+            depthWrite={false}
+          />
+        </mesh>
+        <pointLight
+          ref={lightSourceRef}
+          position={[0, 3.4, 0]}
+          color={GOAL_LIGHT_RED}
+          intensity={isSelected ? 24 : 16}
+          distance={28}
+          decay={2}
+        />
       </group>
     )
   }
