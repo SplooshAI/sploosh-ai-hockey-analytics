@@ -208,16 +208,6 @@ function nhlToWorld(x: number, y: number): [number, number] {
   return [x, -y]
 }
 
-function isLightColor(hex: string): boolean {
-  const c = hex.replace('#', '')
-  if (c.length !== 6) return false
-  const r = parseInt(c.slice(0, 2), 16)
-  const g = parseInt(c.slice(2, 4), 16)
-  const b = parseInt(c.slice(4, 6), 16)
-  const luminance = (0.2126 * r + 0.7152 * g + 0.0722 * b) / 255
-  return luminance > 0.6
-}
-
 const GOAL_LIGHT_RED = '#ff1a1a'
 
 function ShotMarker({ shot, color, isHome, onClick, onHover, isSelected }: ShotMarkerProps) {
@@ -225,7 +215,6 @@ function ShotMarker({ shot, color, isHome, onClick, onHover, isSelected }: ShotM
   const isGoal = shot.result === 'goal'
   const isMiss = shot.result === 'missed-shot'
   const isBlock = shot.result === 'blocked-shot'
-  const needsContrast = isLightColor(color)
   const contrastColor = '#0b1220'
   const beamRef = useRef<THREE.MeshStandardMaterial>(null)
 
@@ -327,60 +316,101 @@ function ShotMarker({ shot, color, isHome, onClick, onHover, isSelected }: ShotM
   }
 
   if (isMiss) {
+    // missed shot — a clear X symbol indicating "missed" with team color accents
+    // More defined than the previous translucent puck to avoid "cheese" appearance
+    const armLength = 1.4
+    const armThickness = 0.22
+    const armY = 0.18
     return (
       <group position={[wx, ICE_LEVEL + 0.05, wz]} onClick={handleClick} onPointerOver={handlePointerOver}>
-        {/* dark contrast ring on ice */}
-        <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0.01, 0]}>
-          <ringGeometry args={[0.55, 1.4, 24]} />
-          <meshBasicMaterial color={contrastColor} transparent opacity={0.55} side={THREE.DoubleSide} />
+        {/* dark contrast disc beneath */}
+        <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0.02, 0]}>
+          <circleGeometry args={[1.15, 28]} />
+          <meshBasicMaterial color={contrastColor} transparent opacity={0.7} side={THREE.DoubleSide} />
         </mesh>
-        {/* open team-color ring (no fill — the play didn't connect) */}
-        <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0.04, 0]}>
-          <ringGeometry args={[0.85, 1.15, isHome ? 24 : 4]} />
-          <meshStandardMaterial
-            color={color}
-            emissive={color}
-            emissiveIntensity={isSelected ? 1.3 : 0.45}
-            transparent
-            opacity={0.85}
-            side={THREE.DoubleSide}
-          />
-        </mesh>
+        {/* X symbol — clearer definition than before */}
+        <group rotation={[0, isHome ? Math.PI / 4 : -Math.PI / 4, 0]}>
+          <mesh position={[0, armY, 0]}>
+            <boxGeometry args={[armLength, armThickness, armThickness]} />
+            <meshStandardMaterial
+              color={contrastColor}
+              roughness={0.4}
+              metalness={0.1}
+            />
+          </mesh>
+          <mesh position={[0, armY, 0]} rotation={[0, Math.PI / 2, 0]}>
+            <boxGeometry args={[armLength, armThickness, armThickness]} />
+            <meshStandardMaterial
+              color={contrastColor}
+              roughness={0.4}
+              metalness={0.1}
+            />
+          </mesh>
+          {/* team color outline for visual interest */}
+          <mesh position={[0, armY + 0.01, 0]}>
+            <boxGeometry args={[armLength, armThickness * 0.6, armThickness * 0.6]} />
+            <meshStandardMaterial
+              color={color}
+              emissive={color}
+              emissiveIntensity={isSelected ? 1.2 : 0.6}
+              roughness={0.3}
+            />
+          </mesh>
+          <mesh position={[0, armY + 0.01, 0]} rotation={[0, Math.PI / 2, 0]}>
+            <boxGeometry args={[armLength, armThickness * 0.6, armThickness * 0.6]} />
+            <meshStandardMaterial
+              color={color}
+              emissive={color}
+              emissiveIntensity={isSelected ? 1.2 : 0.6}
+              roughness={0.3}
+            />
+          </mesh>
+          {/* small hub at center */}
+          <mesh position={[0, armY + 0.02, 0]}>
+            <cylinderGeometry args={[0.16, 0.16, armThickness + 0.04, 12]} />
+            <meshStandardMaterial color={color} roughness={0.5} />
+          </mesh>
+        </group>
       </group>
     )
   }
 
   if (isBlock) {
+    // blocked shot — shield symbol indicating "blocked" with clear team color
+    // More distinctive than crossed sticks to avoid confusion with miss symbols
+    const shieldRadius = 1.0
+    const shieldY = 0.18
     return (
       <group position={[wx, ICE_LEVEL + 0.05, wz]} onClick={handleClick} onPointerOver={handlePointerOver}>
-        {/* dark contrast disc */}
+        {/* dark contrast disc beneath */}
         <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0.02, 0]}>
-          <ringGeometry args={[0.6, 1.3, 24]} />
+          <circleGeometry args={[1.25, 28]} />
           <meshBasicMaterial color={contrastColor} transparent opacity={0.7} side={THREE.DoubleSide} />
         </mesh>
-        {/* upright shield-slab — a defender wall */}
-        <mesh position={[0, 0.85, 0]} rotation={[0, isHome ? 0 : Math.PI / 4, 0]}>
-          <boxGeometry args={[2.0, 1.7, 0.25]} />
-          <meshStandardMaterial
-            color={color}
-            emissive={color}
-            emissiveIntensity={isSelected ? 1.5 : 0.6}
-            transparent
-            opacity={0.92}
-          />
-        </mesh>
-        {/* dark cross-bar through the shield */}
-        <mesh position={[0, 0.85, 0]} rotation={[0, isHome ? 0 : Math.PI / 4, 0]}>
-          <boxGeometry args={[2.1, 0.32, 0.27]} />
-          <meshStandardMaterial color={contrastColor} roughness={0.5} />
-        </mesh>
-        {/* small contrast band where the shield meets the ice */}
-        {needsContrast && (
-          <mesh position={[0, 0.06, 0]} rotation={[0, isHome ? 0 : Math.PI / 4, 0]}>
-            <boxGeometry args={[2.05, 0.12, 0.32]} />
-            <meshBasicMaterial color={contrastColor} />
+        {/* shield symbol — clearer blocked indication */}
+        <group position={[0, shieldY, 0]}>
+          {/* main shield body */}
+          <mesh rotation={[-Math.PI / 2, 0, 0]}>
+            <cylinderGeometry args={[shieldRadius, shieldRadius, 0.15, 32]} />
+            <meshStandardMaterial
+              color={color}
+              emissive={color}
+              emissiveIntensity={isSelected ? 1.3 : 0.7}
+              roughness={0.4}
+              metalness={0.2}
+            />
           </mesh>
-        )}
+          {/* inner dark circle for contrast */}
+          <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0.08, 0]}>
+            <cylinderGeometry args={[shieldRadius * 0.6, shieldRadius * 0.6, 0.12, 24]} />
+            <meshBasicMaterial color={contrastColor} transparent opacity={0.8} />
+          </mesh>
+          {/* center dot */}
+          <mesh position={[0, 0.12, 0]}>
+            <cylinderGeometry args={[0.2, 0.2, 0.1, 12]} />
+            <meshStandardMaterial color={color} roughness={0.3} />
+          </mesh>
+        </group>
       </group>
     )
   }
