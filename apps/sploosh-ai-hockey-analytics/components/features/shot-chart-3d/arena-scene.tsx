@@ -385,74 +385,83 @@ function ShotMarker({ shot, color, isHome, onClick, onHover, isSelected }: ShotM
     )
   }
 
-  // shot-on-goal: a hockey stick standing in a puck — dark shaft with
-  // tape wraps in the team color on the blade, mid-grip, and knob.
-  // Blade points one way for home, the other for away.
-  const bladeDir = isHome ? 1 : -1
+  // shot-on-goal: a hockey stick mid-shot — blade flat on the ice, shaft
+  // angled back like a player's follow-through. Blade fully wrapped in
+  // team-color tape; mid-grip and knob also taped. Home points the blade
+  // one way, away the other (entire stick mirrored on the y axis).
   const shaftColor = '#15161a'
-  const tapeIntensity = isSelected ? 1.4 : 0.75
+  const tapeIntensity = isSelected ? 1.5 : 0.85
   return (
     <group position={[wx, ICE_LEVEL + 0.05, wz]} onClick={handleClick} onPointerOver={handlePointerOver}>
       {/* dark contrast disc */}
       <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0.02, 0]}>
-        <ringGeometry args={[0.7, 1.3, 24]} />
+        <ringGeometry args={[0.7, 1.55, 28]} />
         <meshBasicMaterial color={contrastColor} transparent opacity={0.7} side={THREE.DoubleSide} />
       </mesh>
-      {/* puck at the base of the stick */}
-      <mesh position={[0, 0.16, 0]}>
-        <cylinderGeometry args={[0.55, 0.55, 0.32, 20]} />
-        <meshStandardMaterial color="#0c0d10" roughness={0.7} metalness={0.15} />
-      </mesh>
 
-      {/* blade — fully wrapped in team-color tape, sitting on top of the puck */}
-      <mesh position={[bladeDir * 0.55, 0.46, 0]}>
-        <boxGeometry args={[1.5, 0.22, 0.42]} />
-        <meshStandardMaterial
-          ref={beamRef}
-          color={color}
-          emissive={color}
-          emissiveIntensity={tapeIntensity}
-          roughness={0.55}
-        />
-      </mesh>
-      {/* dark tape stripe along the bottom of the blade for definition */}
-      <mesh position={[bladeDir * 0.55, 0.34, 0]}>
-        <boxGeometry args={[1.52, 0.06, 0.44]} />
-        <meshStandardMaterial color={contrastColor} roughness={0.6} />
-      </mesh>
+      {/* whole stick — mirror across y for away */}
+      <group rotation={[0, isHome ? 0 : Math.PI, 0]}>
+        {/* puck — slightly forward of the heel */}
+        <mesh position={[0.6, 0.16, 0]}>
+          <cylinderGeometry args={[0.5, 0.5, 0.32, 20]} />
+          <meshStandardMaterial color="#0c0d10" roughness={0.7} metalness={0.15} />
+        </mesh>
 
-      {/* shaft — dark composite, attached to the heel of the blade */}
-      <mesh position={[bladeDir * -0.18, 1.78, 0]} rotation={[0, 0, bladeDir * 0.06]}>
-        <boxGeometry args={[0.2, 2.7, 0.2]} />
-        <meshStandardMaterial color={shaftColor} roughness={0.45} metalness={0.05} />
-      </mesh>
+        {/* blade — long, flat on the ice, fully taped in team color */}
+        <mesh position={[1.0, 0.28, 0]}>
+          <boxGeometry args={[2.0, 0.2, 0.5]} />
+          <meshStandardMaterial
+            ref={beamRef}
+            color={color}
+            emissive={color}
+            emissiveIntensity={tapeIntensity}
+            roughness={0.55}
+          />
+        </mesh>
+        {/* dark stripe along the bottom edge of the blade for definition */}
+        <mesh position={[1.0, 0.16, 0]}>
+          <boxGeometry args={[2.02, 0.06, 0.52]} />
+          <meshStandardMaterial color={contrastColor} roughness={0.6} />
+        </mesh>
+        {/* heel curve hint — small dark wedge where blade meets shaft */}
+        <mesh position={[0.05, 0.32, 0]}>
+          <boxGeometry args={[0.32, 0.32, 0.5]} />
+          <meshStandardMaterial color={shaftColor} roughness={0.5} />
+        </mesh>
 
-      {/* mid-grip tape wrap */}
-      <mesh position={[bladeDir * -0.27, 2.55, 0]} rotation={[0, 0, bladeDir * 0.06]}>
-        <boxGeometry args={[0.26, 0.36, 0.26]} />
-        <meshStandardMaterial
-          color={color}
-          emissive={color}
-          emissiveIntensity={tapeIntensity * 0.7}
-          roughness={0.55}
-        />
-      </mesh>
-
-      {/* knob tape at the top of the shaft */}
-      <mesh position={[bladeDir * -0.34, 3.06, 0]} rotation={[0, 0, bladeDir * 0.06]}>
-        <boxGeometry args={[0.28, 0.22, 0.28]} />
-        <meshStandardMaterial
-          color={color}
-          emissive={color}
-          emissiveIntensity={tapeIntensity * 0.9}
-          roughness={0.55}
-        />
-      </mesh>
-      {/* small dark cap on top of the knob */}
-      <mesh position={[bladeDir * -0.345, 3.21, 0]} rotation={[0, 0, bladeDir * 0.06]}>
-        <boxGeometry args={[0.22, 0.06, 0.22]} />
-        <meshStandardMaterial color={shaftColor} roughness={0.5} />
-      </mesh>
+        {/* shaft sub-group — pivots at the heel and leans back away from the blade */}
+        <group position={[0, 0.4, 0]} rotation={[0, 0, 0.45]}>
+          <mesh position={[0, 1.55, 0]}>
+            <cylinderGeometry args={[0.11, 0.11, 3.1, 14]} />
+            <meshStandardMaterial color={shaftColor} roughness={0.45} metalness={0.1} />
+          </mesh>
+          {/* mid-grip tape wrap */}
+          <mesh position={[0, 2.0, 0]}>
+            <cylinderGeometry args={[0.16, 0.16, 0.45, 14]} />
+            <meshStandardMaterial
+              color={color}
+              emissive={color}
+              emissiveIntensity={tapeIntensity * 0.7}
+              roughness={0.55}
+            />
+          </mesh>
+          {/* knob tape near the top */}
+          <mesh position={[0, 2.95, 0]}>
+            <cylinderGeometry args={[0.18, 0.18, 0.32, 14]} />
+            <meshStandardMaterial
+              color={color}
+              emissive={color}
+              emissiveIntensity={tapeIntensity * 0.9}
+              roughness={0.55}
+            />
+          </mesh>
+          {/* knob cap at very top */}
+          <mesh position={[0, 3.16, 0]}>
+            <cylinderGeometry args={[0.14, 0.14, 0.08, 14]} />
+            <meshStandardMaterial color={shaftColor} roughness={0.5} />
+          </mesh>
+        </group>
+      </group>
     </group>
   )
 }
