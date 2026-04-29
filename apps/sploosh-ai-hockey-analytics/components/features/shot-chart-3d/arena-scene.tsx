@@ -208,11 +208,23 @@ function nhlToWorld(x: number, y: number): [number, number] {
   return [x, -y]
 }
 
-function ShotMarker({ shot, color, onClick, onHover, isSelected }: ShotMarkerProps) {
+function isLightColor(hex: string): boolean {
+  const c = hex.replace('#', '')
+  if (c.length !== 6) return false
+  const r = parseInt(c.slice(0, 2), 16)
+  const g = parseInt(c.slice(2, 4), 16)
+  const b = parseInt(c.slice(4, 6), 16)
+  const luminance = (0.2126 * r + 0.7152 * g + 0.0722 * b) / 255
+  return luminance > 0.6
+}
+
+function ShotMarker({ shot, color, isHome, onClick, onHover, isSelected }: ShotMarkerProps) {
   const [wx, wz] = nhlToWorld(shot.xCoord, shot.yCoord)
   const goalRef = useRef<THREE.Group>(null)
   const isGoal = shot.result === 'goal'
   const isMissBlock = shot.result === 'missed-shot' || shot.result === 'blocked-shot'
+  const needsContrast = isLightColor(color)
+  const contrastColor = '#0b1220'
 
   useFrame(({ clock }) => {
     if (isGoal && goalRef.current) {
@@ -232,10 +244,19 @@ function ShotMarker({ shot, color, onClick, onHover, isSelected }: ShotMarkerPro
   }
 
   if (isGoal) {
+    const goalCapColor = needsContrast ? contrastColor : '#FFD700'
     return (
       <group position={[wx, ICE_LEVEL + 0.05, wz]} ref={goalRef} onClick={handleClick} onPointerOver={handlePointerOver}>
-        <mesh position={[0, 6, 0]}>
-          <cylinderGeometry args={[0.6, 0.9, 12, 16]} />
+        <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0.02, 0]}>
+          <ringGeometry args={[0.9, 1.6, 24]} />
+          <meshBasicMaterial color={contrastColor} transparent opacity={0.75} side={THREE.DoubleSide} />
+        </mesh>
+        <mesh position={[0, 6, 0]} rotation={[0, isHome ? 0 : Math.PI / 4, 0]}>
+          {isHome ? (
+            <cylinderGeometry args={[0.6, 0.9, 12, 16]} />
+          ) : (
+            <boxGeometry args={[1.4, 12, 1.4]} />
+          )}
           <meshStandardMaterial
             color={color}
             emissive={color}
@@ -244,30 +265,46 @@ function ShotMarker({ shot, color, onClick, onHover, isSelected }: ShotMarkerPro
             opacity={0.85}
           />
         </mesh>
-        <mesh position={[0, 13, 0]}>
-          <sphereGeometry args={[1.2, 16, 16]} />
-          <meshStandardMaterial
-            color="#FFD700"
-            emissive="#FFD700"
-            emissiveIntensity={isSelected ? 2.5 : 1.6}
-          />
-        </mesh>
+        {isHome ? (
+          <mesh position={[0, 13, 0]}>
+            <sphereGeometry args={[1.2, 16, 16]} />
+            <meshStandardMaterial
+              color={goalCapColor}
+              emissive={goalCapColor}
+              emissiveIntensity={isSelected ? 2.5 : 1.6}
+            />
+          </mesh>
+        ) : (
+          <mesh position={[0, 13, 0]} rotation={[0, Math.PI / 4, 0]}>
+            <octahedronGeometry args={[1.4, 0]} />
+            <meshStandardMaterial
+              color={goalCapColor}
+              emissive={goalCapColor}
+              emissiveIntensity={isSelected ? 2.5 : 1.6}
+            />
+          </mesh>
+        )}
         <pointLight position={[0, 6, 0]} color={color} intensity={isSelected ? 30 : 18} distance={20} decay={2} />
       </group>
     )
   }
 
   if (isMissBlock) {
+    const ringSegments = isHome ? 16 : 4
     return (
       <group position={[wx, ICE_LEVEL + 0.05, wz]} onClick={handleClick} onPointerOver={handlePointerOver}>
-        <mesh rotation={[-Math.PI / 2, 0, 0]}>
-          <ringGeometry args={[0.7, 1.1, 16]} />
+        <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0.01, 0]}>
+          <ringGeometry args={[0.55, 1.25, isHome ? 20 : 4]} />
+          <meshBasicMaterial color={contrastColor} transparent opacity={0.7} side={THREE.DoubleSide} />
+        </mesh>
+        <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0.03, 0]}>
+          <ringGeometry args={[0.7, 1.1, ringSegments]} />
           <meshStandardMaterial
             color={color}
             emissive={color}
             emissiveIntensity={isSelected ? 1.5 : 0.5}
             transparent
-            opacity={0.9}
+            opacity={0.95}
             side={THREE.DoubleSide}
           />
         </mesh>
@@ -277,14 +314,35 @@ function ShotMarker({ shot, color, onClick, onHover, isSelected }: ShotMarkerPro
 
   return (
     <group position={[wx, ICE_LEVEL + 0.05, wz]} onClick={handleClick} onPointerOver={handlePointerOver}>
-      <mesh position={[0, 1, 0]}>
-        <cylinderGeometry args={[0.7, 0.9, 2, 12]} />
-        <meshStandardMaterial
-          color={color}
-          emissive={color}
-          emissiveIntensity={isSelected ? 1.8 : 0.7}
-        />
+      <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0.02, 0]}>
+        <ringGeometry args={[0.9, 1.4, 20]} />
+        <meshBasicMaterial color={contrastColor} transparent opacity={0.7} side={THREE.DoubleSide} />
       </mesh>
+      {isHome ? (
+        <mesh position={[0, 1, 0]}>
+          <cylinderGeometry args={[0.7, 0.9, 2, 12]} />
+          <meshStandardMaterial
+            color={color}
+            emissive={color}
+            emissiveIntensity={isSelected ? 1.8 : 0.7}
+          />
+        </mesh>
+      ) : (
+        <mesh position={[0, 1.2, 0]} rotation={[0, Math.PI / 4, 0]}>
+          <octahedronGeometry args={[1.1, 0]} />
+          <meshStandardMaterial
+            color={color}
+            emissive={color}
+            emissiveIntensity={isSelected ? 1.8 : 0.7}
+          />
+        </mesh>
+      )}
+      {needsContrast && isHome && (
+        <mesh position={[0, 1, 0]}>
+          <cylinderGeometry args={[0.92, 1.12, 0.15, 12]} />
+          <meshBasicMaterial color={contrastColor} />
+        </mesh>
+      )}
     </group>
   )
 }

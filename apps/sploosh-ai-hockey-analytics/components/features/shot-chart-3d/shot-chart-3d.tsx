@@ -12,6 +12,7 @@ import {
   filterShotsByPeriod,
   filterShotsByResult,
   getTeamRinkColor,
+  getTeamRinkColorWithContrast,
   getPlayerName,
   type ShotEvent,
 } from '@/lib/utils/shot-chart-utils'
@@ -101,7 +102,11 @@ export const ShotChart3D: React.FC<ShotChart3DProps> = ({
     const teamLogo = team?.logo || team?.darkLogo
     const teamName = team?.name?.default || team?.commonName?.default
     const teamAbbrev = team?.abbrev
-    const teamColor = getTeamRinkColor(shot.teamId)
+    const teamColor = getTeamRinkColorWithContrast(
+      gameData.homeTeam?.id,
+      gameData.awayTeam?.id,
+      shot.teamId
+    )
     const player = (gameData.rosterSpots || []).find((spot: { playerId: number }) => spot.playerId === shot.playerId)
     const playerHeadshot = player?.headshot
     const assistNames = shot.assists
@@ -132,8 +137,16 @@ export const ShotChart3D: React.FC<ShotChart3DProps> = ({
     return s
   }, [allShots, selectedTeam, selectedPeriod, selectedResults])
 
-  const homeColor = getTeamRinkColor(gameData.homeTeam?.id)
-  const awayColor = getTeamRinkColor(gameData.awayTeam?.id)
+  const homeColor = getTeamRinkColorWithContrast(
+    gameData.homeTeam?.id,
+    gameData.awayTeam?.id,
+    gameData.homeTeam?.id
+  )
+  const awayColor = getTeamRinkColorWithContrast(
+    gameData.homeTeam?.id,
+    gameData.awayTeam?.id,
+    gameData.awayTeam?.id
+  )
   const awayTeamName = gameData.awayTeam ? formatTeamFullName(gameData.awayTeam) : 'Away'
   const homeTeamName = gameData.homeTeam ? formatTeamFullName(gameData.homeTeam) : 'Home'
 
@@ -235,6 +248,25 @@ export const ShotChart3D: React.FC<ShotChart3DProps> = ({
                 />
                 Miss/Block
               </label>
+            </div>
+
+            <div className="flex flex-wrap gap-x-4 gap-y-1 items-center text-xs text-muted-foreground">
+              <span className="flex items-center gap-1.5">
+                <span
+                  className="inline-block w-3 h-3 rounded-full border border-foreground/30"
+                  style={{ backgroundColor: homeColor }}
+                  aria-hidden
+                />
+                {homeTeamName} (Home)
+              </span>
+              <span className="flex items-center gap-1.5">
+                <span
+                  className="inline-block w-3 h-3 border border-foreground/30"
+                  style={{ backgroundColor: awayColor, transform: 'rotate(45deg)' }}
+                  aria-hidden
+                />
+                {awayTeamName} (Away)
+              </span>
             </div>
 
             <div className="flex flex-wrap gap-2 items-center text-sm">

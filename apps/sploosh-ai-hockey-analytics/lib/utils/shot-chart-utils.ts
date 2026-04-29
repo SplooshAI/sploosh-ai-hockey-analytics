@@ -281,6 +281,35 @@ export function getTeamRinkColor(teamId: number): string {
 }
 
 /**
+ * Rink color with cross-team contrast adjustment.
+ *
+ * `getTeamRinkColor` is per-team only and can return near-identical colors when
+ * two teams share a brand palette (e.g. BOS gold vs BUF gold accent). This
+ * variant compares the two rink colors for the matchup and, if their contrast
+ * ratio is below threshold, swaps the requested team to its alternate color.
+ */
+export function getTeamRinkColorWithContrast(
+  homeTeamId: number,
+  awayTeamId: number,
+  requestedTeamId: number
+): string {
+  const homeRink = getTeamRinkColor(homeTeamId)
+  const awayRink = getTeamRinkColor(awayTeamId)
+  const CONTRAST_THRESHOLD = 2.5
+
+  if (getContrastRatio(homeRink, awayRink) < CONTRAST_THRESHOLD) {
+    if (requestedTeamId === awayTeamId && teamAlternateColors[awayTeamId]) {
+      return teamAlternateColors[awayTeamId]
+    }
+    if (requestedTeamId === homeTeamId && teamAlternateColors[homeTeamId]) {
+      return teamAlternateColors[homeTeamId]
+    }
+  }
+
+  return getTeamRinkColor(requestedTeamId)
+}
+
+/**
  * Alternative colors for teams when primary colors have poor contrast
  */
 const teamAlternateColors: Record<number, string> = {
