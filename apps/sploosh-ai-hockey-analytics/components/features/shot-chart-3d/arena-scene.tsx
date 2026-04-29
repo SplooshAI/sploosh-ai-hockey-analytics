@@ -6,6 +6,7 @@ import * as THREE from 'three'
 import { useFrame } from '@react-three/fiber'
 import type { ShotEvent } from '@/lib/utils/shot-chart-utils'
 import { createRinkTexture } from './ice-rink-texture'
+import { NHLGoal } from './nhl-goal'
 
 const RINK_LENGTH = 200
 const RINK_WIDTH = 85
@@ -542,6 +543,10 @@ export function ArenaScene({
         centerIceLogoHeightFt={centerIceLogoHeightFt}
       />
       <Boards />
+      
+      {/* 3D NHL Goals at both ends of the rink */}
+      <NHLGoal position={[89, ICE_LEVEL, 0]} rotation={[0, -Math.PI / 2, 0]} />
+      <NHLGoal position={[-89, ICE_LEVEL, 0]} rotation={[0, Math.PI / 2, 0]} />
       {shots.map((shot) => {
         const isHome = shot.teamId === homeTeamId
         const color = isHome ? homeColor : awayColor

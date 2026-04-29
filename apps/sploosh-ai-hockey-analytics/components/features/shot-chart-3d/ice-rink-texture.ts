@@ -76,8 +76,7 @@ export function createRinkTexture(opts: RinkTextureOptions = {}): THREE.CanvasTe
   drawGoalieCrease(ctx, x, y, ftToPx, 89)
   drawGoalieCrease(ctx, x, y, ftToPx, -89)
 
-  drawGoalNet(ctx, x, y, ftToPx, 89)
-  drawGoalNet(ctx, x, y, ftToPx, -89)
+  // 3D goals are now rendered separately, so we don't need the 2D goal drawing
 
   ctx.strokeStyle = 'rgba(0,0,0,0.25)'
   ctx.lineWidth = ftToPx(0.6)
@@ -298,38 +297,6 @@ function drawGoalTrapezoids(
   })
 }
 
-function drawGoalNet(
-  ctx: CanvasRenderingContext2D,
-  x: (n: number) => number,
-  y: (n: number) => number,
-  ftToPx: (n: number) => number,
-  goalX: number
-) {
-  const dir = goalX > 0 ? -1 : 1
-  const netDepth = 3.33
-  const halfH = 3
-
-  ctx.strokeStyle = RED
-  ctx.lineWidth = ftToPx(LINE_THIN * 1.5)
-
-  ctx.beginPath()
-  const goalLine = x(goalX)
-  const back = x(goalX - dir * netDepth)
-
-  ctx.moveTo(goalLine, y(halfH))
-  ctx.lineTo(back, y(halfH))
-  ctx.lineTo(back, y(-halfH))
-  ctx.lineTo(goalLine, y(-halfH))
-  ctx.stroke()
-
-  ctx.fillStyle = 'rgba(120, 120, 130, 0.18)'
-  ctx.fillRect(
-    Math.min(goalLine, back),
-    y(halfH),
-    Math.abs(back - goalLine),
-    y(-halfH) - y(halfH)
-  )
-}
 
 function drawRinkBoundary(
   ctx: CanvasRenderingContext2D,
