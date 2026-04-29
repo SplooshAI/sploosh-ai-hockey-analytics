@@ -11,7 +11,6 @@ import {
   filterShotsByTeam,
   filterShotsByPeriod,
   filterShotsByResult,
-  getTeamRinkColor,
   getTeamRinkColorWithContrast,
   getPlayerName,
   type ShotEvent,
@@ -80,6 +79,8 @@ export const ShotChart3D: React.FC<ShotChart3DProps> = ({
   ])
   const [cameraPreset, setCameraPreset] = useState<CameraPreset>('broadcast')
   const [autoRotate, setAutoRotate] = useState(false)
+  const [resetSignal, setResetSignal] = useState(0)
+  const [showHelp, setShowHelp] = useState(false)
 
   const [hoveredShot, setHoveredShot] = useState<{
     shot: ShotEvent
@@ -171,6 +172,76 @@ export const ShotChart3D: React.FC<ShotChart3DProps> = ({
     () => ({ position: CAMERA_PRESETS.broadcast.position, fov: 45, near: 0.5, far: 1000 }),
     []
   )
+
+  const zoomBy = (delta: number) => {
+    const controls = orbitRef.current
+    if (!controls) return
+    const distance = controls.getDistance()
+    const next = Math.min(320, Math.max(40, distance + delta))
+    const direction = new THREE.Vector3()
+      .subVectors(controls.object.position, controls.target)
+      .normalize()
+    controls.object.position.copy(controls.target).add(direction.multiplyScalar(next))
+    controls.update()
+  }
+
+  const orbitBy = (deltaTheta: number, deltaPhi: number) => {
+    const controls = orbitRef.current
+    if (!controls) return
+    const offset = new THREE.Vector3().subVectors(controls.object.position, controls.target)
+    const sph = new THREE.Spherical().setFromVector3(offset)
+    sph.theta += deltaTheta
+    sph.phi = Math.max(0.08, Math.min(Math.PI / 2 - 0.05, sph.phi + deltaPhi))
+    offset.setFromSpherical(sph)
+    controls.object.position.copy(controls.target).add(offset)
+    controls.update()
+  }
+
+  const resetView = () => setResetSignal((n) => n + 1)
+
+  useEffect(() => {
+    const handler = (e: KeyboardEvent) => {
+      if (e.target instanceof HTMLElement) {
+        const tag = e.target.tagName
+        if (tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT' || e.target.isContentEditable) return
+      }
+      switch (e.key) {
+        case 'r':
+        case 'R':
+          resetView()
+          break
+        case 'ArrowLeft':
+          orbitBy(-Math.PI / 18, 0)
+          e.preventDefault()
+          break
+        case 'ArrowRight':
+          orbitBy(Math.PI / 18, 0)
+          e.preventDefault()
+          break
+        case 'ArrowUp':
+          orbitBy(0, -Math.PI / 36)
+          e.preventDefault()
+          break
+        case 'ArrowDown':
+          orbitBy(0, Math.PI / 36)
+          e.preventDefault()
+          break
+        case '+':
+        case '=':
+          zoomBy(-20)
+          break
+        case '-':
+        case '_':
+          zoomBy(20)
+          break
+        case '?':
+          setShowHelp((v) => !v)
+          break
+      }
+    }
+    window.addEventListener('keydown', handler)
+    return () => window.removeEventListener('keydown', handler)
+  }, [])
 
   return (
     <div className={`flex flex-col gap-4 ${className}`}>
@@ -284,15 +355,6 @@ export const ShotChart3D: React.FC<ShotChart3DProps> = ({
                   {CAMERA_PRESETS[key].label}
                 </button>
               ))}
-              <label className="flex items-center gap-1.5 text-sm cursor-pointer ml-2">
-                <input
-                  type="checkbox"
-                  checked={autoRotate}
-                  onChange={(e) => setAutoRotate(e.target.checked)}
-                  className="rounded w-4 h-4 cursor-pointer"
-                />
-                Auto-rotate
-              </label>
             </div>
           </div>
 
@@ -318,7 +380,7 @@ export const ShotChart3D: React.FC<ShotChart3DProps> = ({
             autoRotateSpeed={0.4}
             makeDefault
           />
-          <CameraRig preset={preset} controlsRef={orbitRef} />
+          <CameraRig preset={preset} controlsRef={orbitRef} resetSignal={resetSignal} />
           <ArenaScene
             shots={filteredShots}
             homeTeamId={gameData.homeTeam?.id}
@@ -335,56 +397,49 @@ export const ShotChart3D: React.FC<ShotChart3DProps> = ({
 
         <div className="absolute top-3 left-3 px-3 py-1.5 rounded-md bg-black/60 backdrop-blur-sm text-white text-xs font-semibold pointer-events-none">
           Sploosh.AI Arena
-          <span className="block text-[10px] font-normal opacity-70">Drag to orbit / Scroll to zoom</span>
+          <span className="block text-[10px] font-normal opacity-70">Drag to orbit · scroll to zoom · ? for help</span>
         </div>
         
-        <div className="absolute bottom-2 left-3 flex gap-1">
-          <button
-            onClick={() => {
-              const controls = orbitRef.current
-              if (controls) {
-                const currentDistance = controls.getDistance()
-                const newDistance = Math.max(40, currentDistance - 20)
-                const direction = new THREE.Vector3()
-                  .subVectors(controls.object.position, controls.target)
-                  .normalize()
-                controls.object.position.copy(controls.target).add(direction.multiplyScalar(newDistance))
-                controls.update()
-              }
-            }}
-            className="px-2 py-1 text-xs font-medium rounded border bg-black/60 text-white border-white/20 hover:bg-black/80 transition-colors"
-            title="Zoom in"
+        <ArenaControlBar
+          onResetView={resetView}
+          onOrbitLeft={() => orbitBy(-Math.PI / 18, 0)}
+          onOrbitRight={() => orbitBy(Math.PI / 18, 0)}
+          onTiltUp={() => orbitBy(0, -Math.PI / 36)}
+          onTiltDown={() => orbitBy(0, Math.PI / 36)}
+          onZoomIn={() => zoomBy(-20)}
+          onZoomOut={() => zoomBy(20)}
+          autoRotate={autoRotate}
+          onToggleAutoRotate={() => setAutoRotate((v) => !v)}
+          onToggleHelp={() => setShowHelp((v) => !v)}
+        />
+
+        {showHelp && (
+          <div
+            className="absolute bottom-16 right-3 max-w-xs px-4 py-3 rounded-lg bg-black/85 backdrop-blur-sm text-white text-xs shadow-lg border border-white/10"
+            role="dialog"
+            aria-label="3D arena controls help"
           >
-            +
-          </button>
-          <button
-            onClick={() => {
-              const controls = orbitRef.current
-              if (controls) {
-                const currentDistance = controls.getDistance()
-                const newDistance = Math.min(320, currentDistance + 20)
-                const direction = controls.object.position.clone().normalize()
-                controls.object.position.copy(direction.multiplyScalar(newDistance))
-                controls.update()
-              }
-            }}
-            className="px-2 py-1 text-xs font-medium rounded border bg-black/60 text-white border-white/20 hover:bg-black/80 transition-colors"
-            title="Zoom out"
-          >
-            -
-          </button>
-          <button
-            onClick={() => setAutoRotate(!autoRotate)}
-            className={`px-2 py-1 text-xs font-medium rounded border transition-colors ${
-              autoRotate
-                ? 'bg-primary text-primary-foreground border-primary'
-                : 'bg-black/60 text-white border-white/20 hover:bg-black/80'
-            }`}
-            title={autoRotate ? 'Stop rotation' : 'Start rotation'}
-          >
-            {autoRotate ? '||' : '->'}
-          </button>
-        </div>
+            <div className="flex items-start justify-between gap-3 mb-2">
+              <div className="font-semibold text-sm">Controls</div>
+              <button
+                onClick={() => setShowHelp(false)}
+                className="text-white/60 hover:text-white text-base leading-none"
+                aria-label="Close help"
+              >
+                ×
+              </button>
+            </div>
+            <ul className="space-y-1 text-white/80">
+              <li><span className="font-medium text-white">Drag</span> to orbit</li>
+              <li><span className="font-medium text-white">Scroll / pinch</span> to zoom</li>
+              <li><span className="font-medium text-white">Right-drag</span> to pan</li>
+              <li><span className="font-medium text-white">Arrow keys</span> orbit / tilt</li>
+              <li><span className="font-medium text-white">+ / −</span> zoom in / out</li>
+              <li><span className="font-medium text-white">R</span> reset view</li>
+              <li><span className="font-medium text-white">?</span> toggle this help</li>
+            </ul>
+          </div>
+        )}
 
         {hoveredShot && (
           <ShotTooltip
@@ -437,9 +492,10 @@ export const ShotChart3D: React.FC<ShotChart3DProps> = ({
 interface CameraRigProps {
   preset: { position: [number, number, number]; target: [number, number, number] }
   controlsRef: React.RefObject<OrbitControlsImpl | null>
+  resetSignal?: number
 }
 
-function CameraRig({ preset, controlsRef }: CameraRigProps) {
+function CameraRig({ preset, controlsRef, resetSignal }: CameraRigProps) {
   const camera = useThree((s) => s.camera)
   const invalidate = useThree((s) => s.invalidate)
   const rafRef = useRef<number | null>(null)
@@ -473,7 +529,72 @@ function CameraRig({ preset, controlsRef }: CameraRigProps) {
     return () => {
       if (rafRef.current !== null) cancelAnimationFrame(rafRef.current)
     }
-  }, [preset, camera, controlsRef, invalidate])
+  }, [preset, resetSignal, camera, controlsRef, invalidate])
 
   return null
+}
+
+interface ArenaControlBarProps {
+  onResetView: () => void
+  onOrbitLeft: () => void
+  onOrbitRight: () => void
+  onTiltUp: () => void
+  onTiltDown: () => void
+  onZoomIn: () => void
+  onZoomOut: () => void
+  autoRotate: boolean
+  onToggleAutoRotate: () => void
+  onToggleHelp: () => void
+}
+
+function ArenaControlBar({
+  onResetView,
+  onOrbitLeft,
+  onOrbitRight,
+  onTiltUp,
+  onTiltDown,
+  onZoomIn,
+  onZoomOut,
+  autoRotate,
+  onToggleAutoRotate,
+  onToggleHelp,
+}: ArenaControlBarProps) {
+  const btnBase =
+    'w-8 h-8 flex items-center justify-center rounded-md border border-white/15 bg-black/55 text-white text-sm hover:bg-black/80 active:scale-95 transition'
+  const btnActive = 'w-8 h-8 flex items-center justify-center rounded-md border border-primary bg-primary text-primary-foreground text-sm hover:opacity-90 active:scale-95 transition'
+
+  return (
+    <div className="absolute bottom-3 right-3 flex items-center gap-1 px-1.5 py-1.5 rounded-lg bg-black/40 backdrop-blur-sm border border-white/10">
+      <button onClick={onResetView} className={btnBase} title="Reset view (R)" aria-label="Reset view">
+        <svg viewBox="0 0 16 16" width="14" height="14" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
+          <path d="M2 8a6 6 0 1 0 1.76-4.24" />
+          <path d="M2 2v4h4" />
+        </svg>
+      </button>
+      <div className="w-px h-5 bg-white/15 mx-0.5" aria-hidden />
+      <button onClick={onOrbitLeft} className={btnBase} title="Orbit left (←)" aria-label="Orbit left">←</button>
+      <button onClick={onTiltUp} className={btnBase} title="Tilt up (↑)" aria-label="Tilt up">↑</button>
+      <button onClick={onTiltDown} className={btnBase} title="Tilt down (↓)" aria-label="Tilt down">↓</button>
+      <button onClick={onOrbitRight} className={btnBase} title="Orbit right (→)" aria-label="Orbit right">→</button>
+      <div className="w-px h-5 bg-white/15 mx-0.5" aria-hidden />
+      <button onClick={onZoomIn} className={btnBase} title="Zoom in (+)" aria-label="Zoom in">+</button>
+      <button onClick={onZoomOut} className={btnBase} title="Zoom out (−)" aria-label="Zoom out">−</button>
+      <div className="w-px h-5 bg-white/15 mx-0.5" aria-hidden />
+      <button
+        onClick={onToggleAutoRotate}
+        className={autoRotate ? btnActive : btnBase}
+        title={autoRotate ? 'Stop auto-rotate' : 'Start auto-rotate'}
+        aria-label={autoRotate ? 'Stop auto-rotate' : 'Start auto-rotate'}
+        aria-pressed={autoRotate}
+      >
+        <svg viewBox="0 0 16 16" width="14" height="14" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
+          <path d="M2.5 8a5.5 5.5 0 0 1 9.5-3.8" />
+          <path d="M13.5 8a5.5 5.5 0 0 1-9.5 3.8" />
+          <path d="M12 1.5v3h-3" />
+          <path d="M4 14.5v-3h3" />
+        </svg>
+      </button>
+      <button onClick={onToggleHelp} className={btnBase} title="Show help (?)" aria-label="Show help">?</button>
+    </div>
+  )
 }

@@ -223,27 +223,35 @@ const GOAL_LIGHT_RED = '#ff1a1a'
 function ShotMarker({ shot, color, isHome, onClick, onHover, isSelected }: ShotMarkerProps) {
   const [wx, wz] = nhlToWorld(shot.xCoord, shot.yCoord)
   const isGoal = shot.result === 'goal'
-  const isMissBlock = shot.result === 'missed-shot' || shot.result === 'blocked-shot'
+  const isMiss = shot.result === 'missed-shot'
+  const isBlock = shot.result === 'blocked-shot'
   const needsContrast = isLightColor(color)
   const contrastColor = '#0b1220'
+  const beamRef = useRef<THREE.MeshStandardMaterial>(null)
 
   const lightDomeRef = useRef<THREE.MeshStandardMaterial>(null)
   const lightHaloRef = useRef<THREE.MeshBasicMaterial>(null)
   const lightSourceRef = useRef<THREE.PointLight>(null)
 
   useFrame(({ clock }) => {
-    if (!isGoal) return
-    const t = clock.getElapsedTime() + shot.eventId * 0.41
-    // Square the sine so the pulse spends more time bright then dims sharply,
-    // closer to a real rotating goal lamp than a smooth oscillation.
-    const pulse = Math.pow(Math.max(0, Math.sin(t * 4)), 2)
-    const base = isSelected ? 1.6 : 1.0
-    const peak = isSelected ? 5.5 : 4.0
-    const intensity = base + (peak - base) * pulse
+    if (isGoal) {
+      const t = clock.getElapsedTime() + shot.eventId * 0.41
+      const pulse = Math.pow(Math.max(0, Math.sin(t * 4)), 2)
+      const base = isSelected ? 1.6 : 1.0
+      const peak = isSelected ? 5.5 : 4.0
+      const intensity = base + (peak - base) * pulse
 
-    if (lightDomeRef.current) lightDomeRef.current.emissiveIntensity = intensity
-    if (lightHaloRef.current) lightHaloRef.current.opacity = 0.15 + 0.5 * pulse
-    if (lightSourceRef.current) lightSourceRef.current.intensity = (isSelected ? 12 : 6) + 24 * pulse
+      if (lightDomeRef.current) lightDomeRef.current.emissiveIntensity = intensity
+      if (lightHaloRef.current) lightHaloRef.current.opacity = 0.15 + 0.5 * pulse
+      if (lightSourceRef.current) lightSourceRef.current.intensity = (isSelected ? 12 : 6) + 24 * pulse
+      return
+    }
+    if (beamRef.current) {
+      const t = clock.getElapsedTime() + shot.eventId * 0.27
+      const breathe = 0.5 + 0.5 * Math.sin(t * 1.4)
+      const base = isSelected ? 1.4 : 0.9
+      beamRef.current.emissiveIntensity = base + 0.5 * breathe
+    }
   })
 
   const handleClick = (e: { stopPropagation: () => void; nativeEvent: MouseEvent }) => {
@@ -318,22 +326,23 @@ function ShotMarker({ shot, color, isHome, onClick, onHover, isSelected }: ShotM
     )
   }
 
-  if (isMissBlock) {
-    const ringSegments = isHome ? 16 : 4
+  if (isMiss) {
     return (
       <group position={[wx, ICE_LEVEL + 0.05, wz]} onClick={handleClick} onPointerOver={handlePointerOver}>
+        {/* dark contrast ring on ice */}
         <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0.01, 0]}>
-          <ringGeometry args={[0.55, 1.25, isHome ? 20 : 4]} />
-          <meshBasicMaterial color={contrastColor} transparent opacity={0.7} side={THREE.DoubleSide} />
+          <ringGeometry args={[0.55, 1.4, 24]} />
+          <meshBasicMaterial color={contrastColor} transparent opacity={0.55} side={THREE.DoubleSide} />
         </mesh>
-        <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0.03, 0]}>
-          <ringGeometry args={[0.7, 1.1, ringSegments]} />
+        {/* open team-color ring (no fill — the play didn't connect) */}
+        <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0.04, 0]}>
+          <ringGeometry args={[0.85, 1.15, isHome ? 24 : 4]} />
           <meshStandardMaterial
             color={color}
             emissive={color}
-            emissiveIntensity={isSelected ? 1.5 : 0.5}
+            emissiveIntensity={isSelected ? 1.3 : 0.45}
             transparent
-            opacity={0.95}
+            opacity={0.85}
             side={THREE.DoubleSide}
           />
         </mesh>
@@ -341,37 +350,89 @@ function ShotMarker({ shot, color, isHome, onClick, onHover, isSelected }: ShotM
     )
   }
 
-  return (
-    <group position={[wx, ICE_LEVEL + 0.05, wz]} onClick={handleClick} onPointerOver={handlePointerOver}>
-      <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0.02, 0]}>
-        <ringGeometry args={[0.9, 1.4, 20]} />
-        <meshBasicMaterial color={contrastColor} transparent opacity={0.7} side={THREE.DoubleSide} />
-      </mesh>
-      {isHome ? (
-        <mesh position={[0, 1, 0]}>
-          <cylinderGeometry args={[0.7, 0.9, 2, 12]} />
+  if (isBlock) {
+    return (
+      <group position={[wx, ICE_LEVEL + 0.05, wz]} onClick={handleClick} onPointerOver={handlePointerOver}>
+        {/* dark contrast disc */}
+        <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0.02, 0]}>
+          <ringGeometry args={[0.6, 1.3, 24]} />
+          <meshBasicMaterial color={contrastColor} transparent opacity={0.7} side={THREE.DoubleSide} />
+        </mesh>
+        {/* upright shield-slab — a defender wall */}
+        <mesh position={[0, 0.85, 0]} rotation={[0, isHome ? 0 : Math.PI / 4, 0]}>
+          <boxGeometry args={[2.0, 1.7, 0.25]} />
           <meshStandardMaterial
             color={color}
             emissive={color}
-            emissiveIntensity={isSelected ? 1.8 : 0.7}
+            emissiveIntensity={isSelected ? 1.5 : 0.6}
+            transparent
+            opacity={0.92}
+          />
+        </mesh>
+        {/* dark cross-bar through the shield */}
+        <mesh position={[0, 0.85, 0]} rotation={[0, isHome ? 0 : Math.PI / 4, 0]}>
+          <boxGeometry args={[2.1, 0.32, 0.27]} />
+          <meshStandardMaterial color={contrastColor} roughness={0.5} />
+        </mesh>
+        {/* small contrast band where the shield meets the ice */}
+        {needsContrast && (
+          <mesh position={[0, 0.06, 0]} rotation={[0, isHome ? 0 : Math.PI / 4, 0]}>
+            <boxGeometry args={[2.05, 0.12, 0.32]} />
+            <meshBasicMaterial color={contrastColor} />
+          </mesh>
+        )}
+      </group>
+    )
+  }
+
+  // shot-on-goal: glowing team-color beam rising from a small puck-disc
+  return (
+    <group position={[wx, ICE_LEVEL + 0.05, wz]} onClick={handleClick} onPointerOver={handlePointerOver}>
+      {/* dark contrast disc */}
+      <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0.02, 0]}>
+        <ringGeometry args={[0.7, 1.3, 24]} />
+        <meshBasicMaterial color={contrastColor} transparent opacity={0.7} side={THREE.DoubleSide} />
+      </mesh>
+      {/* puck base — small dark disc at ice level */}
+      <mesh position={[0, 0.18, 0]}>
+        <cylinderGeometry args={[0.55, 0.55, 0.32, 18]} />
+        <meshStandardMaterial color="#101218" roughness={0.6} metalness={0.2} />
+      </mesh>
+      {/* glowing team-color beam — cylinder for home, square for away */}
+      {isHome ? (
+        <mesh position={[0, 1.7, 0]}>
+          <cylinderGeometry args={[0.35, 0.45, 2.6, 16]} />
+          <meshStandardMaterial
+            ref={beamRef}
+            color={color}
+            emissive={color}
+            emissiveIntensity={isSelected ? 1.6 : 1.0}
+            transparent
+            opacity={0.9}
           />
         </mesh>
       ) : (
-        <mesh position={[0, 1.2, 0]} rotation={[0, Math.PI / 4, 0]}>
-          <octahedronGeometry args={[1.1, 0]} />
+        <mesh position={[0, 1.7, 0]} rotation={[0, Math.PI / 4, 0]}>
+          <boxGeometry args={[0.75, 2.6, 0.75]} />
           <meshStandardMaterial
+            ref={beamRef}
             color={color}
             emissive={color}
-            emissiveIntensity={isSelected ? 1.8 : 0.7}
+            emissiveIntensity={isSelected ? 1.6 : 1.0}
+            transparent
+            opacity={0.9}
           />
         </mesh>
       )}
-      {needsContrast && isHome && (
-        <mesh position={[0, 1, 0]}>
-          <cylinderGeometry args={[0.92, 1.12, 0.15, 12]} />
-          <meshBasicMaterial color={contrastColor} />
-        </mesh>
-      )}
+      {/* small bright cap at the top of the beam */}
+      <mesh position={[0, 3.05, 0]}>
+        <sphereGeometry args={[0.35, 12, 10]} />
+        <meshStandardMaterial
+          color={needsContrast ? contrastColor : color}
+          emissive={needsContrast ? contrastColor : color}
+          emissiveIntensity={isSelected ? 2.0 : 1.4}
+        />
+      </mesh>
     </group>
   )
 }
