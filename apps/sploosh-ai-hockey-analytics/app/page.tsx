@@ -26,7 +26,7 @@ function HomeContent() {
   const [lastRefreshTime, setLastRefreshTime] = useState<Date | null>(null)
   const [isUsingCachedData, setIsUsingCachedData] = useState(false)
   const [cachedLogoUrl, setCachedLogoUrl] = useState<string>('/sploosh.ai/sploosh-ai-character-transparent.png')
-  const [shotChartView, setShotChartView] = useState<'2d' | '3d'>('2d')
+  const [shotChartView, setShotChartView] = useState<'2d' | '3d'>('3d')
   const isSelectingGameRef = useRef(false)
   const selectedGameIdRef = useRef<number | null>(null)
   const abortControllerRef = useRef<AbortController | null>(null)
@@ -335,11 +335,6 @@ function HomeContent() {
                       <span className="ml-1.5 text-[10px] uppercase tracking-wider px-1.5 py-0.5 rounded bg-cyan-500/20 text-cyan-400">New</span>
                     </button>
                   </div>
-                  {shotChartView === '3d' && (
-                    <span className="text-xs text-muted-foreground">
-                      Inside Sploosh.AI Arena
-                    </span>
-                  )}
                 </div>
 
                 {shotChartView === '2d' ? (

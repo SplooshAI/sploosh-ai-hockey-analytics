@@ -328,7 +328,7 @@ export const ShotChart3D: React.FC<ShotChart3DProps> = ({
                   style={{ backgroundColor: awayColor, transform: 'rotate(45deg)' }}
                   aria-hidden
                 />
-                {awayTeamName} (Away)
+                {awayTeamName}
               </span>
               <span className="flex items-center gap-1.5">
                 <span
@@ -336,25 +336,27 @@ export const ShotChart3D: React.FC<ShotChart3DProps> = ({
                   style={{ backgroundColor: homeColor }}
                   aria-hidden
                 />
-                {homeTeamName} (Home)
+                {homeTeamName}
               </span>
             </div>
 
-            <div className="flex flex-wrap gap-2 items-center text-sm">
+            <div className="space-y-2 text-sm">
               <label className="text-sm font-medium whitespace-nowrap">Camera:</label>
-              {(Object.keys(CAMERA_PRESETS) as CameraPreset[]).map((key) => (
-                <button
-                  key={key}
-                  onClick={() => setCameraPreset(key)}
-                  className={`px-3 py-1.5 text-xs font-medium rounded-md border transition-colors ${
-                    cameraPreset === key
-                      ? 'bg-primary text-primary-foreground border-primary'
-                      : 'border-border hover:bg-muted'
-                  }`}
-                >
-                  {CAMERA_PRESETS[key].label}
-                </button>
-              ))}
+              <div className="grid grid-cols-2 sm:flex sm:flex-wrap gap-2">
+                {(Object.keys(CAMERA_PRESETS) as CameraPreset[]).map((key) => (
+                  <button
+                    key={key}
+                    onClick={() => setCameraPreset(key)}
+                    className={`px-3 py-1.5 text-xs font-medium rounded-md border transition-colors ${
+                      cameraPreset === key
+                        ? 'bg-primary text-primary-foreground border-primary'
+                        : 'border-border hover:bg-muted'
+                    }`}
+                  >
+                    {CAMERA_PRESETS[key].label}
+                  </button>
+                ))}
+              </div>
             </div>
           </div>
 
