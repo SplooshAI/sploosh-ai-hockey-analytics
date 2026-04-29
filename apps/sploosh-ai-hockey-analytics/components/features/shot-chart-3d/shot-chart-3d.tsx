@@ -324,19 +324,19 @@ export const ShotChart3D: React.FC<ShotChart3DProps> = ({
             <div className="flex flex-wrap gap-x-4 gap-y-1 items-center text-xs text-muted-foreground">
               <span className="flex items-center gap-1.5">
                 <span
-                  className="inline-block w-3 h-3 rounded-full border border-foreground/30"
-                  style={{ backgroundColor: homeColor }}
-                  aria-hidden
-                />
-                {homeTeamName} (Home)
-              </span>
-              <span className="flex items-center gap-1.5">
-                <span
                   className="inline-block w-3 h-3 border border-foreground/30"
                   style={{ backgroundColor: awayColor, transform: 'rotate(45deg)' }}
                   aria-hidden
                 />
                 {awayTeamName} (Away)
+              </span>
+              <span className="flex items-center gap-1.5">
+                <span
+                  className="inline-block w-3 h-3 rounded-full border border-foreground/30"
+                  style={{ backgroundColor: homeColor }}
+                  aria-hidden
+                />
+                {homeTeamName} (Home)
               </span>
             </div>
 
