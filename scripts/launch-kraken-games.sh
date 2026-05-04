@@ -42,7 +42,7 @@ EXAMPLES:
     $0                                    # Launch all games locally
     $0 --outcome=win                    # Launch only regulation wins
     $0 --environment=production           # Launch in production
-    $0 --outcome=so_win --production    # Launch shootout wins in production
+    $0 --outcome=so_win --environment=production    # Launch shootout wins in production
 
 NOTES:
     - Most game IDs need to be updated with actual Seattle Kraken games
