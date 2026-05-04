@@ -271,7 +271,7 @@ export const ShotChart3D: React.FC<ShotChart3DProps> = ({
                   <option value="">All Periods</option>
                   {periods.map((p) => (
                     <option key={p} value={p}>
-                      {formatPeriodLabel(p)}
+                      {formatPeriodLabel(p, gameData)}
                     </option>
                   ))}
                 </select>

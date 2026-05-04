@@ -316,7 +316,7 @@ export const ShotChart: React.FC<ShotChartProps> = ({
                   <option value="">All Periods</option>
                   {periods.map(period => (
                     <option key={period} value={period}>
-                      {formatPeriodLabel(period)}
+                      {formatPeriodLabel(period, gameData)}
                     </option>
                   ))}
                 </select>
