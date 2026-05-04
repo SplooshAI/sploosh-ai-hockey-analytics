@@ -339,12 +339,12 @@ function HomeContent() {
 
                 {shotChartView === '2d' ? (
                   <ShotChart
-                    gameData={playByPlayData}
+                    gameData={{...playByPlayData, ...gameCenterData}}
                     showCenterLogo={true}
                     centerIceLogo={cachedLogoUrl}
                   />
                 ) : (
-                  <ShotChart3D gameData={playByPlayData} centerIceLogo={cachedLogoUrl} />
+                  <ShotChart3D gameData={{...playByPlayData, ...gameCenterData}} centerIceLogo={cachedLogoUrl} />
                 )}
               </div>
 

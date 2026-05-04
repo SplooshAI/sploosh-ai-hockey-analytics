@@ -36,6 +36,7 @@ export function formatTeamAbbrev(team: { abbrev: string }): string {
  * Format a period number to its display label
  * 
  * @param period - The period number (1-3 for regulation, 4+ for overtime/shootout)
+ * @param gameData - Optional game data to determine if postseason (no shootouts)
  * @returns The formatted period label
  * 
  * @example
@@ -43,9 +44,10 @@ export function formatTeamAbbrev(team: { abbrev: string }): string {
  * formatPeriodLabel(2) // "2nd"
  * formatPeriodLabel(3) // "3rd"
  * formatPeriodLabel(4) // "OT"
- * formatPeriodLabel(5) // "SO"
+ * formatPeriodLabel(5) // "SO" (regular season)
+ * formatPeriodLabel(5, postseasonGameData) // "2OT" (postseason)
  */
-export function formatPeriodLabel(period: number): string {
+export function formatPeriodLabel(period: number, gameData?: { gameType?: number }): string {
   // Regulation periods
   if (period === 1) return '1st'
   if (period === 2) return '2nd'
@@ -54,12 +56,17 @@ export function formatPeriodLabel(period: number): string {
   // Overtime
   if (period === 4) return 'OT'
   
-  // Shootout
-  if (period === 5) return 'SO'
+  // Check if this is a postseason game (gameType 3 = playoffs)
+  const isPostseason = gameData?.gameType === 3
   
-  // Multiple overtimes (rare, but possible in playoffs)
-  if (period > 5) {
-    const overtimeNumber = period - 4
+  // Shootout (only in regular season - postseason games have continuous OT)
+  if (period === 5) {
+    return isPostseason ? '2OT' : 'SO'
+  }
+  
+  // Multiple overtimes (reasonable range only)
+  if (period > 5 && period <= 10) { // Reasonable upper limit for overtime periods
+    const overtimeNumber = isPostseason ? period - 3 : period - 4
     return `${overtimeNumber}OT`
   }
   

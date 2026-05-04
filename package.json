@@ -43,7 +43,17 @@
     "test:workflows:ghcr:keep-versions": "act workflow_dispatch -e .github/test-data/ghcr/keep-versions.json -W .github/workflows/cleanup_ghcr.yml --container-architecture linux/amd64",
     "test:workflows:ghcr:keep-days": "act workflow_dispatch -e .github/test-data/ghcr/keep-days.json -W .github/workflows/cleanup_ghcr.yml --container-architecture linux/amd64",
     "test:workflows:ghcr:cleanup": "act workflow_dispatch -e .github/test-data/ghcr/actual-cleanup.json -W .github/workflows/cleanup_ghcr.yml --container-architecture linux/amd64",
-    "test:workflows:secrets": "act workflow_dispatch -W .github/workflows/test_secrets.yml"
+    "test:workflows:secrets": "act workflow_dispatch -W .github/workflows/test_secrets.yml",
+    "kraken:launch:all": "./scripts/launch-kraken-games.sh",
+    "kraken:launch:win": "./scripts/launch-kraken-games.sh --outcome=win",
+    "kraken:launch:loss": "./scripts/launch-kraken-games.sh --outcome=loss",
+    "kraken:launch:ot-win": "./scripts/launch-kraken-games.sh --outcome=ot_win",
+    "kraken:launch:ot-loss": "./scripts/launch-kraken-games.sh --outcome=ot_loss",
+    "kraken:launch:so-win": "./scripts/launch-kraken-games.sh --outcome=so_win",
+    "kraken:launch:so-loss": "./scripts/launch-kraken-games.sh --outcome=so_loss",
+    "kraken:launch:postseason": "./scripts/launch-kraken-games.sh --outcome=postseason_ot",
+    "kraken:launch:prod": "./scripts/launch-kraken-games.sh --environment=production",
+    "kraken:find-games": "./scripts/find-kraken-games.sh"
   },
   "repository": {
     "type": "git",
