@@ -128,6 +128,24 @@ The app image is built on the VM from the synced source, tagged with the
 current git commit (`GIT_HASH`, `GIT_DATE`) so the version shown in the app
 matches what shipped.
 
+### Automatic deploys from GitHub Actions
+
+After the version-bump PR merges, the `deploy` job in `.github/workflows/main-merge.yml`
+runs `deploy-to-oracle.sh up app` from `main` and then checks that the public site
+returns 200. It runs in the `hockey-preview` GitHub Environment, which should require a
+reviewer, so a merge does not go live until it is approved.
+
+Set up once in the repository settings:
+
+1. Settings > Environments > New environment: `hockey-preview`, with Required reviewers.
+2. In that environment, add secrets `HOCKEY_DEPLOY_SSH_KEY` (the contents of
+   `~/.ssh/hockey_oracle_deploy`) and `HOCKEY_VM_IP`.
+
+The workflow does not have the Cloudflare tunnel token. Its `.env.deploy` has no
+`TUNNEL_TOKEN`, so the script leaves the settings file already on the VM (which has the
+token) in place, and `up app` only recreates the app container. The VM IP is not static;
+update `HOCKEY_VM_IP` if the instance is ever stopped and started or recreated.
+
 ### Logging in to look around
 
 ```bash
