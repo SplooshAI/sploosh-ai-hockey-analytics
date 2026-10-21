@@ -1,0 +1,45 @@
+# Cloudflare Tunnel overlay — strictly additive. Layer this ON TOP of
+# docker-compose.yml with an extra -f flag (see scripts/deploy/deploy-to-oracle.sh);
+# the plain `npm run docker:prod:up` path stays localhost-only and tunnel-free.
+#
+# What this changes:
+#   - adds the cloudflared service (profile "tunnel", so it never auto-starts)
+#   - drops the host port mapping on the app. The tunnel reaches the app by its
+#     compose service name over the internal network, so nothing has to listen
+#     on the host at all. On the shared Oracle VM that matters: the CIP demo
+#     already holds host port 3000, and the two stacks must not collide.
+#   - adds a healthcheck, so cloudflared only starts once the app is serving
+#     and `docker compose ps` says plainly whether it is healthy
+#
+# Requires TUNNEL_TOKEN in .env.deploy — see docs/deployment/cloudflare-tunnel.md.
+#
+# The public hostname's Service URL in the Cloudflare dashboard must be
+# http://sploosh-ai-hockey-analytics-app:3000 (the compose service name), not
+# localhost — localhost would point at the cloudflared container itself.
+
+services:
+  sploosh-ai-hockey-analytics-app:
+    # Compose concatenates list fields across -f files; a plain `ports: []`
+    # would leave the base file's mapping in place. `!reset` is the Compose
+    # Specification's "replace, don't merge" tag (same trick the CIP overlay
+    # uses for its volumes).
+    ports: !reset []
+    healthcheck:
+      test: ["CMD", "wget", "-q", "-O", "/dev/null", "http://127.0.0.1:3000/"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+      start_period: 15s
+
+  cloudflared:
+    profiles: ["tunnel"]
+    image: cloudflare/cloudflared:latest
+    command: tunnel --no-autoupdate run --token ${TUNNEL_TOKEN:?set TUNNEL_TOKEN in .env.deploy — see docs/deployment/cloudflare-tunnel.md}
+    restart: unless-stopped
+    depends_on:
+      sploosh-ai-hockey-analytics-app:
+        condition: service_healthy
+    labels:
+      ai.sploosh.application: "cloudflared"
+      ai.sploosh.project: "sploosh-ai-hockey-analytics"
+      ai.sploosh.environment: "production"
