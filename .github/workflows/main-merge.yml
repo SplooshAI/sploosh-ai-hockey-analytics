@@ -46,26 +46,14 @@ jobs:
           PR_TITLE=$(echo "$COMMIT_MSG" | sed -n '3p')
           echo "PR title: $PR_TITLE"
           
-          # Major version bump for breaking changes
-          if [[ $PR_TITLE =~ ^feat!: ]]; then
-            echo "type=major" >> $GITHUB_OUTPUT
-            echo "Major version bump triggered by breaking change"
-          
-          # Minor version bump for new features
-          elif [[ $PR_TITLE =~ ^feat: ]]; then
-            echo "type=minor" >> $GITHUB_OUTPUT
-            echo "Minor version bump triggered by new feature"
-          
-          # Patch version bump for all other types
-          elif [[ $PR_TITLE =~ ^(fix|docs|style|refactor|perf|test|build|ci|chore|revert): ]]; then
-            echo "type=patch" >> $GITHUB_OUTPUT
-            echo "Patch version bump triggered by maintenance change"
-          
-          else
+          # Scripts and tests share one definition of a valid title, including optional scopes
+          if ! BUMP=$(scripts/ci/classify-pr-title.sh "$PR_TITLE"); then
             echo "❌ Invalid PR title format: $PR_TITLE"
             exit 1
           fi
-      
+          echo "type=$BUMP" >> $GITHUB_OUTPUT
+          echo "Version bump type: $BUMP"
+
       - name: Create Version Bump Branch
         id: create_branch
         run: |
