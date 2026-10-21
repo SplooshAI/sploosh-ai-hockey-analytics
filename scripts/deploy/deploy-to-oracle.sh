@@ -13,6 +13,7 @@
 #   up         sync, then rebuild and (re)create the app. Without a service,
 #              the tunnel is brought up too; it is only recreated if its
 #              config changed, so a routine code deploy leaves it connected.
+#              Afterwards, prunes untagged images and old build cache.
 #   stop       Stop containers, keep them (and their images) on the VM.
 #   start      Start stopped containers.
 #   restart    Restart containers in place, no rebuild.
@@ -98,6 +99,13 @@ case "$CMD" in
     # Always detached. An attached `docker compose up` over SSH stops every
     # container the moment the session's stdin closes (found on the CIP deploy).
     remote "GIT_HASH=$GIT_HASH GIT_DATE=$GIT_DATE $COMPOSE up -d --build $SERVICES"
+    # Every build leaves old layers and untagged images behind (about 1.5 GB a
+    # deploy) on a disk shared with another project. Drop the untagged images
+    # and keep only a 500 MB build cache so the next build stays fast. Never
+    # fatal: a failed cleanup must not fail a deploy that already succeeded.
+    echo "==> Cleaning up old images and build cache"
+    remote "docker image prune -f >/dev/null && docker builder prune -f --reserved-space 500MB | tail -1; df -h / | tail -1" \
+      || echo "Cleanup skipped (deploy itself succeeded)."
     ;;
   stop)    remote "$COMPOSE stop $SERVICES" ;;
   start)   remote "$COMPOSE start $SERVICES" ;;
