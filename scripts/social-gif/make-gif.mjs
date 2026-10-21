@@ -168,7 +168,7 @@ try {
               <div style="display:flex;gap:16px;flex-wrap:wrap;justify-content:center;max-width:780px">
                 ${(it.pills || []).map((t) => `<span style="background:rgba(255,255,255,.14);border:2px solid rgba(255,255,255,.55);border-radius:999px;padding:10px 24px;font-weight:700;font-size:26px">${t}</span>`).join('')}
               </div>
-              ${it.footer ? `<div style="margin-top:14px;background:#fff;color:#1d4ed8;font-weight:900;font-size:38px;line-height:1.15;border-radius:36px;padding:16px 36px;box-shadow:0 12px 34px rgba(0,0,0,.35)">${it.footer}${it.footerSub ? `<div style="font-weight:700;font-size:28px;color:#334155;margin-top:4px">${it.footerSub}</div>` : ''}</div>` : ''}`
+              ${it.footer ? `<div style="margin-top:14px;background:#fff;border-radius:999px;padding:18px 34px;box-shadow:0 12px 34px rgba(0,0,0,.35);white-space:nowrap;font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:27px;font-weight:700;color:#334155"><span style="color:#1d4ed8;font-weight:800">${it.footer}</span>${it.footerSub || ''}</div>` : ''}`
             ov.appendChild(el)
           }
         }
