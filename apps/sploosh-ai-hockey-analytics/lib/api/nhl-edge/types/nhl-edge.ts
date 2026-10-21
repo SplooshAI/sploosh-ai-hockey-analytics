@@ -31,6 +31,13 @@ export interface NHLEdgeGame {
         }
     }
     matchup?: NHLEdgeMatchup
+    neutralSite?: boolean
+    venue?: {
+        default?: string
+    }
+    venueLocation?: {
+        default?: string
+    }
 }
 
 export type NHLEdgePeriodType = 'REG' | 'OT' | 'SO'

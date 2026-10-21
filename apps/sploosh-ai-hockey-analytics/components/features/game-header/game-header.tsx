@@ -6,6 +6,9 @@ import { ExternalLink, Share2, Tv } from 'lucide-react'
 import { useSearchParams } from 'next/navigation'
 import { useState, useEffect } from 'react'
 import { getGameCenterUrl, getGameShareUrl } from '@/lib/share-url'
+import { specialGameBadge } from '@/lib/utils/special-game'
+import { formatVenueLine } from '@/lib/utils/venue-location'
+import { SpecialGameBadge } from '@/components/shared/special-game-badge/special-game-badge'
 import { QrCard, QrDivider } from './qr-code'
 
 // Extended game data type that includes fields from both play-by-play and game center APIs
@@ -40,6 +43,10 @@ interface GameHeaderData {
   venue?: {
     default?: string
   }
+  venueLocation?: {
+    default?: string
+  }
+  neutralSite?: boolean
   specialEvent?: {
     name: {
       default: string
@@ -324,9 +331,9 @@ export const GameHeader: React.FC<GameHeaderProps> = ({ gameData, className = ''
       </div>
 
       {/* Special Event Name */}
-      {gameData.specialEvent && (
-        <div className="text-sm text-muted-foreground text-center">
-          {gameData.specialEvent.name.default}
+      {specialGameBadge(gameData) && (
+        <div className="flex justify-center">
+          <SpecialGameBadge label={specialGameBadge(gameData)} />
         </div>
       )}
 
@@ -341,7 +348,7 @@ export const GameHeader: React.FC<GameHeaderProps> = ({ gameData, className = ''
           {formatGameDate()}
         </div>
         <div className="text-xs text-muted-foreground">
-          {gameData.venue?.default || 'Unknown Venue'}
+          {formatVenueLine(gameData.venue, gameData.venueLocation) || 'Unknown Venue'}
         </div>
         {lastRefreshTime && (
           <div className="text-xs text-muted-foreground mt-1">

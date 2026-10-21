@@ -4,6 +4,9 @@ import { NHLEdgeGame, NHLEdgeTeam } from '@/lib/api/nhl-edge/types/nhl-edge'
 import { parseISO } from 'date-fns'
 import { formatInTimeZone } from 'date-fns-tz'
 import { useSearchParams } from 'next/navigation'
+import { specialGameBadge } from '@/lib/utils/special-game'
+import { formatVenueLine } from '@/lib/utils/venue-location'
+import { SpecialGameBadge } from '@/components/shared/special-game-badge/special-game-badge'
 
 interface GameCardProps {
     game: NHLEdgeGame
@@ -193,10 +196,13 @@ export function GameCard({ game, onSelectGame, onClose }: GameCardProps) {
                     </div>
                 </div>
 
-                {/* Special Event Name (if present) */}
-                {game.specialEvent && (
-                    <div className="text-xs text-muted-foreground text-center">
-                        {game.specialEvent.name.default}
+                {/* Special event or neutral-site call-out, with the arena and where it is */}
+                {specialGameBadge(game) && (
+                    <div className="flex flex-col items-center gap-1">
+                        <SpecialGameBadge label={specialGameBadge(game)} />
+                        <div className="text-[11px] text-muted-foreground text-center">
+                            {formatVenueLine(game.venue, game.venueLocation)}
+                        </div>
                     </div>
                 )}
 

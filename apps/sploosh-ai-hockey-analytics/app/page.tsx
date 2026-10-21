@@ -18,6 +18,8 @@ function HomeContent() {
   const searchParams = useSearchParams()
   const [playByPlayData, setPlayByPlayData] = useState<NHLEdgePlayByPlay | null>(null)
   const [gameCenterData, setGameCenterData] = useState<any | null>(null)
+  // The play-by-play has the special event name but not the neutralSite flag; the scores feed does.
+  const [neutralSite, setNeutralSite] = useState<{ gameId: number; value: boolean } | null>(null)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [copied, setCopied] = useState(false)
@@ -85,6 +87,18 @@ function HomeContent() {
         
         // Cache the successful response
         Cache.set(`game_${gameId}`, { playByPlayData, gameCenterData })
+
+        // Best effort: learn from the scores feed whether this is a neutral-site game. A failure only
+        // means no neutral-site badge; it never blocks the game.
+        if (playByPlayData?.gameDate) {
+          fetch(`/api/nhl/scores?date=${playByPlayData.gameDate}`, { signal: abortController.signal })
+            .then((response) => response.json())
+            .then((scores) => {
+              const flagged = Boolean(scores?.games?.find((g: { id: number }) => g.id === gameId)?.neutralSite)
+              setNeutralSite({ gameId, value: flagged })
+            })
+            .catch(() => {})
+        }
       }
     } catch (err) {
       // Ignore abort errors - they're expected when switching games
@@ -293,6 +307,7 @@ function HomeContent() {
               gameData={{
                 ...playByPlayData,
                 gameCenterLink: `/gamecenter/${playByPlayData.id}/recap`,
+                neutralSite: neutralSite?.gameId === playByPlayData.id && neutralSite.value,
                 tvBroadcasts: gameCenterData?.tvBroadcasts || [],
                 gameVideo: gameCenterData?.gameVideo
               } as any} 
