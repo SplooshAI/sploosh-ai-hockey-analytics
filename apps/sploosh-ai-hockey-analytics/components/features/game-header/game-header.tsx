@@ -6,7 +6,7 @@ import { ExternalLink, Share2, Tv } from 'lucide-react'
 import { useSearchParams } from 'next/navigation'
 import { useState, useEffect } from 'react'
 import { getGameCenterUrl, getGameShareUrl } from '@/lib/share-url'
-import { QrCode } from './qr-code'
+import { QrCard, QrDivider } from './qr-code'
 
 // Extended game data type that includes fields from both play-by-play and game center APIs
 interface GameHeaderData {
@@ -370,9 +370,9 @@ export const GameHeader: React.FC<GameHeaderProps> = ({ gameData, className = ''
 
       {/* NHL Game Center and Share links, each with a QR code */}
       {(gameCenterUrl || shareUrl) && (
-        <div className="flex flex-wrap items-start justify-center gap-6 pt-1">
+        <div className={`flex justify-center pt-1 ${showQrCodes ? 'flex-col items-center gap-10' : 'flex-wrap items-start gap-6'}`}>
           {gameCenterUrl && (
-            <div className="flex flex-col items-center gap-2">
+            <div className="flex flex-col items-center gap-3">
               <button
                 onClick={handleGameCenterClick}
                 className="inline-flex items-center gap-1 text-xs text-blue-600 hover:text-blue-700 transition-colors"
@@ -380,11 +380,14 @@ export const GameHeader: React.FC<GameHeaderProps> = ({ gameData, className = ''
                 <span>NHL® Game Center</span>
                 <ExternalLink className="h-3 w-3" />
               </button>
-              {showQrCodes && <QrCode url={gameCenterUrl} label="QR code for NHL Game Center" testId="qr-game-center" />}
+              {showQrCodes && (
+                <QrCard url={gameCenterUrl} variant="nhl" label="QR code for NHL Game Center" testId="qr-game-center" />
+              )}
             </div>
           )}
+          {showQrCodes && gameCenterUrl && shareUrl && <QrDivider />}
           {shareUrl && (
-            <div className="flex flex-col items-center gap-2">
+            <div className="flex flex-col items-center gap-3">
               <button
                 onClick={handleShareClick}
                 className="inline-flex items-center gap-1 text-xs text-blue-600 hover:text-blue-700 transition-colors"
@@ -392,10 +395,12 @@ export const GameHeader: React.FC<GameHeaderProps> = ({ gameData, className = ''
                 <span>Share</span>
                 <Share2 className="h-3 w-3" />
               </button>
-              {showQrCodes && <QrCode url={shareUrl} label="QR code to share this game" testId="qr-share" />}
               <span role="status" aria-live="polite" className="h-4 text-xs text-muted-foreground">
                 {copyStatus === 'copied' ? 'Link copied' : copyStatus === 'failed' ? "Couldn't copy link" : ''}
               </span>
+              {showQrCodes && (
+                <QrCard url={shareUrl} variant="sploosh" label="QR code to share this game" testId="qr-share" />
+              )}
             </div>
           )}
         </div>

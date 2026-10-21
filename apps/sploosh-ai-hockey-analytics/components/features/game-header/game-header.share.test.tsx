@@ -6,7 +6,7 @@
  */
 
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
-import { render, screen, fireEvent, waitFor } from '@testing-library/react'
+import { render, screen, fireEvent, waitFor, within } from '@testing-library/react'
 import { GameHeader } from './game-header'
 import { getGameShareUrl } from '@/lib/share-url'
 import { SITE } from '@/lib/constants'
@@ -128,5 +128,28 @@ describe('GameHeader - QR codes', () => {
     render(<GameHeader gameData={{ ...gameData, gameCenterLink: undefined }} />)
     expect(screen.queryByTestId('qr-game-center')).not.toBeInTheDocument()
     expect(screen.getByTestId('qr-share')).toBeInTheDocument()
+  })
+})
+
+describe('GameHeader - QR code labels and separation', () => {
+  const cardFor = (testId: string) => screen.getByTestId(testId).closest('figure') as HTMLElement
+
+  it('labels the Sploosh.AI code and the NHL code, each tied to its own code', () => {
+    render(<GameHeader gameData={gameData} />)
+    expect(within(cardFor('qr-share')).getByText('Sploosh.AI')).toBeInTheDocument()
+    expect(within(cardFor('qr-share')).queryByText(/NHL/)).not.toBeInTheDocument()
+    expect(within(cardFor('qr-game-center')).getByText(/NHL® Game Center/)).toBeInTheDocument()
+    expect(within(cardFor('qr-game-center')).queryByText('Sploosh.AI')).not.toBeInTheDocument()
+  })
+
+  it('gives each code its own visual treatment', () => {
+    render(<GameHeader gameData={gameData} />)
+    expect(cardFor('qr-share')).toHaveAttribute('data-variant', 'sploosh')
+    expect(cardFor('qr-game-center')).toHaveAttribute('data-variant', 'nhl')
+  })
+
+  it('separates the two codes with a divider so a camera does not see both', () => {
+    render(<GameHeader gameData={gameData} />)
+    expect(screen.getByRole('separator')).toBeInTheDocument()
   })
 })

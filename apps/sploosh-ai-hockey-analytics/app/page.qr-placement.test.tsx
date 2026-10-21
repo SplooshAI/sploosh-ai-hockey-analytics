@@ -63,6 +63,12 @@ describe('Home Page - QR code placement', () => {
     // QR codes come after the chart within its card
     const qr = within(chartCard).getByTestId('qr-share')
     expect(chart.compareDocumentPosition(qr) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy()
+    // each code is labelled with its own name
+    expect(within(qr.closest('figure') as HTMLElement).getByText('Sploosh.AI')).toBeInTheDocument()
+    expect(
+      within(within(chartCard).getByTestId('qr-game-center').closest('figure') as HTMLElement).getByText(/NHL® Game Center/)
+    ).toBeInTheDocument()
+    expect(within(chartCard).getByRole('separator')).toBeInTheDocument()
     // exactly one of each on the page, and the Share link stays in the footer
     expect(screen.getAllByTestId('qr-share')).toHaveLength(1)
     expect(screen.getAllByTestId('qr-game-center')).toHaveLength(1)

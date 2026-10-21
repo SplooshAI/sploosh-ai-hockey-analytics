@@ -1,6 +1,6 @@
 'use client'
 import { getGameCenterUrl, getGameShareUrl } from '@/lib/share-url'
-import { QrCode } from './qr-code'
+import { QrCard, QrDivider } from './qr-code'
 
 interface GameQrCodesProps {
   gameId?: number
@@ -9,8 +9,9 @@ interface GameQrCodesProps {
 }
 
 /**
- * GameQrCodes - captioned QR codes for the NHL Game Center page and this game's share URL.
- * Used underneath the shot chart; the header footer renders the same codes under its links.
+ * GameQrCodes - labelled QR cards for this game's Sploosh.AI page and its NHL Game Center page.
+ * Stacked with a divider so only one code is in a camera's view at a time.
+ * Used underneath the shot chart; the header footer renders the same cards under its links.
  */
 export const GameQrCodes: React.FC<GameQrCodesProps> = ({ gameId, gameCenterLink, className = '' }) => {
   const gameCenterUrl = gameCenterLink ? getGameCenterUrl(gameCenterLink) : null
@@ -18,18 +19,13 @@ export const GameQrCodes: React.FC<GameQrCodesProps> = ({ gameId, gameCenterLink
   if (!gameCenterUrl && !shareUrl) return null
 
   return (
-    <div className={`flex flex-wrap items-start justify-center gap-6 ${className}`}>
-      {gameCenterUrl && (
-        <figure className="flex flex-col items-center gap-2">
-          <QrCode url={gameCenterUrl} label="QR code for NHL Game Center" testId="qr-game-center" />
-          <figcaption className="text-xs text-muted-foreground">NHL® Game Center</figcaption>
-        </figure>
-      )}
+    <div className={`flex flex-col items-center gap-10 ${className}`}>
       {shareUrl && (
-        <figure className="flex flex-col items-center gap-2">
-          <QrCode url={shareUrl} label="QR code to share this game" testId="qr-share" />
-          <figcaption className="text-xs text-muted-foreground">Share</figcaption>
-        </figure>
+        <QrCard url={shareUrl} variant="sploosh" label="QR code to share this game" testId="qr-share" />
+      )}
+      {shareUrl && gameCenterUrl && <QrDivider />}
+      {gameCenterUrl && (
+        <QrCard url={gameCenterUrl} variant="nhl" label="QR code for NHL Game Center" testId="qr-game-center" />
       )}
     </div>
   )
