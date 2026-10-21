@@ -26,6 +26,12 @@ ensure environment consistency.
 See the [Build and Deployment](#build-and-deployment) section for
 complete command details.
 
+To run the production container on the Oracle Cloud VM behind a
+Cloudflare Tunnel (`npm run deploy`, `deploy:stop`, `deploy:start`,
+`deploy:restart`, `deploy:status`, `deploy:logs`), see
+[docs/deployment/oracle-vm.md](../docs/deployment/oracle-vm.md) and
+[docs/deployment/cloudflare-tunnel.md](../docs/deployment/cloudflare-tunnel.md).
+
 ## CI/CD Pipeline Overview
 
 Our application uses GitHub Actions for continuous integration and
