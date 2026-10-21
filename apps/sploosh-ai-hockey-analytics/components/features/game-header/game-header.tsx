@@ -6,10 +6,12 @@ import { ExternalLink, Share2, Tv } from 'lucide-react'
 import { useSearchParams } from 'next/navigation'
 import { useState, useEffect } from 'react'
 import { getGameCenterUrl, getGameShareUrl } from '@/lib/share-url'
-import { specialGameBadge } from '@/lib/utils/special-game'
+import { specialGameBadge, specialEventTheme, needsGeneratedBanner } from '@/lib/utils/special-game'
+import { SpecialEventBanner } from '@/components/shared/special-event-banner/special-event-banner'
 import { formatVenueLine } from '@/lib/utils/venue-location'
 import { SpecialGameBadge } from '@/components/shared/special-game-badge/special-game-badge'
 import { QrCard, QrDivider } from './qr-code'
+import { Scorebug } from './scorebug'
 
 // Extended game data type that includes fields from both play-by-play and game center APIs
 interface GameHeaderData {
@@ -88,20 +90,7 @@ interface GameHeaderProps {
  */
 export const GameHeader: React.FC<GameHeaderProps> = ({ gameData, className = '', lastRefreshTime, showQrCodes = true }) => {
   const searchParams = useSearchParams()
-  const [awayLogoError, setAwayLogoError] = useState(false)
-  const [homeLogoError, setHomeLogoError] = useState(false)
   const [copyStatus, setCopyStatus] = useState<'copied' | 'failed' | null>(null)
-  
-  // Reset logo errors when network comes back online
-  useEffect(() => {
-    const handleOnline = () => {
-      setAwayLogoError(false)
-      setHomeLogoError(false)
-    }
-    
-    window.addEventListener('online', handleOnline)
-    return () => window.removeEventListener('online', handleOnline)
-  }, [])
   
   const timeZone = (() => {
     const tz = searchParams.get('tz');
@@ -260,95 +249,32 @@ export const GameHeader: React.FC<GameHeaderProps> = ({ gameData, className = ''
         </div>
       )}
 
-      {/* Teams and Score */}
-      <div className="flex flex-col items-center gap-2">
-        <div className="flex items-center justify-center gap-3">
-          {/* Away Team Logo */}
-          {gameData.awayTeam?.logo && !awayLogoError ? (
-            <div className="relative w-12 h-12 sm:w-16 sm:h-16">
-              <Image
-                src={gameData.awayTeam.logo}
-                alt={awayTeamName}
-                fill
-                className="object-contain"
-                onError={() => setAwayLogoError(true)}
-              />
-            </div>
-          ) : (
-            <div className="w-12 h-12 sm:w-16 sm:h-16 flex items-center justify-center bg-muted rounded-full">
-              <span className="text-lg sm:text-xl font-bold text-muted-foreground">{awayTeamName}</span>
-            </div>
-          )}
-
-          {/* Score and Team Info */}
-          <div className="flex flex-col items-center gap-1">
-            <div className="flex items-center gap-3">
-              <span className="font-bold text-lg sm:text-xl">{awayTeamName}</span>
-              <span className="text-3xl sm:text-4xl font-bold">{gameData.awayTeam?.score ?? 0}</span>
-              <span className="text-2xl sm:text-3xl text-muted-foreground">-</span>
-              <span className="text-3xl sm:text-4xl font-bold">{gameData.homeTeam?.score ?? 0}</span>
-              <span className="font-bold text-lg sm:text-xl">{homeTeamName}</span>
-            </div>
-
-            {/* Records and SOG */}
-            <div className="flex items-center justify-between w-full text-xs text-muted-foreground">
-              <div className="flex items-center gap-2">
-                {(gameData.gameState === 'LIVE' || gameData.gameState === 'CRIT' || gameData.gameState === 'FINAL' || gameData.gameState === 'OFF') && (
-                  <span>{gameData.awayTeam?.sog ?? 0} SOG</span>
-                )}
-                {gameData.awayTeam?.record && (
-                  <span>{gameData.awayTeam.record}</span>
-                )}
-              </div>
-              <div className="flex items-center gap-2">
-                {gameData.homeTeam?.record && (
-                  <span>{gameData.homeTeam.record}</span>
-                )}
-                {(gameData.gameState === 'LIVE' || gameData.gameState === 'CRIT' || gameData.gameState === 'FINAL' || gameData.gameState === 'OFF') && (
-                  <span>{gameData.homeTeam?.sog ?? 0} SOG</span>
-                )}
-              </div>
-            </div>
-          </div>
-
-          {/* Home Team Logo */}
-          {gameData.homeTeam?.logo && !homeLogoError ? (
-            <div className="relative w-12 h-12 sm:w-16 sm:h-16">
-              <Image
-                src={gameData.homeTeam.logo}
-                alt={homeTeamName}
-                fill
-                className="object-contain"
-                onError={() => setHomeLogoError(true)}
-              />
-            </div>
-          ) : (
-            <div className="w-12 h-12 sm:w-16 sm:h-16 flex items-center justify-center bg-muted rounded-full">
-              <span className="text-lg sm:text-xl font-bold text-muted-foreground">{homeTeamName}</span>
-            </div>
-          )}
-        </div>
-      </div>
-
-      {/* Special Event Name */}
-      {specialGameBadge(gameData) && (
-        <div className="flex justify-center">
-          <SpecialGameBadge label={specialGameBadge(gameData)} />
-        </div>
+      {needsGeneratedBanner(gameData) && (
+        <SpecialEventBanner name={gameData.specialEvent!.name.default} theme={specialEventTheme(gameData)} className="rounded-md" />
       )}
 
-      {/* Game State - Color Coded */}
-      <div className={`text-base sm:text-lg font-semibold text-center ${getGameStateClass()}`}>
-        {getGameStatus()}
-      </div>
+      {/* Scorebug: logos, scores, status, and arena line */}
+      <Scorebug
+        variant="split"
+        awayTeam={gameData.awayTeam}
+        homeTeam={gameData.homeTeam}
+        status={getGameStatus()}
+        statusClass={getGameStateClass()}
+        showSog={['LIVE', 'CRIT', 'FINAL', 'OFF'].includes(gameData.gameState)}
+        venue={formatVenueLine(gameData.venue, gameData.venueLocation) || 'Unknown Venue'}
+      />
+
+      {/* Special Event Name */}
+      {specialGameBadge(gameData) && !needsGeneratedBanner(gameData) && (
+        <div className="flex justify-center">
+          <SpecialGameBadge label={specialGameBadge(gameData)} theme={gameData.specialEvent ? specialEventTheme(gameData) : undefined} />
+        </div>
+      )}
 
       {/* Game Date and Venue */}
       <div className="text-center space-y-0.5">
         <div className="text-xs sm:text-sm text-muted-foreground">
           {formatGameDate()}
-        </div>
-        <div className="text-xs text-muted-foreground">
-          {formatVenueLine(gameData.venue, gameData.venueLocation) || 'Unknown Venue'}
         </div>
         {lastRefreshTime && (
           <div className="text-xs text-muted-foreground mt-1">
@@ -359,8 +285,8 @@ export const GameHeader: React.FC<GameHeaderProps> = ({ gameData, className = ''
 
       {/* Broadcast Information */}
       {gameData.tvBroadcasts && gameData.tvBroadcasts.length > 0 && (
-        <div className="flex items-center justify-center gap-2 pt-2 border-t border-border/30 text-xs">
-          <div className="flex items-center gap-1.5 font-medium text-muted-foreground">
+        <div className="flex flex-wrap items-center justify-center gap-x-2 gap-y-1 pt-2 border-t border-border/30 text-xs">
+          <div className="flex items-center gap-1.5 whitespace-nowrap font-medium text-muted-foreground">
             <Tv className="h-3.5 w-3.5" />
             <span>Watch On</span>
           </div>
