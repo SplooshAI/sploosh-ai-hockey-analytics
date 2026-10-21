@@ -49,8 +49,8 @@ scroll to the QR cards, Sploosh.AI card, NHL card, end card. The score pill (`ca
 shows from the scroll onward. The opening card and the end card are the same card (`bookend` in the script), so the GIF
 loops cleanly and both show the scorebug and the game's QR code. The scorebug is broadcast-style and built from the
 game's live data (team logos, scores with the winner highlighted, a FINAL, FINAL/OT or
-FINAL/SO tag, a "Sponsored by Sploosh.AI" strip with the logo, the arena name and
-the full date with puck-drop time in the arena's own time zone, e.g. "Tuesday, October 20th,
+FINAL/SO tag, a "Sponsored by Sploosh.AI" strip with the logo, the arena name with its
+city and state (or province and "Canada", or the country, outside the US) and the full date with puck-drop time in the arena's own time zone, e.g. "Tuesday, October 20th,
 2026 @ 6:40 PM PDT"), then the
 heading "See every shot", the game's own Sploosh.AI QR code (copied from the app's
 QR card, so it always encodes the exact game URL) and the URL (`<host>/?gameId=<id>`). Each uses `reveal([...items])`
@@ -64,3 +64,7 @@ scene that rings it and adds a `pill` (`pos`: `above`, `below` or `edge`).
 - 900 CSS px at 1.2x gives the single-column layout (no sidebar), 1080 px wide.
 - The GIF is built with ffmpeg (palette per frame set, 12 fps, held frames deduplicated).
 - Needs network access to the site and `ffmpeg` on the PATH.
+- The NHL feed only gives the arena's city, so `scripts/social-gif/venue-location.mjs` adds the
+  state, province, or country from a table keyed by arena name. An arena not in the table shows
+  just its city, never a guess; add new arenas (or neutral-site cities) there. Test it with
+  `node --test scripts/social-gif/venue-location.test.mjs`.

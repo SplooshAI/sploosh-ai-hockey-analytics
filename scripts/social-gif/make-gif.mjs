@@ -11,6 +11,7 @@
 // `npm run pr:screenshots` or `npm install` in that folder) and ffmpeg.
 import { chromium } from '../pr-screenshots/node_modules/playwright/index.mjs'
 import { execFileSync } from 'node:child_process'
+import { formatVenueLocation } from './venue-location.mjs'
 import { mkdtemp, writeFile, rm, stat } from 'node:fs/promises'
 import { tmpdir } from 'node:os'
 import path from 'node:path'
@@ -77,12 +78,15 @@ try {
       label: final ? (t === 'OT' || t === 'SO' ? `Final (${t})` : 'Final') : String(d.gameState),
       date,
       venue: d.venue?.default || '',
+      city: d.venueLocation?.default || '',
       when,
       sponsorLogo: `${location.origin}/sploosh.ai/sploosh-ai-character-transparent.png`,
       // the app's own QR code for this game, so the GIF shows exactly what the page encodes
       qrSvg: document.querySelector('[data-testid=qr-share] svg')?.outerHTML.replace(/ height="\d+" width="\d+"/, ' style="width:168px;height:168px;display:block"') || '',
     }
   }, GAME)
+  // The feed only has the arena's city; the table adds the state, province or country (outside the US).
+  game.location = formatVenueLocation(game.venue, game.city)
   const info = `${game.away.abbrev} ${game.away.score}  @  ${game.home.abbrev} ${game.home.score}  ·  ${game.label}  ·  ${game.date}`
   const CAPTION = String(args.caption && args.caption !== true ? args.caption : info)
 
@@ -144,7 +148,7 @@ try {
               </div>
             </div>
             <div style="display:flex;flex-direction:column;align-items:center;gap:2px;text-align:center">
-              <div style="font-weight:800;font-size:28px">${g.venue}</div>
+              <div style="font-weight:800;font-size:28px">${g.venue}${g.location ? ` · ${g.location}` : ''}</div>
               <div style="font-weight:600;font-size:24px;opacity:.92">${g.when || g.date}</div>
             </div>
           </div>`
