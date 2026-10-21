@@ -13,7 +13,7 @@ interface ShotChartStats {
 }
 
 /**
- * Calculate shot statistics - shared between 2D and 3D views
+ * Calculate shot statistics
  */
 function calculateStats(shots: ShotEvent[]): ShotChartStats {
   return {
