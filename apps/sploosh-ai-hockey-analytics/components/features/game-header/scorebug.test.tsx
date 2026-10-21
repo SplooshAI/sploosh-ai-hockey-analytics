@@ -10,7 +10,7 @@
 
 import { describe, it, expect, vi } from 'vitest'
 import { render, screen, fireEvent } from '@testing-library/react'
-import { Scorebug } from './scorebug'
+import { Scorebug, scorebugColors } from './scorebug'
 import { GameHeader } from './game-header'
 
 vi.mock('next/image', () => ({
@@ -168,5 +168,38 @@ describe('GameHeader uses the Split scorebug', () => {
     expect(screen.getByTestId('scorebug')).toHaveAttribute('data-variant', 'split')
     expect(screen.getAllByText(/Climate Pledge Arena/)).toHaveLength(1)
     expect(screen.getByText('Final (SO)')).toBeInTheDocument()
+  })
+})
+
+describe('scorebugColors', () => {
+  it('uses both primary colors when they are easy to tell apart', () => {
+    expect(scorebugColors('DET', 'SEA')).toEqual({ away: '#CE1126', home: '#68A2B9' })
+  })
+
+  it('switches the home side to its secondary color when both teams are red', () => {
+    const { away, home } = scorebugColors('FLA', 'OTT')
+    expect(away).toBe('#C8102E')
+    expect(home).toBe('#1c1c1c')
+  })
+
+  it('never leaves the two sides close in color', () => {
+    const teams = ['DET', 'FLA', 'OTT', 'CAR', 'NJD', 'WSH', 'MTL', 'CGY', 'TOR', 'NYR', 'BUF', 'EDM', 'PHI']
+    for (const a of teams) {
+      for (const h of teams) {
+        if (a === h) continue
+        const { away, home } = scorebugColors(a, h)
+        const d = (x: string, y: string) => {
+          const p = (c: string) => [1, 3, 5].map((i) => parseInt(c.slice(i, i + 2), 16))
+          const [r1, g1, b1] = p(x)
+          const [r2, g2, b2] = p(y)
+          return Math.hypot(r1 - r2, g1 - g2, b1 - b2)
+        }
+        expect(d(away, home), `${a} vs ${h}`).toBeGreaterThanOrEqual(110)
+      }
+    }
+  })
+
+  it('falls back to a neutral color for an unknown team', () => {
+    expect(scorebugColors('XXX', 'SEA').away).toBe('#475569')
   })
 })

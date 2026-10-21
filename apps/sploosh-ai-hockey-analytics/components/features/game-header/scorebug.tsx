@@ -37,7 +37,40 @@ const TEAM_COLORS: Record<string, string> = {
   WSH: '#C8102E', WPG: '#041E42',
 }
 
+// Secondary colors, used when the two primaries are too close to tell apart
+const TEAM_ALT_COLORS: Record<string, string> = {
+  ANA: '#B09862', BOS: '#2b2b2b', BUF: '#FCB514', CGY: '#F1BE48', CAR: '#1c1c1c', CHI: '#1c1c1c',
+  COL: '#236192', CBJ: '#CE1126', DAL: '#8F8F8C', DET: '#7a0a18', EDM: '#041E42', FLA: '#041E42',
+  LAK: '#1c1c1c', MIN: '#A6192E', MTL: '#192168', NSH: '#041E42', NJD: '#1c1c1c', NYI: '#F47D30',
+  NYR: '#CE1126', OTT: '#1c1c1c', PHI: '#1c1c1c', PIT: '#1c1c1c', SEA: '#001628', SJS: '#1c1c1c',
+  STL: '#FCB514', TBL: '#001a45', TOR: '#001a45', UTA: '#1c1c1c', VAN: '#041C2C', VGK: '#333F42',
+  WSH: '#041E42', WPG: '#004C97',
+}
+
 const teamColor = (abbrev?: string) => (abbrev && TEAM_COLORS[abbrev]) || '#475569'
+
+const rgb = (hex: string): [number, number, number] => {
+  const h = hex.replace('#', '')
+  return [parseInt(h.slice(0, 2), 16), parseInt(h.slice(2, 4), 16), parseInt(h.slice(4, 6), 16)]
+}
+
+const colorDistance = (a: string, b: string) => {
+  const [r1, g1, b1] = rgb(a)
+  const [r2, g2, b2] = rgb(b)
+  return Math.sqrt((r1 - r2) ** 2 + (g1 - g2) ** 2 + (b1 - b2) ** 2)
+}
+
+/**
+ * Colors for the two sides of the scorebug. Uses each team's primary color; when the primaries are too
+ * close to tell apart (for example FLA and OTT, both red), the home side switches to its secondary color.
+ */
+export function scorebugColors(awayAbbrev?: string, homeAbbrev?: string): { away: string; home: string } {
+  const away = teamColor(awayAbbrev)
+  const home = teamColor(homeAbbrev)
+  if (colorDistance(away, home) >= 110) return { away, home }
+  const alt = (homeAbbrev && TEAM_ALT_COLORS[homeAbbrev]) || '#1c1c1c'
+  return { away, home: colorDistance(away, alt) >= 110 ? alt : '#1c1c1c' }
+}
 
 const TeamEnd: React.FC<{ team?: ScorebugTeam; fallback: string; showSog: boolean; compact?: boolean }> = ({ team, fallback, showSog, compact }) => {
   const [logoError, setLogoError] = useState(false)
@@ -67,8 +100,7 @@ const TeamEnd: React.FC<{ team?: ScorebugTeam; fallback: string; showSog: boolea
  * The other variants are explorations shown on the scorebug lab page.
  */
 export const Scorebug: React.FC<ScorebugProps> = ({ variant = 'keeper', awayTeam, homeTeam, status, statusClass, showSog, venue, compact, highlight }) => {
-  const away = teamColor(awayTeam?.abbrev)
-  const home = teamColor(homeTeam?.abbrev)
+  const { away, home } = scorebugColors(awayTeam?.abbrev, homeTeam?.abbrev)
   const stripes = 'repeating-linear-gradient(90deg, rgba(255,255,255,0.04) 0 2px, transparent 2px 28px)'
   const isFinal = status.toLowerCase().startsWith('final')
   const isLive = statusClass.includes('text-green-500')
@@ -121,7 +153,7 @@ export const Scorebug: React.FC<ScorebugProps> = ({ variant = 'keeper', awayTeam
     },
     split: {
       // Straight seam on narrow screens so the slash never cuts through the scores; diagonal from sm up
-      box: 'border border-white/20 text-white shadow-lg bg-[linear-gradient(90deg,var(--away)_0%,var(--away)_49.5%,#0b1220_49.5%,#0b1220_50.5%,var(--home)_50.5%,var(--home)_100%)] sm:bg-[linear-gradient(115deg,var(--away)_0%,var(--away)_49.5%,#0b1220_49.5%,#0b1220_50.5%,var(--home)_50.5%,var(--home)_100%)]',
+      box: 'border border-white/20 text-white shadow-lg bg-[linear-gradient(90deg,var(--away)_0%,var(--away)_49.5%,#f8fafc_49.5%,#f8fafc_50.5%,var(--home)_50.5%,var(--home)_100%)] sm:bg-[linear-gradient(115deg,var(--away)_0%,var(--away)_49.5%,#f8fafc_49.5%,#f8fafc_50.5%,var(--home)_50.5%,var(--home)_100%)]',
       style: { '--away': away, '--home': home } as React.CSSProperties,
       num: 'text-4xl font-black min-[360px]:text-5xl sm:text-6xl drop-shadow-lg',
       plate: plateClass('rounded-md border border-white/40 bg-black/60'),
@@ -160,7 +192,7 @@ export const Scorebug: React.FC<ScorebugProps> = ({ variant = 'keeper', awayTeam
         data-testid="scorebug"
         data-variant="card"
         className={`relative w-full rounded-xl border border-white/20 px-2 py-2.5 text-white shadow ${highlight ? 'ring-2 ring-amber-500' : ''}`}
-        style={{ background: `linear-gradient(90deg, ${away} 0%, ${away} 49.5%, #0b1220 49.5%, #0b1220 50.5%, ${home} 50.5%, ${home} 100%)` }}
+        style={{ background: `linear-gradient(90deg, ${away} 0%, ${away} 49.5%, #f8fafc 49.5%, #f8fafc 50.5%, ${home} 50.5%, ${home} 100%)` }}
       >
         <div className="grid grid-cols-2 items-center gap-x-4 gap-y-2">
           <div className="flex items-start justify-end gap-2">
