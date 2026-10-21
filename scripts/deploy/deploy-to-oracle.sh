@@ -26,6 +26,10 @@
 # Settings come from .env.deploy (see .env.deploy.example):
 #   HOCKEY_VM_IP, HOCKEY_PUBLIC_HOSTNAME, TUNNEL_TOKEN
 #
+# When that file has no TUNNEL_TOKEN (the GitHub Actions deploy, which keeps the tunnel
+# token out of GitHub), it is not copied to the VM, so the VM keeps its own .env.deploy
+# with the token. DEPLOY_ENV_FILE points at a different local settings file.
+#
 set -euo pipefail
 cd "$(dirname "${BASH_SOURCE[0]}")/../.."
 
@@ -35,7 +39,8 @@ CMD="${1:-}"
 [ -n "$CMD" ] || { usage >&2; exit 1; }
 SERVICE_ARG="${2:-}"
 
-ENV_FILE=".env.deploy"
+ENV_FILE="${DEPLOY_ENV_FILE:-.env.deploy}"
+REMOTE_ENV_FILE=".env.deploy"
 [ -f "$ENV_FILE" ] || { echo "No $ENV_FILE — copy .env.deploy.example and fill it in." >&2; exit 1; }
 
 # Read with grep rather than sourcing: .env files are not guaranteed to be
@@ -56,7 +61,7 @@ ssh_vm() { ssh "${SSH_OPTS[@]}" "$USER_NAME@$HOST" "$@" 2> >(grep -v -i 'post-qu
 # Non-interactive SSH does not read ~/.bashrc, so point the docker CLI at this
 # user's own daemon explicitly.
 REMOTE_ENV='export XDG_RUNTIME_DIR=/run/user/$(id -u) DOCKER_HOST=unix:///run/user/$(id -u)/docker.sock'
-COMPOSE="docker compose -p sploosh-ai-hockey-analytics-prod --env-file $ENV_FILE \
+COMPOSE="docker compose -p sploosh-ai-hockey-analytics-prod --env-file $REMOTE_ENV_FILE \
 -f docker/sploosh-ai-hockey-analytics/production/docker-compose.yml \
 -f docker/sploosh-ai-hockey-analytics/production/docker-compose.tunnel.yml --profile tunnel"
 
@@ -82,9 +87,13 @@ do_sync() {
     --exclude '.DS_Store' \
     --exclude '.env.deploy' \
     ./ "$USER_NAME@$HOST:$REMOTE_DIR/" 2> >(grep -v -i 'post-quantum\|store now\|openssh.com/pq' >&2)
-  echo "==> Syncing $ENV_FILE separately (never logged)"
-  scp "${SSH_OPTS[@]}" "$ENV_FILE" "$USER_NAME@$HOST:$REMOTE_DIR/$ENV_FILE" 2> >(grep -v -i 'post-quantum\|store now\|openssh.com/pq' >&2)
-  ssh_vm "chmod 600 $REMOTE_DIR/$ENV_FILE"
+  if [ -n "$(env_get TUNNEL_TOKEN)" ]; then
+    echo "==> Syncing $ENV_FILE separately (never logged)"
+    scp "${SSH_OPTS[@]}" "$ENV_FILE" "$USER_NAME@$HOST:$REMOTE_DIR/$REMOTE_ENV_FILE" 2> >(grep -v -i 'post-quantum\|store now\|openssh.com/pq' >&2)
+    ssh_vm "chmod 600 $REMOTE_DIR/$REMOTE_ENV_FILE"
+  else
+    echo "==> $ENV_FILE has no TUNNEL_TOKEN, keeping the settings file already on the VM"
+  fi
 }
 
 case "$CMD" in

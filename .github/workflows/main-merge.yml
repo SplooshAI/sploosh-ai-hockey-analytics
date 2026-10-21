@@ -196,3 +196,45 @@ jobs:
           
           echo "Timeout waiting for checks!"
           exit 1
+
+  deploy:
+    needs: merge-pr
+    runs-on: ubuntu-latest
+    # Approval gate: the hockey-preview environment requires a reviewer before this job runs
+    environment: hockey-preview
+    concurrency:
+      group: deploy-hockey-preview
+      cancel-in-progress: false
+    permissions:
+      contents: read
+    steps:
+      # main now includes the merged version bump, so the deployed build shows the new version
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+
+      - name: Install deploy key and settings
+        env:
+          HOCKEY_DEPLOY_SSH_KEY: ${{ secrets.HOCKEY_DEPLOY_SSH_KEY }}
+          HOCKEY_VM_IP: ${{ secrets.HOCKEY_VM_IP }}
+        run: |
+          mkdir -p ~/.ssh
+          install -m 600 /dev/null ~/.ssh/hockey_oracle_deploy
+          printf '%s\n' "$HOCKEY_DEPLOY_SSH_KEY" > ~/.ssh/hockey_oracle_deploy
+          # No TUNNEL_TOKEN here on purpose: the VM keeps its own settings file with the token
+          printf 'HOCKEY_VM_IP=%s\nHOCKEY_PUBLIC_HOSTNAME=hockey-preview.sploosh.ai\n' "$HOCKEY_VM_IP" > .env.deploy
+
+      - name: Deploy the app to the Oracle VM
+        run: ./scripts/deploy/deploy-to-oracle.sh up app
+
+      - name: Verify the public site
+        run: |
+          for i in $(seq 1 12); do
+            code=$(curl -s -o /dev/null --max-time 15 -w '%{http_code}' https://hockey-preview.sploosh.ai/ || true)
+            echo "Attempt $i: https://hockey-preview.sploosh.ai/ -> ${code:-000}"
+            [ "$code" = "200" ] && exit 0
+            sleep 10
+          done
+          echo "Site did not return 200 after the deploy"
+          exit 1
