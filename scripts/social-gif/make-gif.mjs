@@ -168,7 +168,7 @@ try {
           const r = target && target.getBoundingClientRect()
           if (it.type === 'banner') {
             const el = document.createElement('div')
-            el.innerHTML = `<span style="background:#facc15;color:#1e293b;border-radius:999px;padding:3px 12px;margin-right:12px;font-size:19px">NEW</span>${it.text}`
+            el.textContent = it.text
             css(el, { ...pillCss('#1d4ed8'), left: '50%', bottom: '26px', transform: `translateX(-50%) scale(${0.9 + 0.1 * ease})`, fontSize: '26px', padding: '12px 26px' })
             ov.appendChild(el)
           } else if (it.type === 'caption') {
@@ -227,7 +227,6 @@ try {
               opacity: String(it.solid ? 1 : ease),
             })
             el.innerHTML = `
-              <div style="background:#facc15;color:#1e293b;font-weight:900;font-size:24px;border-radius:999px;padding:6px 20px;letter-spacing:.08em">NEW</div>
               ${it.scoreboard ? scoreboardHtml(it.scoreboard) : ''}
               <div style="font-weight:900;font-size:${it.titleSize || 84}px;line-height:1.05;max-width:760px">${it.title}</div>
               ${it.scoreboard ? '' : `<div style="font-weight:600;font-size:34px;opacity:.9;max-width:720px">${it.subtitle}</div>`}
