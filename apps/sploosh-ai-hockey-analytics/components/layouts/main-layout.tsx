@@ -22,11 +22,13 @@ export function MainLayout({ children, onGameSelect, onSidebarRefresh }: MainLay
         setIsSidebarOpen(false)
     }
 
-    // Auto-open sidebar on mobile devices on first load
+    // Auto-open sidebar on mobile devices on first load so a game can be picked,
+    // unless the URL already names a game (a shared link or QR scan)
     useEffect(() => {
         if (!hasMounted) {
             const isMobile = window.innerWidth < 1024 // 1024px matches our lg breakpoint
-            setIsSidebarOpen(isMobile)
+            const hasGameInUrl = new URLSearchParams(window.location.search).has('gameId')
+            setIsSidebarOpen(isMobile && !hasGameInUrl)
             setHasMounted(true)
         }
     }, [hasMounted])
