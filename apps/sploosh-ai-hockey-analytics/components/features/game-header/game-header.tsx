@@ -6,7 +6,8 @@ import { ExternalLink, Share2, Tv } from 'lucide-react'
 import { useSearchParams } from 'next/navigation'
 import { useState, useEffect } from 'react'
 import { getGameCenterUrl, getGameShareUrl } from '@/lib/share-url'
-import { specialGameBadge } from '@/lib/utils/special-game'
+import { specialGameBadge, specialEventTheme, needsGeneratedBanner } from '@/lib/utils/special-game'
+import { SpecialEventBanner } from '@/components/shared/special-event-banner/special-event-banner'
 import { formatVenueLine } from '@/lib/utils/venue-location'
 import { SpecialGameBadge } from '@/components/shared/special-game-badge/special-game-badge'
 import { QrCard, QrDivider } from './qr-code'
@@ -248,6 +249,10 @@ export const GameHeader: React.FC<GameHeaderProps> = ({ gameData, className = ''
         </div>
       )}
 
+      {needsGeneratedBanner(gameData) && (
+        <SpecialEventBanner name={gameData.specialEvent!.name.default} theme={specialEventTheme(gameData)} className="rounded-md" />
+      )}
+
       {/* Scorebug: logos, scores, status, and arena line */}
       <Scorebug
         variant="split"
@@ -260,9 +265,9 @@ export const GameHeader: React.FC<GameHeaderProps> = ({ gameData, className = ''
       />
 
       {/* Special Event Name */}
-      {specialGameBadge(gameData) && (
+      {specialGameBadge(gameData) && !needsGeneratedBanner(gameData) && (
         <div className="flex justify-center">
-          <SpecialGameBadge label={specialGameBadge(gameData)} />
+          <SpecialGameBadge label={specialGameBadge(gameData)} theme={gameData.specialEvent ? specialEventTheme(gameData) : undefined} />
         </div>
       )}
 

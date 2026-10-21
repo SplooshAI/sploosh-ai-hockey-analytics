@@ -78,7 +78,7 @@ describe('GameCard - compact scorebug', () => {
     )
     expect(screen.getByAltText('2026 NHL Global Series')).toBeInTheDocument()
     expect(screen.getByTestId('special-game-badge')).toHaveTextContent('2026 NHL Global Series')
-    expect(screen.getByTestId('scorebug').className).toContain('ring-amber-500')
+    expect(screen.getByTestId('scorebug').getAttribute('style')).toContain('#0b3a8f')
   })
 
   it('hides SOG before a game starts and shows the start time on the plate', () => {
@@ -93,5 +93,46 @@ describe('GameCard - compact scorebug', () => {
     )
     expect(container.querySelector('.animate-pulse')).not.toBeNull()
     expect(screen.getByText('2nd Period - 07:12')).toBeInTheDocument()
+  })
+
+  it('tints the ring and badge with the event colors and shows the event artwork', () => {
+    render(
+      <GameCard
+        game={{
+          ...game,
+          neutralSite: true,
+          specialEvent: { parentId: 36, name: { default: '2026 NHL Global Series' }, lightLogoUrl: { default: 'https://example.com/gs.svg' } },
+        }}
+      />
+    )
+    expect(screen.getByAltText('2026 NHL Global Series')).toBeInTheDocument()
+    expect(screen.queryByTestId('special-event-banner')).not.toBeInTheDocument()
+    expect(screen.getByTestId('special-game-badge')).toHaveStyle({ backgroundColor: '#0b3a8f' })
+    expect(screen.getByTestId('scorebug').getAttribute('style')).toContain('#0b3a8f')
+    expect(screen.getByTestId('scorebug').className).not.toContain('ring-amber-500')
+  })
+
+  it('shows a generated banner with the event name when the feed has no artwork', () => {
+    render(
+      <GameCard
+        game={{
+          ...game,
+          neutralSite: true,
+          venue: { default: 'AT&T Stadium' },
+          venueLocation: { default: 'Arlington' },
+          specialEvent: { parentId: 31, name: { default: '2027 Navy Federal Credit Union NHL Stadium Series' } },
+        }}
+      />
+    )
+    expect(screen.getByTestId('special-event-banner')).toHaveTextContent('2027 Navy Federal Credit Union NHL Stadium Series')
+    expect(screen.queryByTestId('special-game-badge')).not.toBeInTheDocument()
+    expect(screen.getByText('AT&T Stadium · Arlington')).toBeInTheDocument()
+  })
+
+  it('keeps the amber Neutral site badge when there is no event at all', () => {
+    render(<GameCard game={{ ...game, neutralSite: true }} />)
+    expect(screen.queryByTestId('special-event-banner')).not.toBeInTheDocument()
+    expect(screen.getByTestId('special-game-badge')).toHaveTextContent('Neutral site')
+    expect(screen.getByTestId('scorebug').className).toContain('ring-amber-500')
   })
 })

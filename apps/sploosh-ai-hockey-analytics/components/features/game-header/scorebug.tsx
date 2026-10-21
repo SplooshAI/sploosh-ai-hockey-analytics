@@ -23,8 +23,8 @@ interface ScorebugProps {
   venue?: string
   /** Compact card for the sidebar: no Sploosh.AI badge, ribbon or arena line, fixed small sizes. */
   compact?: boolean
-  /** Amber ring for special-event and neutral-site games. */
-  highlight?: boolean
+  /** Ring for special-event and neutral-site games: true for amber, or a color for an event theme. */
+  highlight?: boolean | string
 }
 
 // Official NHL primary colors keyed by abbreviation; the panel background blends the two teams
@@ -191,8 +191,8 @@ export const Scorebug: React.FC<ScorebugProps> = ({ variant = 'keeper', awayTeam
       <div
         data-testid="scorebug"
         data-variant="card"
-        className={`relative w-full rounded-xl border border-white/20 px-2 py-2.5 text-white shadow ${highlight ? 'ring-2 ring-amber-500' : ''}`}
-        style={{ background: `linear-gradient(90deg, ${away} 0%, ${away} 49.5%, #f8fafc 49.5%, #f8fafc 50.5%, ${home} 50.5%, ${home} 100%)` }}
+        className={`relative w-full rounded-xl border border-white/20 px-2 py-2.5 text-white shadow ${highlight === true ? 'ring-2 ring-amber-500' : highlight ? 'ring-2' : ''}`}
+        style={{ ...(typeof highlight === 'string' ? ({ '--tw-ring-color': highlight } as React.CSSProperties) : {}), background: `linear-gradient(90deg, ${away} 0%, ${away} 49.5%, #f8fafc 49.5%, #f8fafc 50.5%, ${home} 50.5%, ${home} 100%)` }}
       >
         <div className="grid grid-cols-2 items-center gap-x-4 gap-y-2">
           <div className="flex items-start justify-end gap-2">

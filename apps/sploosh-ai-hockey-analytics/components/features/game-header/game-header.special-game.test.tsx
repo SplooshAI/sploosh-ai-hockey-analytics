@@ -62,4 +62,25 @@ describe('GameHeader - special games', () => {
     render(<GameHeader gameData={{ ...base, venue: { default: 'Test Arena' } }} />)
     expect(screen.getByText('Test Arena')).toBeInTheDocument()
   })
+
+  it('shows a generated banner instead of the name badge when the feed has no artwork', () => {
+    render(
+      <GameHeader
+        gameData={{
+          ...base,
+          venue: { default: 'AT&T Stadium' },
+          venueLocation: { default: 'Arlington' },
+          specialEvent: { name: { default: '2027 Navy Federal Credit Union NHL Stadium Series' } },
+        } as any}
+      />
+    )
+    expect(screen.getByTestId('special-event-banner')).toHaveTextContent('Stadium Series')
+    expect(screen.queryByTestId('special-game-badge')).not.toBeInTheDocument()
+  })
+
+  it('tints the name badge with the event colors when the feed has artwork', () => {
+    render(<GameHeader gameData={globalSeries} />)
+    expect(screen.getByTestId('special-game-badge')).toHaveStyle({ backgroundColor: '#0b3a8f' })
+    expect(screen.queryByTestId('special-event-banner')).not.toBeInTheDocument()
+  })
 })
