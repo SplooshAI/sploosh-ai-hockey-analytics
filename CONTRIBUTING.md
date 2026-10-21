@@ -48,6 +48,9 @@ Regular Changes:
 - `chore: maintenance` (patch version bump)
 - `revert: undo previous change` (patch version bump)
 
+An optional scope in parentheses is accepted after the type and before any `!`, for example
+`fix(sidebar): resolve bug` (patch) or `feat(api)!: breaking feature change` (major).
+
 Note: The `!` indicates a breaking change and will trigger a major version bump regardless of the type prefix used.
 
 ## Screenshots
