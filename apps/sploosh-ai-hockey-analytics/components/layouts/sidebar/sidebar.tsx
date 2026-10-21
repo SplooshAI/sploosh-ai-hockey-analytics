@@ -79,11 +79,9 @@ export default function Sidebar({ onClose, onGameSelect, onRefresh }: SidebarPro
                         onLoadingChange={setIsLoadingGames}
                         onGamesCountChange={setGamesCount}
                     />
-                    <div className="pt-4 mt-4 border-t border-border/50 space-y-4">
+                    <div className="pt-4 mt-4 border-t border-border/50 space-y-3">
                         <Version />
-                        <div className="pt-3 border-t border-border/30">
-                            <NHLAttribution variant="sidebar" />
-                        </div>
+                        <NHLAttribution variant="sidebar" />
                     </div>
                 </div>
             </div>
