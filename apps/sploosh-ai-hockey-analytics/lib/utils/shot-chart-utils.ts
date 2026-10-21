@@ -1,6 +1,7 @@
 /**
  * Utility functions for parsing and transforming shot chart data from NHL EDGE API
  */
+import { excludeShootoutAttempts } from '@/lib/utils/shootout'
 
 /**
  * Check if a game has location data (coordinates) for shot events
@@ -96,7 +97,7 @@ function calculateShotAngle(x: number, y: number): number {
  * @returns Array of parsed shot events
  */
 export function parseShotsFromEdge(gameJSON: any): ShotEvent[] {
-  const plays = gameJSON.plays || []
+  const plays = excludeShootoutAttempts(gameJSON).plays || []
   const relevantTypes = ['shot-on-goal', 'missed-shot', 'blocked-shot', 'goal']
 
   return plays
