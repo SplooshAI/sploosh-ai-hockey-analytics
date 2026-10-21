@@ -26,8 +26,11 @@ actual elements, so call-outs stay centered on what they point at.
    node scripts/social-gif/make-gif.mjs --out ~/Downloads/sploosh-ai-hockey-share-qr.gif
    ```
 
-   Options: `--base <url>`, `--game <gameId>` (use a finished game with shots so the
-   shot chart and QR cards render), `--keep` (print the folder with the raw frames).
+   The default game is the Kraken's 4-3 shootout win over the Red Wings on 2026-10-20
+   (`2026020149`). Options: `--base <url>`, `--game <gameId>` (use a finished game with
+   shots so the shot chart and QR cards render), `--caption <text>` (replaces the score
+   pill, which is otherwise built from the game's live data), `--keep` (print the folder
+   with the raw frames).
 4. **Look at it.** Extract a few frames and read them:
 
    ```bash
@@ -42,8 +45,10 @@ actual elements, so call-outs stay centered on what they point at.
 ## Changing the story
 
 The scenes live in `scripts/social-gif/make-gif.mjs`, in order: title card, Share link,
-scroll to the QR cards, Sploosh.AI card, NHL card, end card. Each uses `reveal([...items])`
-with item types `banner`, `ring`, `pill`, `tap` and `card`. To highlight a new feature,
+scroll to the QR cards, Sploosh.AI card, NHL card, end card. The score pill (`caption`)
+shows from the scroll onward, and the end card names the game and prints its exact URL
+(`<host>/?gameId=<id>`). Each uses `reveal([...items])`
+with item types `banner`, `caption`, `ring`, `pill`, `tap` and `card`. To highlight a new feature,
 tag its element with a `data-gif` attribute in the page (see `shareBtn`) and add a
 scene that rings it and adds a `pill` (`pos`: `above`, `below` or `edge`).
 

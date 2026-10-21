@@ -2,8 +2,9 @@
 // highlight rings drawn over the real UI. Every frame is a screenshot of the
 // running site, so the GIF always shows what the code produces right now.
 //
-// Usage: node make-gif.mjs [--base URL] [--game ID] [--out FILE] [--keep]
-//   defaults: --base https://hockey-preview.sploosh.ai --game 2026020141
+// Usage: node make-gif.mjs [--base URL] [--game ID] [--caption TEXT] [--out FILE] [--keep]
+//   defaults: --base https://hockey-preview.sploosh.ai --game 2026020149 (Kraken 4, Red Wings 3 (SO), 2026-10-20)
+//   --caption TEXT overrides the score caption pill (default is built from the game's live data)
 //             --out ./sploosh-ai-hockey-share.gif
 //
 // Needs Playwright (reuses ../pr-screenshots/node_modules, installed by
@@ -21,7 +22,7 @@ const args = Object.fromEntries(
   }, [])
 )
 const BASE = String(args.base || 'https://hockey-preview.sploosh.ai')
-const GAME = String(args.game || '2026020141')
+const GAME = String(args.game || '2026020149')
 const OUT = path.resolve(String(args.out || 'sploosh-ai-hockey-share.gif'))
 const HOST = new URL(BASE).host
 
@@ -42,6 +43,16 @@ try {
   const page = await context.newPage()
   await page.goto(`${BASE}/?gameId=${GAME}`, { waitUntil: 'networkidle', timeout: 60000 })
   await page.waitForSelector('[data-testid=qr-share]', { timeout: 45000 })
+
+  // Score caption from the game's own data, so the pill always matches the page.
+  const info = await page.evaluate(async (g) => {
+    const d = await (await fetch(`/api/nhl/play-by-play?gameId=${g}`)).json()
+    const t = d.periodDescriptor?.periodType
+    const final = d.gameState === 'FINAL' || d.gameState === 'OFF'
+    const date = new Date(`${d.gameDate}T12:00:00`).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
+    return `${d.awayTeam.abbrev} ${d.awayTeam.score ?? 0}  @  ${d.homeTeam.abbrev} ${d.homeTeam.score ?? 0}  ·  ${final ? (t === 'OT' || t === 'SO' ? `Final (${t})` : 'Final') : d.gameState}  ·  ${date}`
+  }, GAME)
+  const CAPTION = String(args.caption && args.caption !== true ? args.caption : info)
 
   // Framing only: hide scrollbars, the mobile menu button and the scroll-to-top button.
   await page.addStyleTag({
@@ -65,7 +76,8 @@ try {
   //   banner  - pill pinned bottom center
   //   ring    - pulsing outline around an element
   //   pill    - label centered above, below, or on the top edge of an element
-  //   tap     - tap ripple at the center of an element
+  //   caption - score pill pinned top center
+//   tap     - tap ripple at the center of an element
   //   card    - full-frame title / end card
   // p is animation progress 0..1 (fade and scale in); k is a pulse phase.
   const draw = (items, p = 1, k = 0) =>
@@ -95,6 +107,11 @@ try {
             const el = document.createElement('div')
             el.innerHTML = `<span style="background:#facc15;color:#1e293b;border-radius:999px;padding:3px 12px;margin-right:12px;font-size:19px">NEW</span>${it.text}`
             css(el, { ...pillCss('#1d4ed8'), left: '50%', bottom: '26px', transform: `translateX(-50%) scale(${0.9 + 0.1 * ease})`, fontSize: '26px', padding: '12px 26px' })
+            ov.appendChild(el)
+          } else if (it.type === 'caption') {
+            const el = document.createElement('div')
+            el.textContent = it.text
+            css(el, { ...pillCss('#0f172a'), left: '50%', top: '22px', transform: `translateX(-50%) scale(${0.9 + 0.1 * ease})`, fontSize: '26px', padding: '12px 28px', border: '3px solid rgba(255,255,255,.85)' })
             ov.appendChild(el)
           } else if (it.type === 'ring' && r) {
             const el = document.createElement('div')
@@ -151,7 +168,7 @@ try {
               <div style="display:flex;gap:16px;flex-wrap:wrap;justify-content:center;max-width:780px">
                 ${(it.pills || []).map((t) => `<span style="background:rgba(255,255,255,.14);border:2px solid rgba(255,255,255,.55);border-radius:999px;padding:10px 24px;font-weight:700;font-size:26px">${t}</span>`).join('')}
               </div>
-              ${it.footer ? `<div style="margin-top:14px;background:#fff;color:#1d4ed8;font-weight:900;font-size:36px;border-radius:999px;padding:14px 34px;box-shadow:0 12px 34px rgba(0,0,0,.35)">${it.footer}</div>` : ''}`
+              ${it.footer ? `<div style="margin-top:14px;background:#fff;color:#1d4ed8;font-weight:900;font-size:38px;line-height:1.15;border-radius:36px;padding:16px 36px;box-shadow:0 12px 34px rgba(0,0,0,.35)">${it.footer}${it.footerSub ? `<div style="font-weight:700;font-size:28px;color:#334155;margin-top:4px">${it.footerSub}</div>` : ''}</div>` : ''}`
             ov.appendChild(el)
           }
         }
@@ -187,6 +204,7 @@ try {
   }
 
   const banner = { type: 'banner', text: 'Share any game in a tap' }
+  const cap = { type: 'caption', text: CAPTION }
   const sploosh = '[data-testid=qr-share]'
   const nhl = '[data-testid=qr-game-center]'
   const shareCard = `${sploosh}`
@@ -218,7 +236,7 @@ try {
     const t = i / steps
     const e = t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2
     await page.evaluate((y) => (document.getElementById('main-content').scrollTop = y), FROM + (target - FROM) * e)
-    await draw([banner], 1, 0)
+    await draw([banner, cap], 1, 0)
     await snap(0.07)
   }
 
@@ -228,19 +246,19 @@ try {
     document.querySelector('[data-testid=qr-share]').closest('figure').setAttribute('data-gif', 'splo')
     document.querySelector('[data-testid=qr-game-center]').closest('figure').setAttribute('data-gif', 'nhl')
   })
-  await reveal([banner, { type: 'ring', selector: '[data-gif=splo]' }, { type: 'pill', selector: '[data-gif=splo]', text: 'Scan or tap: this game', pos: 'edge' }], 1.5)
+  await reveal([banner, cap, { type: 'ring', selector: '[data-gif=splo]' }, { type: 'pill', selector: '[data-gif=splo]', text: 'Scan or tap: this game', pos: 'edge' }], 1.5)
   for (let i = 0; i < 5; i++) {
-    await draw([banner, { type: 'ring', selector: '[data-gif=splo]' }, { type: 'pill', selector: '[data-gif=splo]', text: 'Scan or tap: this game', pos: 'edge' }, { type: 'tap', selector: sploosh }], 1, i / 5)
+    await draw([banner, cap, { type: 'ring', selector: '[data-gif=splo]' }, { type: 'pill', selector: '[data-gif=splo]', text: 'Scan or tap: this game', pos: 'edge' }, { type: 'tap', selector: sploosh }], 1, i / 5)
     await snap(0.1)
   }
-  await reveal([banner, { type: 'ring', selector: '[data-gif=nhl]' }, { type: 'pill', selector: '[data-gif=nhl]', text: 'Scan or tap: NHL.com recap', pos: 'edge', color: '#0f172a' }], 1.5)
+  await reveal([banner, cap, { type: 'ring', selector: '[data-gif=nhl]' }, { type: 'pill', selector: '[data-gif=nhl]', text: 'Scan or tap: NHL.com recap', pos: 'edge', color: '#0f172a' }], 1.5)
   for (let i = 0; i < 5; i++) {
-    await draw([banner, { type: 'ring', selector: '[data-gif=nhl]' }, { type: 'pill', selector: '[data-gif=nhl]', text: 'Scan or tap: NHL.com recap', pos: 'edge', color: '#0f172a' }, { type: 'tap', selector: nhl }], 1, i / 5)
+    await draw([banner, cap, { type: 'ring', selector: '[data-gif=nhl]' }, { type: 'pill', selector: '[data-gif=nhl]', text: 'Scan or tap: NHL.com recap', pos: 'edge', color: '#0f172a' }, { type: 'tap', selector: nhl }], 1, i / 5)
     await snap(0.1)
   }
 
   // ---- Scene 5: end card
-  await reveal([{ type: 'card', title: 'Try it on any game', subtitle: 'Share link + QR codes, live now', pills: ['Tap to open', 'Scan to share', 'Works on mobile'], footer: HOST, titleSize: 70 }], 2.6, { fadeFrames: 5, pulseFrames: 4 })
+  await reveal([{ type: 'card', title: 'Open this game', subtitle: CAPTION.replace(/  /g, ' '), pills: ['Tap to open', 'Scan to share', 'Works on mobile'], footer: HOST, footerSub: `/?gameId=${GAME}`, titleSize: 76 }], 2.6, { fadeFrames: 5, pulseFrames: 4 })
 
   // ---- Encode
   const list = frames.map((f) => `file '${f.file}'\nduration ${f.dur.toFixed(3)}`).join('\n') + `\nfile '${frames[frames.length - 1].file}'\n`
