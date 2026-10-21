@@ -275,6 +275,8 @@ try {
 
   const banner = { type: 'banner', text: 'Share any game in a tap' }
   const cap = { type: 'caption', text: CAPTION }
+  // The opening and end cards are the same card: scorebug, arena and date, heading, the game's QR code and its URL.
+  const bookend = { type: 'card', title: 'See every shot', scoreboard: game, qr: true, footer: HOST, footerSub: `/?gameId=${GAME}`, titleSize: 70 }
   const sploosh = '[data-testid=qr-share]'
   const nhl = '[data-testid=qr-game-center]'
   const shareCard = `${sploosh}`
@@ -282,7 +284,7 @@ try {
 
   // ---- Scene 1: title card
   await scrollTo(null, 0)
-  await reveal([{ type: 'card', title: 'Share any game.<br>Scan or tap.', scoreboard: game, subtitle: 'Sploosh.AI Hockey Analytics', pills: ['Share link', 'QR codes', 'Tap to open'], titleSize: 64 }], 2.2, { fadeFrames: 5, pulseFrames: 4 })
+  await reveal([bookend], 2.2, { fadeFrames: 5, pulseFrames: 4 })
 
   // ---- Scene 2: the Share link in the game header
   const shareBtn = await page.evaluateHandle(() => [...document.querySelectorAll('button')].find((b) => b.textContent.trim() === 'Share'))
@@ -328,7 +330,7 @@ try {
   }
 
   // ---- Scene 5: end card
-  await reveal([{ type: 'card', title: 'See every shot', scoreboard: game, qr: true, pills: ['Tap to open', 'Scan to share', 'Works on mobile'], footer: HOST, footerSub: `/?gameId=${GAME}`, titleSize: 70 }], 2.6, { fadeFrames: 5, pulseFrames: 4 })
+  await reveal([bookend], 2.6, { fadeFrames: 5, pulseFrames: 4 })
 
   // ---- Encode
   const list = frames.map((f) => `file '${f.file}'\nduration ${f.dur.toFixed(3)}`).join('\n') + `\nfile '${frames[frames.length - 1].file}'\n`
