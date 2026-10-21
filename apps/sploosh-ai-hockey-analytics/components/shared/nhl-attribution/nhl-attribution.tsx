@@ -1,5 +1,7 @@
 'use client'
 
+import { Info } from 'lucide-react'
+
 /**
  * NHLAttribution - Displays required NHL copyright and trademark notices
  * 
@@ -21,18 +23,32 @@ export function NHLAttribution({ variant = 'footer' }: NHLAttributionProps) {
   
   if (variant === 'sidebar') {
     return (
-      <div className="text-xs text-muted-foreground space-y-2 leading-relaxed">
-        <p>
-          NHL, the NHL Shield, and NHL EDGE are registered trademarks of the National Hockey League.
-        </p>
-        <p>
-          NHL and NHL team marks are the property of the NHL and its teams.
-        </p>
-        <p>
-          © NHL {currentYear}. All Rights Reserved.
-        </p>
-        <p className="pt-2 border-t border-border/30">
-          This application uses publicly available NHL data for informational and analytical purposes. 
+      <div
+        data-testid="nhl-attribution-card"
+        className="overflow-hidden rounded-xl border border-border/60 bg-background/60 text-xs text-muted-foreground"
+      >
+        <div className="flex items-center gap-3 p-3">
+          <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-primary">
+            <Info className="h-[18px] w-[18px]" aria-hidden="true" />
+          </span>
+          <span className="min-w-0 flex-1 leading-tight">
+            <span className="block text-sm font-semibold text-foreground">NHL Data</span>
+            <span className="block text-xs text-muted-foreground">Legal notices</span>
+          </span>
+        </div>
+        <div className="space-y-1.5 border-t border-border/60 px-3 py-2.5 text-[11px] leading-snug">
+          <p>
+            NHL, the NHL Shield, and NHL EDGE are registered trademarks of the National Hockey League.
+          </p>
+          <p>
+            NHL and NHL team marks are the property of the NHL and its teams.
+          </p>
+          <p className="font-medium text-foreground/80">
+            © NHL {currentYear}. All Rights Reserved.
+          </p>
+        </div>
+        <p className="border-t border-border/60 px-3 py-2.5 text-[10px] leading-snug text-muted-foreground/80">
+          This application uses publicly available NHL data for informational and analytical purposes.
           We are not affiliated with or endorsed by the NHL.
         </p>
       </div>
