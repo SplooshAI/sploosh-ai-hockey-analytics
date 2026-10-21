@@ -64,6 +64,7 @@ try {
       label: final ? (t === 'OT' || t === 'SO' ? `Final (${t})` : 'Final') : String(d.gameState),
       date,
       venue: d.venue?.default || '',
+      sponsorLogo: `${location.origin}/sploosh.ai/sploosh-ai-character-transparent.png`,
     }
   }, GAME)
   const info = `${game.away.abbrev} ${game.away.score}  @  ${game.home.abbrev} ${game.home.score}  ·  ${game.label}  ·  ${game.date}`
@@ -114,10 +115,17 @@ try {
             return `<div style="display:flex;align-items:center;gap:14px">${parts.join('')}</div>`
           }
           return `<div style="display:flex;flex-direction:column;align-items:center;gap:14px">
-            <div style="display:flex;align-items:center;justify-content:center;gap:22px;background:rgba(8,15,35,.82);border:3px solid rgba(255,255,255,.55);border-radius:26px;padding:18px 28px;box-shadow:0 14px 40px rgba(0,0,0,.4)">
-              ${team(g.away, 'away')}
-              <div style="background:#facc15;color:#1e293b;font-weight:900;font-size:24px;letter-spacing:.06em;border-radius:12px;padding:9px 15px;white-space:nowrap">${g.status}</div>
-              ${team(g.home, 'home')}
+            <div style="display:flex;flex-direction:column;align-items:stretch;box-shadow:0 14px 40px rgba(0,0,0,.4);border-radius:26px">
+              <div style="display:flex;align-items:center;justify-content:center;gap:22px;background:rgba(8,15,35,.9);border:3px solid rgba(255,255,255,.55);border-bottom:none;border-radius:26px 26px 0 0;padding:18px 28px">
+                ${team(g.away, 'away')}
+                <div style="background:#facc15;color:#1e293b;font-weight:900;font-size:24px;letter-spacing:.06em;border-radius:12px;padding:9px 15px;white-space:nowrap">${g.status}</div>
+                ${team(g.home, 'home')}
+              </div>
+              <div style="display:flex;align-items:center;justify-content:center;gap:12px;background:#1d4ed8;border:3px solid rgba(255,255,255,.55);border-radius:0 0 26px 26px;padding:9px 20px">
+                <span style="font-weight:700;font-size:18px;letter-spacing:.14em;opacity:.9">SPONSORED BY</span>
+                <span style="width:42px;height:42px;border-radius:50%;background:#fff;display:inline-flex;align-items:center;justify-content:center"><img src="${g.sponsorLogo}" style="height:30px;width:auto"></span>
+                <span style="font-weight:900;font-size:26px">Sploosh.AI</span>
+              </div>
             </div>
             <div style="font-weight:600;font-size:26px;opacity:.9">${[g.venue, g.date].filter(Boolean).join(' · ')}</div>
           </div>`
@@ -201,8 +209,9 @@ try {
             })
             el.innerHTML = `
               <div style="background:#facc15;color:#1e293b;font-weight:900;font-size:24px;border-radius:999px;padding:6px 20px;letter-spacing:.08em">NEW</div>
+              ${it.scoreboard ? scoreboardHtml(it.scoreboard) : ''}
               <div style="font-weight:900;font-size:${it.titleSize || 84}px;line-height:1.05;max-width:760px">${it.title}</div>
-              ${it.scoreboard ? scoreboardHtml(it.scoreboard) : `<div style="font-weight:600;font-size:34px;opacity:.9;max-width:720px">${it.subtitle}</div>`}
+              ${it.scoreboard ? '' : `<div style="font-weight:600;font-size:34px;opacity:.9;max-width:720px">${it.subtitle}</div>`}
               <div style="display:flex;gap:16px;flex-wrap:wrap;justify-content:center;max-width:780px">
                 ${(it.pills || []).map((t) => `<span style="background:rgba(255,255,255,.14);border:2px solid rgba(255,255,255,.55);border-radius:999px;padding:10px 24px;font-weight:700;font-size:26px">${t}</span>`).join('')}
               </div>
@@ -299,7 +308,7 @@ try {
   }
 
   // ---- Scene 5: end card
-  await reveal([{ type: 'card', title: 'Open this game', scoreboard: game, pills: ['Tap to open', 'Scan to share', 'Works on mobile'], footer: HOST, footerSub: `/?gameId=${GAME}`, titleSize: 70 }], 2.6, { fadeFrames: 5, pulseFrames: 4 })
+  await reveal([{ type: 'card', title: 'See every shot', scoreboard: game, pills: ['Tap to open', 'Scan to share', 'Works on mobile'], footer: HOST, footerSub: `/?gameId=${GAME}`, titleSize: 70 }], 2.6, { fadeFrames: 5, pulseFrames: 4 })
 
   // ---- Encode
   const list = frames.map((f) => `file '${f.file}'\nduration ${f.dur.toFixed(3)}`).join('\n') + `\nfile '${frames[frames.length - 1].file}'\n`

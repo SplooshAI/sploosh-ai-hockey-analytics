@@ -46,9 +46,10 @@ actual elements, so call-outs stay centered on what they point at.
 
 The scenes live in `scripts/social-gif/make-gif.mjs`, in order: title card, Share link,
 scroll to the QR cards, Sploosh.AI card, NHL card, end card. The score pill (`caption`)
-shows from the scroll onward. The end card is a broadcast-style scorebug built from the
+shows from the scroll onward. The end card leads with a broadcast-style scorebug built from the
 game's live data (team logos, scores with the winner highlighted, a FINAL, FINAL/OT or
-FINAL/SO tag, arena and date) above the game's exact URL (`<host>/?gameId=<id>`). Each uses `reveal([...items])`
+FINAL/SO tag, a "Sponsored by Sploosh.AI" strip with the logo, arena and date), then the
+heading "See every shot" and the game's exact URL (`<host>/?gameId=<id>`). Each uses `reveal([...items])`
 with item types `banner`, `caption`, `ring`, `pill`, `tap` and `card`. To highlight a new feature,
 tag its element with a `data-gif` attribute in the page (see `shareBtn`) and add a
 scene that rings it and adds a `pill` (`pos`: `above`, `below` or `edge`).
