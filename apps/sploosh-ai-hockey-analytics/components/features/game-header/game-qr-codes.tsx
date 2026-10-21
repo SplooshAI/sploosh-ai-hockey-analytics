@@ -10,7 +10,7 @@ interface GameQrCodesProps {
 
 /**
  * GameQrCodes - labelled QR cards for this game's Sploosh.AI page and its NHL Game Center page.
- * Stacked with a divider so only one code is in a camera's view at a time.
+ * Side by side from the sm breakpoint, stacked (still compact) on narrow screens.
  * Used underneath the shot chart; the header footer renders the same cards under its links.
  */
 export const GameQrCodes: React.FC<GameQrCodesProps> = ({ gameId, gameCenterLink, className = '' }) => {
@@ -19,7 +19,7 @@ export const GameQrCodes: React.FC<GameQrCodesProps> = ({ gameId, gameCenterLink
   if (!gameCenterUrl && !shareUrl) return null
 
   return (
-    <div className={`flex flex-col items-center gap-10 ${className}`}>
+    <div className={`flex flex-col items-center gap-5 sm:flex-row sm:items-start sm:justify-center sm:gap-6 ${className}`}>
       {shareUrl && (
         <QrCard url={shareUrl} variant="sploosh" label="QR code for Sploosh.AI Hockey Analytics" testId="qr-share" />
       )}
