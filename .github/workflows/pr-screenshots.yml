@@ -1,8 +1,9 @@
 name: PR Screenshots
 
 # Builds the app at the PR's base and head, captures the pages in
-# scripts/pr-screenshots/shots.json from both, and posts a before/after
-# comment. Runs only when a PR touches code that can change what users see.
+# scripts/pr-screenshots/shots.json from both, and writes a before/after
+# table into the PR description. Runs only when a PR touches code that can
+# change what users see.
 # Add the `no-visual-change` label to skip it for a change with no visible
 # effect (a refactor, a dependency bump, docs).
 
@@ -27,7 +28,7 @@ concurrency:
 
 permissions:
   contents: write        # pushes images to the pr-screenshots branch
-  pull-requests: write   # posts the comment
+  pull-requests: write   # edits the PR description
 
 jobs:
   screenshots:
@@ -74,26 +75,32 @@ jobs:
           path: screenshots/*.png
           if-no-files-found: ignore
 
-      - name: Publish and comment
+      - name: Publish and put the screenshots in the PR description
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           SHOT_SHA="${HEAD_SHA::7}" ./scripts/pr-screenshots/publish.sh "$PR_NUMBER" screenshots > table.md
 
           {
-            echo '<!-- pr-screenshots -->'
+            echo '<!-- pr-screenshots:start -->'
             echo '## Screenshots, before and after'
             echo
-            echo "Built from \`${{ github.base_ref }}\` and from \`${HEAD_SHA::7}\`, against the live NHL API."
+            echo "Built from \`${{ github.base_ref }}\` and from \`${HEAD_SHA::7}\`, against the live NHL API. Added automatically; edits inside this block are replaced on the next push."
             echo 'Pages are listed in `scripts/pr-screenshots/shots.json`. Add the `no-visual-change` label to skip this for a change with no visible effect.'
             echo
             cat table.md
-          } > comment.md
+            echo '<!-- pr-screenshots:end -->'
+          } > block.md
 
-          existing="$(gh api "repos/${{ github.repository }}/issues/$PR_NUMBER/comments" --paginate \
-            --jq '[.[] | select(.body | startswith("<!-- pr-screenshots -->"))][0].id // empty')"
-          if [ -n "$existing" ]; then
-            gh api -X PATCH "repos/${{ github.repository }}/issues/comments/$existing" -F body=@comment.md >/dev/null
-          else
-            gh api -X POST "repos/${{ github.repository }}/issues/$PR_NUMBER/comments" -F body=@comment.md >/dev/null
-          fi
+          # Replace the block in the description if it is already there,
+          # otherwise append it, and leave everything the author wrote alone.
+          gh api "repos/${{ github.repository }}/pulls/$PR_NUMBER" --jq '.body // ""' > body.md
+          python3 - <<'PY'
+          import re
+          body = open('body.md').read()
+          block = open('block.md').read().rstrip('\n')
+          pattern = re.compile(r'<!-- pr-screenshots:start -->.*?<!-- pr-screenshots:end -->', re.S)
+          body = pattern.sub(lambda m: block, body) if pattern.search(body) else body.rstrip('\n') + '\n\n' + block + '\n'
+          open('body.md', 'w').write(body)
+          PY
+          gh api -X PATCH "repos/${{ github.repository }}/pulls/$PR_NUMBER" -F body=@body.md >/dev/null

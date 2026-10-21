@@ -23,9 +23,12 @@ Visible changes are anything under `apps/sploosh-ai-hockey-analytics/` in
 
 - **It is automatic.** The `PR Screenshots` workflow
   (`.github/workflows/pr-screenshots.yml`) builds `main` and the PR head,
-  captures the pages in `scripts/pr-screenshots/shots.json`, and posts a
-  before/after comment. Do not attach images by hand unless the workflow
-  cannot show the change.
+  captures the pages in `scripts/pr-screenshots/shots.json`, and writes a
+  before/after table into the **PR description** (between
+  `<!-- pr-screenshots:start -->` and `<!-- pr-screenshots:end -->`; it is
+  replaced on every push and leaves the rest of the description alone). The
+  screenshots belong in the description, not buried in a comment. Do not
+  attach images by hand unless the workflow cannot show the change.
 - **A change with no visible effect** (a refactor, a dependency bump, docs, a
   deploy script) gets the `no-visual-change` label instead.
 - **Add a page to `shots.json`** when a PR changes something the existing
@@ -33,9 +36,12 @@ Visible changes are anything under `apps/sploosh-ai-hockey-analytics/` in
 - **Always against live data and a fresh build.** Never screenshot a stale
   build, a cached image, or a copy made only for a preview: the shot must show
   what the code produces right now. The scripts always build from source.
-- **Before the PR exists** (or when the workflow cannot run), use the
-  `pr-screenshots` skill (`.claude/skills/pr-screenshots/SKILL.md`) to capture
-  and publish the same before/after locally.
+- **When opening a PR**, check the description before calling it done: if the
+  change is visible, the screenshots block must be there (wait for the
+  workflow, or use the `pr-screenshots` skill
+  (`.claude/skills/pr-screenshots/SKILL.md`) to capture and publish the same
+  before/after yourself and paste the table in). If it is not visible, the
+  `no-visual-change` label must be on the PR.
 - **Images are linked by commit SHA**, from the never-deleted
   `pr-screenshots` branch, not by branch name or relative path. A relative
   path does not render in a PR, and a branch-name link turns into a 404 when

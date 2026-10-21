@@ -33,8 +33,8 @@ checking a change yourself first, or when CI cannot show it.
 
    This pushes the PNGs to the `pr-screenshots` branch and prints a Markdown
    table that links each image by commit SHA and has already checked each URL
-   returns 200. Paste it into the PR body. Never link a branch name or a
-   relative path.
+   returns 200. Paste it into the PR **description** (not just a comment). Never link a
+   branch name or a relative path.
 6. **Show Rob the real thing** (the running app or the images) before treating
    the PR as done.
 
