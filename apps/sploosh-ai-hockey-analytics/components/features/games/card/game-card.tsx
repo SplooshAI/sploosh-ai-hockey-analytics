@@ -7,6 +7,7 @@ import { useSearchParams } from 'next/navigation'
 import { specialGameBadge } from '@/lib/utils/special-game'
 import { formatVenueLine } from '@/lib/utils/venue-location'
 import { SpecialGameBadge } from '@/components/shared/special-game-badge/special-game-badge'
+import { Scorebug } from '@/components/features/game-header/scorebug'
 
 interface GameCardProps {
     game: NHLEdgeGame
@@ -145,56 +146,17 @@ export function GameCard({ game, onSelectGame, onClose }: GameCardProps) {
                 </div>
             )}
 
-            <div className="px-4 pb-4 flex flex-col gap-1.5">
-                {/* Teams and Scores */}
-                <div className="flex flex-col items-center">
-                    <div className="flex items-center justify-center gap-1">
-                        <div className="relative w-8 h-8">
-                            <Image
-                                src={getTeamLogoUrl(game.awayTeam)}
-                                alt={`${game.awayTeam.abbrev} logo`}
-                                fill
-                                className="object-contain"
-                            />
-                        </div>
-                        <div className="flex flex-col items-center">
-                            <div className="flex items-center gap-2">
-                                <span>{game.awayTeam.abbrev}</span>
-                                <span>{game.awayTeam.score}</span>
-                                <span>-</span>
-                                <span>{game.homeTeam.score}</span>
-                                <span>{game.homeTeam.abbrev}</span>
-                            </div>
-                            {/* Additional game details row - add new stats here */}
-                            <div className="flex items-center justify-between w-full text-[10px] text-muted-foreground">
-                                <div className="flex flex-col items-start gap-0.5">
-                                    <div className="flex items-center gap-2">
-                                        {(game.gameState === 'LIVE' || game.gameState === 'CRIT' || game.gameState === 'FINAL' || game.gameState === 'OFF') && (
-                                            <span className="min-w-[45px]">{game.awayTeam.sog ?? 0} SOG</span>
-                                        )}
-                                        <span>{game.awayTeam.record}</span>
-                                    </div>
-                                </div>
-                                <div className="flex flex-col items-end gap-0.5">
-                                    <div className="flex items-center gap-2">
-                                        <span>{game.homeTeam.record}</span>
-                                        {(game.gameState === 'LIVE' || game.gameState === 'CRIT' || game.gameState === 'FINAL' || game.gameState === 'OFF') && (
-                                            <span className="min-w-[45px] text-right">{game.homeTeam.sog ?? 0} SOG</span>
-                                        )}
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div className="relative w-8 h-8">
-                            <Image
-                                src={getTeamLogoUrl(game.homeTeam)}
-                                alt={`${game.homeTeam.abbrev} logo`}
-                                fill
-                                className="object-contain"
-                            />
-                        </div>
-                    </div>
-                </div>
+            <div className="px-3 pb-3 pt-3 flex flex-col gap-1.5">
+                {/* Scorebug: logos, scores, and status */}
+                <Scorebug
+                    compact
+                    highlight={!!specialGameBadge(game)}
+                    awayTeam={{ ...game.awayTeam, logo: getTeamLogoUrl(game.awayTeam) }}
+                    homeTeam={{ ...game.homeTeam, logo: getTeamLogoUrl(game.homeTeam) }}
+                    status={getGameStatus()}
+                    statusClass={getGameStateClass()}
+                    showSog={['LIVE', 'CRIT', 'FINAL', 'OFF'].includes(game.gameState)}
+                />
 
                 {/* Special event or neutral-site call-out, with the arena and where it is */}
                 {specialGameBadge(game) && (
@@ -205,11 +167,6 @@ export function GameCard({ game, onSelectGame, onClose }: GameCardProps) {
                         </div>
                     </div>
                 )}
-
-                {/* Game Status */}
-                <div className={`text-sm text-center ${getGameStateClass()}`}>
-                    {getGameStatus()}
-                </div>
             </div>
         </div>
     )

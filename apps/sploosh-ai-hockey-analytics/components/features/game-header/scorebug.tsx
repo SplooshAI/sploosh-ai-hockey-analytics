@@ -21,6 +21,10 @@ interface ScorebugProps {
   showSog: boolean
   /** Arena and city line shown along the bottom of the panel. */
   venue?: string
+  /** Compact card for the sidebar: no Sploosh.AI badge, ribbon or arena line, fixed small sizes. */
+  compact?: boolean
+  /** Amber ring for special-event and neutral-site games. */
+  highlight?: boolean
 }
 
 // Official NHL primary colors keyed by abbreviation; the panel background blends the two teams
@@ -35,19 +39,19 @@ const TEAM_COLORS: Record<string, string> = {
 
 const teamColor = (abbrev?: string) => (abbrev && TEAM_COLORS[abbrev]) || '#475569'
 
-const TeamEnd: React.FC<{ team?: ScorebugTeam; fallback: string; showSog: boolean }> = ({ team, fallback, showSog }) => {
+const TeamEnd: React.FC<{ team?: ScorebugTeam; fallback: string; showSog: boolean; compact?: boolean }> = ({ team, fallback, showSog, compact }) => {
   const [logoError, setLogoError] = useState(false)
   const abbrev = team?.abbrev || fallback
   return (
     <div className="flex min-w-0 flex-col items-center gap-1">
-      <div className="relative h-10 w-10 rounded-full bg-white p-1.5 shadow-md min-[360px]:h-12 min-[360px]:w-12 sm:h-16 sm:w-16">
+      <div className={`relative rounded-full bg-white p-1.5 shadow-md ${compact ? 'h-10 w-10' : 'h-10 w-10 min-[360px]:h-12 min-[360px]:w-12 sm:h-16 sm:w-16'}`}>
         {team?.logo && !logoError ? (
           <Image src={team.logo} alt={abbrev} fill className="object-contain p-1.5" onError={() => setLogoError(true)} />
         ) : (
           <span className="flex h-full w-full items-center justify-center text-xs font-bold text-slate-700">{abbrev}</span>
         )}
       </div>
-      <span className="text-sm font-bold tracking-wide sm:text-base">{abbrev}</span>
+      <span className={`text-sm font-bold tracking-wide ${compact ? '' : 'sm:text-base'}`}>{abbrev}</span>
       <span className="flex flex-col items-center gap-0 whitespace-nowrap text-[11px] leading-tight opacity-70 sm:flex-row sm:gap-1">
         {showSog && <span>{team?.sog ?? 0} SOG</span>}
         {showSog && team?.record && <span aria-hidden className="hidden sm:inline">·</span>}
@@ -62,7 +66,7 @@ const TeamEnd: React.FC<{ team?: ScorebugTeam; fallback: string; showSog: boolea
  * with both teams' colors, a Sploosh.AI badge at top center, bold scores and a status plate.
  * The other variants are explorations shown on the scorebug lab page.
  */
-export const Scorebug: React.FC<ScorebugProps> = ({ variant = 'keeper', awayTeam, homeTeam, status, statusClass, showSog, venue }) => {
+export const Scorebug: React.FC<ScorebugProps> = ({ variant = 'keeper', awayTeam, homeTeam, status, statusClass, showSog, venue, compact, highlight }) => {
   const away = teamColor(awayTeam?.abbrev)
   const home = teamColor(homeTeam?.abbrev)
   const stripes = 'repeating-linear-gradient(90deg, rgba(255,255,255,0.04) 0 2px, transparent 2px 28px)'
@@ -150,6 +154,32 @@ export const Scorebug: React.FC<ScorebugProps> = ({ variant = 'keeper', awayTeam
       watermark: false,
     },
   }
+  if (compact) {
+    return (
+      <div
+        data-testid="scorebug"
+        data-variant="card"
+        className={`relative w-full rounded-xl border border-white/20 px-2 py-2.5 text-white shadow ${highlight ? 'ring-2 ring-amber-500' : ''}`}
+        style={{ background: `linear-gradient(90deg, ${away} 0%, ${away} 49.5%, #0b1220 49.5%, #0b1220 50.5%, ${home} 50.5%, ${home} 100%)` }}
+      >
+        <div className="grid grid-cols-2 items-center gap-x-4 gap-y-2">
+          <div className="flex items-start justify-end gap-2">
+            <TeamEnd team={awayTeam} fallback="Away" showSog={showSog} compact />
+            <span className={`flex h-10 items-center text-4xl font-black leading-none tabular-nums drop-shadow-lg ${dim(awayScore, homeScore)}`}>{awayScore}</span>
+          </div>
+          <div className="flex items-start justify-start gap-2">
+            <span className={`flex h-10 items-center text-4xl font-black leading-none tabular-nums drop-shadow-lg ${dim(homeScore, awayScore)}`}>{homeScore}</span>
+            <TeamEnd team={homeTeam} fallback="Home" showSog={showSog} compact />
+          </div>
+          <div className={`col-span-2 justify-self-center whitespace-nowrap rounded-md border border-white/30 bg-black/50 px-3 py-1 text-center text-[11px] font-bold uppercase tracking-widest ${statusClass.replace('text-muted-foreground', 'text-white')}`}>
+            {isLive && <span aria-hidden className="mr-1.5 inline-block h-2 w-2 animate-pulse rounded-full bg-green-400 align-middle" />}
+            {status}
+          </div>
+        </div>
+      </div>
+    )
+  }
+
   const look = looks[variant]
 
   return (
