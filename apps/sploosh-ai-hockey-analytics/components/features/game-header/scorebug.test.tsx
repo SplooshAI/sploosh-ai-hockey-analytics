@@ -74,6 +74,22 @@ describe('Scorebug', () => {
     expect(screen.getByTestId('scorebug-venue')).toHaveTextContent('Climate Pledge Arena · Seattle, WA')
   })
 
+  it('keeps the arena line and the ribbon on one line at any width', () => {
+    renderBug()
+    expect(screen.getByTestId('scorebug-venue').className).toContain('whitespace-nowrap')
+    expect(screen.getByTestId('scorebug-badge').querySelector('span')?.className).toContain('whitespace-nowrap')
+  })
+
+  it('centers each score on its team logo row', () => {
+    renderBug()
+    const score = screen.getByText('3')
+    expect(score.className).toContain('flex')
+    expect(score.className).toContain('items-center')
+    expect(score.className).toContain('h-10')
+    expect(score.className).toContain('sm:h-16')
+    expect(score.parentElement?.className).toContain('items-start')
+  })
+
   it('omits the arena line when no venue is given', () => {
     renderBug({ venue: undefined })
     expect(screen.queryByTestId('scorebug-venue')).not.toBeInTheDocument()

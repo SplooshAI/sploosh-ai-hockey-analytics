@@ -40,7 +40,7 @@ const TeamEnd: React.FC<{ team?: ScorebugTeam; fallback: string; showSog: boolea
   const abbrev = team?.abbrev || fallback
   return (
     <div className="flex min-w-0 flex-col items-center gap-1">
-      <div className="relative h-12 w-12 rounded-full bg-white p-1.5 shadow-md sm:h-16 sm:w-16">
+      <div className="relative h-10 w-10 rounded-full bg-white p-1.5 shadow-md min-[360px]:h-12 min-[360px]:w-12 sm:h-16 sm:w-16">
         {team?.logo && !logoError ? (
           <Image src={team.logo} alt={abbrev} fill className="object-contain p-1.5" onError={() => setLogoError(true)} />
         ) : (
@@ -116,9 +116,10 @@ export const Scorebug: React.FC<ScorebugProps> = ({ variant = 'keeper', awayTeam
       watermark: false,
     },
     split: {
-      box: 'border border-white/20 text-white shadow-lg',
-      style: { background: `linear-gradient(115deg, ${away} 0%, ${away} 49.5%, #0b1220 49.5%, #0b1220 50.5%, ${home} 50.5%, ${home} 100%)` },
-      num: 'text-6xl font-black sm:text-7xl drop-shadow-lg',
+      // Straight seam on narrow screens so the slash never cuts through the scores; diagonal from sm up
+      box: 'border border-white/20 text-white shadow-lg bg-[linear-gradient(90deg,var(--away)_0%,var(--away)_49.5%,#0b1220_49.5%,#0b1220_50.5%,var(--home)_50.5%,var(--home)_100%)] sm:bg-[linear-gradient(115deg,var(--away)_0%,var(--away)_49.5%,#0b1220_49.5%,#0b1220_50.5%,var(--home)_50.5%,var(--home)_100%)]',
+      style: { '--away': away, '--home': home } as React.CSSProperties,
+      num: 'text-4xl font-black min-[360px]:text-5xl sm:text-6xl drop-shadow-lg',
       plate: plateClass('rounded-md border border-white/40 bg-black/60'),
       badge: 'ribbon',
       watermark: true,
@@ -176,7 +177,7 @@ export const Scorebug: React.FC<ScorebugProps> = ({ variant = 'keeper', awayTeam
           className="absolute inset-x-0 bottom-0 flex items-center justify-center gap-2 rounded-b-2xl bg-black/75 py-2"
         >
           <Image src="/sploosh.ai/sploosh-ai-character-transparent.png" alt="" width={24} height={22} />
-          <span className="text-balance text-center text-[11px] font-extrabold uppercase leading-tight tracking-[0.14em] text-white sm:text-xs sm:tracking-[0.2em]">Sploosh.AI Hockey Analytics</span>
+          <span className="whitespace-nowrap text-center text-[clamp(7px,2.8vw,11px)] font-extrabold uppercase leading-tight tracking-[0.1em] text-white sm:text-xs sm:tracking-[0.2em]">Sploosh.AI Hockey Analytics</span>
         </div>
       )}
       {look.badge === true && (
@@ -188,18 +189,18 @@ export const Scorebug: React.FC<ScorebugProps> = ({ variant = 'keeper', awayTeam
         </div>
       )}
       <div className="relative grid grid-cols-2 items-center gap-x-6 gap-y-3 sm:grid-cols-[1fr_auto_1fr] sm:gap-4">
-        <div className="flex items-center justify-end gap-2 sm:gap-5">
+        <div className="flex items-start justify-end gap-2 sm:gap-5">
           <TeamEnd team={awayTeam} fallback="Away" showSog={showSog} />
-          <span className={`leading-none tabular-nums ${look.num} ${dim(awayScore, homeScore)}`}>{awayScore}</span>
+          <span className={`flex h-10 items-center leading-none tabular-nums min-[360px]:h-12 sm:h-16 ${look.num} ${dim(awayScore, homeScore)}`}>{awayScore}</span>
         </div>
         <div className={`col-span-2 row-start-2 justify-self-center whitespace-nowrap px-3 py-1 text-center text-[11px] font-bold uppercase tracking-widest sm:col-span-1 sm:col-start-2 sm:row-start-1 sm:text-sm ${look.plate}`}>{isLive && <span aria-hidden className="mr-1.5 inline-block h-2 w-2 animate-pulse rounded-full bg-green-400 align-middle" />}{status}</div>
-        <div className="flex items-center justify-start gap-2 sm:gap-5">
-          <span className={`leading-none tabular-nums ${look.num} ${dim(homeScore, awayScore)}`}>{homeScore}</span>
+        <div className="flex items-start justify-start gap-2 sm:gap-5">
+          <span className={`flex h-10 items-center leading-none tabular-nums min-[360px]:h-12 sm:h-16 ${look.num} ${dim(homeScore, awayScore)}`}>{homeScore}</span>
           <TeamEnd team={homeTeam} fallback="Home" showSog={showSog} />
         </div>
       </div>
       {venue && (
-        <div data-testid="scorebug-venue" className="relative mt-3 text-balance text-center text-[10px] font-semibold uppercase tracking-[0.12em] opacity-75 sm:text-xs sm:tracking-[0.25em]">{venue}</div>
+        <div data-testid="scorebug-venue" className="relative mt-3 whitespace-nowrap text-center text-[clamp(6px,2.6vw,10px)] font-semibold uppercase tracking-[0.08em] opacity-75 sm:text-xs sm:tracking-[0.25em]">{venue}</div>
       )}
     </div>
   )
