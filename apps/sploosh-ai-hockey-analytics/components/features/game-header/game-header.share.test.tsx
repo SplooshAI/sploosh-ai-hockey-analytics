@@ -152,4 +152,13 @@ describe('GameHeader - QR code labels and separation', () => {
     render(<GameHeader gameData={gameData} />)
     expect(screen.getByRole('separator')).toBeInTheDocument()
   })
+
+  it('keeps the two footer cards aligned: each sits directly under a same-shaped link row', () => {
+    render(<GameHeader gameData={gameData} />)
+    const rowFor = (id: string) => cardFor(id).previousElementSibling as HTMLElement
+    expect(rowFor('qr-share').tagName).toBe(rowFor('qr-game-center').tagName)
+    expect(rowFor('qr-share').className).toBe(rowFor('qr-game-center').className)
+    expect(within(rowFor('qr-share')).getByRole('button', { name: /^share/i })).toBeInTheDocument()
+    expect(within(rowFor('qr-game-center')).getByRole('button', { name: /nhl® game center/i })).toBeInTheDocument()
+  })
 })

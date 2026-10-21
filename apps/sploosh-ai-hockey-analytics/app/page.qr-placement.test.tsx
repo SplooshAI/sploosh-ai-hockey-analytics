@@ -85,6 +85,6 @@ describe('Home Page - QR code placement', () => {
     expect(screen.getAllByTestId('qr-share')).toHaveLength(1)
     expect(screen.getAllByTestId('qr-game-center')).toHaveLength(1)
     // footer column holds both the Share link and its QR code
-    expect(share.parentElement).toContainElement(screen.getByTestId('qr-share'))
+    expect(share.parentElement?.parentElement).toContainElement(screen.getByTestId('qr-share'))
   })
 })

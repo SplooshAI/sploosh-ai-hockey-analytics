@@ -373,13 +373,15 @@ export const GameHeader: React.FC<GameHeaderProps> = ({ gameData, className = ''
         <div className={`flex justify-center pt-1 ${showQrCodes ? 'flex-col items-center gap-5 sm:flex-row sm:items-start sm:gap-6' : 'flex-wrap items-start gap-6'}`}>
           {gameCenterUrl && (
             <div className="flex flex-col items-center gap-3">
-              <button
-                onClick={handleGameCenterClick}
-                className="inline-flex items-center gap-1 text-xs text-blue-600 hover:text-blue-700 transition-colors"
-              >
-                <span>NHL® Game Center</span>
-                <ExternalLink className="h-3 w-3" />
-              </button>
+              <div className="relative flex justify-center">
+                <button
+                  onClick={handleGameCenterClick}
+                  className="inline-flex items-center gap-1 text-xs text-blue-600 hover:text-blue-700 transition-colors"
+                >
+                  <span>NHL® Game Center</span>
+                  <ExternalLink className="h-3 w-3" />
+                </button>
+              </div>
               {showQrCodes && (
                 <QrCard url={gameCenterUrl} variant="nhl" label="QR code for NHL Game Center" testId="qr-game-center" />
               )}
@@ -388,16 +390,22 @@ export const GameHeader: React.FC<GameHeaderProps> = ({ gameData, className = ''
           {showQrCodes && gameCenterUrl && shareUrl && <QrDivider />}
           {shareUrl && (
             <div className="flex flex-col items-center gap-3">
-              <button
-                onClick={handleShareClick}
-                className="inline-flex items-center gap-1 text-xs text-blue-600 hover:text-blue-700 transition-colors"
-              >
-                <span>Share</span>
-                <Share2 className="h-3 w-3" />
-              </button>
-              <span role="status" aria-live="polite" className="h-4 text-xs text-muted-foreground">
-                {copyStatus === 'copied' ? 'Link copied' : copyStatus === 'failed' ? "Couldn't copy link" : ''}
-              </span>
+              <div className="relative flex justify-center">
+                <button
+                  onClick={handleShareClick}
+                  className="inline-flex items-center gap-1 text-xs text-blue-600 hover:text-blue-700 transition-colors"
+                >
+                  <span>Share</span>
+                  <Share2 className="h-3 w-3" />
+                </button>
+                <span
+                  role="status"
+                  aria-live="polite"
+                  className="absolute left-full top-0 ml-2 whitespace-nowrap text-xs text-muted-foreground"
+                >
+                  {copyStatus === 'copied' ? 'Link copied' : copyStatus === 'failed' ? "Couldn't copy link" : ''}
+                </span>
+              </div>
               {showQrCodes && (
                 <QrCard url={shareUrl} variant="sploosh" label="QR code for Sploosh.AI Hockey Analytics" testId="qr-share" />
               )}

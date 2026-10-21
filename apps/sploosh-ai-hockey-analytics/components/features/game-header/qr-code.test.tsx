@@ -77,4 +77,23 @@ describe('QR cards', () => {
     expect(decode('qr-share')).toBe(shareUrl)
     expect(decode('qr-game-center')).toBe(gameCenterUrl)
   })
+
+  it('makes each QR code a link that opens its own URL in a new tab', () => {
+    render(<GameQrCodes {...props} />)
+    const share = screen.getByRole('link', { name: /sploosh\.ai hockey analytics/i })
+    const nhl = screen.getByRole('link', { name: /nhl® game center/i })
+    expect(share).toHaveAttribute('href', shareUrl)
+    expect(nhl).toHaveAttribute('href', gameCenterUrl)
+    for (const link of [share, nhl]) {
+      expect(link).toHaveAttribute('target', '_blank')
+      expect(link.getAttribute('rel')).toContain('noopener')
+      expect(link.getAttribute('rel')).toContain('noreferrer')
+    }
+  })
+
+  it('wraps each QR image in its own link, not the other one', () => {
+    render(<GameQrCodes {...props} />)
+    expect(screen.getByTestId('qr-share').closest('a')).toHaveAttribute('href', shareUrl)
+    expect(screen.getByTestId('qr-game-center').closest('a')).toHaveAttribute('href', gameCenterUrl)
+  })
 })
