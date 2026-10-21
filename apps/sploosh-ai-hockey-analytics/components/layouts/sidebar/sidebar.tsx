@@ -7,7 +7,12 @@ import { GamesList } from '@/components/features/games/list/games-list'
 import { Version } from '../../shared/version/version'
 import { NHLAttribution } from '../../shared/nhl-attribution/nhl-attribution'
 import { GamesDatePicker } from '@/components/features/games/date-picker/games-date-picker'
-import { startOfDay } from 'date-fns'
+import { isSameDay, startOfDay } from 'date-fns'
+
+function getToday() {
+    const now = new Date()
+    return startOfDay(new Date(now.getFullYear(), now.getMonth(), now.getDate()))
+}
 
 interface SidebarProps {
     onClose?: () => void
@@ -17,12 +22,18 @@ interface SidebarProps {
 
 export default function Sidebar({ onClose, onGameSelect, onRefresh }: SidebarProps) {
     const router = useRouter()
-    const [selectedDate, setSelectedDate] = useState<Date>(() => {
-        const now = new Date()
-        return startOfDay(new Date(now.getFullYear(), now.getMonth(), now.getDate()))
-    })
+    const [selectedDate, setSelectedDate] = useState<Date>(getToday)
     const [isLoadingGames, setIsLoadingGames] = useState(false)
     const [gamesCount, setGamesCount] = useState<number>(0)
+
+    // Back to the default view: today's games and a plain root URL
+    const handleHomeClick = () => {
+        setSelectedDate(prev => {
+            const today = getToday()
+            return isSameDay(prev, today) ? prev : today
+        })
+        router.push('/')
+    }
 
     return (
         <div className="w-64 h-[100dvh] flex flex-col bg-secondary">
@@ -36,7 +47,7 @@ export default function Sidebar({ onClose, onGameSelect, onRefresh }: SidebarPro
                     </button>
 
                     <button
-                        onClick={() => router.push('/')}
+                        onClick={handleHomeClick}
                         className="text-lg font-semibold hover:text-primary transition-colors cursor-pointer"
                     >
                         NHL Games
