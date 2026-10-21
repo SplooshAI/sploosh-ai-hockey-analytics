@@ -7,8 +7,21 @@ import { ErrorBoundary } from "@/components/shared/error"
 const inter = Inter({ subsets: ["latin"] })
 
 export const metadata: Metadata = {
+  metadataBase: new URL(SITE.url),
   title: SITE.name,
   description: SITE.description,
+  openGraph: {
+    type: 'website',
+    siteName: SITE.name,
+    title: SITE.name,
+    description: SITE.description,
+    url: SITE.url,
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: SITE.name,
+    description: SITE.description,
+  },
   viewport: 'width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no',
 }
 
