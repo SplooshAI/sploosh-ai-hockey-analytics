@@ -1,0 +1,9 @@
+{
+  "name": "pr-screenshots",
+  "private": true,
+  "type": "module",
+  "description": "Headless before/after screenshot capture for pull requests. Installed on demand by run.sh; kept out of the app's dependencies.",
+  "dependencies": {
+    "playwright": "1.64.1"
+  }
+}

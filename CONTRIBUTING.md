@@ -49,3 +49,9 @@ Regular Changes:
 - `revert: undo previous change` (patch version bump)
 
 Note: The `!` indicates a breaking change and will trigger a major version bump regardless of the type prefix used.
+
+## Screenshots
+
+Pull requests that change what the app looks like get before and after
+screenshots automatically (the `PR Screenshots` check). For a change with no
+visible effect, add the `no-visual-change` label. Details are in `CLAUDE.md`.

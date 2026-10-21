@@ -1,0 +1,33 @@
+{
+  "comment": "Pages captured for every PR that touches visible output. A finished historical game is used so before and after show the same data; the sidebar game list is live and may differ. Add a page here when a PR changes something these do not show. The app scrolls inside its own container, so a tall viewport (not fullPage) is what captures the whole page. `click` is an optional selector clicked after the page renders, used to close the mobile sidebar that opens by default.",
+  "shots": [
+    {
+      "name": "game-desktop",
+      "path": "/?gameId=2024020053",
+      "viewport": {
+        "width": 1280,
+        "height": 2600
+      },
+      "waitFor": "text=Game Timeline"
+    },
+    {
+      "name": "game-mobile",
+      "path": "/?gameId=2024020053",
+      "viewport": {
+        "width": 390,
+        "height": 3200
+      },
+      "waitFor": "text=Game Timeline",
+      "click": "button:has(svg.lucide-menu)"
+    },
+    {
+      "name": "home",
+      "path": "/",
+      "viewport": {
+        "width": 1280,
+        "height": 900
+      },
+      "waitFor": "text=NHL Games"
+    }
+  ]
+}
