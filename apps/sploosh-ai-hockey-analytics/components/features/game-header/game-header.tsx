@@ -5,7 +5,7 @@ import { format, formatInTimeZone } from 'date-fns-tz'
 import { ExternalLink, Share2, Tv } from 'lucide-react'
 import { useSearchParams } from 'next/navigation'
 import { useState, useEffect } from 'react'
-import { getGameShareUrl } from '@/lib/share-url'
+import { getGameCenterUrl, getGameShareUrl } from '@/lib/share-url'
 import { QrCode } from './qr-code'
 
 // Extended game data type that includes fields from both play-by-play and game center APIs
@@ -70,6 +70,8 @@ interface GameHeaderProps {
   gameData: GameHeaderData
   className?: string
   lastRefreshTime?: Date | null
+  /** Render the QR codes under the footer links; false when the page shows them elsewhere. */
+  showQrCodes?: boolean
 }
 
 /**
@@ -77,7 +79,7 @@ interface GameHeaderProps {
  * Displays team logos, scores, records, SOG, game state, and venue
  * Matches the sidebar game card styling
  */
-export const GameHeader: React.FC<GameHeaderProps> = ({ gameData, className = '', lastRefreshTime }) => {
+export const GameHeader: React.FC<GameHeaderProps> = ({ gameData, className = '', lastRefreshTime, showQrCodes = true }) => {
   const searchParams = useSearchParams()
   const [awayLogoError, setAwayLogoError] = useState(false)
   const [homeLogoError, setHomeLogoError] = useState(false)
@@ -199,7 +201,7 @@ export const GameHeader: React.FC<GameHeaderProps> = ({ gameData, className = ''
     return `${formattedDate} ${ordinalSuffix}, ${formatInTimeZone(date, 'UTC', 'yyyy')}`
   }
 
-  const gameCenterUrl = gameData.gameCenterLink ? `https://www.nhl.com${gameData.gameCenterLink}` : null
+  const gameCenterUrl = gameData.gameCenterLink ? getGameCenterUrl(gameData.gameCenterLink) : null
   const shareUrl = gameData.id !== undefined ? getGameShareUrl(gameData.id) : null
 
   const handleShareClick = async () => {
@@ -378,7 +380,7 @@ export const GameHeader: React.FC<GameHeaderProps> = ({ gameData, className = ''
                 <span>NHL® Game Center</span>
                 <ExternalLink className="h-3 w-3" />
               </button>
-              <QrCode url={gameCenterUrl} label="QR code for NHL Game Center" testId="qr-game-center" />
+              {showQrCodes && <QrCode url={gameCenterUrl} label="QR code for NHL Game Center" testId="qr-game-center" />}
             </div>
           )}
           {shareUrl && (
@@ -390,7 +392,7 @@ export const GameHeader: React.FC<GameHeaderProps> = ({ gameData, className = ''
                 <span>Share</span>
                 <Share2 className="h-3 w-3" />
               </button>
-              <QrCode url={shareUrl} label="QR code to share this game" testId="qr-share" />
+              {showQrCodes && <QrCode url={shareUrl} label="QR code to share this game" testId="qr-share" />}
               <span role="status" aria-live="polite" className="h-4 text-xs text-muted-foreground">
                 {copyStatus === 'copied' ? 'Link copied' : copyStatus === 'failed' ? "Couldn't copy link" : ''}
               </span>

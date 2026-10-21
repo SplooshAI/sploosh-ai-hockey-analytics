@@ -116,6 +116,14 @@ describe('GameHeader - QR codes', () => {
     expect(screen.getByTestId('qr-share')).toHaveAttribute('data-url', expectedShareUrl)
   })
 
+  it('hides both QR codes but keeps the links when showQrCodes is false', () => {
+    render(<GameHeader gameData={gameData} showQrCodes={false} />)
+    expect(screen.queryByTestId('qr-share')).not.toBeInTheDocument()
+    expect(screen.queryByTestId('qr-game-center')).not.toBeInTheDocument()
+    expect(screen.getByRole('button', { name: /^share/i })).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: /nhl® game center/i })).toBeInTheDocument()
+  })
+
   it('omits the Game Center QR code when there is no Game Center link', () => {
     render(<GameHeader gameData={{ ...gameData, gameCenterLink: undefined }} />)
     expect(screen.queryByTestId('qr-game-center')).not.toBeInTheDocument()

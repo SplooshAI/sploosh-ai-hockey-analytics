@@ -3,7 +3,7 @@ import { useState, useEffect, useRef, Suspense } from 'react'
 import { useSearchParams } from 'next/navigation'
 import { MainLayout } from '@/components/layouts/main-layout'
 import { NHLEdgeHockeyRink } from '@/components/features/hockey-rink/nhl-edge-hockey-rink/nhl-edge-hockey-rink'
-import { GameHeader } from '@/components/features/game-header'
+import { GameHeader, GameQrCodes } from '@/components/features/game-header'
 import { ShotChart } from '@/components/features/shot-chart/shot-chart'
 import { GameTimeline } from '@/components/features/game-timeline/game-timeline'
 import { ErrorMessage } from '@/components/shared/error'
@@ -297,6 +297,7 @@ function HomeContent() {
                 gameVideo: gameCenterData?.gameVideo
               } as any} 
               lastRefreshTime={lastRefreshTime} 
+              showQrCodes={!hasLocationData(playByPlayData)}
             />
           </div>
 
@@ -309,6 +310,11 @@ function HomeContent() {
                   gameData={{...playByPlayData, ...gameCenterData}}
                   showCenterLogo={true}
                   centerIceLogo={cachedLogoUrl}
+                />
+                <GameQrCodes
+                  gameId={playByPlayData.id}
+                  gameCenterLink={`/gamecenter/${playByPlayData.id}/recap`}
+                  className="mt-6 pt-6 border-t border-border/30"
                 />
               </div>
 
