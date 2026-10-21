@@ -3,6 +3,7 @@
 import React, { useMemo, useState } from 'react'
 import { Clock, AlertTriangle, Play, Target, Shield, XCircle, Circle, Users, Zap, StopCircle } from 'lucide-react'
 import { formatPeriodLabel, formatSituationCode } from '@/lib/utils/formatters'
+import { excludeShootoutAttempts } from '@/lib/utils/shootout'
 import Image from 'next/image'
 import { RedLightIcon } from './red-light-icon'
 import { VideoOverlay } from '../shot-chart/video-overlay'
@@ -33,7 +34,7 @@ function getPlayerName(playerId: number, rosterSpots: any[]): string {
 }
 
 function parseTimelineEvents(gameData: any): TimelineEvent[] {  
-  const plays = gameData.plays || []
+  const plays = excludeShootoutAttempts(gameData).plays || []
   const events: TimelineEvent[] = []
 
   plays.forEach((play: any) => {  
