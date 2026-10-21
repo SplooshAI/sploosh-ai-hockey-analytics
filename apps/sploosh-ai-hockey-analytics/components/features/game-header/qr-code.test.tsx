@@ -51,6 +51,12 @@ describe('QR cards', () => {
     expect(row.className).toContain('sm:flex-row')
   })
 
+  it('spreads the two cards far apart on wider screens so a camera frames one at a time', () => {
+    render(<GameQrCodes {...props} />)
+    const row = cardFor('qr-share').parentElement as HTMLElement
+    for (const gap of ['sm:gap-14', 'md:gap-20', 'lg:gap-28']) expect(row.className).toContain(gap)
+  })
+
   it('gives both codes the same plain card styling, with no tint on either', () => {
     render(<GameQrCodes {...props} />)
     const classes = (id: string) => cardFor(id).className.replace(/\s+/g, ' ')

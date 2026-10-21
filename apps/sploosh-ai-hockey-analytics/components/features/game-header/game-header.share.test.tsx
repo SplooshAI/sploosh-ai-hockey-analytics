@@ -161,4 +161,10 @@ describe('GameHeader - QR code labels and separation', () => {
     expect(within(rowFor('qr-share')).getByRole('button', { name: /^share/i })).toBeInTheDocument()
     expect(within(rowFor('qr-game-center')).getByRole('button', { name: /nhl® game center/i })).toBeInTheDocument()
   })
+
+  it('uses the same wide spacing between the footer cards', () => {
+    render(<GameHeader gameData={gameData} />)
+    const row = cardFor('qr-share').parentElement?.parentElement as HTMLElement
+    for (const gap of ['sm:gap-14', 'md:gap-20', 'lg:gap-28']) expect(row.className).toContain(gap)
+  })
 })

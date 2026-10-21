@@ -370,7 +370,7 @@ export const GameHeader: React.FC<GameHeaderProps> = ({ gameData, className = ''
 
       {/* NHL Game Center and Share links, each with a QR code */}
       {(gameCenterUrl || shareUrl) && (
-        <div className={`flex justify-center pt-1 ${showQrCodes ? 'flex-col items-center gap-5 sm:flex-row sm:items-start sm:gap-6' : 'flex-wrap items-start gap-6'}`}>
+        <div className={`flex justify-center pt-1 ${showQrCodes ? 'flex-col items-center gap-5 sm:flex-row sm:items-start sm:gap-14 md:gap-20 lg:gap-28' : 'flex-wrap items-start gap-6'}`}>
           {gameCenterUrl && (
             <div className="flex flex-col items-center gap-3">
               <div className="relative flex justify-center">

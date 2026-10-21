@@ -19,7 +19,7 @@ export const GameQrCodes: React.FC<GameQrCodesProps> = ({ gameId, gameCenterLink
   if (!gameCenterUrl && !shareUrl) return null
 
   return (
-    <div className={`flex flex-col items-center gap-5 sm:flex-row sm:items-start sm:justify-center sm:gap-6 ${className}`}>
+    <div className={`flex flex-col items-center gap-5 sm:flex-row sm:items-start sm:justify-center sm:gap-14 md:gap-20 lg:gap-28 ${className}`}>
       {shareUrl && (
         <QrCard url={shareUrl} variant="sploosh" label="QR code for Sploosh.AI Hockey Analytics" testId="qr-share" />
       )}
