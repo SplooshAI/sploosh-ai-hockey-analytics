@@ -74,4 +74,22 @@ describe('Home page - neutral-site call-out', () => {
     expect((await screen.findAllByText(/First Horizon Coliseum/)).length).toBeGreaterThan(0)
     expect(screen.queryByTestId('special-game-badge')).not.toBeInTheDocument()
   })
+
+  it('does not crash before the neutral-site lookup finishes, even when the game data has no id', async () => {
+    const errors: unknown[] = []
+    const onError = (e: ErrorEvent) => { errors.push(e.error); e.preventDefault() }
+    window.addEventListener('error', onError)
+    // scores feed never answers, so neutralSite stays null while the header renders
+    ;(global.fetch as any).mockImplementation(async (url: string) => {
+      if (String(url).includes('/api/nhl/scores')) return new Promise(() => {})
+      const { id: _id, ...noId } = game
+      return { ok: true, json: async () => (String(url).includes('play-by-play') ? noId : { tvBroadcasts: [] }) }
+    })
+    render(<Home />)
+    expect((await screen.findAllByText(/First Horizon Coliseum/)).length).toBeGreaterThan(0)
+    window.removeEventListener('error', onError)
+    expect(errors).toEqual([])
+    expect(screen.queryByTestId('special-game-badge')).not.toBeInTheDocument()
+  })
 })
+

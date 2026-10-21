@@ -307,7 +307,7 @@ function HomeContent() {
               gameData={{
                 ...playByPlayData,
                 gameCenterLink: `/gamecenter/${playByPlayData.id}/recap`,
-                neutralSite: neutralSite?.gameId === playByPlayData.id && neutralSite.value,
+                neutralSite: neutralSite !== null && neutralSite.gameId === playByPlayData.id && neutralSite.value,
                 tvBroadcasts: gameCenterData?.tvBroadcasts || [],
                 gameVideo: gameCenterData?.gameVideo
               } as any} 
