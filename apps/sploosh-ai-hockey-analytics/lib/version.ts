@@ -10,8 +10,8 @@ export interface VersionInfo {
 }
 
 export function getVersionInfo(): VersionInfo {
-  // Default repository URL if not in development
-  const repoUrl = 'https://github.com/SplooshAI/sploosh-ai-nhl-shot-chart';
+  // Repository linked from the version line
+  const repoUrl = 'https://github.com/SplooshAI/sploosh-ai-hockey-analytics';
 
   return {
     version: appPackageJson.version,

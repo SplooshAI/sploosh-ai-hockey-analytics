@@ -3,9 +3,10 @@ import { getVersionInfo } from '../../../lib/version'
 import { parseISO } from 'date-fns'
 import { useSearchParams } from 'next/navigation'
 import { useState, useEffect, Suspense } from 'react'
+import { Github } from 'lucide-react'
 
 function VersionContent() {
-  const { version, gitDate } = getVersionInfo()
+  const { version, gitDate, repoUrl } = getVersionInfo()
   const searchParams = useSearchParams()
   const [formattedDate, setFormattedDate] = useState<string>('')
   const currentYear = new Date().getFullYear()
@@ -46,7 +47,17 @@ function VersionContent() {
   return (
     <div className="text-xs text-muted-foreground space-y-1">
       <p className="font-medium">
-        Sploosh.AI Hockey Analytics v{version}
+        <a
+          href={repoUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+          aria-label="View the repository on GitHub"
+          title="View the repository on GitHub"
+          className="inline-flex items-center gap-1.5 hover:text-primary hover:underline transition-colors"
+        >
+          <Github className="h-3.5 w-3.5" aria-hidden="true" />
+          Sploosh.AI Hockey Analytics v{version}
+        </a>
       </p>
       <p>
         © {currentYear} Sploosh.AI. All rights reserved.
