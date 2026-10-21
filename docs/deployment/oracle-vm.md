@@ -132,12 +132,13 @@ matches what shipped.
 
 After the version-bump PR merges, the `deploy` job in `.github/workflows/main-merge.yml`
 runs `deploy-to-oracle.sh up app` from `main` and then checks that the public site
-returns 200. It runs in the `hockey-preview` GitHub Environment, which should require a
-reviewer, so a merge does not go live until it is approved.
+returns 200. It runs unattended: every merge to `main` ships to production in about five
+minutes. To require an approval first, add Required reviewers to the `hockey-preview`
+GitHub Environment (Settings > Environments).
 
 Set up once in the repository settings:
 
-1. Settings > Environments > New environment: `hockey-preview`, with Required reviewers.
+1. Settings > Environments > New environment: `hockey-preview`.
 2. In that environment, add secrets `HOCKEY_DEPLOY_SSH_KEY` (the contents of
    `~/.ssh/hockey_oracle_deploy`) and `HOCKEY_VM_IP`.
 

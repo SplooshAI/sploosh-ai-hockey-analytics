@@ -200,7 +200,7 @@ jobs:
   deploy:
     needs: merge-pr
     runs-on: ubuntu-latest
-    # Approval gate: the hockey-preview environment requires a reviewer before this job runs
+    # Deploys run unattended. Add required reviewers to the hockey-preview environment to gate them.
     environment: hockey-preview
     concurrency:
       group: deploy-hockey-preview
