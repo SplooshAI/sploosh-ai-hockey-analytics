@@ -28,9 +28,11 @@ TREE="$(mktemp -d)"
 trap 'git -C "$REPO_ROOT" worktree remove --force "$TREE" 2>/dev/null || true; rm -rf "$TREE"' EXIT
 
 for attempt in 1 2 3 4 5; do
-  if git -C "$REPO_ROOT" ls-remote --exit-code --heads origin "$BRANCH" >/dev/null 2>&1; then
-    git -C "$REPO_ROOT" fetch -q origin "$BRANCH"
-    git -C "$REPO_ROOT" worktree add --detach "$TREE" "origin/$BRANCH" >/dev/null
+  # The full ref matters: a bare name also matches any branch that merely ends
+  # in it, such as 2026.10.21/pr-screenshots.
+  if [ -n "$(git -C "$REPO_ROOT" ls-remote --heads origin "refs/heads/$BRANCH")" ]; then
+    git -C "$REPO_ROOT" fetch -q origin "refs/heads/$BRANCH"
+    git -C "$REPO_ROOT" worktree add --detach "$TREE" FETCH_HEAD >/dev/null
   else
     git -C "$REPO_ROOT" worktree add --detach "$TREE" HEAD >/dev/null
     git -C "$TREE" checkout -q --orphan "$BRANCH"
