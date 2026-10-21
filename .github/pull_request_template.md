@@ -19,6 +19,17 @@ version: ci       # CI/CD changes
 version: chore    # General maintenance
 version: revert   # Reverting changes
 
+## Screenshots
+
+<!--
+Automatic: when a PR changes code under apps/sploosh-ai-hockey-analytics (app,
+components, hooks, lib, public), the "PR Screenshots" check posts before and
+after screenshots into this description. Nothing to attach by hand.
+-->
+
+- [ ] There is no visible change, and I added the `no-visual-change` label
+- [ ] I looked at the screenshots in this description and they show what I intended
+
 ## Testing
 
 - [ ] I have tested these changes locally using `act`

@@ -1,6 +1,6 @@
 {
   "name": "sploosh-ai-hockey-analytics",
-  "version": "2.14.2",
+  "version": "2.15.1",
   "description": "Explore hockey data from the NHL EDGE API.",
   "scripts": {
     "dev": "npm run dev --prefix apps/sploosh-ai-hockey-analytics",
@@ -40,6 +40,7 @@
     "deploy:down": "./scripts/deploy/deploy-to-oracle.sh down",
     "deploy:status": "./scripts/deploy/deploy-to-oracle.sh status",
     "deploy:logs": "./scripts/deploy/deploy-to-oracle.sh logs",
+    "pr:screenshots": "./scripts/pr-screenshots/run.sh --base origin/main --head HEAD --out screenshots",
     "test:workflows": "chmod +x .github/test-workflows.sh && time .github/test-workflows.sh",
     "test:workflows:semantic": "act pull_request -e .github/test-data/pr-events/minor.json -W .github/workflows/semantic-pr-check.yml",
     "test:workflows:semantic:major": "act pull_request -e .github/test-data/pr-events/major.json -W .github/workflows/semantic-pr-check.yml",
