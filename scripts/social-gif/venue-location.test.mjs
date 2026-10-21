@@ -57,3 +57,18 @@ test('every NHL arena in the feed gets a city and region', () => {
     assert.ok(out.startsWith(`${city}, `), `${venue}: ${out}`)
   }
 })
+
+test('a special-event venue in a known NHL city falls back to that city\'s region', () => {
+  assert.equal(formatVenueLocation('Carter-Finley Stadium', 'Raleigh'), 'Raleigh, NC')
+  assert.equal(formatVenueLocation('BC Place', 'Vancouver'), 'Vancouver, BC, Canada')
+  assert.equal(formatVenueLocation('Lincoln Financial Field', 'Philadelphia'), 'Philadelphia, PA')
+})
+
+test('a neutral-site arena abroad shows the city and country', () => {
+  assert.equal(formatVenueLocation('Veikkaus Arena', 'Helsinki'), 'Helsinki, Finland')
+})
+
+test('the city fallback skips ambiguous names like Ontario', () => {
+  assert.equal(formatVenueLocation('Some Stadium', 'Ontario'), 'Ontario')
+})
+

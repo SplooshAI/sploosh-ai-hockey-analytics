@@ -12,6 +12,8 @@
 import { chromium } from '../pr-screenshots/node_modules/playwright/index.mjs'
 import { execFileSync } from 'node:child_process'
 import { formatVenueLocation } from './venue-location.mjs'
+import { formatPuckDrop } from './puck-drop.mjs'
+import { specialGameBadge } from './special-game.mjs'
 import { mkdtemp, writeFile, rm, stat } from 'node:fs/promises'
 import { tmpdir } from 'node:os'
 import path from 'node:path'
@@ -46,48 +48,65 @@ try {
   await page.waitForSelector('[data-testid=qr-share]', { timeout: 45000 })
 
   // Score caption from the game's own data, so the pill always matches the page.
-  const game = await page.evaluate(async (g) => {
+  const raw = await page.evaluate(async (g) => {
     const d = await (await fetch(`/api/nhl/play-by-play?gameId=${g}`)).json()
-    const t = d.periodDescriptor?.periodType
-    const final = d.gameState === 'FINAL' || d.gameState === 'OFF'
-    const date = new Date(`${d.gameDate}T12:00:00`).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
-    // Puck drop in the arena's own time zone: find the North American zone whose offset matches the feed's venue offset.
-    const start = d.startTimeUTC ? new Date(d.startTimeUTC) : null
-    let when = ''
-    if (start) {
-      const zones = ['America/Los_Angeles', 'America/Vancouver', 'America/Denver', 'America/Edmonton', 'America/Phoenix', 'America/Chicago', 'America/Winnipeg', 'America/New_York', 'America/Toronto', 'America/Halifax']
-      const want = `GMT${d.venueUTCOffset}`.replace(/^GMT([+-])0?(\d+):00$/, (m, sg, h) => `GMT${sg}${h}`).replace('GMT-0', 'GMT')
-      const offsetOf = (z) => (new Intl.DateTimeFormat('en-US', { timeZone: z, timeZoneName: 'shortOffset' }).formatToParts(start).find((x) => x.type === 'timeZoneName')?.value || '')
-      const zone = zones.find((z) => offsetOf(z) === want) || 'America/New_York'
-      const f = (o) => new Intl.DateTimeFormat('en-US', { timeZone: zone, ...o }).format(start)
-      const day = Number(f({ day: 'numeric' }))
-      const ord = day % 100 >= 11 && day % 100 <= 13 ? 'th' : ['th', 'st', 'nd', 'rd'][day % 10 > 3 ? 0 : day % 10]
-      when = `${f({ weekday: 'long' })}, ${f({ month: 'long' })} ${day}${ord}, ${f({ year: 'numeric' })} @ ${f({ hour: 'numeric', minute: '2-digit' })} ${f({ timeZoneName: 'short' }).split(' ').pop()}`
-    }
+    // `neutralSite` is on the scores feed, not on the play-by-play; the special event name is on both.
+    let neutralSite = d.neutralSite
+    try {
+      const scores = await (await fetch(`/api/nhl/scores?date=${d.gameDate}`)).json()
+      neutralSite = scores.games?.find((x) => x.id === d.id)?.neutralSite ?? neutralSite
+    } catch {}
+    const special = Boolean(d.specialEvent?.name?.default || neutralSite)
     const side = (x) => ({
       abbrev: x.abbrev,
       score: x.score ?? 0,
       logo: x.logo,
       name: [x.placeName?.default, x.commonName?.default].filter(Boolean).join(' '),
     })
+    // a special game has an extra badge line, so its QR code is drawn a little smaller to keep the card inside the frame
+    const qrSize = special ? 148 : 168
     return {
       away: side(d.awayTeam),
       home: side(d.homeTeam),
-      // broadcast style: FINAL, FINAL/OT, FINAL/SO; anything else shows the live game state
-      status: final ? (t === 'OT' || t === 'SO' ? `FINAL/${t}` : 'FINAL') : String(d.gameState),
-      label: final ? (t === 'OT' || t === 'SO' ? `Final (${t})` : 'Final') : String(d.gameState),
-      date,
+      gameState: String(d.gameState),
+      periodType: d.periodDescriptor?.periodType,
+      gameDate: d.gameDate,
+      startTimeUTC: d.startTimeUTC,
+      venueUTCOffset: d.venueUTCOffset,
       venue: d.venue?.default || '',
       city: d.venueLocation?.default || '',
-      when,
+      specialEvent: d.specialEvent || null,
+      neutralSite: Boolean(neutralSite),
       sponsorLogo: `${location.origin}/sploosh.ai/sploosh-ai-character-transparent.png`,
       // the app's own QR code for this game, so the GIF shows exactly what the page encodes
-      qrSvg: document.querySelector('[data-testid=qr-share] svg')?.outerHTML.replace(/ height="\d+" width="\d+"/, ' style="width:168px;height:168px;display:block"') || '',
+      qrSvg: document.querySelector('[data-testid=qr-share] svg')?.outerHTML.replace(/ height="\d+" width="\d+"/, ` style="width:${qrSize}px;height:${qrSize}px;display:block"`) || '',
     }
   }, GAME)
+  const final = raw.gameState === 'FINAL' || raw.gameState === 'OFF'
+  const upcoming = raw.gameState === 'FUT' || raw.gameState === 'PRE'
+  const extra = raw.periodType === 'OT' || raw.periodType === 'SO'
+  const game = {
+    away: raw.away,
+    home: raw.home,
+    upcoming,
+    // broadcast style: FINAL, FINAL/OT, FINAL/SO, UPCOMING; anything else shows the live game state
+    status: final ? (extra ? `FINAL/${raw.periodType}` : 'FINAL') : upcoming ? 'UPCOMING' : raw.gameState,
+    label: final ? (extra ? `Final (${raw.periodType})` : 'Final') : upcoming ? 'Upcoming' : raw.gameState,
+    date: new Date(`${raw.gameDate}T12:00:00`).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }),
+    venue: raw.venue,
+    city: raw.city,
+    // Puck drop in the arena's own time zone; Global Series and other neutral-site games are not at the usual arenas.
+    when: formatPuckDrop(raw.startTimeUTC, raw.venueUTCOffset, raw.city),
+    // Called out as the special event's name, or "Neutral site"
+    badge: specialGameBadge({ specialEvent: raw.specialEvent, neutralSite: raw.neutralSite }),
+    sponsorLogo: raw.sponsorLogo,
+    qrSvg: raw.qrSvg,
+  }
   // The feed only has the arena's city; the table adds the state, province or country (outside the US).
   game.location = formatVenueLocation(game.venue, game.city)
-  const info = `${game.away.abbrev} ${game.away.score}  @  ${game.home.abbrev} ${game.home.score}  ·  ${game.label}  ·  ${game.date}`
+  const info = game.upcoming
+    ? `${game.away.abbrev}  @  ${game.home.abbrev}  ·  ${game.date}`
+    : `${game.away.abbrev} ${game.away.score}  @  ${game.home.abbrev} ${game.home.score}  ·  ${game.label}  ·  ${game.date}`
   const CAPTION = String(args.caption && args.caption !== true ? args.caption : info)
 
   // Framing only: hide scrollbars, the mobile menu button and the scroll-to-top button.
@@ -131,10 +150,12 @@ try {
             const logo = `<div style="width:78px;height:78px;border-radius:50%;background:#fff;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 14px rgba(0,0,0,.3)"><img src="${t.logo}" style="width:58px;height:58px;object-fit:contain"></div>`
             const abbr = `<div style="font-weight:900;font-size:38px;letter-spacing:.02em;${dim}">${t.abbrev}</div>`
             const score = `<div style="font-weight:900;font-size:84px;line-height:1;min-width:52px;text-align:center;${dim}">${t.score}</div>`
-            const parts = key === 'away' ? [logo, abbr, score] : [score, abbr, logo]
+            const parts = g.upcoming ? (key === 'away' ? [logo, abbr] : [abbr, logo]) : key === 'away' ? [logo, abbr, score] : [score, abbr, logo]
             return `<div style="display:flex;align-items:center;gap:14px">${parts.join('')}</div>`
           }
+          const badge = g.badge ? `<div style="background:#f59e0b;color:#1e293b;font-weight:900;font-size:22px;letter-spacing:.07em;text-transform:uppercase;border-radius:999px;padding:7px 24px;box-shadow:0 6px 18px rgba(0,0,0,.35)">${g.badge}</div>` : ''
           return `<div style="display:flex;flex-direction:column;align-items:center;gap:14px">
+            ${badge}
             <div style="display:flex;flex-direction:column;align-items:stretch;box-shadow:0 14px 40px rgba(0,0,0,.4);border-radius:26px">
               <div style="display:flex;align-items:center;justify-content:center;gap:22px;background:rgba(8,15,35,.9);border:3px solid rgba(255,255,255,.55);border-bottom:none;border-radius:26px 26px 0 0;padding:18px 28px">
                 ${team(g.away, 'away')}
@@ -280,7 +301,7 @@ try {
   const banner = { type: 'banner', text: 'Share any game in a tap' }
   const cap = { type: 'caption', text: CAPTION }
   // The opening and end cards are the same card: scorebug, arena and date, heading, the game's QR code and its URL.
-  const bookend = { type: 'card', title: 'See every shot', scoreboard: game, qr: true, footer: HOST, footerSub: `/?gameId=${GAME}`, titleSize: 70 }
+  const bookend = { type: 'card', title: 'See every shot', scoreboard: game, qr: true, footer: HOST, footerSub: `/?gameId=${GAME}`, titleSize: game.badge ? 58 : 70 }
   const sploosh = '[data-testid=qr-share]'
   const nhl = '[data-testid=qr-game-center]'
   const shareCard = `${sploosh}`

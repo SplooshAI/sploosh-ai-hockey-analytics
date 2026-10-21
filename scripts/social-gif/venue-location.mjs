@@ -61,9 +61,21 @@ const INTERNATIONAL_CITIES = {
   Tokyo: 'Japan',
 }
 
+// A special-event venue (a stadium for the Stadium Series or Winter Classic, say) is not in the table above,
+// but it is often in an NHL city, so fall back to that city's region. "Ontario" is left out on purpose:
+// it is both a California city and a Canadian province.
+const CITY_REGIONS = {
+  Anaheim: US('CA'), Boston: US('MA'), Buffalo: US('NY'), Calgary: CA('AB'), Raleigh: US('NC'), Chicago: US('IL'),
+  Denver: US('CO'), Columbus: US('OH'), Dallas: US('TX'), Detroit: US('MI'), Edmonton: CA('AB'), Sunrise: US('FL'),
+  'St. Paul': US('MN'), Montreal: CA('QC'), Nashville: US('TN'), Newark: US('NJ'), Elmont: US('NY'), 'New York': US('NY'),
+  Ottawa: CA('ON'), Philadelphia: US('PA'), Pittsburgh: US('PA'), 'San Jose': US('CA'), Seattle: US('WA'), 'St. Louis': US('MO'),
+  Tampa: US('FL'), Toronto: CA('ON'), 'Salt Lake City': US('UT'), Vancouver: CA('BC'), Paradise: US('NV'), Hershey: US('PA'),
+  Winnipeg: CA('MB'),
+}
+
 /** "City, ST", "City, PROV, Canada", "City, Country", or just "City"; '' when there is no city. */
 export function formatVenueLocation(venue, city) {
   if (!city) return ''
-  const region = VENUES[venue] ?? INTERNATIONAL_CITIES[city]
+  const region = VENUES[venue] ?? CITY_REGIONS[city] ?? INTERNATIONAL_CITIES[city]
   return region ? `${city}, ${region}` : city
 }

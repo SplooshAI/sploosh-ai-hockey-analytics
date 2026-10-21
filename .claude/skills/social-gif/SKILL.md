@@ -68,3 +68,12 @@ scene that rings it and adds a `pill` (`pos`: `above`, `below` or `edge`).
   state, province, or country from a table keyed by arena name. An arena not in the table shows
   just its city, never a guess; add new arenas (or neutral-site cities) there. Test it with
   `node --test scripts/social-gif/venue-location.test.mjs`.
+- Special games (Global Series, Stadium Series, Winter Classic, and other neutral-site games) are called out
+  with an amber badge above the scorebug: the feed's `specialEvent` name, or "Neutral site" when only the
+  `neutralSite` flag is set (`special-game.mjs`). Their arenas are not the usual ones, so the region comes from
+  the arena table, then the NHL-city table, then the international-city table, and otherwise shows only the city.
+- The puck-drop time uses the arena's own zone (`puck-drop.mjs`: by city for international venues, by UTC
+  offset in North America), e.g. "@ 7:00 PM EET" in Helsinki.
+- A game that has not started shows an UPCOMING tag and no scores. Add cities to the tables as new ones come up.
+- Tests: `node --test scripts/social-gif/*.test.mjs`.
+
