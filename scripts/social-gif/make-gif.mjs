@@ -45,13 +45,28 @@ try {
   await page.waitForSelector('[data-testid=qr-share]', { timeout: 45000 })
 
   // Score caption from the game's own data, so the pill always matches the page.
-  const info = await page.evaluate(async (g) => {
+  const game = await page.evaluate(async (g) => {
     const d = await (await fetch(`/api/nhl/play-by-play?gameId=${g}`)).json()
     const t = d.periodDescriptor?.periodType
     const final = d.gameState === 'FINAL' || d.gameState === 'OFF'
     const date = new Date(`${d.gameDate}T12:00:00`).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
-    return `${d.awayTeam.abbrev} ${d.awayTeam.score ?? 0}  @  ${d.homeTeam.abbrev} ${d.homeTeam.score ?? 0}  ·  ${final ? (t === 'OT' || t === 'SO' ? `Final (${t})` : 'Final') : d.gameState}  ·  ${date}`
+    const side = (x) => ({
+      abbrev: x.abbrev,
+      score: x.score ?? 0,
+      logo: x.logo,
+      name: [x.placeName?.default, x.commonName?.default].filter(Boolean).join(' '),
+    })
+    return {
+      away: side(d.awayTeam),
+      home: side(d.homeTeam),
+      // broadcast style: FINAL, FINAL/OT, FINAL/SO; anything else shows the live game state
+      status: final ? (t === 'OT' || t === 'SO' ? `FINAL/${t}` : 'FINAL') : String(d.gameState),
+      label: final ? (t === 'OT' || t === 'SO' ? `Final (${t})` : 'Final') : String(d.gameState),
+      date,
+      venue: d.venue?.default || '',
+    }
   }, GAME)
+  const info = `${game.away.abbrev} ${game.away.score}  @  ${game.home.abbrev} ${game.home.score}  ·  ${game.label}  ·  ${game.date}`
   const CAPTION = String(args.caption && args.caption !== true ? args.caption : info)
 
   // Framing only: hide scrollbars, the mobile menu button and the scroll-to-top button.
@@ -86,6 +101,27 @@ try {
         const ov = document.getElementById('gif-overlay')
         ov.innerHTML = ''
         const ease = 1 - Math.pow(1 - p, 3)
+        // TV-style scorebug: team logo, abbreviation and score each side, FINAL tag in the middle.
+        // The winner is full strength, the loser dimmed.
+        const scoreboardHtml = (g) => {
+          const winner = g.away.score > g.home.score ? 'away' : g.home.score > g.away.score ? 'home' : null
+          const team = (t, key) => {
+            const dim = winner && winner !== key ? 'opacity:.6;' : ''
+            const logo = `<div style="width:78px;height:78px;border-radius:50%;background:#fff;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 14px rgba(0,0,0,.3)"><img src="${t.logo}" style="width:58px;height:58px;object-fit:contain"></div>`
+            const abbr = `<div style="font-weight:900;font-size:38px;letter-spacing:.02em;${dim}">${t.abbrev}</div>`
+            const score = `<div style="font-weight:900;font-size:84px;line-height:1;min-width:52px;text-align:center;${dim}">${t.score}</div>`
+            const parts = key === 'away' ? [logo, abbr, score] : [score, abbr, logo]
+            return `<div style="display:flex;align-items:center;gap:14px">${parts.join('')}</div>`
+          }
+          return `<div style="display:flex;flex-direction:column;align-items:center;gap:14px">
+            <div style="display:flex;align-items:center;justify-content:center;gap:22px;background:rgba(8,15,35,.82);border:3px solid rgba(255,255,255,.55);border-radius:26px;padding:18px 28px;box-shadow:0 14px 40px rgba(0,0,0,.4)">
+              ${team(g.away, 'away')}
+              <div style="background:#facc15;color:#1e293b;font-weight:900;font-size:24px;letter-spacing:.06em;border-radius:12px;padding:9px 15px;white-space:nowrap">${g.status}</div>
+              ${team(g.home, 'home')}
+            </div>
+            <div style="font-weight:600;font-size:26px;opacity:.9">${[g.venue, g.date].filter(Boolean).join(' · ')}</div>
+          </div>`
+        }
         const css = (el, s) => Object.assign(el.style, s)
         const pillCss = (bg) => ({
           position: 'absolute',
@@ -166,7 +202,7 @@ try {
             el.innerHTML = `
               <div style="background:#facc15;color:#1e293b;font-weight:900;font-size:24px;border-radius:999px;padding:6px 20px;letter-spacing:.08em">NEW</div>
               <div style="font-weight:900;font-size:${it.titleSize || 84}px;line-height:1.05;max-width:760px">${it.title}</div>
-              <div style="font-weight:600;font-size:34px;opacity:.9;max-width:720px">${it.subtitle}</div>
+              ${it.scoreboard ? scoreboardHtml(it.scoreboard) : `<div style="font-weight:600;font-size:34px;opacity:.9;max-width:720px">${it.subtitle}</div>`}
               <div style="display:flex;gap:16px;flex-wrap:wrap;justify-content:center;max-width:780px">
                 ${(it.pills || []).map((t) => `<span style="background:rgba(255,255,255,.14);border:2px solid rgba(255,255,255,.55);border-radius:999px;padding:10px 24px;font-weight:700;font-size:26px">${t}</span>`).join('')}
               </div>
@@ -176,6 +212,9 @@ try {
         }
       },
       { items, p, k }
+    ).then(() =>
+      // team logos load over the network; never capture a frame before they have
+      page.evaluate(() => Promise.all([...document.querySelectorAll('#gif-overlay img')].map((i) => (i.complete ? 1 : new Promise((res) => { i.onload = i.onerror = res })))))
     )
 
   const snap = async (dur) => {
@@ -260,7 +299,7 @@ try {
   }
 
   // ---- Scene 5: end card
-  await reveal([{ type: 'card', title: 'Open this game', subtitle: CAPTION.replace(/  /g, ' '), pills: ['Tap to open', 'Scan to share', 'Works on mobile'], footer: HOST, footerSub: `/?gameId=${GAME}`, titleSize: 76 }], 2.6, { fadeFrames: 5, pulseFrames: 4 })
+  await reveal([{ type: 'card', title: 'Open this game', scoreboard: game, pills: ['Tap to open', 'Scan to share', 'Works on mobile'], footer: HOST, footerSub: `/?gameId=${GAME}`, titleSize: 70 }], 2.6, { fadeFrames: 5, pulseFrames: 4 })
 
   // ---- Encode
   const list = frames.map((f) => `file '${f.file}'\nduration ${f.dur.toFixed(3)}`).join('\n') + `\nfile '${frames[frames.length - 1].file}'\n`
