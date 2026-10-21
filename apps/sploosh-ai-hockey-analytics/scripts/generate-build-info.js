@@ -2,15 +2,7 @@ const fs = require('fs');
 const { execSync } = require('child_process');
 
 const getBuildInfo = () => {
-  // First try Vercel environment variables
-  if (process.env.VERCEL_GIT_COMMIT_SHA) {
-    return {
-      commitHash: process.env.VERCEL_GIT_COMMIT_SHA,
-      buildTime: new Date().toISOString(),
-    };
-  }
-
-  // If not on Vercel, try local git info
+  // Try local git info
   try {
     const commitHash = execSync('git rev-parse HEAD').toString().trim();
     return {

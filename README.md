@@ -1,9 +1,8 @@
 # Welcome
 
-You can view the [demo](https://sploosh-ai-hockey-analytics.vercel.app/)
-on Vercel at:
+You can view the live app at:
 
-[https://sploosh-ai-hockey-analytics.vercel.app/](https://sploosh-ai-hockey-analytics.vercel.app/)
+[https://hockey-preview.sploosh.ai/](https://hockey-preview.sploosh.ai/)
 
 ## Background
 
@@ -56,8 +55,9 @@ displayed in both the sidebar and footer of the application.
 
 ## Demo
 
-This application is deployed on Vercel and can be accessed at:
-<https://sploosh-ai-hockey-analytics.vercel.app/>
+This application runs in Docker on an Oracle Cloud VM behind a Cloudflare
+Tunnel and can be accessed at: <https://hockey-preview.sploosh.ai/>. See
+[docs/deployment/oracle-vm.md](docs/deployment/oracle-vm.md).
 
 ## Development
 

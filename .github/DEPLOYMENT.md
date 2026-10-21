@@ -222,29 +222,11 @@ npm run test:workflows:ghcr:keep-days
 npm run test:workflows:ghcr:cleanup
 ```
 
-## Vercel Integration
+## Hosting
 
-The project is configured to deploy preview builds to Vercel for each PR:
-
-- Preview deployments are automatically created for each PR
-- Vercel reports deployment status directly to GitHub as a native status check
-- Preview URLs are available in the PR checks
-
-### Why We Don't Manually Poll Vercel
-
-The `semantic-pr-check.yml` workflow relies on GitHub's native Vercel
-integration rather than manually polling for deployment status. This approach:
-
-- **Eliminates complexity**: No custom polling logic or timeout handling
-- **Improves reliability**: GitHub's status check system is battle-tested
-- **Faster execution**: Workflow completes in seconds vs minutes of polling
-- **Reduces maintenance**: Less code to maintain and debug
-- **Leverages branch protection**: GitHub can require Vercel checks before
-  merging
-
-GitHub already handles Vercel status checks through its native integration,
-making manual polling redundant. If Vercel fails, GitHub's branch protection
-will prevent merging regardless of our workflow status.
+The app is self-hosted on an Oracle Cloud VM behind a Cloudflare Tunnel; there
+is no per-PR preview deployment. See
+[docs/deployment/oracle-vm.md](../docs/deployment/oracle-vm.md) to deploy.
 
 ## Troubleshooting
 
@@ -252,8 +234,7 @@ If you encounter issues during deployment:
 
 1. **Build Failures**: Check the workflow logs in the GitHub Actions tab
 2. **Version Bump Issues**: Ensure PR titles follow the semantic versioning format
-3. **Vercel Deployment Issues**: Check the Vercel dashboard for deployment logs
-4. **Docker Issues**: Verify Docker configurations and check container logs
+3. **Docker Issues**: Verify Docker configurations and check container logs
 
 ## Best Practices
 

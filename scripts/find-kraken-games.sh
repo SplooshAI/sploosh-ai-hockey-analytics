@@ -12,7 +12,7 @@ ENVIRONMENT="local"
 
 # URLs
 LOCAL_BASE="http://localhost:3000"
-PROD_BASE="https://sploosh-ai-hockey-analytics.vercel.app"
+PROD_BASE="https://hockey-preview.sploosh.ai"
 
 # Help function
 show_help() {
