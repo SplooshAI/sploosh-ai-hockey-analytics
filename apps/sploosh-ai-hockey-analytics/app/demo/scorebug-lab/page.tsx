@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react'
 import { Scorebug, type ScorebugVariant } from '@/components/features/game-header/scorebug'
 import { GameCard } from '@/components/features/games/card/game-card'
+import { getGameCenter } from '@/lib/api/nhl-edge'
 import type { NHLEdgeGame } from '@/lib/api/nhl-edge/types/nhl-edge'
 
 // Contact sheet of scorebug looks across game states. Development only; not linked from the app.
@@ -67,7 +68,11 @@ function SpecialCards() {
       SPECIAL_DATES.map((d) =>
         fetch(`/api/nhl/scores?date=${d}`)
           .then((r) => (r.ok ? r.json() : { games: [] }))
-          .then((j) => (j.games ?? []).filter((g: NHLEdgeGame) => g.specialEvent || g.neutralSite))
+          .then(async (j) => {
+            const flagged: NHLEdgeGame[] = (j.games ?? []).filter((g: NHLEdgeGame) => g.specialEvent || g.neutralSite)
+            // The sidebar merges game center data into every game; do the same so the event banner shows
+            return Promise.all(flagged.map(async (g) => ({ ...g, ...(await getGameCenter(g.id.toString()).catch(() => ({}))) })))
+          })
           .catch(() => [])
       )
     ).then((lists) => {
