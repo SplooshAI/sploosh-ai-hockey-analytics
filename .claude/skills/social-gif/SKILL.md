@@ -20,10 +20,13 @@ actual elements, so call-outs stay centered on what they point at.
    (cd scripts/pr-screenshots && npm install && npx playwright install chromium)
    ```
 
-3. Render. Rob wants finished GIFs in `~/Downloads`:
+3. Render. Rob wants finished GIFs in `~/Downloads`. Add `--mp4 <file>` to write an MP4 of the same
+   frames too (H.264, yuv420p, 30 fps, about half the size). Some chats, Facebook Messenger for one,
+   fail to download GIFs ("Couldn't download"), so share the GIF first and send the MP4 if it fails:
 
    ```bash
-   node scripts/social-gif/make-gif.mjs --out ~/Downloads/sploosh-ai-hockey-share-qr.gif
+   node scripts/social-gif/make-gif.mjs --out ~/Downloads/sploosh-ai-hockey-share-qr.gif \
+     --mp4 ~/Downloads/sploosh-ai-hockey-share-qr.mp4
    ```
 
    The default game is the Kraken's 4-3 shootout win over the Red Wings on 2026-10-20

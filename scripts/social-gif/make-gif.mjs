@@ -2,10 +2,13 @@
 // highlight rings drawn over the real UI. Every frame is a screenshot of the
 // running site, so the GIF always shows what the code produces right now.
 //
-// Usage: node make-gif.mjs [--base URL] [--game ID] [--caption TEXT] [--out FILE] [--keep]
-//   defaults: --base https://hockey-preview.sploosh.ai --game 2026020149 (Kraken 4, Red Wings 3 (SO), 2026-10-20)
-//   --caption TEXT overrides the score caption pill (default is built from the game's live data)
+// Usage: node make-gif.mjs [--base URL] [--game ID] [--caption TEXT] [--out FILE] [--mp4 FILE] [--keep]
+//   defaults: --base https://hockey-preview.sploosh.ai
+//             --game 2026020149 (Kraken 4, Red Wings 3 (SO), 2026-10-20)
 //             --out ./sploosh-ai-hockey-share.gif
+//   --caption TEXT overrides the score caption pill (default is built from the game's live data)
+//   --mp4 FILE also writes an MP4 (H.264, yuv420p) of the same frames, for chats like Messenger that
+//             handle video better than GIFs
 //
 // Needs Playwright (reuses ../pr-screenshots/node_modules, installed by
 // `npm run pr:screenshots` or `npm install` in that folder) and ffmpeg.
@@ -369,6 +372,22 @@ try {
     ],
     { stdio: 'inherit' }
   )
+  if (args.mp4 && args.mp4 !== true) {
+    // H.264 in yuv420p with the moov atom up front plays inline on every phone and in Messenger.
+    // Same frames and timing as the GIF, at a constant 30 fps.
+    execFileSync(
+      'ffmpeg',
+      [
+        '-y', '-loglevel', 'error', '-f', 'concat', '-safe', '0', '-i', path.join(dir, 'frames.txt'),
+        '-vf', 'fps=30,scale=1080:1080:flags=lanczos,format=yuv420p',
+        '-c:v', 'libx264', '-profile:v', 'high', '-level', '4.0', '-crf', '18', '-preset', 'slow',
+        '-movflags', '+faststart', '-an', path.resolve(String(args.mp4)),
+      ],
+      { stdio: 'inherit' }
+    )
+    const mp4 = await stat(path.resolve(String(args.mp4)))
+    console.log(`${path.resolve(String(args.mp4))}  ${(mp4.size / 1048576).toFixed(2)} MB (MP4)`)
+  }
   const { size } = await stat(OUT)
   console.log(`${OUT}  ${(size / 1048576).toFixed(2)} MB, ${frames.length} frames, ${(frames.reduce((s, f) => s + f.dur, 0)).toFixed(1)}s`)
   if (args.keep) console.log(`frames kept in ${dir}`)
