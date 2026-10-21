@@ -3,7 +3,7 @@ import { getVersionInfo } from '../../../lib/version'
 import { parseISO } from 'date-fns'
 import { useSearchParams } from 'next/navigation'
 import { useState, useEffect, Suspense } from 'react'
-import { Github } from 'lucide-react'
+import { ExternalLink, Github } from 'lucide-react'
 
 function VersionContent() {
   const { version, gitDate, repoUrl } = getVersionInfo()
@@ -45,20 +45,33 @@ function VersionContent() {
   }, [gitDate, timezone])
 
   return (
-    <div className="text-xs text-muted-foreground space-y-1">
-      <p className="font-medium">
-        <a
-          href={repoUrl}
-          target="_blank"
-          rel="noopener noreferrer"
-          aria-label="View the repository on GitHub"
-          title="View the repository on GitHub"
-          className="inline-flex items-center gap-1.5 hover:text-primary hover:underline transition-colors"
-        >
-          <Github className="h-3.5 w-3.5" aria-hidden="true" />
-          Sploosh.AI Hockey Analytics v{version}
-        </a>
-      </p>
+    <div className="text-xs text-muted-foreground space-y-2">
+      <a
+        href={repoUrl}
+        target="_blank"
+        rel="noopener noreferrer"
+        aria-label="View the repository on GitHub"
+        title="View the repository on GitHub"
+        className="group flex items-start gap-3 rounded-lg border border-border/60 bg-background/60 p-3 transition-colors hover:border-primary/50 hover:bg-background"
+      >
+        <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-md bg-primary/10 text-primary">
+          <Github className="h-4 w-4" aria-hidden="true" />
+        </span>
+        <span className="min-w-0 flex-1 space-y-1.5">
+          <span className="block text-sm font-semibold leading-snug text-foreground">
+            Sploosh.AI Hockey Analytics
+          </span>
+          <span className="flex flex-wrap items-center gap-x-2 gap-y-1">
+            <span className="rounded-full bg-primary/10 px-2 py-0.5 font-mono text-[11px] font-medium text-primary">
+              v{version}
+            </span>
+            <span className="inline-flex items-center gap-1 transition-colors group-hover:text-primary">
+              View on GitHub
+              <ExternalLink className="h-3 w-3" aria-hidden="true" />
+            </span>
+          </span>
+        </span>
+      </a>
       <p>
         © {currentYear} Sploosh.AI. All rights reserved.
       </p>
