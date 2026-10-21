@@ -63,20 +63,6 @@ jobs:
             fi
           fi
 
-      - name: Wait for Vercel Preview
-        env:
-          GH_TOKEN: ${{ github.token }}
-        run: |
-          # Skip this step when running in act (local testing)
-          if [ -n "$ACT" ]; then
-            echo "Skipping Vercel check in local act environment"
-            exit 0
-          fi
-          
-          echo "ℹ️ Vercel deployment check is handled by GitHub's built-in status checks"
-          echo "✅ Skipping manual Vercel wait - relying on GitHub's native integration"
-          exit 0
-
       - name: Check Breaking Change Format
         if: success()
         run: |

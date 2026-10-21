@@ -19,7 +19,8 @@ including shot charts, game timelines, and hockey rink animations.
 - React state management (no external state library)
 - Component-based architecture with feature-focused organization
 - Docker support for local development and production build verification
-- Automated deployment to Vercel via GitHub Actions on PR/merge to main
+- Self-hosted deployment: Docker on an Oracle Cloud VM behind a Cloudflare
+  Tunnel (see `docs/deployment/oracle-vm.md`)
 
 ## Technology Stack
 
@@ -62,10 +63,9 @@ including shot charts, game timelines, and hockey rink animations.
 
 ### Deployment
 
-- **Vercel** - Hosting platform
+- **Oracle Cloud VM + Cloudflare Tunnel** - Hosting (self-hosted)
 - **Docker** - Containerization
 - **GitHub Actions** - CI/CD
-- **@vercel/analytics 1.4.1** - Analytics
 
 ## Project Structure
 
@@ -463,28 +463,27 @@ interface Play {
 
 ### Deployment Platform
 
-**Platform:** Vercel
+**Platform:** Oracle Cloud VM, rootless Docker, behind a Cloudflare Tunnel
+(see `docs/deployment/oracle-vm.md` and `docs/deployment/cloudflare-tunnel.md`)
 
 **Configuration:**
 
-- Framework: Next.js
-- Build command: `npm run build`
-- Output directory: `.next`
-- Install command: `npm install`
+- Framework: Next.js (standalone output)
+- Image: `docker/sploosh-ai-hockey-analytics/production/app/Dockerfile`
 - Node version: >=24.0.0
+- Public URL: `https://hockey-preview.sploosh.ai`
 
 **Environment Variables:**
 
 The application requires **no manual environment variable configuration**. All
-variables are automatically populated by build systems (Vercel/Docker).
+variables are automatically populated by build systems (Docker).
 
 **Build Variables (Auto-Populated):**
 
 - `NEXT_PUBLIC_GIT_HASH` - Git commit hash for version display
-  (auto-set by Vercel/Docker, required for version info)
+  (set by the Docker build, required for version info)
 - `NEXT_PUBLIC_GIT_DATE` - Git commit date for version display
-  (auto-set by Vercel/Docker, required for version info)
-- `VERCEL_GIT_COMMIT_SHA` - Vercel's commit SHA (auto-set by Vercel)
+  (set by the Docker build, required for version info)
 - `NODE_ENV` - Node environment (auto-set by Next.js)
 
 **API Configuration:**
@@ -497,8 +496,6 @@ variables are automatically populated by build systems (Vercel/Docker).
 **Environment Setup:**
 
 - See `.env.example` for complete documentation
-- Use `npm run env:pull` to pull environment variables from Vercel
-  (requires Vercel CLI)
 - Copy `.env.example` to `.env.local` for local development (optional)
 
 **Docker Support:**
@@ -554,8 +551,8 @@ variables are automatically populated by build systems (Vercel/Docker).
 **Data Privacy:**
 
 - ✅ No user data collected
-- ✅ No cookies (except Vercel Analytics)
-- ⚠️ Vercel Analytics enabled
+- ✅ No cookies
+- ✅ No analytics or tracking
 
 **Dependencies:**
 
@@ -616,11 +613,10 @@ variables are automatically populated by build systems (Vercel/Docker).
 - **SLA:** None
 - **Reference:** <https://github.com/Zmalski/NHL-API-Reference>
 
-**Vercel:**
+**Cloudflare:**
 
-- **Hosting:** Production deployment
-- **Analytics:** User tracking
-- **Edge Network:** CDN and routing
+- **Tunnel:** Public hostname routing to the Oracle VM
+- **Edge Network:** CDN, TLS, and DDoS protection
 
 **npm Registry:**
 
@@ -637,7 +633,7 @@ variables are automatically populated by build systems (Vercel/Docker).
 **Runtime:**
 
 - NHL EDGE API (critical)
-- Vercel Edge Network
+- Cloudflare Tunnel and the Oracle Cloud VM
 - Browser APIs (fetch, localStorage)
 
 ## Future Architecture Considerations
@@ -652,7 +648,7 @@ variables are automatically populated by build systems (Vercel/Docker).
 
 **Phase 2 (Weeks 4-6):**
 
-- Enhanced Vercel Analytics
+- Analytics (self-hosted, if wanted)
 - User feedback widget
 - Performance monitoring
 

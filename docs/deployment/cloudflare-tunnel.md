@@ -15,8 +15,8 @@ public service, so it needs one hostname.
 
 | Option | Hostname | Tunnel name | Notes |
 | --- | --- | --- | --- |
-| **Recommended** | `hockey-preview.sploosh.ai` | `hockey-preview` | Mirrors `cip-preview`. "Preview" signals it is not the production site (that is still the Vercel deployment), and the name can later be promoted without renaming anything. |
-| Production-style | `hockey.sploosh.ai` | `hockey` | Use once this deployment replaces the Vercel one. |
+| **Recommended** | `hockey-preview.sploosh.ai` | `hockey-preview` | Mirrors `cip-preview`. "Preview" signals it is a pre-production hostname, and the name can later be promoted without renaming anything. It is currently the canonical URL. |
+| Production-style | `hockey.sploosh.ai` | `hockey` | Use if you later want a production-style name. |
 | Descriptive | `hockey-analytics.sploosh.ai` | `hockey-analytics` | Matches the repo name; longer. |
 
 Keep it **one label** deep. `*.sploosh.ai` is covered by Cloudflare's free

@@ -9,19 +9,19 @@ with different outcomes for testing and demonstration purposes.
 
 | Outcome | Game ID | Description | Local URL | Production URL |
 | ------- | ------- | ----------- | --------- | -------------- |
-| **Win** | `2024020053` | Seattle Kraken 7-3 vs Nashville Predators | `http://localhost:3000/?gameId=2024020053` | `https://sploosh-ai-hockey-analytics.vercel.app/?gameId=2024020053` |
-| **Loss** | `2024020003` | Seattle Kraken 2-3 vs St. Louis Blues | `http://localhost:3000/?gameId=2024020003` | `https://sploosh-ai-hockey-analytics.vercel.app/?gameId=2024020003` |
-| **OT Win** | `2024020087` | Seattle Kraken 2-1 OT vs Calgary Flames | `http://localhost:3000/?gameId=2024020087` | `https://sploosh-ai-hockey-analytics.vercel.app/?gameId=2024020087` |
-| **OT Loss** | `2024010068` | Seattle Kraken 3-4 OTL vs Calgary Flames | `http://localhost:3000/?gameId=2024010068` | `https://sploosh-ai-hockey-analytics.vercel.app/?gameId=2024010068` |
-| **SO Win** | `2024020033` | Seattle Kraken 5-4 SO vs Minnesota Wild | `http://localhost:3000/?gameId=2024020033` | `https://sploosh-ai-hockey-analytics.vercel.app/?gameId=2024020033` |
-| **SO Loss** | `2024020456` | Seattle Kraken 1-2 SO vs Florida Panthers | `http://localhost:3000/?gameId=2024020456` | `https://sploosh-ai-hockey-analytics.vercel.app/?gameId=2024020456` |
+| **Win** | `2024020053` | Seattle Kraken 7-3 vs Nashville Predators | `http://localhost:3000/?gameId=2024020053` | `https://hockey-preview.sploosh.ai/?gameId=2024020053` |
+| **Loss** | `2024020003` | Seattle Kraken 2-3 vs St. Louis Blues | `http://localhost:3000/?gameId=2024020003` | `https://hockey-preview.sploosh.ai/?gameId=2024020003` |
+| **OT Win** | `2024020087` | Seattle Kraken 2-1 OT vs Calgary Flames | `http://localhost:3000/?gameId=2024020087` | `https://hockey-preview.sploosh.ai/?gameId=2024020087` |
+| **OT Loss** | `2024010068` | Seattle Kraken 3-4 OTL vs Calgary Flames | `http://localhost:3000/?gameId=2024010068` | `https://hockey-preview.sploosh.ai/?gameId=2024010068` |
+| **SO Win** | `2024020033` | Seattle Kraken 5-4 SO vs Minnesota Wild | `http://localhost:3000/?gameId=2024020033` | `https://hockey-preview.sploosh.ai/?gameId=2024020033` |
+| **SO Loss** | `2024020456` | Seattle Kraken 1-2 SO vs Florida Panthers | `http://localhost:3000/?gameId=2024020456` | `https://hockey-preview.sploosh.ai/?gameId=2024020456` |
 
 ### Postseason Games (gameType: 3)
 
 | Outcome | Game ID | Description | Local URL | Production URL |
 | ------- | ------- | ----------- | --------- | -------------- |
-| **OT Win** | `2025030175` | Example postseason OT game (MIN @ VGK) | `http://localhost:3000/?gameId=2025030175` | `https://sploosh-ai-hockey-analytics.vercel.app/?gameId=2025030175` |
-| **2OT/3OT+** | `TODO_FIND_GAME_ID` | Multiple overtime periods | `http://localhost:3000/?gameId=TODO_FIND_GAME_ID` | `https://sploosh-ai-hockey-analytics.vercel.app/?gameId=TODO_FIND_GAME_ID` |
+| **OT Win** | `2025030175` | Example postseason OT game (MIN @ VGK) | `http://localhost:3000/?gameId=2025030175` | `https://hockey-preview.sploosh.ai/?gameId=2025030175` |
+| **2OT/3OT+** | `TODO_FIND_GAME_ID` | Multiple overtime periods | `http://localhost:3000/?gameId=TODO_FIND_GAME_ID` | `https://hockey-preview.sploosh.ai/?gameId=TODO_FIND_GAME_ID` |
 
 ## How to Find Game IDs
 

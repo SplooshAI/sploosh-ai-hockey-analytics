@@ -23,7 +23,7 @@ postseason_2ot="2025030175" # Postseason multiple OT (same game - 2OT)
 
 # URLs
 LOCAL_BASE="http://localhost:3000"
-PROD_BASE="https://sploosh-ai-hockey-analytics.vercel.app"
+PROD_BASE="https://hockey-preview.sploosh.ai"
 
 # Help function
 show_help() {

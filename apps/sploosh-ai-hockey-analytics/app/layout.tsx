@@ -1,8 +1,6 @@
 import type { Metadata } from "next"
 import { Inter } from "next/font/google"
-import { Analytics } from "@vercel/analytics/next"
 import "./globals.css"
-import { Suspense } from "react"
 import { SITE } from "@/lib/constants"
 import { ErrorBoundary } from "@/components/shared/error"
 
@@ -25,9 +23,6 @@ export default function RootLayout({
         <ErrorBoundary>
           {children}
         </ErrorBoundary>
-        <Suspense fallback={null}>
-          <Analytics />
-        </Suspense>
       </body>
     </html>
   )

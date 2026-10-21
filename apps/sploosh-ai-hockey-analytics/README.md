@@ -9,7 +9,7 @@ This is a [Next.js](https://nextjs.org) project bootstrapped with
 
 **No manual environment variable configuration is required.** The NHL EDGE API
 is public and requires no authentication. Build variables for version display
-are automatically populated by Vercel and Docker.
+are automatically populated by Docker.
 
 If you want to set up optional environment variables:
 
@@ -18,14 +18,6 @@ If you want to set up optional environment variables:
    ```bash
    cp .env.example .env.local
    ```
-
-2. (Optional) Pull environment variables from Vercel:
-
-   ```bash
-   npm run env:pull
-   ```
-
-   Note: This requires the Vercel CLI to be installed and authenticated.
 
 See `.env.example` for documentation of all available environment variables.
 
@@ -66,11 +58,11 @@ You can check out
 [the Next.js GitHub repository](https://github.com/vercel/next.js) - your
 feedback and contributions are welcome!
 
-## Deploy on Vercel
+## Deploy
 
-The easiest way to deploy your Next.js app is to use the
-[Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme)
-from the creators of Next.js.
+This app is self-hosted: the production Docker image runs on an Oracle Cloud VM
+behind a Cloudflare Tunnel. See
+[docs/deployment/oracle-vm.md](../../docs/deployment/oracle-vm.md).
 
 Check out our
 [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying)

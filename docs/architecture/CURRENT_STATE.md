@@ -19,7 +19,8 @@ including shot charts, game timelines, and hockey rink animations.
 - React state management (no external state library)
 - Component-based architecture with feature-focused organization
 - Docker support for local development and production build verification
-- Automated deployment to Vercel via GitHub Actions on PR/merge to main
+- Self-hosted deployment: Docker on an Oracle Cloud VM behind a Cloudflare
+  Tunnel (see `docs/deployment/oracle-vm.md`)
 
 ## Technology Stack
 
@@ -62,10 +63,9 @@ including shot charts, game timelines, and hockey rink animations.
 
 ### Deployment
 
-- **Vercel** - Hosting platform
+- **Oracle Cloud VM + Cloudflare Tunnel** - Hosting (self-hosted)
 - **Docker** - Containerization
 - **GitHub Actions** - CI/CD
-- **@vercel/analytics 1.4.1** - Analytics
 
 ## Project Structure
 
@@ -463,19 +463,19 @@ interface Play {
 
 ### Deployment Platform
 
-**Platform:** Vercel
+**Platform:** Oracle Cloud VM, rootless Docker, behind a Cloudflare Tunnel
+(see `docs/deployment/oracle-vm.md` and `docs/deployment/cloudflare-tunnel.md`)
 
 **Configuration:**
 
-- Framework: Next.js
-- Build command: `npm run build`
-- Output directory: `.next`
-- Install command: `npm install`
+- Framework: Next.js (standalone output)
+- Image: `docker/sploosh-ai-hockey-analytics/production/app/Dockerfile`
 - Node version: >=24.0.0
+- Public URL: `https://hockey-preview.sploosh.ai`
 
 **Environment Variables:**
 
-- Managed in Vercel dashboard
+- Set in `.env.deploy` for the Oracle VM deployment (gitignored)
 - No documented environment variables currently
 
 **Docker Support:**
@@ -531,8 +531,8 @@ interface Play {
 **Data Privacy:**
 
 - ✅ No user data collected
-- ✅ No cookies (except Vercel Analytics)
-- ⚠️ Vercel Analytics enabled
+- ✅ No cookies
+- ✅ No analytics or tracking
 
 **Dependencies:**
 
@@ -593,11 +593,10 @@ interface Play {
 - **SLA:** None
 - **Reference:** <https://github.com/Zmalski/NHL-API-Reference>
 
-**Vercel:**
+**Cloudflare:**
 
-- **Hosting:** Production deployment
-- **Analytics:** User tracking
-- **Edge Network:** CDN and routing
+- **Tunnel:** Public hostname routing to the Oracle VM
+- **Edge Network:** CDN, TLS, and DDoS protection
 
 **npm Registry:**
 
@@ -614,7 +613,7 @@ interface Play {
 **Runtime:**
 
 - NHL EDGE API (critical)
-- Vercel Edge Network
+- Cloudflare Tunnel and the Oracle Cloud VM
 - Browser APIs (fetch, localStorage)
 
 ## Future Architecture Considerations
@@ -629,7 +628,7 @@ interface Play {
 
 **Phase 2 (Weeks 4-6):**
 
-- Enhanced Vercel Analytics
+- Analytics (self-hosted, if wanted)
 - User feedback widget
 - Performance monitoring
 
