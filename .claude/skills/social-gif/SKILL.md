@@ -20,10 +20,13 @@ actual elements, so call-outs stay centered on what they point at.
    (cd scripts/pr-screenshots && npm install && npx playwright install chromium)
    ```
 
-3. Render. Rob wants finished GIFs in `~/Downloads`:
+3. Render. Rob wants finished GIFs in `~/Downloads`. Add `--mp4 <file>` to write an MP4 of the same
+   frames too (H.264, yuv420p, 30 fps, about half the size). Some chats, Facebook Messenger for one,
+   fail to download GIFs ("Couldn't download"), so share the GIF first and send the MP4 if it fails:
 
    ```bash
-   node scripts/social-gif/make-gif.mjs --out ~/Downloads/sploosh-ai-hockey-share-qr.gif
+   node scripts/social-gif/make-gif.mjs --out ~/Downloads/sploosh-ai-hockey-share-qr.gif \
+     --mp4 ~/Downloads/sploosh-ai-hockey-share-qr.mp4
    ```
 
    The default game is the Kraken's 4-3 shootout win over the Red Wings on 2026-10-20
@@ -46,8 +49,14 @@ actual elements, so call-outs stay centered on what they point at.
 
 The scenes live in `scripts/social-gif/make-gif.mjs`, in order: title card, Share link,
 scroll to the QR cards, Sploosh.AI card, NHL card, end card. The score pill (`caption`)
-shows from the scroll onward, and the end card names the game and prints its exact URL
-(`<host>/?gameId=<id>`). Each uses `reveal([...items])`
+shows from the scroll onward. The opening card and the end card are the same card (`bookend` in the script), so the GIF
+loops cleanly and both show the scorebug and the game's QR code. The scorebug is broadcast-style and built from the
+game's live data (team logos, scores with the winner highlighted, a FINAL, FINAL/OT or
+FINAL/SO tag, a "Sponsored by Sploosh.AI" strip with the logo, the arena name with its
+city and state (or province and "Canada", or the country, outside the US) and the full date with puck-drop time in the arena's own time zone, e.g. "Tuesday, October 20th,
+2026 @ 6:40 PM PDT"), then the
+heading "See every shot", the game's own Sploosh.AI QR code (copied from the app's
+QR card, so it always encodes the exact game URL) and the URL (`<host>/?gameId=<id>`). Each uses `reveal([...items])`
 with item types `banner`, `caption`, `ring`, `pill`, `tap` and `card`. To highlight a new feature,
 tag its element with a `data-gif` attribute in the page (see `shareBtn`) and add a
 scene that rings it and adds a `pill` (`pos`: `above`, `below` or `edge`).
@@ -58,3 +67,16 @@ scene that rings it and adds a `pill` (`pos`: `above`, `below` or `edge`).
 - 900 CSS px at 1.2x gives the single-column layout (no sidebar), 1080 px wide.
 - The GIF is built with ffmpeg (palette per frame set, 12 fps, held frames deduplicated).
 - Needs network access to the site and `ffmpeg` on the PATH.
+- The NHL feed only gives the arena's city, so `scripts/social-gif/venue-location.mjs` adds the
+  state, province, or country from a table keyed by arena name. An arena not in the table shows
+  just its city, never a guess; add new arenas (or neutral-site cities) there. Test it with
+  `node --test scripts/social-gif/venue-location.test.mjs`.
+- Special games (Global Series, Stadium Series, Winter Classic, and other neutral-site games) are called out
+  with an amber badge above the scorebug: the feed's `specialEvent` name, or "Neutral site" when only the
+  `neutralSite` flag is set (`special-game.mjs`). Their arenas are not the usual ones, so the region comes from
+  the arena table, then the NHL-city table, then the international-city table, and otherwise shows only the city.
+- The puck-drop time uses the arena's own zone (`puck-drop.mjs`: by city for international venues, by UTC
+  offset in North America), e.g. "@ 7:00 PM EET" in Helsinki.
+- A game that has not started shows an UPCOMING tag and no scores. Add cities to the tables as new ones come up.
+- Tests: `node --test scripts/social-gif/*.test.mjs`.
+

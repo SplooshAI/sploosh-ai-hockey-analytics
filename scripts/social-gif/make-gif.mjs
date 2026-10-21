@@ -2,15 +2,21 @@
 // highlight rings drawn over the real UI. Every frame is a screenshot of the
 // running site, so the GIF always shows what the code produces right now.
 //
-// Usage: node make-gif.mjs [--base URL] [--game ID] [--caption TEXT] [--out FILE] [--keep]
-//   defaults: --base https://hockey-preview.sploosh.ai --game 2026020149 (Kraken 4, Red Wings 3 (SO), 2026-10-20)
-//   --caption TEXT overrides the score caption pill (default is built from the game's live data)
+// Usage: node make-gif.mjs [--base URL] [--game ID] [--caption TEXT] [--out FILE] [--mp4 FILE] [--keep]
+//   defaults: --base https://hockey-preview.sploosh.ai
+//             --game 2026020149 (Kraken 4, Red Wings 3 (SO), 2026-10-20)
 //             --out ./sploosh-ai-hockey-share.gif
+//   --caption TEXT overrides the score caption pill (default is built from the game's live data)
+//   --mp4 FILE also writes an MP4 (H.264, yuv420p) of the same frames, for chats like Messenger that
+//             handle video better than GIFs
 //
 // Needs Playwright (reuses ../pr-screenshots/node_modules, installed by
 // `npm run pr:screenshots` or `npm install` in that folder) and ffmpeg.
 import { chromium } from '../pr-screenshots/node_modules/playwright/index.mjs'
 import { execFileSync } from 'node:child_process'
+import { formatVenueLocation } from './venue-location.mjs'
+import { formatPuckDrop } from './puck-drop.mjs'
+import { specialGameBadge } from './special-game.mjs'
 import { mkdtemp, writeFile, rm, stat } from 'node:fs/promises'
 import { tmpdir } from 'node:os'
 import path from 'node:path'
@@ -45,13 +51,65 @@ try {
   await page.waitForSelector('[data-testid=qr-share]', { timeout: 45000 })
 
   // Score caption from the game's own data, so the pill always matches the page.
-  const info = await page.evaluate(async (g) => {
+  const raw = await page.evaluate(async (g) => {
     const d = await (await fetch(`/api/nhl/play-by-play?gameId=${g}`)).json()
-    const t = d.periodDescriptor?.periodType
-    const final = d.gameState === 'FINAL' || d.gameState === 'OFF'
-    const date = new Date(`${d.gameDate}T12:00:00`).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
-    return `${d.awayTeam.abbrev} ${d.awayTeam.score ?? 0}  @  ${d.homeTeam.abbrev} ${d.homeTeam.score ?? 0}  ·  ${final ? (t === 'OT' || t === 'SO' ? `Final (${t})` : 'Final') : d.gameState}  ·  ${date}`
+    // `neutralSite` is on the scores feed, not on the play-by-play; the special event name is on both.
+    let neutralSite = d.neutralSite
+    try {
+      const scores = await (await fetch(`/api/nhl/scores?date=${d.gameDate}`)).json()
+      neutralSite = scores.games?.find((x) => x.id === d.id)?.neutralSite ?? neutralSite
+    } catch {}
+    const special = Boolean(d.specialEvent?.name?.default || neutralSite)
+    const side = (x) => ({
+      abbrev: x.abbrev,
+      score: x.score ?? 0,
+      logo: x.logo,
+      name: [x.placeName?.default, x.commonName?.default].filter(Boolean).join(' '),
+    })
+    // a special game has an extra badge line, so its QR code is drawn a little smaller to keep the card inside the frame
+    const qrSize = special ? 148 : 168
+    return {
+      away: side(d.awayTeam),
+      home: side(d.homeTeam),
+      gameState: String(d.gameState),
+      periodType: d.periodDescriptor?.periodType,
+      gameDate: d.gameDate,
+      startTimeUTC: d.startTimeUTC,
+      venueUTCOffset: d.venueUTCOffset,
+      venue: d.venue?.default || '',
+      city: d.venueLocation?.default || '',
+      specialEvent: d.specialEvent || null,
+      neutralSite: Boolean(neutralSite),
+      sponsorLogo: `${location.origin}/sploosh.ai/sploosh-ai-character-transparent.png`,
+      // the app's own QR code for this game, so the GIF shows exactly what the page encodes
+      qrSvg: document.querySelector('[data-testid=qr-share] svg')?.outerHTML.replace(/ height="\d+" width="\d+"/, ` style="width:${qrSize}px;height:${qrSize}px;display:block"`) || '',
+    }
   }, GAME)
+  const final = raw.gameState === 'FINAL' || raw.gameState === 'OFF'
+  const upcoming = raw.gameState === 'FUT' || raw.gameState === 'PRE'
+  const extra = raw.periodType === 'OT' || raw.periodType === 'SO'
+  const game = {
+    away: raw.away,
+    home: raw.home,
+    upcoming,
+    // broadcast style: FINAL, FINAL/OT, FINAL/SO, UPCOMING; anything else shows the live game state
+    status: final ? (extra ? `FINAL/${raw.periodType}` : 'FINAL') : upcoming ? 'UPCOMING' : raw.gameState,
+    label: final ? (extra ? `Final (${raw.periodType})` : 'Final') : upcoming ? 'Upcoming' : raw.gameState,
+    date: new Date(`${raw.gameDate}T12:00:00`).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }),
+    venue: raw.venue,
+    city: raw.city,
+    // Puck drop in the arena's own time zone; Global Series and other neutral-site games are not at the usual arenas.
+    when: formatPuckDrop(raw.startTimeUTC, raw.venueUTCOffset, raw.city),
+    // Called out as the special event's name, or "Neutral site"
+    badge: specialGameBadge({ specialEvent: raw.specialEvent, neutralSite: raw.neutralSite }),
+    sponsorLogo: raw.sponsorLogo,
+    qrSvg: raw.qrSvg,
+  }
+  // The feed only has the arena's city; the table adds the state, province or country (outside the US).
+  game.location = formatVenueLocation(game.venue, game.city)
+  const info = game.upcoming
+    ? `${game.away.abbrev}  @  ${game.home.abbrev}  ·  ${game.date}`
+    : `${game.away.abbrev} ${game.away.score}  @  ${game.home.abbrev} ${game.home.score}  ·  ${game.label}  ·  ${game.date}`
   const CAPTION = String(args.caption && args.caption !== true ? args.caption : info)
 
   // Framing only: hide scrollbars, the mobile menu button and the scroll-to-top button.
@@ -86,6 +144,39 @@ try {
         const ov = document.getElementById('gif-overlay')
         ov.innerHTML = ''
         const ease = 1 - Math.pow(1 - p, 3)
+        // TV-style scorebug: team logo, abbreviation and score each side, FINAL tag in the middle.
+        // The winner is full strength, the loser dimmed.
+        const scoreboardHtml = (g) => {
+          const winner = g.away.score > g.home.score ? 'away' : g.home.score > g.away.score ? 'home' : null
+          const team = (t, key) => {
+            const dim = winner && winner !== key ? 'opacity:.6;' : ''
+            const logo = `<div style="width:78px;height:78px;border-radius:50%;background:#fff;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 14px rgba(0,0,0,.3)"><img src="${t.logo}" style="width:58px;height:58px;object-fit:contain"></div>`
+            const abbr = `<div style="font-weight:900;font-size:38px;letter-spacing:.02em;${dim}">${t.abbrev}</div>`
+            const score = `<div style="font-weight:900;font-size:84px;line-height:1;min-width:52px;text-align:center;${dim}">${t.score}</div>`
+            const parts = g.upcoming ? (key === 'away' ? [logo, abbr] : [abbr, logo]) : key === 'away' ? [logo, abbr, score] : [score, abbr, logo]
+            return `<div style="display:flex;align-items:center;gap:14px">${parts.join('')}</div>`
+          }
+          const badge = g.badge ? `<div style="background:#f59e0b;color:#1e293b;font-weight:900;font-size:22px;letter-spacing:.07em;text-transform:uppercase;border-radius:999px;padding:7px 24px;box-shadow:0 6px 18px rgba(0,0,0,.35)">${g.badge}</div>` : ''
+          return `<div style="display:flex;flex-direction:column;align-items:center;gap:14px">
+            ${badge}
+            <div style="display:flex;flex-direction:column;align-items:stretch;box-shadow:0 14px 40px rgba(0,0,0,.4);border-radius:26px">
+              <div style="display:flex;align-items:center;justify-content:center;gap:22px;background:rgba(8,15,35,.9);border:3px solid rgba(255,255,255,.55);border-bottom:none;border-radius:26px 26px 0 0;padding:18px 28px">
+                ${team(g.away, 'away')}
+                <div style="background:#facc15;color:#1e293b;font-weight:900;font-size:24px;letter-spacing:.06em;border-radius:12px;padding:9px 15px;white-space:nowrap">${g.status}</div>
+                ${team(g.home, 'home')}
+              </div>
+              <div style="display:flex;align-items:center;justify-content:center;gap:12px;background:#1d4ed8;border:3px solid rgba(255,255,255,.55);border-radius:0 0 26px 26px;padding:9px 20px">
+                <span style="font-weight:700;font-size:18px;letter-spacing:.14em;opacity:.9">SPONSORED BY</span>
+                <span style="width:42px;height:42px;border-radius:50%;background:#fff;display:inline-flex;align-items:center;justify-content:center"><img src="${g.sponsorLogo}" style="height:30px;width:auto"></span>
+                <span style="font-weight:900;font-size:26px">Sploosh.AI</span>
+              </div>
+            </div>
+            <div style="display:flex;flex-direction:column;align-items:center;gap:2px;text-align:center">
+              <div style="font-weight:800;font-size:28px">${g.venue}${g.location ? ` · ${g.location}` : ''}</div>
+              <div style="font-weight:600;font-size:24px;opacity:.92">${g.when || g.date}</div>
+            </div>
+          </div>`
+        }
         const css = (el, s) => Object.assign(el.style, s)
         const pillCss = (bg) => ({
           position: 'absolute',
@@ -105,7 +196,7 @@ try {
           const r = target && target.getBoundingClientRect()
           if (it.type === 'banner') {
             const el = document.createElement('div')
-            el.innerHTML = `<span style="background:#facc15;color:#1e293b;border-radius:999px;padding:3px 12px;margin-right:12px;font-size:19px">NEW</span>${it.text}`
+            el.textContent = it.text
             css(el, { ...pillCss('#1d4ed8'), left: '50%', bottom: '26px', transform: `translateX(-50%) scale(${0.9 + 0.1 * ease})`, fontSize: '26px', padding: '12px 26px' })
             ov.appendChild(el)
           } else if (it.type === 'caption') {
@@ -157,25 +248,30 @@ try {
               flexDirection: 'column',
               alignItems: 'center',
               justifyContent: 'center',
-              gap: '26px',
+              gap: '18px',
               textAlign: 'center',
               background: 'linear-gradient(160deg,#0f172a 0%,#1e3a8a 60%,#2563eb 100%)',
               color: '#fff',
               opacity: String(it.solid ? 1 : ease),
             })
             el.innerHTML = `
-              <div style="background:#facc15;color:#1e293b;font-weight:900;font-size:24px;border-radius:999px;padding:6px 20px;letter-spacing:.08em">NEW</div>
+              ${it.scoreboard ? scoreboardHtml(it.scoreboard) : ''}
               <div style="font-weight:900;font-size:${it.titleSize || 84}px;line-height:1.05;max-width:760px">${it.title}</div>
-              <div style="font-weight:600;font-size:34px;opacity:.9;max-width:720px">${it.subtitle}</div>
-              <div style="display:flex;gap:16px;flex-wrap:wrap;justify-content:center;max-width:780px">
+              ${it.scoreboard ? '' : `<div style="font-weight:600;font-size:34px;opacity:.9;max-width:720px">${it.subtitle}</div>`}
+              ${it.qr && it.scoreboard && it.scoreboard.qrSvg
+                ? `<div style="background:#fff;border-radius:24px;padding:12px;box-shadow:0 12px 34px rgba(0,0,0,.4)">${it.scoreboard.qrSvg}</div><div style="font-weight:700;font-size:26px;opacity:.95;margin-top:-10px">Scan to open this game</div>`
+                : `<div style="display:flex;gap:16px;flex-wrap:wrap;justify-content:center;max-width:780px">
                 ${(it.pills || []).map((t) => `<span style="background:rgba(255,255,255,.14);border:2px solid rgba(255,255,255,.55);border-radius:999px;padding:10px 24px;font-weight:700;font-size:26px">${t}</span>`).join('')}
-              </div>
+              </div>`}
               ${it.footer ? `<div style="margin-top:14px;background:#fff;border-radius:999px;padding:18px 34px;box-shadow:0 12px 34px rgba(0,0,0,.35);white-space:nowrap;font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:27px;font-weight:700;color:#334155"><span style="color:#1d4ed8;font-weight:800">${it.footer}</span>${it.footerSub || ''}</div>` : ''}`
             ov.appendChild(el)
           }
         }
       },
       { items, p, k }
+    ).then(() =>
+      // team logos load over the network; never capture a frame before they have
+      page.evaluate(() => Promise.all([...document.querySelectorAll('#gif-overlay img')].map((i) => (i.complete ? 1 : new Promise((res) => { i.onload = i.onerror = res })))))
     )
 
   const snap = async (dur) => {
@@ -207,6 +303,8 @@ try {
 
   const banner = { type: 'banner', text: 'Share any game in a tap' }
   const cap = { type: 'caption', text: CAPTION }
+  // The opening and end cards are the same card: scorebug, arena and date, heading, the game's QR code and its URL.
+  const bookend = { type: 'card', title: 'See every shot', scoreboard: game, qr: true, footer: HOST, footerSub: `/?gameId=${GAME}`, titleSize: game.badge ? 58 : 70 }
   const sploosh = '[data-testid=qr-share]'
   const nhl = '[data-testid=qr-game-center]'
   const shareCard = `${sploosh}`
@@ -214,7 +312,7 @@ try {
 
   // ---- Scene 1: title card
   await scrollTo(null, 0)
-  await reveal([{ type: 'card', title: 'Share any game.<br>Scan or tap.', subtitle: 'Sploosh.AI Hockey Analytics', pills: ['Share link', 'QR codes', 'Tap to open'], titleSize: 78 }], 1.7, { fadeFrames: 5, pulseFrames: 4 })
+  await reveal([bookend], 2.2, { fadeFrames: 5, pulseFrames: 4 })
 
   // ---- Scene 2: the Share link in the game header
   const shareBtn = await page.evaluateHandle(() => [...document.querySelectorAll('button')].find((b) => b.textContent.trim() === 'Share'))
@@ -260,7 +358,7 @@ try {
   }
 
   // ---- Scene 5: end card
-  await reveal([{ type: 'card', title: 'Open this game', subtitle: CAPTION.replace(/  /g, ' '), pills: ['Tap to open', 'Scan to share', 'Works on mobile'], footer: HOST, footerSub: `/?gameId=${GAME}`, titleSize: 76 }], 2.6, { fadeFrames: 5, pulseFrames: 4 })
+  await reveal([bookend], 2.6, { fadeFrames: 5, pulseFrames: 4 })
 
   // ---- Encode
   const list = frames.map((f) => `file '${f.file}'\nduration ${f.dur.toFixed(3)}`).join('\n') + `\nfile '${frames[frames.length - 1].file}'\n`
@@ -274,6 +372,22 @@ try {
     ],
     { stdio: 'inherit' }
   )
+  if (args.mp4 && args.mp4 !== true) {
+    // H.264 in yuv420p with the moov atom up front plays inline on every phone and in Messenger.
+    // Same frames and timing as the GIF, at a constant 30 fps.
+    execFileSync(
+      'ffmpeg',
+      [
+        '-y', '-loglevel', 'error', '-f', 'concat', '-safe', '0', '-i', path.join(dir, 'frames.txt'),
+        '-vf', 'fps=30,scale=1080:1080:flags=lanczos,format=yuv420p',
+        '-c:v', 'libx264', '-profile:v', 'high', '-level', '4.0', '-crf', '18', '-preset', 'slow',
+        '-movflags', '+faststart', '-an', path.resolve(String(args.mp4)),
+      ],
+      { stdio: 'inherit' }
+    )
+    const mp4 = await stat(path.resolve(String(args.mp4)))
+    console.log(`${path.resolve(String(args.mp4))}  ${(mp4.size / 1048576).toFixed(2)} MB (MP4)`)
+  }
   const { size } = await stat(OUT)
   console.log(`${OUT}  ${(size / 1048576).toFixed(2)} MB, ${frames.length} frames, ${(frames.reduce((s, f) => s + f.dur, 0)).toFixed(1)}s`)
   if (args.keep) console.log(`frames kept in ${dir}`)
