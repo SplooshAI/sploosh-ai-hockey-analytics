@@ -1,0 +1,99 @@
+name: PR Screenshots
+
+# Builds the app at the PR's base and head, captures the pages in
+# scripts/pr-screenshots/shots.json from both, and posts a before/after
+# comment. Runs only when a PR touches code that can change what users see.
+# Add the `no-visual-change` label to skip it for a change with no visible
+# effect (a refactor, a dependency bump, docs).
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened, labeled, unlabeled]
+    branches: [main]
+    paths:
+      - 'apps/sploosh-ai-hockey-analytics/app/**'
+      - 'apps/sploosh-ai-hockey-analytics/components/**'
+      - 'apps/sploosh-ai-hockey-analytics/hooks/**'
+      - 'apps/sploosh-ai-hockey-analytics/lib/**'
+      - 'apps/sploosh-ai-hockey-analytics/public/**'
+      - 'apps/sploosh-ai-hockey-analytics/*.config.*'
+      - 'apps/sploosh-ai-hockey-analytics/package.json'
+      - 'scripts/pr-screenshots/**'
+      - '.github/workflows/pr-screenshots.yml'
+
+concurrency:
+  group: pr-screenshots-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+permissions:
+  contents: write        # pushes images to the pr-screenshots branch
+  pull-requests: write   # posts the comment
+
+jobs:
+  screenshots:
+    name: Before and after screenshots
+    # Fork PRs get a read-only token, so they cannot publish images.
+    if: >-
+      github.event.pull_request.head.repo.full_name == github.repository &&
+      !contains(github.event.pull_request.labels.*.name, 'no-visual-change')
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    env:
+      GH_TOKEN: ${{ github.token }}
+      PR_NUMBER: ${{ github.event.pull_request.number }}
+      HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+
+      - name: Install the browser and its system libraries
+        working-directory: scripts/pr-screenshots
+        run: |
+          npm install --no-audit --no-fund
+          npx playwright install --with-deps chromium
+
+      - name: Capture before and after
+        run: |
+          ./scripts/pr-screenshots/run.sh \
+            --base "origin/${{ github.base_ref }}" \
+            --head "$HEAD_SHA" \
+            --out screenshots
+
+      - name: Keep the images as a build artifact too
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: pr-screenshots
+          path: screenshots/*.png
+          if-no-files-found: ignore
+
+      - name: Publish and comment
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          SHOT_SHA="${HEAD_SHA::7}" ./scripts/pr-screenshots/publish.sh "$PR_NUMBER" screenshots > table.md
+
+          {
+            echo '<!-- pr-screenshots -->'
+            echo '## Screenshots, before and after'
+            echo
+            echo "Built from \`${{ github.base_ref }}\` and from \`${HEAD_SHA::7}\`, against the live NHL API."
+            echo 'Pages are listed in `scripts/pr-screenshots/shots.json`. Add the `no-visual-change` label to skip this for a change with no visible effect.'
+            echo
+            cat table.md
+          } > comment.md
+
+          existing="$(gh api "repos/${{ github.repository }}/issues/$PR_NUMBER/comments" --paginate \
+            --jq '[.[] | select(.body | startswith("<!-- pr-screenshots -->"))][0].id // empty')"
+          if [ -n "$existing" ]; then
+            gh api -X PATCH "repos/${{ github.repository }}/issues/comments/$existing" -F body=@comment.md >/dev/null
+          else
+            gh api -X POST "repos/${{ github.repository }}/issues/$PR_NUMBER/comments" -F body=@comment.md >/dev/null
+          fi
