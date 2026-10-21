@@ -2,12 +2,15 @@
 import Image from 'next/image'
 import { parseISO } from 'date-fns'
 import { format, formatInTimeZone } from 'date-fns-tz'
-import { ExternalLink, Tv } from 'lucide-react'
+import { ExternalLink, Share2, Tv } from 'lucide-react'
 import { useSearchParams } from 'next/navigation'
 import { useState, useEffect } from 'react'
+import { getGameShareUrl } from '@/lib/share-url'
+import { QrCode } from './qr-code'
 
 // Extended game data type that includes fields from both play-by-play and game center APIs
 interface GameHeaderData {
+  id?: number
   gameDate: string
   gameState: string
   startTimeUTC?: string
@@ -78,6 +81,7 @@ export const GameHeader: React.FC<GameHeaderProps> = ({ gameData, className = ''
   const searchParams = useSearchParams()
   const [awayLogoError, setAwayLogoError] = useState(false)
   const [homeLogoError, setHomeLogoError] = useState(false)
+  const [copyStatus, setCopyStatus] = useState<'copied' | 'failed' | null>(null)
   
   // Reset logo errors when network comes back online
   useEffect(() => {
@@ -194,6 +198,37 @@ export const GameHeader: React.FC<GameHeaderProps> = ({ gameData, className = ''
     const formattedDate = formatInTimeZone(date, 'UTC', 'EEEE, MMMM')
     return `${formattedDate} ${ordinalSuffix}, ${formatInTimeZone(date, 'UTC', 'yyyy')}`
   }
+
+  const gameCenterUrl = gameData.gameCenterLink ? `https://www.nhl.com${gameData.gameCenterLink}` : null
+  const shareUrl = gameData.id !== undefined ? getGameShareUrl(gameData.id) : null
+
+  const handleShareClick = async () => {
+    if (!shareUrl) return
+    const title = `${awayTeamName} vs ${homeTeamName}`
+    if (typeof navigator.share === 'function') {
+      try {
+        await navigator.share({ title, url: shareUrl })
+      } catch (err) {
+        // The user closing the share sheet is not an error
+        if (!(err instanceof DOMException && err.name === 'AbortError')) {
+          console.error('Share failed:', err)
+        }
+      }
+      return
+    }
+    try {
+      await navigator.clipboard.writeText(shareUrl)
+      setCopyStatus('copied')
+    } catch {
+      setCopyStatus('failed')
+    }
+  }
+
+  useEffect(() => {
+    if (!copyStatus) return
+    const timer = setTimeout(() => setCopyStatus(null), 2000)
+    return () => clearTimeout(timer)
+  }, [copyStatus])
 
   const handleGameCenterClick = () => {
     if (gameData.gameCenterLink) {
@@ -331,16 +366,36 @@ export const GameHeader: React.FC<GameHeaderProps> = ({ gameData, className = ''
         </div>
       )}
 
-      {/* NHL Game Center Link */}
-      {gameData.gameCenterLink && (
-        <div className="flex justify-center pt-1">
-          <button
-            onClick={handleGameCenterClick}
-            className="inline-flex items-center gap-1 text-xs text-blue-600 hover:text-blue-700 transition-colors"
-          >
-            <span>NHL® Game Center</span>
-            <ExternalLink className="h-3 w-3" />
-          </button>
+      {/* NHL Game Center and Share links, each with a QR code */}
+      {(gameCenterUrl || shareUrl) && (
+        <div className="flex flex-wrap items-start justify-center gap-6 pt-1">
+          {gameCenterUrl && (
+            <div className="flex flex-col items-center gap-2">
+              <button
+                onClick={handleGameCenterClick}
+                className="inline-flex items-center gap-1 text-xs text-blue-600 hover:text-blue-700 transition-colors"
+              >
+                <span>NHL® Game Center</span>
+                <ExternalLink className="h-3 w-3" />
+              </button>
+              <QrCode url={gameCenterUrl} label="QR code for NHL Game Center" testId="qr-game-center" />
+            </div>
+          )}
+          {shareUrl && (
+            <div className="flex flex-col items-center gap-2">
+              <button
+                onClick={handleShareClick}
+                className="inline-flex items-center gap-1 text-xs text-blue-600 hover:text-blue-700 transition-colors"
+              >
+                <span>Share</span>
+                <Share2 className="h-3 w-3" />
+              </button>
+              <QrCode url={shareUrl} label="QR code to share this game" testId="qr-share" />
+              <span role="status" aria-live="polite" className="h-4 text-xs text-muted-foreground">
+                {copyStatus === 'copied' ? 'Link copied' : copyStatus === 'failed' ? "Couldn't copy link" : ''}
+              </span>
+            </div>
+          )}
         </div>
       )}
     </div>
