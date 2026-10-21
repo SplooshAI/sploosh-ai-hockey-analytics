@@ -1,8 +1,8 @@
 /**
  * Version - GitHub repository link
  *
- * The version block is a card-style link to the GitHub repository: GitHub icon, app name,
- * version badge, and a "View on GitHub" cue with an external-link arrow.
+ * The sidebar version block is one card: a GitHub link header (icon, app name, external-link
+ * arrow), then the version badge, release date, and copyright.
  * lib/version.ts pointed at the old sploosh-ai-nhl-shot-chart repository name.
  */
 
@@ -31,18 +31,28 @@ describe('Version', () => {
     expect(link).toHaveAttribute('rel', expect.stringContaining('noopener'))
   })
 
-  it('shows the app name, the version as a badge, and a view-on-GitHub cue', () => {
+  it('shows the app name in the link and the version badge in the same card', () => {
     render(<Version />)
 
     const link = screen.getByRole('link', { name: /view the repository on github/i })
-    expect(link).toHaveTextContent('Sploosh.AI Hockey Analytics')
-    expect(screen.getByText(`v${getVersionInfo().version}`)).toBeInTheDocument()
-    expect(screen.getByText('View on GitHub')).toBeInTheDocument()
-    expect(link).toContainElement(screen.getByText(`v${getVersionInfo().version}`))
-    expect(link).toContainElement(screen.getByText('View on GitHub'))
+    const badge = screen.getByText(`v${getVersionInfo().version}`)
+    expect(link).toHaveTextContent('Sploosh.AI')
+    expect(link).toHaveTextContent('Hockey Analytics')
+    expect(badge).toBeInTheDocument()
+    expect(badge.closest('[data-testid="version-card"]')).toBe(link.closest('[data-testid="version-card"]'))
+    expect(link.closest('[data-testid="version-card"]')).not.toBeNull()
   })
 
-  it('shows the GitHub icon and an external-link arrow inside the link', () => {
+  it('keeps the copyright inside the card, below the link', () => {
+    render(<Version />)
+
+    const card = screen.getByTestId('version-card')
+    const copyright = screen.getByText(`© ${new Date().getFullYear()} Sploosh.AI. All rights reserved.`)
+    expect(card).toContainElement(copyright)
+    expect(screen.getByRole('link', { name: /view the repository on github/i })).not.toContainElement(copyright)
+  })
+
+  it('shows the GitHub icon and an external-link arrow in the link', () => {
     render(<Version />)
 
     const link = screen.getByRole('link', { name: /view the repository on github/i })
