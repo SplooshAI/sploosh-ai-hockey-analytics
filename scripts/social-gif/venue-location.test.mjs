@@ -35,6 +35,10 @@ test('an unknown venue in an unknown city shows only the city, never a guess', (
   assert.equal(formatVenueLocation('Some New Arena', 'Springfield'), 'Springfield')
 })
 
+test('the neutral-site preseason arena in Greensboro is in North Carolina', () => {
+  assert.equal(formatVenueLocation('First Horizon Coliseum', 'Greensboro'), 'Greensboro, NC')
+})
+
 test('no city means no location', () => {
   assert.equal(formatVenueLocation('Rogers Arena', ''), '')
   assert.equal(formatVenueLocation('Rogers Arena', undefined), '')

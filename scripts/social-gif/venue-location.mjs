@@ -44,6 +44,8 @@ const VENUES = {
   'T-Mobile Arena': US('NV'),
   'GIANT Center': US('PA'),
   'Canada Life Centre': CA('MB'),
+  // neutral-site preseason arena
+  'First Horizon Coliseum': US('NC'),
 }
 
 // Neutral-site and international games: city -> country, for venues not in the table above.
