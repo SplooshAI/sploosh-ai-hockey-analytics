@@ -74,7 +74,7 @@ try {
   // Draws overlay items. Each item is positioned from a live element's
   // rectangle so call-outs stay centered on what they point at.
   //   banner  - pill pinned bottom center
-  //   ring    - pulsing outline around an element
+  //   ring    - pulsing outline around an element (tight: true for a small glow)
   //   pill    - label centered above, below, or on the top edge of an element
   //   caption - score pill pinned top center
 //   tap     - tap ripple at the center of an element
@@ -115,7 +115,9 @@ try {
             ov.appendChild(el)
           } else if (it.type === 'ring' && r) {
             const el = document.createElement('div')
-            const grow = 10 + 6 * Math.sin(k * Math.PI)
+            const pulse = Math.sin(k * Math.PI)
+            // tight rings (the QR cards sit side by side) stay small so the glow never touches the neighbor
+            const grow = it.tight ? 4 + 3 * pulse : 10 + 6 * pulse
             css(el, {
               position: 'absolute',
               left: r.left - grow + 'px',
@@ -124,7 +126,7 @@ try {
               height: r.height + grow * 2 + 'px',
               border: '5px solid #2563eb',
               borderRadius: '18px',
-              boxShadow: `0 0 0 ${4 + 8 * Math.sin(k * Math.PI)}px rgba(37,99,235,.22), 0 0 34px rgba(37,99,235,.55)`,
+              boxShadow: it.tight ? `0 0 0 ${2 + 3 * pulse}px rgba(37,99,235,.22), 0 0 14px rgba(37,99,235,.5)` : `0 0 0 ${4 + 8 * pulse}px rgba(37,99,235,.22), 0 0 34px rgba(37,99,235,.55)`,
               opacity: String(ease),
             })
             ov.appendChild(el)
@@ -246,14 +248,14 @@ try {
     document.querySelector('[data-testid=qr-share]').closest('figure').setAttribute('data-gif', 'splo')
     document.querySelector('[data-testid=qr-game-center]').closest('figure').setAttribute('data-gif', 'nhl')
   })
-  await reveal([banner, cap, { type: 'ring', selector: '[data-gif=splo]' }, { type: 'pill', selector: '[data-gif=splo]', text: 'Scan or tap: this game', pos: 'edge' }], 1.5)
+  await reveal([banner, cap, { type: 'ring', selector: '[data-gif=splo]', tight: true }, { type: 'pill', selector: '[data-gif=splo]', text: 'Scan or tap: this game', pos: 'edge' }], 1.5)
   for (let i = 0; i < 5; i++) {
-    await draw([banner, cap, { type: 'ring', selector: '[data-gif=splo]' }, { type: 'pill', selector: '[data-gif=splo]', text: 'Scan or tap: this game', pos: 'edge' }, { type: 'tap', selector: sploosh }], 1, i / 5)
+    await draw([banner, cap, { type: 'ring', selector: '[data-gif=splo]', tight: true }, { type: 'pill', selector: '[data-gif=splo]', text: 'Scan or tap: this game', pos: 'edge' }, { type: 'tap', selector: sploosh }], 1, i / 5)
     await snap(0.1)
   }
-  await reveal([banner, cap, { type: 'ring', selector: '[data-gif=nhl]' }, { type: 'pill', selector: '[data-gif=nhl]', text: 'Scan or tap: NHL.com recap', pos: 'edge', color: '#0f172a' }], 1.5)
+  await reveal([banner, cap, { type: 'ring', selector: '[data-gif=nhl]', tight: true }, { type: 'pill', selector: '[data-gif=nhl]', text: 'Scan or tap: NHL.com recap', pos: 'edge', color: '#0f172a' }], 1.5)
   for (let i = 0; i < 5; i++) {
-    await draw([banner, cap, { type: 'ring', selector: '[data-gif=nhl]' }, { type: 'pill', selector: '[data-gif=nhl]', text: 'Scan or tap: NHL.com recap', pos: 'edge', color: '#0f172a' }, { type: 'tap', selector: nhl }], 1, i / 5)
+    await draw([banner, cap, { type: 'ring', selector: '[data-gif=nhl]', tight: true }, { type: 'pill', selector: '[data-gif=nhl]', text: 'Scan or tap: NHL.com recap', pos: 'edge', color: '#0f172a' }, { type: 'tap', selector: nhl }], 1, i / 5)
     await snap(0.1)
   }
 
