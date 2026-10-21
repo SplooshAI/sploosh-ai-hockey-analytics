@@ -65,6 +65,8 @@ try {
       date,
       venue: d.venue?.default || '',
       sponsorLogo: `${location.origin}/sploosh.ai/sploosh-ai-character-transparent.png`,
+      // the app's own QR code for this game, so the GIF shows exactly what the page encodes
+      qrSvg: document.querySelector('[data-testid=qr-share] svg')?.outerHTML.replace(/ height="\d+" width="\d+"/, ' style="width:190px;height:190px;display:block"') || '',
     }
   }, GAME)
   const info = `${game.away.abbrev} ${game.away.score}  @  ${game.home.abbrev} ${game.home.score}  ·  ${game.label}  ·  ${game.date}`
@@ -212,9 +214,11 @@ try {
               ${it.scoreboard ? scoreboardHtml(it.scoreboard) : ''}
               <div style="font-weight:900;font-size:${it.titleSize || 84}px;line-height:1.05;max-width:760px">${it.title}</div>
               ${it.scoreboard ? '' : `<div style="font-weight:600;font-size:34px;opacity:.9;max-width:720px">${it.subtitle}</div>`}
-              <div style="display:flex;gap:16px;flex-wrap:wrap;justify-content:center;max-width:780px">
+              ${it.scoreboard && it.scoreboard.qrSvg
+                ? `<div style="background:#fff;border-radius:24px;padding:12px;box-shadow:0 12px 34px rgba(0,0,0,.4)">${it.scoreboard.qrSvg}</div><div style="font-weight:700;font-size:26px;opacity:.95;margin-top:-10px">Scan to open this game</div>`
+                : `<div style="display:flex;gap:16px;flex-wrap:wrap;justify-content:center;max-width:780px">
                 ${(it.pills || []).map((t) => `<span style="background:rgba(255,255,255,.14);border:2px solid rgba(255,255,255,.55);border-radius:999px;padding:10px 24px;font-weight:700;font-size:26px">${t}</span>`).join('')}
-              </div>
+              </div>`}
               ${it.footer ? `<div style="margin-top:14px;background:#fff;border-radius:999px;padding:18px 34px;box-shadow:0 12px 34px rgba(0,0,0,.35);white-space:nowrap;font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:27px;font-weight:700;color:#334155"><span style="color:#1d4ed8;font-weight:800">${it.footer}</span>${it.footerSub || ''}</div>` : ''}`
             ov.appendChild(el)
           }

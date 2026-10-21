@@ -49,7 +49,8 @@ scroll to the QR cards, Sploosh.AI card, NHL card, end card. The score pill (`ca
 shows from the scroll onward. The end card leads with a broadcast-style scorebug built from the
 game's live data (team logos, scores with the winner highlighted, a FINAL, FINAL/OT or
 FINAL/SO tag, a "Sponsored by Sploosh.AI" strip with the logo, arena and date), then the
-heading "See every shot" and the game's exact URL (`<host>/?gameId=<id>`). Each uses `reveal([...items])`
+heading "See every shot", the game's own Sploosh.AI QR code (copied from the app's
+QR card, so it always encodes the exact game URL) and the URL (`<host>/?gameId=<id>`). Each uses `reveal([...items])`
 with item types `banner`, `caption`, `ring`, `pill`, `tap` and `card`. To highlight a new feature,
 tag its element with a `data-gif` attribute in the page (see `shareBtn`) and add a
 scene that rings it and adds a `pill` (`pos`: `above`, `below` or `edge`).
