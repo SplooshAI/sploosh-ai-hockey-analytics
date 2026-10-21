@@ -21,7 +21,7 @@ export const GameQrCodes: React.FC<GameQrCodesProps> = ({ gameId, gameCenterLink
   return (
     <div className={`flex flex-col items-center gap-10 ${className}`}>
       {shareUrl && (
-        <QrCard url={shareUrl} variant="sploosh" label="QR code to share this game" testId="qr-share" />
+        <QrCard url={shareUrl} variant="sploosh" label="QR code for Sploosh.AI Hockey Analytics" testId="qr-share" />
       )}
       {shareUrl && gameCenterUrl && <QrDivider />}
       {gameCenterUrl && (

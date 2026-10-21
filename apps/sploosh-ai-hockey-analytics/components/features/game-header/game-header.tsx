@@ -399,7 +399,7 @@ export const GameHeader: React.FC<GameHeaderProps> = ({ gameData, className = ''
                 {copyStatus === 'copied' ? 'Link copied' : copyStatus === 'failed' ? "Couldn't copy link" : ''}
               </span>
               {showQrCodes && (
-                <QrCard url={shareUrl} variant="sploosh" label="QR code to share this game" testId="qr-share" />
+                <QrCard url={shareUrl} variant="sploosh" label="QR code for Sploosh.AI Hockey Analytics" testId="qr-share" />
               )}
             </div>
           )}

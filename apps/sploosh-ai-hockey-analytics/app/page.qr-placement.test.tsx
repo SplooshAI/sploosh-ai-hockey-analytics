@@ -64,7 +64,7 @@ describe('Home Page - QR code placement', () => {
     const qr = within(chartCard).getByTestId('qr-share')
     expect(chart.compareDocumentPosition(qr) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy()
     // each code is labelled with its own name
-    expect(within(qr.closest('figure') as HTMLElement).getByText('Sploosh.AI')).toBeInTheDocument()
+    expect(within(qr.closest('figure') as HTMLElement).getByText('Sploosh.AI Hockey Analytics')).toBeInTheDocument()
     expect(
       within(within(chartCard).getByTestId('qr-game-center').closest('figure') as HTMLElement).getByText(/NHL® Game Center/)
     ).toBeInTheDocument()

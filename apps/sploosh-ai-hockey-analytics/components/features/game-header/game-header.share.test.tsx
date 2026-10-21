@@ -107,7 +107,7 @@ describe('GameHeader - QR codes', () => {
   it('renders a labelled QR code for the Game Center link and the share link', () => {
     render(<GameHeader gameData={gameData} />)
     expect(screen.getByRole('img', { name: /qr code.*nhl game center/i })).toBeInTheDocument()
-    expect(screen.getByRole('img', { name: /qr code.*share/i })).toBeInTheDocument()
+    expect(screen.getByRole('img', { name: /qr code for sploosh\.ai hockey analytics/i })).toBeInTheDocument()
   })
 
   it('encodes the right URL in each QR code', () => {
@@ -136,10 +136,10 @@ describe('GameHeader - QR code labels and separation', () => {
 
   it('labels the Sploosh.AI code and the NHL code, each tied to its own code', () => {
     render(<GameHeader gameData={gameData} />)
-    expect(within(cardFor('qr-share')).getByText('Sploosh.AI')).toBeInTheDocument()
+    expect(within(cardFor('qr-share')).getByText('Sploosh.AI Hockey Analytics')).toBeInTheDocument()
     expect(within(cardFor('qr-share')).queryByText(/NHL/)).not.toBeInTheDocument()
     expect(within(cardFor('qr-game-center')).getByText(/NHL® Game Center/)).toBeInTheDocument()
-    expect(within(cardFor('qr-game-center')).queryByText('Sploosh.AI')).not.toBeInTheDocument()
+    expect(within(cardFor('qr-game-center')).queryByText('Sploosh.AI Hockey Analytics')).not.toBeInTheDocument()
   })
 
   it('gives each code its own visual treatment', () => {

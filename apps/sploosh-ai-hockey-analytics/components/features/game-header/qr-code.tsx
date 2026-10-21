@@ -14,7 +14,7 @@ interface QrCardProps {
 
 const VARIANTS: Record<QrVariant, { title: string; hint: string; card: string; fgColor: string }> = {
   sploosh: {
-    title: 'Sploosh.AI',
+    title: 'Sploosh.AI Hockey Analytics',
     hint: 'Scan to open this game',
     card: 'border-blue-600 bg-blue-50 dark:bg-blue-950/40',
     fgColor: '#1e3a8a',
@@ -36,9 +36,9 @@ const VARIANTS: Record<QrVariant, { title: string; hint: string; card: string; f
 export const QrCard: React.FC<QrCardProps> = ({ url, variant, label, testId }) => {
   const { title, hint, card, fgColor } = VARIANTS[variant]
   return (
-    <figure data-variant={variant} className={`flex w-60 flex-col items-center gap-3 rounded-xl border-2 p-4 ${card}`}>
+    <figure data-variant={variant} className={`flex w-72 max-w-full flex-col items-center gap-3 rounded-xl border-2 p-4 ${card}`}>
       <figcaption className="flex flex-col items-center gap-0.5 text-center">
-        <span className="inline-flex items-center gap-1.5 text-sm font-semibold text-foreground">
+        <span className="inline-flex items-center justify-center gap-1.5 text-sm font-semibold text-foreground">
           {variant === 'sploosh' && (
             <Image src="/sploosh.ai/sploosh-ai-character-transparent.png" alt="" width={20} height={18} />
           )}
