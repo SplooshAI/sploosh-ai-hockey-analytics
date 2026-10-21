@@ -169,16 +169,24 @@ the app at commit `f40c81f` plus this branch.
 
 ## Disk space
 
-The VM's 30 GB boot volume was 74% full before this app was deployed, and the
-first build added about 1.6 GB. Two things to keep an eye on:
+The VM's 30 GB boot volume is shared with CIP. Each build leaves about 1.5 GB
+of layers and untagged images behind, so `npm run deploy` ends by pruning
+untagged images and trimming the build cache to 500 MB (about 90 seconds for a
+full rebuild, seconds for a cached one). Verified on 2026-10-21: a full rebuild
+and deploy left the disk at 65% used, where the same build used to add about
+1.5 GB.
 
-- `df -h /` on the VM before and after a deploy.
-- Build cache. Each Docker daemon keeps its own, and CIP's was holding about
-  4 GB that is reclaimable (`sudo docker builder prune` as `cipdeploy`). That
-  is CIP's cache, so prune it deliberately, not as part of this deploy.
+Other things worth knowing:
 
-If it gets tight, grow the boot volume in the OCI Console (Block Storage >
-Boot Volumes) rather than deleting things.
+- Watch `df -h /` on the VM, or the last line the deploy prints.
+- Each Docker daemon keeps its own cache. CIP's lives under the system
+  daemon, so clear it as `cipdeploy` with `sudo docker builder prune`; this
+  deploy's cleanup never touches it.
+- Safe system cleanups when it gets tight: `sudo dnf clean all` (about 1 GB)
+  and `sudo journalctl --vacuum-size=100M`.
+- The volume group has no free space and `/var/oled` is a separate Oracle
+  volume that cannot be shrunk. The real fix for a bigger disk is growing the
+  boot volume in the OCI Console (Block Storage > Boot Volumes).
 
 ## Rotating or removing
 
