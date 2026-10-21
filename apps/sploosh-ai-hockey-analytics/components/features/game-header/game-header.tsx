@@ -2,12 +2,15 @@
 import Image from 'next/image'
 import { parseISO } from 'date-fns'
 import { format, formatInTimeZone } from 'date-fns-tz'
-import { ExternalLink, Tv } from 'lucide-react'
+import { ExternalLink, Share2, Tv } from 'lucide-react'
 import { useSearchParams } from 'next/navigation'
 import { useState, useEffect } from 'react'
+import { getGameCenterUrl, getGameShareUrl } from '@/lib/share-url'
+import { QrCard, QrDivider } from './qr-code'
 
 // Extended game data type that includes fields from both play-by-play and game center APIs
 interface GameHeaderData {
+  id?: number
   gameDate: string
   gameState: string
   startTimeUTC?: string
@@ -67,6 +70,8 @@ interface GameHeaderProps {
   gameData: GameHeaderData
   className?: string
   lastRefreshTime?: Date | null
+  /** Render the QR codes under the footer links; false when the page shows them elsewhere. */
+  showQrCodes?: boolean
 }
 
 /**
@@ -74,10 +79,11 @@ interface GameHeaderProps {
  * Displays team logos, scores, records, SOG, game state, and venue
  * Matches the sidebar game card styling
  */
-export const GameHeader: React.FC<GameHeaderProps> = ({ gameData, className = '', lastRefreshTime }) => {
+export const GameHeader: React.FC<GameHeaderProps> = ({ gameData, className = '', lastRefreshTime, showQrCodes = true }) => {
   const searchParams = useSearchParams()
   const [awayLogoError, setAwayLogoError] = useState(false)
   const [homeLogoError, setHomeLogoError] = useState(false)
+  const [copyStatus, setCopyStatus] = useState<'copied' | 'failed' | null>(null)
   
   // Reset logo errors when network comes back online
   useEffect(() => {
@@ -194,6 +200,37 @@ export const GameHeader: React.FC<GameHeaderProps> = ({ gameData, className = ''
     const formattedDate = formatInTimeZone(date, 'UTC', 'EEEE, MMMM')
     return `${formattedDate} ${ordinalSuffix}, ${formatInTimeZone(date, 'UTC', 'yyyy')}`
   }
+
+  const gameCenterUrl = gameData.gameCenterLink ? getGameCenterUrl(gameData.gameCenterLink) : null
+  const shareUrl = gameData.id !== undefined ? getGameShareUrl(gameData.id) : null
+
+  const handleShareClick = async () => {
+    if (!shareUrl) return
+    const title = `${awayTeamName} vs ${homeTeamName}`
+    if (typeof navigator.share === 'function') {
+      try {
+        await navigator.share({ title, url: shareUrl })
+      } catch (err) {
+        // The user closing the share sheet is not an error
+        if (!(err instanceof DOMException && err.name === 'AbortError')) {
+          console.error('Share failed:', err)
+        }
+      }
+      return
+    }
+    try {
+      await navigator.clipboard.writeText(shareUrl)
+      setCopyStatus('copied')
+    } catch {
+      setCopyStatus('failed')
+    }
+  }
+
+  useEffect(() => {
+    if (!copyStatus) return
+    const timer = setTimeout(() => setCopyStatus(null), 2000)
+    return () => clearTimeout(timer)
+  }, [copyStatus])
 
   const handleGameCenterClick = () => {
     if (gameData.gameCenterLink) {
@@ -331,16 +368,41 @@ export const GameHeader: React.FC<GameHeaderProps> = ({ gameData, className = ''
         </div>
       )}
 
-      {/* NHL Game Center Link */}
-      {gameData.gameCenterLink && (
-        <div className="flex justify-center pt-1">
-          <button
-            onClick={handleGameCenterClick}
-            className="inline-flex items-center gap-1 text-xs text-blue-600 hover:text-blue-700 transition-colors"
-          >
-            <span>NHL® Game Center</span>
-            <ExternalLink className="h-3 w-3" />
-          </button>
+      {/* NHL Game Center and Share links, each with a QR code */}
+      {(gameCenterUrl || shareUrl) && (
+        <div className={`flex justify-center pt-1 ${showQrCodes ? 'flex-col items-center gap-5 sm:flex-row sm:items-start sm:gap-6' : 'flex-wrap items-start gap-6'}`}>
+          {gameCenterUrl && (
+            <div className="flex flex-col items-center gap-3">
+              <button
+                onClick={handleGameCenterClick}
+                className="inline-flex items-center gap-1 text-xs text-blue-600 hover:text-blue-700 transition-colors"
+              >
+                <span>NHL® Game Center</span>
+                <ExternalLink className="h-3 w-3" />
+              </button>
+              {showQrCodes && (
+                <QrCard url={gameCenterUrl} variant="nhl" label="QR code for NHL Game Center" testId="qr-game-center" />
+              )}
+            </div>
+          )}
+          {showQrCodes && gameCenterUrl && shareUrl && <QrDivider />}
+          {shareUrl && (
+            <div className="flex flex-col items-center gap-3">
+              <button
+                onClick={handleShareClick}
+                className="inline-flex items-center gap-1 text-xs text-blue-600 hover:text-blue-700 transition-colors"
+              >
+                <span>Share</span>
+                <Share2 className="h-3 w-3" />
+              </button>
+              <span role="status" aria-live="polite" className="h-4 text-xs text-muted-foreground">
+                {copyStatus === 'copied' ? 'Link copied' : copyStatus === 'failed' ? "Couldn't copy link" : ''}
+              </span>
+              {showQrCodes && (
+                <QrCard url={shareUrl} variant="sploosh" label="QR code for Sploosh.AI Hockey Analytics" testId="qr-share" />
+              )}
+            </div>
+          )}
         </div>
       )}
     </div>
