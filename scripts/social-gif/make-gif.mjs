@@ -50,6 +50,19 @@ try {
     const t = d.periodDescriptor?.periodType
     const final = d.gameState === 'FINAL' || d.gameState === 'OFF'
     const date = new Date(`${d.gameDate}T12:00:00`).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
+    // Puck drop in the arena's own time zone: find the North American zone whose offset matches the feed's venue offset.
+    const start = d.startTimeUTC ? new Date(d.startTimeUTC) : null
+    let when = ''
+    if (start) {
+      const zones = ['America/Los_Angeles', 'America/Vancouver', 'America/Denver', 'America/Edmonton', 'America/Phoenix', 'America/Chicago', 'America/Winnipeg', 'America/New_York', 'America/Toronto', 'America/Halifax']
+      const want = `GMT${d.venueUTCOffset}`.replace(/^GMT([+-])0?(\d+):00$/, (m, sg, h) => `GMT${sg}${h}`).replace('GMT-0', 'GMT')
+      const offsetOf = (z) => (new Intl.DateTimeFormat('en-US', { timeZone: z, timeZoneName: 'shortOffset' }).formatToParts(start).find((x) => x.type === 'timeZoneName')?.value || '')
+      const zone = zones.find((z) => offsetOf(z) === want) || 'America/New_York'
+      const f = (o) => new Intl.DateTimeFormat('en-US', { timeZone: zone, ...o }).format(start)
+      const day = Number(f({ day: 'numeric' }))
+      const ord = day % 100 >= 11 && day % 100 <= 13 ? 'th' : ['th', 'st', 'nd', 'rd'][day % 10 > 3 ? 0 : day % 10]
+      when = `${f({ weekday: 'long' })}, ${f({ month: 'long' })} ${day}${ord}, ${f({ year: 'numeric' })} @ ${f({ hour: 'numeric', minute: '2-digit' })} ${f({ timeZoneName: 'short' }).split(' ').pop()}`
+    }
     const side = (x) => ({
       abbrev: x.abbrev,
       score: x.score ?? 0,
@@ -64,9 +77,10 @@ try {
       label: final ? (t === 'OT' || t === 'SO' ? `Final (${t})` : 'Final') : String(d.gameState),
       date,
       venue: d.venue?.default || '',
+      when,
       sponsorLogo: `${location.origin}/sploosh.ai/sploosh-ai-character-transparent.png`,
       // the app's own QR code for this game, so the GIF shows exactly what the page encodes
-      qrSvg: document.querySelector('[data-testid=qr-share] svg')?.outerHTML.replace(/ height="\d+" width="\d+"/, ' style="width:190px;height:190px;display:block"') || '',
+      qrSvg: document.querySelector('[data-testid=qr-share] svg')?.outerHTML.replace(/ height="\d+" width="\d+"/, ' style="width:168px;height:168px;display:block"') || '',
     }
   }, GAME)
   const info = `${game.away.abbrev} ${game.away.score}  @  ${game.home.abbrev} ${game.home.score}  ·  ${game.label}  ·  ${game.date}`
@@ -129,7 +143,10 @@ try {
                 <span style="font-weight:900;font-size:26px">Sploosh.AI</span>
               </div>
             </div>
-            <div style="font-weight:600;font-size:26px;opacity:.9">${[g.venue, g.date].filter(Boolean).join(' · ')}</div>
+            <div style="display:flex;flex-direction:column;align-items:center;gap:2px;text-align:center">
+              <div style="font-weight:800;font-size:28px">${g.venue}</div>
+              <div style="font-weight:600;font-size:24px;opacity:.92">${g.when || g.date}</div>
+            </div>
           </div>`
         }
         const css = (el, s) => Object.assign(el.style, s)
@@ -203,7 +220,7 @@ try {
               flexDirection: 'column',
               alignItems: 'center',
               justifyContent: 'center',
-              gap: '26px',
+              gap: '18px',
               textAlign: 'center',
               background: 'linear-gradient(160deg,#0f172a 0%,#1e3a8a 60%,#2563eb 100%)',
               color: '#fff',
@@ -214,7 +231,7 @@ try {
               ${it.scoreboard ? scoreboardHtml(it.scoreboard) : ''}
               <div style="font-weight:900;font-size:${it.titleSize || 84}px;line-height:1.05;max-width:760px">${it.title}</div>
               ${it.scoreboard ? '' : `<div style="font-weight:600;font-size:34px;opacity:.9;max-width:720px">${it.subtitle}</div>`}
-              ${it.scoreboard && it.scoreboard.qrSvg
+              ${it.qr && it.scoreboard && it.scoreboard.qrSvg
                 ? `<div style="background:#fff;border-radius:24px;padding:12px;box-shadow:0 12px 34px rgba(0,0,0,.4)">${it.scoreboard.qrSvg}</div><div style="font-weight:700;font-size:26px;opacity:.95;margin-top:-10px">Scan to open this game</div>`
                 : `<div style="display:flex;gap:16px;flex-wrap:wrap;justify-content:center;max-width:780px">
                 ${(it.pills || []).map((t) => `<span style="background:rgba(255,255,255,.14);border:2px solid rgba(255,255,255,.55);border-radius:999px;padding:10px 24px;font-weight:700;font-size:26px">${t}</span>`).join('')}
@@ -266,7 +283,7 @@ try {
 
   // ---- Scene 1: title card
   await scrollTo(null, 0)
-  await reveal([{ type: 'card', title: 'Share any game.<br>Scan or tap.', subtitle: 'Sploosh.AI Hockey Analytics', pills: ['Share link', 'QR codes', 'Tap to open'], titleSize: 78 }], 1.7, { fadeFrames: 5, pulseFrames: 4 })
+  await reveal([{ type: 'card', title: 'Share any game.<br>Scan or tap.', scoreboard: game, subtitle: 'Sploosh.AI Hockey Analytics', pills: ['Share link', 'QR codes', 'Tap to open'], titleSize: 64 }], 2.2, { fadeFrames: 5, pulseFrames: 4 })
 
   // ---- Scene 2: the Share link in the game header
   const shareBtn = await page.evaluateHandle(() => [...document.querySelectorAll('button')].find((b) => b.textContent.trim() === 'Share'))
@@ -312,7 +329,7 @@ try {
   }
 
   // ---- Scene 5: end card
-  await reveal([{ type: 'card', title: 'See every shot', scoreboard: game, pills: ['Tap to open', 'Scan to share', 'Works on mobile'], footer: HOST, footerSub: `/?gameId=${GAME}`, titleSize: 70 }], 2.6, { fadeFrames: 5, pulseFrames: 4 })
+  await reveal([{ type: 'card', title: 'See every shot', scoreboard: game, qr: true, pills: ['Tap to open', 'Scan to share', 'Works on mobile'], footer: HOST, footerSub: `/?gameId=${GAME}`, titleSize: 70 }], 2.6, { fadeFrames: 5, pulseFrames: 4 })
 
   // ---- Encode
   const list = frames.map((f) => `file '${f.file}'\nduration ${f.dur.toFixed(3)}`).join('\n') + `\nfile '${frames[frames.length - 1].file}'\n`

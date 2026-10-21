@@ -46,9 +46,11 @@ actual elements, so call-outs stay centered on what they point at.
 
 The scenes live in `scripts/social-gif/make-gif.mjs`, in order: title card, Share link,
 scroll to the QR cards, Sploosh.AI card, NHL card, end card. The score pill (`caption`)
-shows from the scroll onward. The end card leads with a broadcast-style scorebug built from the
+shows from the scroll onward. The scorebug bookends the GIF: the opening card and the end card both lead with it. The scorebug is broadcast-style built from the
 game's live data (team logos, scores with the winner highlighted, a FINAL, FINAL/OT or
-FINAL/SO tag, a "Sponsored by Sploosh.AI" strip with the logo, arena and date), then the
+FINAL/SO tag, a "Sponsored by Sploosh.AI" strip with the logo, the arena name and
+the full date with puck-drop time in the arena's own time zone, e.g. "Tuesday, October 20th,
+2026 @ 6:40 PM PDT"), then the
 heading "See every shot", the game's own Sploosh.AI QR code (copied from the app's
 QR card, so it always encodes the exact game URL) and the URL (`<host>/?gameId=<id>`). Each uses `reveal([...items])`
 with item types `banner`, `caption`, `ring`, `pill`, `tap` and `card`. To highlight a new feature,
