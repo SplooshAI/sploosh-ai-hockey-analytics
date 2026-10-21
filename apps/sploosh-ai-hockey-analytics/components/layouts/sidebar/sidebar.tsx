@@ -1,7 +1,6 @@
 'use client'
 
 import { useState } from 'react'
-import { useRouter } from 'next/navigation'
 import { X } from 'lucide-react'
 import { GamesList } from '@/components/features/games/list/games-list'
 import { Version } from '../../shared/version/version'
@@ -21,18 +20,19 @@ interface SidebarProps {
 }
 
 export default function Sidebar({ onClose, onGameSelect, onRefresh }: SidebarProps) {
-    const router = useRouter()
     const [selectedDate, setSelectedDate] = useState<Date>(getToday)
     const [isLoadingGames, setIsLoadingGames] = useState(false)
     const [gamesCount, setGamesCount] = useState<number>(0)
 
-    // Back to the default view: today's games and a plain root URL
+    // Back to the default view: today's games and a plain root URL. Uses the History API
+    // like game selection does; router.push('/') resolves against a stale router URL once
+    // a game was picked through history.replaceState and goes back to the first game.
     const handleHomeClick = () => {
         setSelectedDate(prev => {
             const today = getToday()
             return isSameDay(prev, today) ? prev : today
         })
-        router.push('/')
+        window.history.pushState(null, '', '/')
     }
 
     return (

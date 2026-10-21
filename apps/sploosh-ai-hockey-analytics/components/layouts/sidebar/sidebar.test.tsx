@@ -9,13 +9,8 @@
  */
 
 import { render, screen, fireEvent } from '@testing-library/react'
-import { useRouter } from 'next/navigation'
 import { vi, describe, it, expect, beforeEach, afterEach } from 'vitest'
 import Sidebar from './sidebar'
-
-vi.mock('next/navigation', () => ({
-  useRouter: vi.fn(),
-}))
 
 const renderedDates = vi.hoisted(() => [] as Date[])
 
@@ -36,14 +31,13 @@ vi.mock('../../shared/version/version', () => ({ Version: () => null }))
 vi.mock('../../shared/nhl-attribution/nhl-attribution', () => ({ NHLAttribution: () => null }))
 
 describe('Sidebar - NHL Games header', () => {
-  const mockRouter = { push: vi.fn() }
+  const pushState = vi.spyOn(window.history, 'pushState')
 
   beforeEach(() => {
     vi.clearAllMocks()
     renderedDates.length = 0
     vi.useFakeTimers()
     vi.setSystemTime(new Date(2026, 9, 21, 10, 0, 0))
-    ;(useRouter as any).mockReturnValue(mockRouter)
   })
 
   afterEach(() => {
@@ -55,7 +49,7 @@ describe('Sidebar - NHL Games header', () => {
 
     fireEvent.click(screen.getByText('NHL Games'))
 
-    expect(mockRouter.push).toHaveBeenCalledWith('/')
+    expect(pushState).toHaveBeenCalledWith(null, '', '/')
   })
 
   it('resets the selected date to today when the header is clicked', () => {
