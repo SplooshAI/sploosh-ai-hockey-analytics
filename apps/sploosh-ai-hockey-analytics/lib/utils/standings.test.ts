@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { formatRank, ordinal, standingsByTeam } from './standings'
+import { formatRank, ordinal, previousDate, standingsByTeam } from './standings'
 
 const row = (abbrev: string, extra: Record<string, unknown> = {}) => ({
   teamAbbrev: { default: abbrev },
@@ -7,6 +7,10 @@ const row = (abbrev: string, extra: Record<string, unknown> = {}) => ({
   conferenceAbbrev: 'W',
   divisionSequence: 3,
   conferenceSequence: 5,
+  wins: 6,
+  losses: 3,
+  otLosses: 1,
+  gamesPlayed: 10,
   ...extra,
 })
 
@@ -66,5 +70,21 @@ describe('standings', () => {
       const lone = standingsByTeam({ standings: [row('WPG', { wildcardSequence: 3, points: 10 })] })
       expect(formatRank(lone.WPG)).toBe('3rd in Pacific, 5th in West (1 spot behind WC2)')
     })
+  })
+
+  it('builds the record from wins, losses and overtime losses', () => {
+    expect(standingsByTeam({ standings: [row('SEA')] }).SEA.record).toBe('6-3-1')
+  })
+
+  it('shows no rank before a team has played', () => {
+    const map = standingsByTeam({ standings: [row('SEA', { wins: 0, losses: 0, otLosses: 0, gamesPlayed: 0 })] })
+    expect(map.SEA.record).toBe('0-0-0')
+    expect(formatRank(map.SEA)).toBeUndefined()
+  })
+
+  it('finds the previous day across month and year boundaries', () => {
+    expect(previousDate('2026-10-22')).toBe('2026-10-21')
+    expect(previousDate('2026-11-01')).toBe('2026-10-31')
+    expect(previousDate('2027-01-01')).toBe('2026-12-31')
   })
 })

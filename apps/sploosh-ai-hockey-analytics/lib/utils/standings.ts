@@ -1,4 +1,7 @@
 export interface TeamStanding {
+  /** W-L-OTL */
+  record: string
+  gamesPlayed: number
   divisionName: string
   conferenceAbbrev: string
   divisionSequence: number
@@ -18,6 +21,10 @@ interface StandingsRow {
   conferenceSequence?: number
   wildcardSequence?: number
   points?: number
+  wins?: number
+  losses?: number
+  otLosses?: number
+  gamesPlayed?: number
 }
 
 const CONFERENCE_LABEL: Record<string, string> = { E: 'East', W: 'West' }
@@ -39,6 +46,8 @@ export function standingsByTeam(response: { standings?: StandingsRow[] } | null 
     const abbrev = row.teamAbbrev?.default
     if (!abbrev || !row.divisionName || !row.conferenceAbbrev || !row.divisionSequence || !row.conferenceSequence) continue
     byTeam[abbrev] = {
+      record: `${row.wins ?? 0}-${row.losses ?? 0}-${row.otLosses ?? 0}`,
+      gamesPlayed: row.gamesPlayed ?? 0,
       divisionName: row.divisionName,
       conferenceAbbrev: row.conferenceAbbrev,
       divisionSequence: row.divisionSequence,
@@ -64,7 +73,8 @@ export function standingsByTeam(response: { standings?: StandingsRow[] } | null 
 
 /** For example "3rd in Pacific, 5th in West"; undefined when the standings have no entry for the team. */
 export function formatRank(standing?: TeamStanding): string | undefined {
-  if (!standing) return undefined
+  // Before a team's first game every team is 0-0-0 and the order is an arbitrary tiebreak
+  if (!standing || standing.gamesPlayed === 0) return undefined
   const conference = CONFERENCE_LABEL[standing.conferenceAbbrev] ?? standing.conferenceAbbrev
   const base = `${ordinal(standing.divisionSequence)} in ${standing.divisionName}, ${ordinal(standing.conferenceSequence)} in ${conference}`
   return `${base}${wildCardNote(standing)}`
@@ -80,4 +90,11 @@ function wildCardNote(standing: TeamStanding): string {
   if (behind === undefined) return ` (${spotText} behind WC2)`
   if (behind === 0) return ` (${spotText} behind WC2, level on points)`
   return ` (${spotText}, ${behind} ${behind === 1 ? 'pt' : 'pts'} behind WC2)`
+}
+
+/** The day before a YYYY-MM-DD date: the standings that day show where teams stood going into the game. */
+export function previousDate(date: string): string {
+  const d = new Date(`${date}T00:00:00Z`)
+  d.setUTCDate(d.getUTCDate() - 1)
+  return d.toISOString().slice(0, 10)
 }

@@ -9,7 +9,7 @@ import { GameTimeline } from '@/components/features/game-timeline/game-timeline'
 import { ErrorMessage } from '@/components/shared/error'
 import { hasLocationData } from '@/lib/utils/shot-chart-utils'
 import { getFriendlyErrorMessage, getFriendlyErrorTitle } from '@/lib/utils/error-messages'
-import { standingsByTeam, formatRank, type TeamStanding } from '@/lib/utils/standings'
+import { standingsByTeam, formatRank, previousDate, type TeamStanding } from '@/lib/utils/standings'
 import { Cache } from '@/lib/utils/cache'
 import { cacheImage, getImageUrl } from '@/lib/utils/image-cache'
 import { Check, Copy, Download } from 'lucide-react'
@@ -19,7 +19,8 @@ type HeaderTeamInfo = { awayRecord?: string; homeRecord?: string; standings: Rec
 
 function withTeamInfo<T extends { abbrev: string; record?: string }>(team: T, info: HeaderTeamInfo | null, side: 'away' | 'home') {
   if (!info) return team
-  const record = team.record || (side === 'away' ? info.awayRecord : info.homeRecord)
+  // Record going into the game: from the previous day's standings, else the scores feed
+  const record = info.standings[team.abbrev]?.record || team.record || (side === 'away' ? info.awayRecord : info.homeRecord)
   return { ...team, ...(record ? { record } : {}), rank: formatRank(info.standings[team.abbrev]) }
 }
 
@@ -109,8 +110,9 @@ function HomeContent() {
               const flagged = Boolean(scoreGame?.neutralSite)
               setNeutralSite({ gameId, value: flagged })
               setHeaderTeamInfo((prev) => ({ gameId, awayRecord: scoreGame?.awayTeam?.record, homeRecord: scoreGame?.homeTeam?.record, standings: prev?.gameId === gameId ? prev.standings : {} }))
-              // Ranks are optional: if the standings feed fails, the header keeps the record only.
-              const standings = await fetch(`/api/nhl/standings?date=${playByPlayData.gameDate}`, { signal: abortController.signal })
+              // Standings from the day before show where teams stood going into the game. Optional: if the feed
+              // fails, the header keeps the scores-feed record and no rank.
+              const standings = await fetch(`/api/nhl/standings?date=${previousDate(playByPlayData.gameDate)}`, { signal: abortController.signal })
                 .then((response) => (response.ok ? response.json() : null))
                 .catch(() => null)
               setHeaderTeamInfo({ gameId, awayRecord: scoreGame?.awayTeam?.record, homeRecord: scoreGame?.homeTeam?.record, standings: standingsByTeam(standings) })
