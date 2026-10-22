@@ -9,10 +9,20 @@ import { GameTimeline } from '@/components/features/game-timeline/game-timeline'
 import { ErrorMessage } from '@/components/shared/error'
 import { hasLocationData } from '@/lib/utils/shot-chart-utils'
 import { getFriendlyErrorMessage, getFriendlyErrorTitle } from '@/lib/utils/error-messages'
+import { standingsByTeam, formatRank, previousDate, type TeamStanding } from '@/lib/utils/standings'
 import { Cache } from '@/lib/utils/cache'
 import { cacheImage, getImageUrl } from '@/lib/utils/image-cache'
 import { Check, Copy, Download } from 'lucide-react'
 import type { NHLEdgePlayByPlay } from '../lib/api/nhl-edge/types/nhl-edge'
+
+type HeaderTeamInfo = { awayRecord?: string; homeRecord?: string; standings: Record<string, TeamStanding> }
+
+function withTeamInfo<T extends { abbrev: string; record?: string }>(team: T, info: HeaderTeamInfo | null, side: 'away' | 'home') {
+  if (!info) return team
+  // Record going into the game: from the previous day's standings, else the scores feed
+  const record = info.standings[team.abbrev]?.record || team.record || (side === 'away' ? info.awayRecord : info.homeRecord)
+  return { ...team, ...(record ? { record } : {}), rank: formatRank(info.standings[team.abbrev]) }
+}
 
 function HomeContent() {
   const searchParams = useSearchParams()
@@ -20,6 +30,8 @@ function HomeContent() {
   const [gameCenterData, setGameCenterData] = useState<any | null>(null)
   // The play-by-play has the special event name but not the neutralSite flag; the scores feed does.
   const [neutralSite, setNeutralSite] = useState<{ gameId: number; value: boolean } | null>(null)
+  // Records come from the scores feed (the same source as the sidebar cards); ranks from the standings feed.
+  const [headerTeamInfo, setHeaderTeamInfo] = useState<{ gameId: number; awayRecord?: string; homeRecord?: string; standings: Record<string, TeamStanding> } | null>(null)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [copied, setCopied] = useState(false)
@@ -93,9 +105,17 @@ function HomeContent() {
         if (playByPlayData?.gameDate) {
           fetch(`/api/nhl/scores?date=${playByPlayData.gameDate}`, { signal: abortController.signal })
             .then((response) => response.json())
-            .then((scores) => {
-              const flagged = Boolean(scores?.games?.find((g: { id: number }) => g.id === gameId)?.neutralSite)
+            .then(async (scores) => {
+              const scoreGame = scores?.games?.find((g: { id: number }) => g.id === gameId)
+              const flagged = Boolean(scoreGame?.neutralSite)
               setNeutralSite({ gameId, value: flagged })
+              setHeaderTeamInfo((prev) => ({ gameId, awayRecord: scoreGame?.awayTeam?.record, homeRecord: scoreGame?.homeTeam?.record, standings: prev?.gameId === gameId ? prev.standings : {} }))
+              // Standings from the day before show where teams stood going into the game. Optional: if the feed
+              // fails, the header keeps the scores-feed record and no rank.
+              const standings = await fetch(`/api/nhl/standings?date=${previousDate(playByPlayData.gameDate)}`, { signal: abortController.signal })
+                .then((response) => (response.ok ? response.json() : null))
+                .catch(() => null)
+              setHeaderTeamInfo({ gameId, awayRecord: scoreGame?.awayTeam?.record, homeRecord: scoreGame?.homeTeam?.record, standings: standingsByTeam(standings) })
             })
             .catch(() => {})
         }
@@ -306,6 +326,8 @@ function HomeContent() {
             <GameHeader 
               gameData={{
                 ...playByPlayData,
+                awayTeam: withTeamInfo(playByPlayData.awayTeam, headerTeamInfo?.gameId === playByPlayData.id ? headerTeamInfo : null, 'away'),
+                homeTeam: withTeamInfo(playByPlayData.homeTeam, headerTeamInfo?.gameId === playByPlayData.id ? headerTeamInfo : null, 'home'),
                 gameCenterLink: `/gamecenter/${playByPlayData.id}/recap`,
                 neutralSite: neutralSite !== null && neutralSite.gameId === playByPlayData.id && neutralSite.value,
                 tvBroadcasts: gameCenterData?.tvBroadcasts || [],
