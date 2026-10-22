@@ -11,6 +11,8 @@ import { getScores, getGameCenter } from '@/lib/api/nhl-edge'
 import { useDebounce } from '@/hooks/use-debounce'
 import { GamesListSkeleton } from './games-list-skeleton'
 import { shouldEnableAutoRefresh } from '@/lib/utils/game-state'
+import { useGameStandings } from '@/hooks/use-game-standings'
+import { resolveGameRecords, isFinalState } from '@/lib/utils/game-records'
 
 interface GamesListProps {
     date: Date
@@ -22,6 +24,29 @@ interface GamesListProps {
 }
 
 const AUTO_REFRESH_INTERVAL_MS = 20000 // 20 seconds
+
+function withRecords(game: NHLEdgeGame, standings: ReturnType<typeof useGameStandings>): NHLEdgeGame {
+    if (!standings) return game
+    const { away, home } = resolveGameRecords(
+        {
+            gameState: game.gameState,
+            awayAbbrev: game.awayTeam.abbrev,
+            homeAbbrev: game.homeTeam.abbrev,
+            awayScore: game.awayTeam.score,
+            homeScore: game.homeTeam.score,
+            lastPeriodType: game.gameOutcome?.lastPeriodType ?? game.periodDescriptor?.periodType,
+            awayFeedRecord: game.awayTeam.record,
+            homeFeedRecord: game.homeTeam.record,
+        },
+        standings.before,
+        standings.after,
+    )
+    return {
+        ...game,
+        awayTeam: { ...game.awayTeam, ...(away.record ? { record: away.record } : {}) },
+        homeTeam: { ...game.homeTeam, ...(home.record ? { record: home.record } : {}) },
+    }
+}
 
 export function GamesList({ date, onGameSelect, onClose, onRefresh, onLoadingChange, onGamesCountChange }: GamesListProps) {
     const [games, setGames] = useState<NHLEdgeGame[]>([])
@@ -37,6 +62,8 @@ export function GamesList({ date, onGameSelect, onClose, onRefresh, onLoadingCha
     const currentDateRef = useRef(format(date, 'yyyy-MM-dd'))
     const refreshTimeoutRef = useRef<NodeJS.Timeout | null>(null)
     const MAX_RETRY_ATTEMPTS = 3
+    // Going-in record for games not yet final, the record after the game once it is
+    const standings = useGameStandings(games[0]?.gameDate, games.some((g) => isFinalState(g.gameState)))
 
     const fetchGames = useCallback(async (attemptNumber = 0) => {
         try {
@@ -289,7 +316,7 @@ export function GamesList({ date, onGameSelect, onClose, onRefresh, onLoadingCha
                 {games.map((game) => (
                     <GameCard
                         key={game.id}
-                        game={game}
+                        game={withRecords(game, standings)}
                         onSelectGame={onGameSelect}
                         onClose={onClose}
                     />

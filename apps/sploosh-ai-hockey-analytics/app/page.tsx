@@ -9,19 +9,34 @@ import { GameTimeline } from '@/components/features/game-timeline/game-timeline'
 import { ErrorMessage } from '@/components/shared/error'
 import { hasLocationData } from '@/lib/utils/shot-chart-utils'
 import { getFriendlyErrorMessage, getFriendlyErrorTitle } from '@/lib/utils/error-messages'
-import { standingsByTeam, formatRank, previousDate, type TeamStanding } from '@/lib/utils/standings'
+import { standingsByTeam, previousDate, type TeamStanding } from '@/lib/utils/standings'
+import { resolveGameRecords, isFinalState } from '@/lib/utils/game-records'
 import { Cache } from '@/lib/utils/cache'
 import { cacheImage, getImageUrl } from '@/lib/utils/image-cache'
 import { Check, Copy, Download } from 'lucide-react'
 import type { NHLEdgePlayByPlay } from '../lib/api/nhl-edge/types/nhl-edge'
 
-type HeaderTeamInfo = { awayRecord?: string; homeRecord?: string; standings: Record<string, TeamStanding> }
+type HeaderTeamInfo = { awayRecord?: string; homeRecord?: string; before: Record<string, TeamStanding>; after: Record<string, TeamStanding> }
 
-function withTeamInfo<T extends { abbrev: string; record?: string }>(team: T, info: HeaderTeamInfo | null, side: 'away' | 'home') {
+/** Record and rank for the header: going in until the game is final, then the record after the game. */
+function withTeamInfo<T extends { abbrev: string; record?: string; score?: number }>(game: any, team: T, info: HeaderTeamInfo | null, side: 'away' | 'home') {
   if (!info) return team
-  // Record going into the game: from the previous day's standings, else the scores feed
-  const record = info.standings[team.abbrev]?.record || team.record || (side === 'away' ? info.awayRecord : info.homeRecord)
-  return { ...team, ...(record ? { record } : {}), rank: formatRank(info.standings[team.abbrev]) }
+  const resolved = resolveGameRecords(
+    {
+      gameState: game.gameState,
+      awayAbbrev: game.awayTeam.abbrev,
+      homeAbbrev: game.homeTeam.abbrev,
+      awayScore: game.awayTeam.score,
+      homeScore: game.homeTeam.score,
+      lastPeriodType: game.gameOutcome?.lastPeriodType ?? game.periodDescriptor?.periodType,
+      awayFeedRecord: info.awayRecord,
+      homeFeedRecord: info.homeRecord,
+    },
+    info.before,
+    info.after,
+  )[side]
+  const record = resolved.record || team.record
+  return { ...team, ...(record ? { record } : {}), rank: resolved.rank }
 }
 
 function HomeContent() {
@@ -31,7 +46,7 @@ function HomeContent() {
   // The play-by-play has the special event name but not the neutralSite flag; the scores feed does.
   const [neutralSite, setNeutralSite] = useState<{ gameId: number; value: boolean } | null>(null)
   // Records come from the scores feed (the same source as the sidebar cards); ranks from the standings feed.
-  const [headerTeamInfo, setHeaderTeamInfo] = useState<{ gameId: number; awayRecord?: string; homeRecord?: string; standings: Record<string, TeamStanding> } | null>(null)
+  const [headerTeamInfo, setHeaderTeamInfo] = useState<(HeaderTeamInfo & { gameId: number }) | null>(null)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [copied, setCopied] = useState(false)
@@ -109,13 +124,20 @@ function HomeContent() {
               const scoreGame = scores?.games?.find((g: { id: number }) => g.id === gameId)
               const flagged = Boolean(scoreGame?.neutralSite)
               setNeutralSite({ gameId, value: flagged })
-              setHeaderTeamInfo((prev) => ({ gameId, awayRecord: scoreGame?.awayTeam?.record, homeRecord: scoreGame?.homeTeam?.record, standings: prev?.gameId === gameId ? prev.standings : {} }))
-              // Standings from the day before show where teams stood going into the game. Optional: if the feed
-              // fails, the header keeps the scores-feed record and no rank.
-              const standings = await fetch(`/api/nhl/standings?date=${previousDate(playByPlayData.gameDate)}`, { signal: abortController.signal })
+              const awayRecord = scoreGame?.awayTeam?.record
+              const homeRecord = scoreGame?.homeTeam?.record
+              setHeaderTeamInfo((prev) => ({ gameId, awayRecord, homeRecord, before: prev?.gameId === gameId ? prev.before : {}, after: prev?.gameId === gameId ? prev.after : {} }))
+              // Standings from the day before show where teams stood going into the game; standings dated the
+              // game day include its result, used once the game is final. Both are optional: if a feed fails,
+              // the header keeps the scores-feed record and no rank.
+              const load = (date: string) => fetch(`/api/nhl/standings?date=${date}`, { signal: abortController.signal })
                 .then((response) => (response.ok ? response.json() : null))
                 .catch(() => null)
-              setHeaderTeamInfo({ gameId, awayRecord: scoreGame?.awayTeam?.record, homeRecord: scoreGame?.homeTeam?.record, standings: standingsByTeam(standings) })
+              const [before, after] = await Promise.all([
+                load(previousDate(playByPlayData.gameDate)),
+                isFinalState(playByPlayData.gameState) ? load(playByPlayData.gameDate) : Promise.resolve(null),
+              ])
+              setHeaderTeamInfo({ gameId, awayRecord, homeRecord, before: standingsByTeam(before), after: standingsByTeam(after) })
             })
             .catch(() => {})
         }
@@ -326,8 +348,8 @@ function HomeContent() {
             <GameHeader 
               gameData={{
                 ...playByPlayData,
-                awayTeam: withTeamInfo(playByPlayData.awayTeam, headerTeamInfo?.gameId === playByPlayData.id ? headerTeamInfo : null, 'away'),
-                homeTeam: withTeamInfo(playByPlayData.homeTeam, headerTeamInfo?.gameId === playByPlayData.id ? headerTeamInfo : null, 'home'),
+                awayTeam: withTeamInfo(playByPlayData, playByPlayData.awayTeam, headerTeamInfo?.gameId === playByPlayData.id ? headerTeamInfo : null, 'away'),
+                homeTeam: withTeamInfo(playByPlayData, playByPlayData.homeTeam, headerTeamInfo?.gameId === playByPlayData.id ? headerTeamInfo : null, 'home'),
                 gameCenterLink: `/gamecenter/${playByPlayData.id}/recap`,
                 neutralSite: neutralSite !== null && neutralSite.gameId === playByPlayData.id && neutralSite.value,
                 tvBroadcasts: gameCenterData?.tvBroadcasts || [],

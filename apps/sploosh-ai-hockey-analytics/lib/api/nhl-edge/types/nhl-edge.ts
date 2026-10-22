@@ -12,6 +12,7 @@ export interface NHLEdgeGame {
     homeTeam: NHLEdgeTeam
     id: number
     period?: number
+    gameOutcome?: { lastPeriodType: NHLEdgePeriodType }
     periodDescriptor?: {
         number: number
         periodType: NHLEdgePeriodType
