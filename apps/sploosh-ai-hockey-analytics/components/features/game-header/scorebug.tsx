@@ -8,6 +8,8 @@ interface ScorebugTeam {
   score?: number
   sog?: number
   record?: string
+  /** Standings line such as "3rd in Pacific, 5th in West"; shown under the record when present. */
+  rank?: string
 }
 
 export type ScorebugVariant = 'keeper' | 'split' | 'marquee' | 'poster' | 'neon' | 'jumbotron' | 'frost' | 'ticker'
@@ -90,6 +92,7 @@ const TeamEnd: React.FC<{ team?: ScorebugTeam; fallback: string; showSog: boolea
         {showSog && team?.record && <span aria-hidden className="hidden sm:inline">·</span>}
         {team?.record && <span>{team.record}</span>}
       </span>
+      {team?.rank && <span data-testid="team-rank" className="max-w-[9rem] text-balance text-center text-[10px] leading-tight opacity-70 sm:max-w-none sm:whitespace-nowrap sm:text-[11px]">{team.rank}</span>}
     </div>
   )
 }

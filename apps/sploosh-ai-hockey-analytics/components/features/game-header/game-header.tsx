@@ -25,6 +25,7 @@ interface GameHeaderData {
     score?: number
     sog?: number
     record?: string
+    rank?: string
   }
   homeTeam?: {
     abbrev: string
@@ -32,6 +33,7 @@ interface GameHeaderData {
     score?: number
     sog?: number
     record?: string
+    rank?: string
   }
   clock?: {
     timeRemaining?: string
