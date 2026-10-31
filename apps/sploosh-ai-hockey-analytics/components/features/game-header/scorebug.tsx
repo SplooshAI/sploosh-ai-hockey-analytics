@@ -197,7 +197,7 @@ export const Scorebug: React.FC<ScorebugProps> = ({ variant = 'keeper', awayTeam
         className={`relative w-full rounded-xl border border-white/20 px-2 py-2.5 text-white shadow ${highlight === true ? 'ring-2 ring-amber-500' : highlight ? 'ring-2' : ''}`}
         style={{ ...(typeof highlight === 'string' ? ({ '--tw-ring-color': highlight } as React.CSSProperties) : {}), background: `linear-gradient(90deg, ${away} 0%, ${away} 49.5%, #f8fafc 49.5%, #f8fafc 50.5%, ${home} 50.5%, ${home} 100%)` }}
       >
-        <div className="grid grid-cols-2 items-center gap-x-4 gap-y-2">
+        <div className="grid grid-cols-2 items-start gap-x-4 gap-y-2">
           <div className="flex items-start justify-end gap-2">
             <TeamEnd team={awayTeam} fallback="Away" showSog={showSog} compact />
             <span className={`flex h-10 items-center text-4xl font-black leading-none tabular-nums drop-shadow-lg ${dim(awayScore, homeScore)}`}>{awayScore}</span>
@@ -253,12 +253,12 @@ export const Scorebug: React.FC<ScorebugProps> = ({ variant = 'keeper', awayTeam
           <span className={`text-[11px] font-extrabold uppercase tracking-[0.2em] drop-shadow sm:text-xs ${variant === 'frost' ? 'text-slate-700' : 'text-white'}`}>Sploosh.AI</span>
         </div>
       )}
-      <div className="relative grid grid-cols-2 items-center gap-x-6 gap-y-3 sm:grid-cols-[1fr_auto_1fr] sm:gap-4">
+      <div className="relative grid grid-cols-2 items-start gap-x-6 gap-y-3 sm:grid-cols-[1fr_auto_1fr] sm:gap-4">
         <div className="flex items-start justify-end gap-2 sm:gap-5">
           <TeamEnd team={awayTeam} fallback="Away" showSog={showSog} />
           <span className={`flex h-10 items-center leading-none tabular-nums min-[360px]:h-12 sm:h-16 ${look.num} ${dim(awayScore, homeScore)}`}>{awayScore}</span>
         </div>
-        <div className={`col-span-2 row-start-2 justify-self-center whitespace-nowrap px-3 py-1 text-center text-[11px] font-bold uppercase tracking-widest sm:col-span-1 sm:col-start-2 sm:row-start-1 sm:text-sm ${look.plate}`}>{isLive && <span aria-hidden className="mr-1.5 inline-block h-2 w-2 animate-pulse rounded-full bg-green-400 align-middle" />}{status}</div>
+        <div className={`col-span-2 row-start-2 justify-self-center whitespace-nowrap px-3 py-1 text-center text-[11px] font-bold uppercase tracking-widest sm:col-span-1 sm:col-start-2 sm:row-start-1 sm:mt-4 sm:text-sm ${look.plate}`}>{isLive && <span aria-hidden className="mr-1.5 inline-block h-2 w-2 animate-pulse rounded-full bg-green-400 align-middle" />}{status}</div>
         <div className="flex items-start justify-start gap-2 sm:gap-5">
           <span className={`flex h-10 items-center leading-none tabular-nums min-[360px]:h-12 sm:h-16 ${look.num} ${dim(homeScore, awayScore)}`}>{homeScore}</span>
           <TeamEnd team={homeTeam} fallback="Home" showSog={showSog} />
