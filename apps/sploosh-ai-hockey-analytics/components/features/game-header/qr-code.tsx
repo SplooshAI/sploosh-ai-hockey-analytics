@@ -10,6 +10,9 @@ interface QrCardProps {
   /** Accessible name for the QR code itself */
   label: string
   testId: string
+  /** Overrides the variant's default hint and link label (e.g. for the app itself rather than a game) */
+  hint?: string
+  linkLabel?: string
 }
 
 const VARIANTS: Record<QrVariant, { title: string; hint: string; linkLabel: string }> = {
@@ -33,8 +36,10 @@ const VARIANTS: Record<QrVariant, { title: string; hint: string; linkLabel: stri
  * Both variants share one plain style: black modules on white with a quiet zone, so they scan
  * the same in light and dark themes. Only the label tells them apart.
  */
-export const QrCard: React.FC<QrCardProps> = ({ url, variant, label, testId }) => {
-  const { title, hint, linkLabel } = VARIANTS[variant]
+export const QrCard: React.FC<QrCardProps> = ({ url, variant, label, testId, hint: hintOverride, linkLabel: linkLabelOverride }) => {
+  const { title, hint: defaultHint, linkLabel: defaultLinkLabel } = VARIANTS[variant]
+  const hint = hintOverride ?? defaultHint
+  const linkLabel = linkLabelOverride ?? defaultLinkLabel
   return (
     <figure data-variant={variant} className="flex w-56 max-w-full flex-col items-center gap-2 rounded-xl border border-border bg-card p-3">
       <figcaption className="flex flex-col items-center gap-0.5 text-center">

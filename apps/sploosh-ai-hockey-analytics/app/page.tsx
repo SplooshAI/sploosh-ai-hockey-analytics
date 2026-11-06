@@ -3,13 +3,14 @@ import { useState, useEffect, useRef, Suspense } from 'react'
 import { useSearchParams } from 'next/navigation'
 import { MainLayout } from '@/components/layouts/main-layout'
 import { NHLEdgeHockeyRink } from '@/components/features/hockey-rink/nhl-edge-hockey-rink/nhl-edge-hockey-rink'
-import { GameHeader, GameQrCodes } from '@/components/features/game-header'
+import { GameHeader, GameQrCodes, QrCard } from '@/components/features/game-header'
 import { ShotChart } from '@/components/features/shot-chart/shot-chart'
 import { GameTimeline } from '@/components/features/game-timeline/game-timeline'
 import { ErrorMessage } from '@/components/shared/error'
 import { hasLocationData } from '@/lib/utils/shot-chart-utils'
 import { getFriendlyErrorMessage, getFriendlyErrorTitle } from '@/lib/utils/error-messages'
 import { standingsByTeam, formatRank, previousDate, type TeamStanding } from '@/lib/utils/standings'
+import { getAppShareUrl } from '@/lib/share-url'
 import { Cache } from '@/lib/utils/cache'
 import { cacheImage, getImageUrl } from '@/lib/utils/image-cache'
 import { Check, Copy, Download } from 'lucide-react'
@@ -249,6 +250,16 @@ function HomeContent() {
               className="w-full h-auto"
               displayZamboni={true}
               iceTexturePattern="none"
+            />
+          </div>
+          <div className="flex justify-center pt-6">
+            <QrCard
+              url={getAppShareUrl()}
+              variant="sploosh"
+              label="QR code for Sploosh.AI Hockey Analytics"
+              testId="qr-app-share"
+              hint="Scan or tap to open and share the app"
+              linkLabel="Open Sploosh.AI Hockey Analytics"
             />
           </div>
         </div>
