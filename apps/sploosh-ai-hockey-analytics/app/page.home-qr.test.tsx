@@ -42,7 +42,7 @@ describe('Home Page - app share QR code', () => {
     const qr = screen.getByTestId('qr-app-share')
     expect(qr).toHaveAttribute('data-url', `${SITE.url}/`)
     expect(qr.getAttribute('data-url')).not.toContain('gameId')
-    expect(screen.getByText('Scan or tap to open and share the app')).toBeInTheDocument()
+    expect(screen.getByText('Scan or tap to share the app')).toBeInTheDocument()
   })
 
   it('does not show it once a game is selected', async () => {

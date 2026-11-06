@@ -258,7 +258,7 @@ function HomeContent() {
               variant="sploosh"
               label="QR code for Sploosh.AI Hockey Analytics"
               testId="qr-app-share"
-              hint="Scan or tap to open and share the app"
+              hint="Scan or tap to share the app"
               linkLabel="Open Sploosh.AI Hockey Analytics"
             />
           </div>
