@@ -3,24 +3,25 @@
 # One-time (re-runnable) setup of the `hockeydeploy` user on the Oracle Cloud
 # VM, including its own rootless Docker daemon.
 #
-# Needs an existing account on the VM that has passwordless sudo — on the
-# current VM that is `cipdeploy` (see docs/deployment/oracle-vm.md). That
-# account is used ONLY here, once; everything after this runs as
-# `hockeydeploy`.
+# Needs a bootstrap admin account on the VM with passwordless sudo: `vmadmin`,
+# with its own key (~/.ssh/oracle_vm_admin), see docs/deployment/oracle-vm.md.
+# It is never an application's account and never another project's deploy key
+# (CIP's cipdeploy has no sudo). It is used ONLY here; everything after this
+# runs as `hockeydeploy`.
 #
 # Usage:
 #   ./scripts/deploy/provision-vm.sh <PUBLIC_IP> [ADMIN_USER] [ADMIN_KEY]
 #
-#   ADMIN_USER  defaults to cipdeploy
-#   ADMIN_KEY   defaults to ~/.ssh/cip_oracle_deploy
+#   ADMIN_USER  defaults to vmadmin
+#   ADMIN_KEY   defaults to ~/.ssh/oracle_vm_admin
 #
 set -euo pipefail
 cd "$(dirname "${BASH_SOURCE[0]}")/../.."
 
 HOST="${1:-}"
 [ -n "$HOST" ] || { echo "Usage: $0 <PUBLIC_IP> [ADMIN_USER] [ADMIN_KEY]" >&2; exit 1; }
-ADMIN_USER="${2:-cipdeploy}"
-ADMIN_KEY="${3:-$HOME/.ssh/cip_oracle_deploy}"
+ADMIN_USER="${2:-vmadmin}"
+ADMIN_KEY="${3:-$HOME/.ssh/oracle_vm_admin}"
 KEY="$HOME/.ssh/hockey_oracle_deploy"
 PUBFILE="infra/oracle-cloud/hockey_oracle_deploy.pub"
 
