@@ -32,7 +32,8 @@ hockey-preview.sploosh.ai                                │ http://sploosh-ai-h
 | Account | Purpose | sudo | `docker` group |
 | --- | --- | --- | --- |
 | `opc` | OCI's default account. Never used day to day. | yes | no |
-| `cipdeploy` | CIP's deploy user. Used **once** here, to create `hockeydeploy`. | yes | yes |
+| `vmadmin` | Bootstrap admin with its own key (`~/.ssh/oracle_vm_admin`). Used only to provision users and for VM maintenance, never by an app. | yes | no |
+| `cipdeploy` | CIP's deploy user. Has **no sudo** (removed 2026-11-14), it only runs CIP's containers through the system Docker daemon. | no | yes |
 | `hockeydeploy` | Owns this app's containers and nothing else. | **no** | **no** |
 
 `hockeydeploy` runs [rootless Docker](https://docs.docker.com/engine/security/rootless/):
@@ -84,16 +85,16 @@ npm run deploy:provision
 
 This runs `scripts/deploy/provision-vm.sh`, which is safe to re-run:
 
-1. As `cipdeploy` (passwordless sudo; the CIP key at
-   `~/.ssh/cip_oracle_deploy`), runs `infra/oracle-cloud/provision-hockeydeploy.sh`
+1. As `vmadmin` (passwordless sudo; its own key at
+   `~/.ssh/oracle_vm_admin`, never another project's deploy key), runs `infra/oracle-cloud/provision-hockeydeploy.sh`
    to create the user, install the SSH key, install `slirp4netns`, and enable
    systemd *linger* so the user's services start at boot with nobody logged in.
 2. As `hockeydeploy`, installs rootless Docker and enables its systemd user
    service.
 
-On a brand-new VM with no `cipdeploy`, create any sudo-capable account
-first (for example by pasting the CIP `cloud-init.yaml` into the OCI Console's
-Initialization script field) and pass it as the second argument:
+On a brand-new VM with no `vmadmin`, create a sudo-capable account with its own
+key first (the Furball Frenzy walkthrough, `docs/deployment/oracle-vm.md` in
+that repo, has the commands) and pass it as the second argument:
 `./scripts/deploy/provision-vm.sh <IP> <admin-user> <admin-key>`.
 
 ## Deploying and operating
@@ -199,7 +200,8 @@ Other things worth knowing:
 
 - Watch `df -h /` on the VM, or the last line the deploy prints.
 - Each Docker daemon keeps its own cache. CIP's lives under the system
-  daemon, so clear it as `cipdeploy` with `sudo docker builder prune`; this
+  daemon, so clear it as `cipdeploy` with `docker builder prune` (the `docker` group is
+  enough, no sudo); this
   deploy's cleanup never touches it.
 - Safe system cleanups when it gets tight: `sudo dnf clean all` (about 1 GB)
   and `sudo journalctl --vacuum-size=100M`.
@@ -213,7 +215,7 @@ Other things worth knowing:
   `infra/oracle-cloud/`, and run `npm run deploy:provision` again; it rewrites
   `authorized_keys`.
 - **Remove the app entirely:** `npm run deploy:down`, then on the VM as
-  `cipdeploy`: `sudo loginctl disable-linger hockeydeploy && sudo userdel -r hockeydeploy`.
+  `vmadmin`: `sudo loginctl disable-linger hockeydeploy && sudo userdel -r hockeydeploy`.
   Nothing outside that user's home is affected.
 
 ## Things worth doing later
