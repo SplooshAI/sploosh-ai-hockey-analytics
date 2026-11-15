@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { formatRank, ordinal, previousDate, standingsByTeam } from './standings'
+import { formatRank, ordinal, previousDate, rankExplanation, standingsByTeam } from './standings'
 
 const row = (abbrev: string, extra: Record<string, unknown> = {}) => ({
   teamAbbrev: { default: abbrev },
@@ -86,5 +86,19 @@ describe('standings', () => {
     expect(previousDate('2026-10-22')).toBe('2026-10-21')
     expect(previousDate('2026-11-01')).toBe('2026-10-31')
     expect(previousDate('2027-01-01')).toBe('2026-12-31')
+  })
+})
+
+describe('rankExplanation', () => {
+  it('explains a wild card spot, since the conference rank alone does not decide it', () => {
+    const text = rankExplanation('5th in Central, 7th in West (WC2)')
+    expect(text).toContain('division')
+    expect(text).toContain('wild cards')
+  })
+
+  it('stays quiet when the rank line has no wild card in it', () => {
+    expect(rankExplanation('2nd in Pacific, 4th in West')).toBeUndefined()
+    expect(rankExplanation('5th in Central, 9th in West (1 spot, 1 pt behind WC2)')).toBeUndefined()
+    expect(rankExplanation(undefined)).toBeUndefined()
   })
 })

@@ -1,6 +1,7 @@
 'use client'
 import Image from 'next/image'
 import { useState } from 'react'
+import { rankExplanation } from '@/lib/utils/standings'
 
 interface ScorebugTeam {
   abbrev: string
@@ -92,7 +93,7 @@ const TeamEnd: React.FC<{ team?: ScorebugTeam; fallback: string; showSog: boolea
         {showSog && team?.record && <span aria-hidden className="hidden sm:inline">·</span>}
         {team?.record && <span>{team.record}</span>}
       </span>
-      {team?.rank && <span data-testid="team-rank" className="max-w-[9rem] text-balance text-center text-[10px] leading-tight opacity-70 sm:max-w-none sm:whitespace-nowrap sm:text-[11px]">{team.rank}</span>}
+      {team?.rank && <RankLine rank={team.rank} />}
     </div>
   )
 }
@@ -268,5 +269,42 @@ export const Scorebug: React.FC<ScorebugProps> = ({ variant = 'keeper', awayTeam
         <div data-testid="scorebug-venue" className="relative mt-3 whitespace-nowrap text-center text-[clamp(6px,2.6vw,10px)] font-semibold uppercase tracking-[0.08em] opacity-75 sm:text-xs sm:tracking-[0.25em]">{venue}</div>
       )}
     </div>
+  )
+}
+
+/**
+ * The standings line under the record. When it names a wild card spot it becomes a tap target with a
+ * short explanation, because "7th in West (WC2)" is correct but reads wrong at a glance.
+ */
+function RankLine({ rank }: { rank: string }) {
+  const [open, setOpen] = useState(false)
+  const note = rankExplanation(rank)
+  const base = 'max-w-[9rem] text-balance text-center text-[10px] leading-tight opacity-70 sm:max-w-none sm:whitespace-nowrap sm:text-[11px]'
+  if (!note) return <span data-testid="team-rank" className={base}>{rank}</span>
+  return (
+    <span className="relative flex flex-col items-center">
+      <button
+        type="button"
+        data-testid="team-rank"
+        aria-expanded={open}
+        aria-describedby="wild-card-note"
+        title={note}
+        onClick={() => setOpen((v) => !v)}
+        onBlur={() => setOpen(false)}
+        className={`${base} cursor-help underline decoration-dotted underline-offset-2`}
+      >
+        {rank}
+      </button>
+      {open && (
+        <span
+          id="wild-card-note"
+          role="tooltip"
+          data-testid="wild-card-note"
+          className="absolute top-full z-20 mt-1 w-56 rounded-md bg-slate-900 p-2 text-left text-[11px] font-normal leading-snug text-white shadow-lg"
+        >
+          {note}
+        </span>
+      )}
+    </span>
   )
 }

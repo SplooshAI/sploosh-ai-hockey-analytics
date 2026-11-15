@@ -98,3 +98,12 @@ export function previousDate(date: string): string {
   d.setUTCDate(d.getUTCDate() - 1)
   return d.toISOString().slice(0, 10)
 }
+
+/**
+ * Plain-language note for a rank line that mentions the wild card race, so "7th in West (WC2)" is not
+ * read as "7th place means WC1". Undefined when the rank line says nothing about the wild cards.
+ */
+export function rankExplanation(rank?: string): string | undefined {
+  if (!rank || !/\(WC[12]\)/.test(rank)) return undefined
+  return 'The top three teams in each division qualify first. The two wild cards, WC1 and WC2, go to the best remaining teams in the conference. So a team can rank 7th by points and still be WC2 when a division leader sits below it in the standings.'
+}

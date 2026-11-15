@@ -5,7 +5,7 @@
  */
 
 import { describe, it, expect, vi } from 'vitest'
-import { render, screen } from '@testing-library/react'
+import { render, screen, fireEvent } from '@testing-library/react'
 import { GameHeader } from './game-header'
 
 vi.mock('next/image', () => ({
@@ -45,5 +45,17 @@ describe('GameHeader - record and rank', () => {
   it('still renders ranks on neutral-site games', () => {
     render(<GameHeader gameData={game({ record: '7-3-0', rank: '1st in Central, 3rd in West' }, { record: '6-3-1', rank: '3rd in Pacific, 5th in West' }, { neutralSite: true })} />)
     expect(screen.getAllByTestId('team-rank')).toHaveLength(2)
+  })
+
+  it('explains a wild card spot when the rank line names one, and only then', () => {
+    render(<GameHeader gameData={game({ record: '10-8-2', rank: '5th in Central, 7th in West (WC2)' }, { record: '6-3-1', rank: '3rd in Pacific, 5th in West' })} />)
+    const wildCard = screen.getByRole('button', { name: /WC2/ })
+    expect(screen.queryByTestId('wild-card-note')).not.toBeInTheDocument()
+    fireEvent.click(wildCard)
+    expect(screen.getByTestId('wild-card-note')).toHaveTextContent(/division leader/)
+    fireEvent.click(wildCard)
+    expect(screen.queryByTestId('wild-card-note')).not.toBeInTheDocument()
+    // the other team's plain rank is not a button
+    expect(screen.getByText('3rd in Pacific, 5th in West').tagName).toBe('SPAN')
   })
 })
