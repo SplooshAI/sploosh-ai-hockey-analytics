@@ -4,10 +4,10 @@
   "private": true,
   "packageManager": "npm@11.7.0",
   "scripts": {
-    "test": "vitest run",
-    "test:coverage": "vitest run --coverage",
-    "test:coverage:open": "vitest run --coverage && open coverage/index.html",
-    "test:ui": "vitest --ui",
+    "test": "NODE_OPTIONS=--no-experimental-webstorage vitest run",
+    "test:coverage": "NODE_OPTIONS=--no-experimental-webstorage vitest run --coverage",
+    "test:coverage:open": "NODE_OPTIONS=--no-experimental-webstorage vitest run --coverage && open coverage/index.html",
+    "test:ui": "NODE_OPTIONS=--no-experimental-webstorage vitest --ui",
     "dev": "next dev --turbopack",
     "prebuild": "node ./scripts/generate-build-info.js",
     "build": "next build",
@@ -53,7 +53,7 @@
     "@types/react-dom": "19.2.3"
   },
   "engines": {
-    "node": ">=24.14.0",
+    "node": ">=26.13.1",
     "npm": ">=11.0.0"
   }
 }
