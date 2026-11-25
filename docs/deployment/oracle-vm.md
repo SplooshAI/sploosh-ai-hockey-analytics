@@ -223,6 +223,5 @@ Other things worth knowing:
 - Build and push the image to GHCR from CI (the `ghcr:build` script already
   produces it) and pull it on the VM instead of building there: faster deploys,
   no build toolchain load next to CIP.
-- A GitHub Actions workflow that runs `npm run deploy` on merge to `main`.
 - Pin `cloudflared` to a version instead of `latest`.
-- Uptime monitoring on the public URL.
+- Uptime monitoring is in place: see [monitoring and analytics](monitoring-and-analytics.md).
