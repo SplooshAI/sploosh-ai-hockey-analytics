@@ -17,7 +17,7 @@ untagged images and old build cache.
 
 ## 3. Later
 
-- Uptime monitoring for the public sites
+- ~~Uptime monitoring for the public sites~~ (done 2026-11-25: [monitoring and analytics](../deployment/monitoring-and-analytics.md))
 - Major dependency upgrades, one PR each (check Next.js support before TypeScript 7)
 - Convert any remaining `<img>` tags to `next/image`
 - Remove old local branches, after checking they are merged
