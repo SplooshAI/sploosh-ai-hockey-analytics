@@ -26,3 +26,8 @@ untagged images and old build cache.
 
 This app's footer card is the reference for `sploosh-ai-web` and Furball Frenzy: `vX.Y.Z`, `Released YYYY.MM.DD @ time`
 in the visitor's time zone, and a link to the repository. Keep the three reading the same way.
+
+## 5. Separate deploy workflows
+
+Give deployment its own workflow so each deploy shows as its own run in the Actions list, not as a job inside
+Main Branch Merge. See `sploosh-ai-web` (`deploy-production.yml`, `deploy-preview.yml`) for the pattern.
