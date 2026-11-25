@@ -28,11 +28,6 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
   componentDidCatch(error: Error, errorInfo: React.ErrorInfo) {
     console.error('ErrorBoundary caught an error:', error, errorInfo)
     
-    // Report to error tracking service (e.g., Sentry)
-    // Uncomment when Sentry is set up:
-    // import { captureException } from '@/lib/monitoring/sentry'
-    // captureException(error, { componentStack: errorInfo.componentStack })
-    
     this.props.onError?.(error, errorInfo)
   }
 
